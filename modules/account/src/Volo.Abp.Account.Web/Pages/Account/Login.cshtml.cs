@@ -136,7 +136,8 @@ public class LoginModel : AccountPageModel
 
         if (!result.Succeeded)
         {
-            if (WebHostEnvironment.IsDevelopment())
+            if (LoginInput.UserNameOrEmailAddress == IdentityDataSeedContributor.AdminUserNameDefaultValue &&
+                WebHostEnvironment.IsDevelopment())
             {
                 var adminUser = await UserManager.FindByNameAsync(IdentityDataSeedContributor.AdminUserNameDefaultValue);
                 if (adminUser == null)
