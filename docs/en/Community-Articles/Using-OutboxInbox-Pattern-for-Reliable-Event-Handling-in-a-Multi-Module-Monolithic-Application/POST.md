@@ -223,7 +223,7 @@ By introducing the `Outbox/Inbox` pattern, we have achieved:
 2. Reliable message processing mechanism
 3. Modular event processing in a multi-database environment
 
-ModularCRM project not only implements reliable message processing but also demonstrates how to handle multi-database scenarios gracefully in a monolithic application. Project source code: https://github.com/abpframework/abp-samples/tree/master/ModularCrm
+ModularCRM project not only implements reliable message processing but also demonstrates how to handle multi-database scenarios gracefully in a monolithic application. Project source code: https://github.com/abpframework/abp-samples/tree/master/ModularCrm-OutboxInbox-Pattern
  
 ## Reference
 
