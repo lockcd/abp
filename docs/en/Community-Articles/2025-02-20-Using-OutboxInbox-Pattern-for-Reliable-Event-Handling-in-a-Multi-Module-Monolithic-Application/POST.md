@@ -15,8 +15,8 @@ This article explains how to implement reliable event handling using the `Outbox
 
 Besides the ABP framework modules, the project contains three business modules:
 
-- Order module (`Products`), using `MongoDB` database
-- Product module (`Ordering`), using `SQL Server` database
+- Order module (`Ordering`), using `MongoDB` database
+- Product module (`Products`), using `SQL Server` database
 - Payment module (`Payment`), using `MongoDB` database
 
 The project configures separate database connection strings for `ModularCRM` and the three business modules in `appsettings.json`:
