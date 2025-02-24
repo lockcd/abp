@@ -43,72 +43,62 @@ public class PermissionAppService : ApplicationService, IPermissionAppService
         };
 
         var multiTenancySide = CurrentTenant.GetMultiTenancySide();
+        var permissionGroups = new List<PermissionGroupDto>();
 
         foreach (var group in await PermissionDefinitionManager.GetGroupsAsync())
         {
             var groupDto = CreatePermissionGroupDto(group);
+            var permissions = group.GetPermissionsWithChildren()
+                .Where(x => x.IsEnabled &&
+                            (!x.Providers.Any() || x.Providers.Contains(providerName)) &&
+                            x.MultiTenancySide.HasFlag(multiTenancySide));
 
             var neededCheckPermissions = new List<PermissionDefinition>();
-
-            var permissions = group.GetPermissionsWithChildren()
-                .Where(x => x.IsEnabled)
-                .Where(x => !x.Providers.Any() || x.Providers.Contains(providerName))
-                .Where(x => x.MultiTenancySide.HasFlag(multiTenancySide));
-            
             foreach (var permission in permissions)
             {
-                if(permission.Parent != null && !neededCheckPermissions.Contains(permission.Parent))
+                if (permission.Parent != null && !neededCheckPermissions.Contains(permission.Parent))
                 {
                     continue;
                 }
-                
+
                 if (await SimpleStateCheckerManager.IsEnabledAsync(permission))
                 {
                     neededCheckPermissions.Add(permission);
                 }
             }
 
-            if (!neededCheckPermissions.Any())
+            groupDto.Permissions.AddRange(neededCheckPermissions.Select(CreatePermissionGrantInfoDto));
+            permissionGroups.Add(groupDto);
+        }
+
+        var multipleGrantInfo = await PermissionManager.GetAsync(
+            permissionGroups.SelectMany(group => group.Permissions).Select(permission => permission.Name).ToArray(),
+            providerName,
+            providerKey);
+
+        foreach (var permissionGroup in permissionGroups)
+        {
+            foreach (var permission in permissionGroup.Permissions.Where(x => multipleGrantInfo.Result.Any(y => y.Name == x.Name)))
             {
-                continue;
-            }
-
-            var grantInfoDtos = neededCheckPermissions
-                .Select(CreatePermissionGrantInfoDto)
-                .ToList();
-
-            var multipleGrantInfo = await PermissionManager.GetAsync(neededCheckPermissions.Select(x => x.Name).ToArray(), providerName, providerKey);
-
-            foreach (var grantInfo in multipleGrantInfo.Result)
-            {
-                var grantInfoDto = grantInfoDtos.First(x => x.Name == grantInfo.Name);
-
-                grantInfoDto.IsGranted = grantInfo.IsGranted;
-
-                foreach (var provider in grantInfo.Providers)
+                var grantInfo = multipleGrantInfo.Result.First(x => x.Name == permission.Name);
+                permission.IsGranted = grantInfo.IsGranted;
+                permission.GrantedProviders = grantInfo.Providers.Select(x => new ProviderInfoDto
                 {
-                    grantInfoDto.GrantedProviders.Add(new ProviderInfoDto
-                    {
-                        ProviderName = provider.Name,
-                        ProviderKey = provider.Key,
-                    });
-                }
-
-                groupDto.Permissions.Add(grantInfoDto);
+                    ProviderName = x.Name,
+                    ProviderKey = x.Key,
+                }).ToList();
             }
 
-            if (groupDto.Permissions.Any())
-            {
-                result.Groups.Add(groupDto);
-            }
+            result.Groups.Add(permissionGroup);
         }
 
         return result;
     }
 
-    private PermissionGrantInfoDto CreatePermissionGrantInfoDto(PermissionDefinition permission)
+    protected virtual  PermissionGrantInfoDto CreatePermissionGrantInfoDto(PermissionDefinition permission)
     {
-        return new PermissionGrantInfoDto {
+        return new PermissionGrantInfoDto
+        {
             Name = permission.Name,
             DisplayName = permission.DisplayName?.Localize(StringLocalizerFactory),
             ParentName = permission.Parent?.Name,
@@ -117,10 +107,10 @@ public class PermissionAppService : ApplicationService, IPermissionAppService
         };
     }
 
-    private PermissionGroupDto CreatePermissionGroupDto(PermissionGroupDefinition group)
+    protected virtual PermissionGroupDto CreatePermissionGroupDto(PermissionGroupDefinition group)
     {
         var localizableDisplayName = group.DisplayName as LocalizableString;
-        
+
         return new PermissionGroupDto
         {
             Name = group.Name,
