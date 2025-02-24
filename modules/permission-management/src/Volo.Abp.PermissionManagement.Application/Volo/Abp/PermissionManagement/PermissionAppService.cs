@@ -49,9 +49,9 @@ public class PermissionAppService : ApplicationService, IPermissionAppService
         {
             var groupDto = CreatePermissionGroupDto(group);
             var permissions = group.GetPermissionsWithChildren()
-                .Where(x => x.IsEnabled &&
-                            (!x.Providers.Any() || x.Providers.Contains(providerName)) &&
-                            x.MultiTenancySide.HasFlag(multiTenancySide));
+                .Where(x => x.IsEnabled)
+                .Where(x => !x.Providers.Any() || x.Providers.Contains(providerName))
+                .Where(x => x.MultiTenancySide.HasFlag(multiTenancySide));
 
             var neededCheckPermissions = new List<PermissionDefinition>();
             foreach (var permission in permissions)
@@ -67,6 +67,11 @@ public class PermissionAppService : ApplicationService, IPermissionAppService
                 }
             }
 
+            if (!neededCheckPermissions.Any())
+            {
+                continue;
+            }
+
             groupDto.Permissions.AddRange(neededCheckPermissions.Select(CreatePermissionGrantInfoDto));
             permissionGroups.Add(groupDto);
         }
@@ -78,9 +83,14 @@ public class PermissionAppService : ApplicationService, IPermissionAppService
 
         foreach (var permissionGroup in permissionGroups)
         {
-            foreach (var permission in permissionGroup.Permissions.Where(x => multipleGrantInfo.Result.Any(y => y.Name == x.Name)))
+            foreach (var permission in permissionGroup.Permissions)
             {
-                var grantInfo = multipleGrantInfo.Result.First(x => x.Name == permission.Name);
+                var grantInfo = multipleGrantInfo.Result.FirstOrDefault(x => x.Name == permission.Name);
+                if (grantInfo == null)
+                {
+                    continue;
+                }
+
                 permission.IsGranted = grantInfo.IsGranted;
                 permission.GrantedProviders = grantInfo.Providers.Select(x => new ProviderInfoDto
                 {
@@ -89,7 +99,10 @@ public class PermissionAppService : ApplicationService, IPermissionAppService
                 }).ToList();
             }
 
-            result.Groups.Add(permissionGroup);
+            if (permissionGroup.Permissions.Any())
+            {
+                result.Groups.Add(permissionGroup);
+            }
         }
 
         return result;
