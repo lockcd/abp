@@ -501,17 +501,6 @@ var abp = abp || {};
         }
     };
 
-    var ISOStringToDateTimeLocaleString = function (format) {
-        return function (data) {
-            var date = luxon
-                .DateTime
-                .fromISO(data, {
-                    locale: abp.localization.currentCulture.name
-                });
-            return format ? date.toLocaleString(format) : date.toLocaleString();
-        };
-    };
-
     datatables.defaultRenderers['date'] = function (value) {
         if (!value) {
             return value;
