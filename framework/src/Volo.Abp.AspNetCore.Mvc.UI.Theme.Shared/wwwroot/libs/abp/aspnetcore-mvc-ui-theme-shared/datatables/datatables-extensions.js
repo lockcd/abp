@@ -159,8 +159,9 @@ var abp = abp || {};
                 $dropdownButton.addClass(field.cssClass);
             }
 
+            var isEntityActionsDisabled = true;
             var $dropdownItemsContainer = $('<ul/>').addClass('dropdown-menu');
-
+            
             for (var i = 0; i < field.items.length; i++) {
                 var fieldItem = field.items[i];
 
@@ -169,6 +170,7 @@ var abp = abp || {};
                     continue;
                 }
 
+                isEntityActionsDisabled = false;
                 var $dropdownItem = _createDropdownItem(record, fieldItem, tableInstance);
 
                 if (fieldItem.enabled && !fieldItem.enabled({ record: record, table: tableInstance })) {
@@ -180,11 +182,22 @@ var abp = abp || {};
 
             if ($dropdownItemsContainer.find('li').length > 0) {
                 $dropdownItemsContainer.appendTo($container);
-            } else {
-                $dropdownButton.addClass('d-none');
             }
 
-            $dropdownButton.prependTo($container);
+            if (isEntityActionsDisabled) {
+                
+                $dropdownButton.attr('disabled', 'disabled');
+
+                var $tooltip = $('<div/>');
+                $tooltip.attr('title', localize("EntityActionsDisabledTooltip"));
+                $tooltip.attr('data-bs-toggle', 'tooltip');
+                new bootstrap.Tooltip($tooltip);
+
+                $dropdownButton.appendTo($tooltip);
+                $tooltip.prependTo($container);
+            }else{
+                $dropdownButton.prependTo($container);
+            }
 
             if (bootstrap) {
                 new bootstrap.Dropdown($dropdownButton, {
