@@ -3,6 +3,9 @@
 
     var commentsService = volo.cmsKit.admin.comments.commentAdmin;
 
+    moment()._locale.preparse = (string) => string;
+    moment()._locale.postformat = (string) => string;
+
     var singleDatePicker = $('#CmsKitCommentsApproveWrapper .singledatepicker');
     singleDatePicker.daterangepicker({
         "singleDatePicker": true,

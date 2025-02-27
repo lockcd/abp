@@ -2,6 +2,8 @@ $(function () {
     var l = abp.localization.getResource("CmsKit");
 
     var commentsService = volo.cmsKit.admin.comments.commentAdmin;
+    moment()._locale.preparse = (string) => string;
+    moment()._locale.postformat = (string) => string;
 
     var commentRequireApprovement = abp.setting.getBoolean("CmsKit.Comments.RequireApprovement");
 

@@ -9,6 +9,9 @@ $(function (){
         $('#IsApprovedSelectInput').show();
     }
 	
+	moment.localeData().preparse = (s)=>s;
+    moment.localeData().postformat = (s)=>s;
+
     var singleDatePicker = $('#CmsKitCommentsDetailsWrapper .singledatepicker');
     singleDatePicker.daterangepicker({
         "singleDatePicker": true,

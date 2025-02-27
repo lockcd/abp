@@ -2,6 +2,9 @@ $(function () {
     var l = abp.localization.getResource('Docs');
     var service = window.volo.docs.admin.documentsAdmin;
 
+	moment.localeData().preparse = (s)=>s;
+    moment.localeData().postformat = (s)=>s;
+
     var singleDatePicker = $('#DocumentsContainer .singledatepicker');
     singleDatePicker.daterangepicker({
         "singleDatePicker": true,
