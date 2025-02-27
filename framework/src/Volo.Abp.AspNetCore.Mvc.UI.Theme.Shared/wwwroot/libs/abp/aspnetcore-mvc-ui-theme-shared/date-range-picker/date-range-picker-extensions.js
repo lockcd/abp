@@ -752,4 +752,37 @@
     $(function () {
         abp.dom.initializers.initializeDateRangePickers($('body'));
     });
+
+    $.fn.handleDatepicker = function (datepickerSelector) {
+        var $this  = $(this);
+        var datepickers = $this.find(datepickerSelector);
+        $this.find('input[class="new-datepicker"]').remove();
+
+        datepickers.each(function () {
+            var $this  = $(this);
+            if($this.val() === ''){
+                return;
+            }
+
+            var name = $this.attr('name');
+            $this.data('name', name).removeAttr('name');
+            var datepicker = $this.data('daterangepicker');
+            if (datepicker.singleDatePicker) {
+                var startDate = abp.clock.normalizeToString(datepicker.startDate.toDate());
+                var startDateInput = $('<input>').attr('type', 'hidden').attr('name', name).val(startDate).addClass('new-datepicker');
+                $this.after(startDateInput);
+            } else {
+                var startDate = abp.clock.normalizeToString(datepicker.startDate.toDate());
+                var startDateInput = $('<input>').attr('type', 'hidden').attr('name', name).val(startDate).addClass('new-datepicker');
+                $this.after(startDateInput);
+
+                var endDate = abp.clock.normalizeToString(datepicker.endDate.toDate());
+                var endDateInput = $('<input>').attr('type', 'hidden').attr('name', name).val(endDate).addClass('new-datepicker');
+                $this.after(endDateInput);
+            }
+        });
+
+        return this;
+    };
+    
 })(jQuery);
