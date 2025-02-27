@@ -764,7 +764,7 @@
                 return;
             }
 
-            var name = $this.attr('name');
+            var name = $this.attr('name') || $this.data('name');
             $this.data('name', name).removeAttr('name');
             var datepicker = $this.data('daterangepicker');
             if (datepicker.singleDatePicker) {
