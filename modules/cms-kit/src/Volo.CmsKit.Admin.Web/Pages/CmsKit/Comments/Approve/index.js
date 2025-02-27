@@ -14,7 +14,8 @@
         return momentDate.isValid() ? momentDate.toISOString() : null;
     };
 
-    $('.singledatepicker').daterangepicker({
+    var singleDatePicker = $('#CmsKitCommentsApproveWrapper .singledatepicker');
+    singleDatePicker.daterangepicker({
         "singleDatePicker": true,
         "showDropdowns": true,
         "autoUpdateInput": false,
@@ -23,9 +24,9 @@
         "drops": "auto"
     });
 
-    $('.singledatepicker').attr('autocomplete', 'off');
+    singleDatePicker.attr('autocomplete', 'off');
 
-    $('.singledatepicker').on('apply.daterangepicker', function (ev, picker) {
+    singleDatePicker.on('apply.daterangepicker', function (ev, picker) {
         $(this).val(picker.startDate.format('l'));
     });
 

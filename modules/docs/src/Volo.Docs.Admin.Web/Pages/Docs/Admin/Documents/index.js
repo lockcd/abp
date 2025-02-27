@@ -9,7 +9,8 @@ $(function () {
 	moment.localeData().preparse = (s)=>s;
     moment.localeData().postformat = (s)=>s;
 	
-    $('.singledatepicker').daterangepicker({
+    var singleDatePicker = $('#DocumentsContainer .singledatepicker');
+    singleDatePicker.daterangepicker({
         "singleDatePicker": true,
         "showDropdowns": true,
         "autoUpdateInput": false,
@@ -20,9 +21,9 @@ $(function () {
         "maxYear": 2199,
     });
 
-    $('.singledatepicker').attr('autocomplete', 'off');
+    singleDatePicker.attr('autocomplete', 'off');
 
-    $('.singledatepicker').on('apply.daterangepicker', function (ev, picker) {
+    singleDatePicker.on('apply.daterangepicker', function (ev, picker) {
         $(this).val(picker.startDate.format('l'));
         $(this).data('date', picker.startDate.locale('en').format('YYYY-MM-DD'));
     });
