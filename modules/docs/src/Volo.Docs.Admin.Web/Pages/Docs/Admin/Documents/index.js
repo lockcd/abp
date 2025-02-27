@@ -2,13 +2,6 @@ $(function () {
     var l = abp.localization.getResource('Docs');
     var service = window.volo.docs.admin.documentsAdmin;
 
-    var getFormattedDate = function ($datePicker) {
-        return $datePicker.data('date');
-    };
-
-	moment.localeData().preparse = (s)=>s;
-    moment.localeData().postformat = (s)=>s;
-	
     var singleDatePicker = $('#DocumentsContainer .singledatepicker');
     singleDatePicker.daterangepicker({
         "singleDatePicker": true,
@@ -131,22 +124,25 @@ $(function () {
 
 
     var getFilter = function () {
+        $('#DocumentsContainer').handleDatepicker('.singledatepicker');
+
         return {
             projectId: $('#ProjectId').val(),
             name: $('#Name').val(),
             version: $('#Version').val(),
             languageCode: $('#LanguageCode').val(),
             format: $('#Format').val(),
-            creationTimeMin: getFormattedDate($('#CreationTimeMin')),
-            creationTimeMax: getFormattedDate($('#CreationTimeMax')),
-            lastUpdatedTimeMin: getFormattedDate($('#LastUpdatedTimeMin')),
-            lastUpdatedTimeMax: getFormattedDate($('#LastUpdatedTimeMax')),
-            lastSignificantUpdateTimeMin: getFormattedDate($('#LastSignificantUpdateTimeMin')),
-            lastSignificantUpdateTimeMax: getFormattedDate($('#LastSignificantUpdateTimeMax')),
-            lastCachedTimeMin: getFormattedDate($('#LastCachedTimeMin')),
-            lastCachedTimeMax: getFormattedDate($('#LastCachedTimeMax')),
+            creationTimeMin: $('#DocumentsContainer').find('input[name="CreationTimeMin"'),
+            creationTimeMax: $('#DocumentsContainer').find('input[name="CreationTimeMax"'),
+            lastUpdatedTimeMin: $('#DocumentsContainer').find('input[name="LastUpdatedTimeMin"'),
+            lastUpdatedTimeMax: $('#DocumentsContainer').find('input[name="LastUpdatedTimeMax"'),
+            lastSignificantUpdateTimeMin: $('#DocumentsContainer').find('input[name="LastSignificantUpdateTimeMin"'),
+            lastSignificantUpdateTimeMax: $('#DocumentsContainer').find('input[name="LastSignificantUpdateTimeMax"'),
+            lastCachedTimeMin: $('#DocumentsContainer').find('input[name="LastCachedTimeMin"'),
+            lastCachedTimeMax: $('#DocumentsContainer').find('input[name="LastCachedTimeMax"'),
         };
     };
+
 
     var parseDateToLocaleDateString = function (date) {
         var parsedDate = Date.parse(date);

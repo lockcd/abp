@@ -8,13 +8,6 @@ $(function (){
     if (commentRequireApprovement) {
         $('#IsApprovedSelectInput').show();
     }
-    
-    var getFormattedDate = function ($datePicker) {
-        return $datePicker.data('date');
-    };
-
-	moment.localeData().preparse = (s)=>s;
-    moment.localeData().postformat = (s)=>s;
 	
     var singleDatePicker = $('#CmsKitCommentsDetailsWrapper .singledatepicker');
     singleDatePicker.daterangepicker({
@@ -38,12 +31,9 @@ $(function (){
     var filterForm = $('#CmsKitCommentsFilterForm');
 
     var getFilter = function () {
-        var filterObj = filterForm.serializeFormToObject();
-
-        filterObj.creationStartDate = getFormattedDate($('#creationStartDate'));
-        filterObj.creationEndDate = getFormattedDate($('#creationEndDate'));
-        
-        return filterObj;
+        filterForm.handleDatepicker('.singledatepicker');
+        var formObject = filterForm.serializeFormToObject();
+        return formObject;
     };
     
     var _dataTable = $('#CommentsTable').DataTable(abp.libs.datatables.normalizeConfiguration({

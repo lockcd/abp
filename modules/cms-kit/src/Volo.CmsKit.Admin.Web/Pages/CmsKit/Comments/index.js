@@ -3,23 +3,12 @@ $(function () {
 
     var commentsService = volo.cmsKit.admin.comments.commentAdmin;
 
-    moment()._locale.preparse = (string) => string;
-    moment()._locale.postformat = (string) => string;
-
     var commentRequireApprovement = abp.setting.getBoolean("CmsKit.Comments.RequireApprovement");
 
     if (commentRequireApprovement) {
         $('#CommentsWaitingAlert').show()
         $('#IsApprovedSelectInput').show();
     }
-
-    var getFormattedDate = function ($datePicker) {
-        if (!$datePicker.val()) {
-            return null;
-        }
-        var momentDate = moment($datePicker.val(), $datePicker.data('daterangepicker').locale.format);
-        return momentDate.isValid() ? momentDate.toISOString() : null;
-    };
 
     var singleDatePicker = $('#CmsKitCommentsWrapper .singledatepicker');
     singleDatePicker.daterangepicker({
@@ -40,12 +29,9 @@ $(function () {
     var filterForm = $('#CmsKitCommentsFilterForm');
 
     var getFilter = function () {
-        var filterObj = filterForm.serializeFormToObject();
-
-        filterObj.creationStartDate = getFormattedDate($('#CreationStartDate'));
-        filterObj.creationEndDate = getFormattedDate($('#CreationEndDate'));
-
-        return filterObj;
+        filterForm.handleDatepicker('.singledatepicker');
+        var formObject = filterForm.serializeFormToObject();
+        return formObject;
     };
 
     var _dataTable = $('#CommentsTable').DataTable(abp.libs.datatables.normalizeConfiguration({
