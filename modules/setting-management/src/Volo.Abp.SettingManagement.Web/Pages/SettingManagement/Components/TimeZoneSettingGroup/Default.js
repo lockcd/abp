@@ -22,7 +22,7 @@
 
         $("#TimeZoneSettingsForm").on('submit', function (event) {
             event.preventDefault();
-            volo.abp.settingManagement.timeZoneSettings.update(select2.find(':selected')[0].value).then(function (result) {
+            volo.abp.settingManagement.timeZoneSettings.update($("#timezone-select").val()).then(function (result) {
                 $(document).trigger("AbpSettingSaved");
             });
         });
