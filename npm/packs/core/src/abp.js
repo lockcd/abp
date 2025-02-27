@@ -748,9 +748,13 @@ var abp = abp || {};
 
     abp.clock.kind = 'Unspecified';
 
-    abp.clock.supportsMultipleTimezone = abp.clock.kind === 'Utc';
+    abp.clock.supportsMultipleTimezone = function () {
+        return abp.clock.kind === 'Utc';
+    }
 
-    abp.clock.timeZone = abp.setting.get('Abp.Timing.TimeZone');
+    abp.clock.timeZone = function () {
+        return abp.setting.get('Abp.Timing.TimeZone');
+    }
 
     // Normalize Date object or date string to standard string format that will be sent to server
     abp.clock.normalizeToString = function (date) {
@@ -763,7 +767,7 @@ var abp = abp || {};
             return date;
         }
 
-        if (abp.clock.supportsMultipleTimezone) {
+        if (abp.clock.supportsMultipleTimezone()) {
             return dateObj.toISOString();
         }
 
@@ -801,8 +805,8 @@ var abp = abp || {};
             return dateString;
         }
 
-        if (abp.clock.supportsMultipleTimezone) {
-            var timezone = abp.clock.timeZone;
+        if (abp.clock.supportsMultipleTimezone()) {
+            var timezone = abp.clock.timeZone();
             if (timezone) {
                 options = options || {};
                 return date.toLocaleString(abp.localization.currentCulture.cultureName, Object.assign({}, abp.clock.toLocaleStringOptions, options, { timeZone: timezone }));
