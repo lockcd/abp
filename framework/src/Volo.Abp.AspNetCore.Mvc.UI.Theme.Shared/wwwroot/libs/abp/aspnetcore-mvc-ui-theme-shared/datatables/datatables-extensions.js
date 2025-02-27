@@ -516,7 +516,7 @@ var abp = abp || {};
         if (!value) {
             return value;
         } else {
-            return (ISOStringToDateTimeLocaleString())(value);
+            return abp.clock.normalizeToLocaleString(value, { year: 'numeric', month: '2-digit', day: '2-digit' });
         }
     };
 
@@ -524,7 +524,7 @@ var abp = abp || {};
         if (!value) {
             return value;
         } else {
-            return (ISOStringToDateTimeLocaleString(luxon.DateTime.DATETIME_SHORT))(value);
+            return abp.clock.normalizeToLocaleString(value);
         }
     };
 

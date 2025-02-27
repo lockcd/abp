@@ -30,7 +30,7 @@ public class TimeZoneSettingsAppService : SettingManagementAppServiceBase, ITime
 
     public virtual Task<List<NameValue>> GetTimezonesAsync()
     {
-        return Task.FromResult(TimeZoneHelper.GetTimezones(TimezoneProvider.GetWindowsTimezones()));
+        return Task.FromResult(TimeZoneHelper.GetTimezones(TimezoneProvider.GetIanaTimezones()));
     }
 
     public virtual async Task UpdateAsync(string timezone)

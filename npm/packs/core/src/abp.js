@@ -748,9 +748,9 @@ var abp = abp || {};
 
     abp.clock.kind = 'Unspecified';
 
-    abp.clock.supportsMultipleTimezone = function () {
-        return abp.clock.kind === 'Utc';
-    };
+    abp.clock.supportsMultipleTimezone = abp.clock.kind === 'Utc';
+
+    abp.clock.timeZone = abp.setting.get('Abp.Timing.TimeZone');
 
     // Normalize Date object or date string to standard string format that will be sent to server
     abp.clock.normalizeToString = function (date) {
@@ -763,7 +763,7 @@ var abp = abp || {};
             return date;
         }
 
-        if (abp.clock.kind === 'Utc') {
+        if (abp.clock.supportsMultipleTimezone) {
             return dateObj.toISOString();
         }
 
@@ -787,8 +787,11 @@ var abp = abp || {};
                 padMilliseconds(dateObj.getMilliseconds());
     };
 
+    // Default options for toLocaleString
+    abp.clock.toLocaleStringOptions = abp.clock.toLocaleStringOptions || {};
+
     // Normalize date string to locale date string that will be displayed to user
-    abp.clock.normalizeToLocaleString = function (dateString) {
+    abp.clock.normalizeToLocaleString = function (dateString, options) {
         if (!dateString) {
             return dateString;
         }
@@ -797,8 +800,14 @@ var abp = abp || {};
         if (isNaN(date)) {
             return dateString;
         }
-        
-        //TODO: Get timezone setting and pass it to toLocaleString
+
+        if (abp.clock.supportsMultipleTimezone) {
+            var timezone = abp.clock.timeZone;
+            if (timezone) {
+                options = options || {};
+                return date.toLocaleString(abp.localization.currentCulture.cultureName, Object.assign({}, abp.clock.toLocaleStringOptions, options, { timeZone: timezone }));
+            }
+        }
         return date.toLocaleString();
     }
 
