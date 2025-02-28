@@ -756,7 +756,7 @@
     $.fn.handleDatepicker = function (datepickerSelector) {
         var $this  = $(this);
         var datepickers = $this.find(datepickerSelector);
-        $this.find('input[class="new-datepicker"]').remove();
+        $this.find('input[class="hidden-datepicker"]').remove();
 
         datepickers.each(function () {
             var $this  = $(this);
@@ -769,15 +769,15 @@
             var datepicker = $this.data('daterangepicker');
             if (datepicker.singleDatePicker) {
                 var startDate = abp.clock.normalizeToString(datepicker.startDate.toDate());
-                var startDateInput = $('<input>').attr('type', 'hidden').attr('name', name).val(startDate).addClass('new-datepicker');
+                var startDateInput = $('<input>').attr('type', 'hidden').attr('name', name).val(startDate).addClass('hidden-datepicker');
                 $this.after(startDateInput);
             } else {
                 var startDate = abp.clock.normalizeToString(datepicker.startDate.toDate());
-                var startDateInput = $('<input>').attr('type', 'hidden').attr('name', name).val(startDate).addClass('new-datepicker');
+                var startDateInput = $('<input>').attr('type', 'hidden').attr('name', name).val(startDate).addClass('hidden-datepicker');
                 $this.after(startDateInput);
 
                 var endDate = abp.clock.normalizeToString(datepicker.endDate.toDate());
-                var endDateInput = $('<input>').attr('type', 'hidden').attr('name', name).val(endDate).addClass('new-datepicker');
+                var endDateInput = $('<input>').attr('type', 'hidden').attr('name', name).val(endDate).addClass('hidden-datepicker');
                 $this.after(endDateInput);
             }
         });
