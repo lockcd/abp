@@ -6,6 +6,7 @@ using Volo.Abp.AspNetCore.Mvc.ApplicationConfigurations.ClientProxies;
 using Volo.Abp.AspNetCore.Mvc.Client;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.MultiTenancy;
+using Volo.Abp.Timing;
 
 namespace Volo.Abp.AspNetCore.Components.WebAssembly;
 
@@ -19,6 +20,8 @@ public class WebAssemblyCachedApplicationConfigurationClient : ICachedApplicatio
 
     protected ICurrentTenantAccessor CurrentTenantAccessor { get; }
 
+    protected ICurrentTimezoneProvider CurrentTimezoneProvider { get; }
+
     protected ApplicationConfigurationChangedService ApplicationConfigurationChangedService { get; }
 
     protected IJSRuntime JSRuntime { get; }
@@ -27,6 +30,7 @@ public class WebAssemblyCachedApplicationConfigurationClient : ICachedApplicatio
         AbpApplicationConfigurationClientProxy applicationConfigurationClientProxy,
         ApplicationConfigurationCache cache,
         ICurrentTenantAccessor currentTenantAccessor,
+        ICurrentTimezoneProvider currentTimezoneProvider,
         AbpApplicationLocalizationClientProxy applicationLocalizationClientProxy,
         ApplicationConfigurationChangedService applicationConfigurationChangedService,
         IJSRuntime jsRuntime)
@@ -34,6 +38,7 @@ public class WebAssemblyCachedApplicationConfigurationClient : ICachedApplicatio
         ApplicationConfigurationClientProxy = applicationConfigurationClientProxy;
         Cache = cache;
         CurrentTenantAccessor = currentTenantAccessor;
+        CurrentTimezoneProvider = currentTimezoneProvider;
         ApplicationLocalizationClientProxy = applicationLocalizationClientProxy;
         ApplicationConfigurationChangedService = applicationConfigurationChangedService;
         JSRuntime = jsRuntime;
@@ -69,6 +74,8 @@ public class WebAssemblyCachedApplicationConfigurationClient : ICachedApplicatio
             configurationDto.CurrentTenant.Id,
             configurationDto.CurrentTenant.Name
         );
+
+        CurrentTimezoneProvider.TimeZone = configurationDto.Timing.TimeZone.Iana.TimeZoneName;
     }
 
     public virtual Task<ApplicationConfigurationDto> GetAsync()

@@ -5,6 +5,7 @@ using Volo.Abp.AspNetCore.Mvc.ApplicationConfigurations.ClientProxies;
 using Volo.Abp.AspNetCore.Mvc.Client;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.MultiTenancy;
+using Volo.Abp.Timing;
 
 namespace Volo.Abp.AspNetCore.Components.MauiBlazor
 {
@@ -18,16 +19,20 @@ namespace Volo.Abp.AspNetCore.Components.MauiBlazor
 
         protected ICurrentTenantAccessor CurrentTenantAccessor { get; }
 
+        protected ICurrentTimezoneProvider CurrentTimezoneProvider { get; }
+
         public MauiBlazorCachedApplicationConfigurationClient(
             AbpApplicationConfigurationClientProxy applicationConfigurationClientProxy,
             ApplicationConfigurationCache cache,
             ICurrentTenantAccessor currentTenantAccessor,
+            ICurrentTimezoneProvider currentTimezoneProvider,
             AuthenticationStateProvider authenticationStateProvider,
             AbpApplicationLocalizationClientProxy applicationLocalizationClientProxy)
         {
             ApplicationConfigurationClientProxy = applicationConfigurationClientProxy;
             Cache = cache;
             CurrentTenantAccessor = currentTenantAccessor;
+            CurrentTimezoneProvider = currentTimezoneProvider;
             ApplicationLocalizationClientProxy = applicationLocalizationClientProxy;
 
             authenticationStateProvider.AuthenticationStateChanged += async _ => { await InitializeAsync(); };
@@ -51,6 +56,7 @@ namespace Volo.Abp.AspNetCore.Components.MauiBlazor
             );
 
             configurationDto.Localization.Resources = localizationDto.Resources;
+            CurrentTimezoneProvider.TimeZone = configurationDto.Timing.TimeZone.Iana.TimeZoneName;
 
             Cache.Set(configurationDto);
 

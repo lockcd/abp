@@ -7,9 +7,16 @@ namespace Volo.Abp.Timing;
 public class Clock : IClock, ITransientDependency
 {
     protected AbpClockOptions Options { get; }
+    protected ICurrentTimezoneProvider CurrentTimezoneProvider { get; }
+    protected ITimezoneProvider TimezoneProvider { get; }
 
-    public Clock(IOptions<AbpClockOptions> options)
+    public Clock(
+        IOptions<AbpClockOptions> options,
+        ICurrentTimezoneProvider currentTimezoneProvider,
+        ITimezoneProvider timezoneProvider)
     {
+        CurrentTimezoneProvider = currentTimezoneProvider;
+        TimezoneProvider = timezoneProvider;
         Options = options.Value;
     }
 
@@ -37,5 +44,18 @@ public class Clock : IClock, ITransientDependency
         }
 
         return DateTime.SpecifyKind(dateTime, Kind);
+    }
+
+    public virtual DateTime Convert(DateTime dateTime)
+    {
+        if (!SupportsMultipleTimezone ||
+            dateTime.Kind != DateTimeKind.Utc ||
+            CurrentTimezoneProvider.TimeZone.IsNullOrWhiteSpace())
+        {
+            return dateTime;
+        }
+
+        var timezoneInfo = TimezoneProvider.GetTimeZoneInfo(CurrentTimezoneProvider.TimeZone);
+        return TimeZoneInfo.ConvertTime(dateTime, timezoneInfo);
     }
 }

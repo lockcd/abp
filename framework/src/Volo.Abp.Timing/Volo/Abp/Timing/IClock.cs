@@ -25,4 +25,11 @@ public interface IClock
     /// <param name="dateTime">DateTime to be normalized.</param>
     /// <returns>Normalized DateTime</returns>
     DateTime Normalize(DateTime dateTime);
+
+    /// <summary>
+    /// Converts given <see cref="DateTime"/> to user's time zone.
+    /// </summary>
+    /// <param name="dateTime">DateTime to be normalized.</param>
+    /// <returns>Converted DateTime</returns>
+    DateTime Convert(DateTime dateTime);
 }
