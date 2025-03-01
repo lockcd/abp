@@ -32,4 +32,11 @@ public interface IClock
     /// <param name="dateTime">DateTime to be normalized.</param>
     /// <returns>Converted DateTime</returns>
     DateTime Convert(DateTime dateTime);
+
+    /// <summary>
+    /// Converts given <see cref="DateTimeOffset"/> to user's time zone.
+    /// </summary>
+    /// <param name="dateTimeOffset">DateTimeOffset to be normalized.</param>
+    /// <returns>Converted DateTimeOffset</returns>
+    DateTimeOffset Convert(DateTimeOffset dateTimeOffset);
 }

@@ -58,4 +58,16 @@ public class Clock : IClock, ITransientDependency
         var timezoneInfo = TimezoneProvider.GetTimeZoneInfo(CurrentTimezoneProvider.TimeZone);
         return TimeZoneInfo.ConvertTime(dateTime, timezoneInfo);
     }
+
+    public virtual DateTimeOffset Convert(DateTimeOffset dateTimeOffset)
+    {
+        if (!SupportsMultipleTimezone ||
+            CurrentTimezoneProvider.TimeZone.IsNullOrWhiteSpace())
+        {
+            return dateTimeOffset;
+        }
+
+        var timezoneInfo = TimezoneProvider.GetTimeZoneInfo(CurrentTimezoneProvider.TimeZone);
+        return TimeZoneInfo.ConvertTime(dateTimeOffset, timezoneInfo);
+    }
 }
