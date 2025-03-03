@@ -9,16 +9,20 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Localization;
 using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Extensions;
 using Volo.Abp.Json;
+using Volo.Abp.Timing;
 
 namespace Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Form.DatePicker;
 
 public class AbpDateRangePickerTagHelperService : AbpDatePickerBaseTagHelperService<AbpDateRangePickerTagHelper>
 {
-    public AbpDateRangePickerTagHelperService(IJsonSerializer jsonSerializer, IHtmlGenerator generator,
-        HtmlEncoder encoder, IServiceProvider serviceProvider, IStringLocalizer<AbpUiResource> l,
-        IAbpTagHelperLocalizer tagHelperLocalizer) :
-        base(jsonSerializer, generator, encoder, serviceProvider, l,
-        tagHelperLocalizer)
+    public AbpDateRangePickerTagHelperService(
+        IJsonSerializer jsonSerializer, IHtmlGenerator generator,
+        HtmlEncoder encoder,
+        IServiceProvider serviceProvider,
+        IStringLocalizer<AbpUiResource> l,
+        IAbpTagHelperLocalizer tagHelperLocalizer,
+        IClock clock) :
+        base(jsonSerializer, generator, encoder, serviceProvider, l, tagHelperLocalizer, clock)
     {
     }
 
@@ -42,6 +46,13 @@ public class AbpDateRangePickerTagHelperService : AbpDatePickerBaseTagHelperServ
                 InputTypeName = "hidden"
             };
 
+            if (Clock.SupportsMultipleTimezone && TagHelper.AspForStart.Model is DateTime dateTime)
+            {
+                StartDateTagHelper.Format = "{0:O}";
+                StartDateTagHelper.Value = Clock.Convert(dateTime).ToString("O");
+                startDateAttributes.Add("value", StartDateTagHelper.Value);
+            }
+
             StartDateTagHelperOutput = await StartDateTagHelper.ProcessAndGetOutputAsync(startDateAttributes, context, "input");
         }
 
@@ -54,6 +65,13 @@ public class AbpDateRangePickerTagHelperService : AbpDatePickerBaseTagHelperServ
                 For = TagHelper.AspForEnd,
                 InputTypeName = "hidden"
             };
+
+            if (Clock.SupportsMultipleTimezone && TagHelper.AspForEnd.Model is DateTime dateTime)
+            {
+                EndDateTagHelper.Format = "{0:O}";
+                EndDateTagHelper.Value = Clock.Convert(dateTime).ToString("O");
+                endDateAttributes.Add("value", EndDateTagHelper.Value);
+            }
 
             EndDateTagHelperOutput = await EndDateTagHelper.ProcessAndGetOutputAsync(endDateAttributes, context, "input");
         }
@@ -78,7 +96,7 @@ public class AbpDateRangePickerTagHelperService : AbpDatePickerBaseTagHelperServ
 
     protected override int GetOrder()
     {
-        return TagHelper.Order;
+        return TagHelper.AspForStart?.Metadata.Order ?? 0;
     }
 
     protected override void AddBaseTagAttributes(TagHelperAttributeList attributes)
@@ -92,7 +110,7 @@ public class AbpDateRangePickerTagHelperService : AbpDatePickerBaseTagHelperServ
                 attributes.Add("data-start-date", convert);
             }
         }
-        
+
         if (TagHelper.AspForEnd?.Model != null &&
             SupportedInputTypes.TryGetValue(TagHelper.AspForEnd.Metadata.ModelType, out var convertFuncEnd))
         {

@@ -81,7 +81,7 @@ var abp = abp || {};
         if (resource) {
             return resource;
         }
-        
+
         var legacySource = abp.localization.values[resourceName];
         if (legacySource) {
             return {
@@ -89,11 +89,11 @@ var abp = abp || {};
                 baseResources: []
             };
         }
-        
-        abp.log.warn('Could not find localization source: ' + resourceName);        
+
+        abp.log.warn('Could not find localization source: ' + resourceName);
         return null;
     };
-    
+
     abp.localization.internal.localize = function (key, sourceName) {
         var resource = abp.localization.internal.getResource(sourceName);
         if (!resource){
@@ -104,7 +104,7 @@ var abp = abp || {};
         }
 
         var value = resource.texts[key];
-        if (value === undefined) {            
+        if (value === undefined) {
             for (var i = 0; i < resource.baseResources.length; i++){
                 var basedArguments = Array.prototype.slice.call(arguments, 0);
                 basedArguments[1] = resource.baseResources[i];
@@ -114,7 +114,7 @@ var abp = abp || {};
                     return result;
                 }
             }
-            
+
             return {
                 value: key,
                 found: false
@@ -135,7 +135,7 @@ var abp = abp || {};
         if (sourceName === '_') { //A convention to suppress the localization
             return key;
         }
-        
+
         if (sourceName) {
             return abp.localization.internal.localize.apply(this, arguments).value;
         }
@@ -767,28 +767,28 @@ var abp = abp || {};
             return date;
         }
 
-        if (abp.clock.supportsMultipleTimezone()) {
-            return dateObj.toISOString();
-        }
-
         function padZero(num) {
             return num < 10 ? '0' + num : num;
         }
 
-        function padMilliseconds(num) {
-            if (num < 10) return '00' + num;
-            if (num < 100) return '0' + num;
-            return num;
+        var addZulu = false;
+        if (abp.clock.supportsMultipleTimezone()) {
+            var timeZone = abp.clock.timeZone();
+            var now = new Date();
+            var formattedDate = now.toLocaleString('en-US', { timeZone: timeZone, timeZoneName: 'short' });
+            var match = formattedDate.match(/GMT([+-]\d+)/);
+            var targetOffsetHours = match ? parseInt(match[1], 10) : 0;
+            var dateObj = new Date(dateObj.getTime() - (targetOffsetHours * 60 * 60 * 1000));
+            addZulu = true;
         }
-        
-        // yyyy-MM-ddTHH:mm:ss.SSS
+
+        // yyyy-MM-DDTHH:mm:ss
         return dateObj.getFullYear() + '-' +
-                padZero(dateObj.getMonth() + 1) + '-' +
-                padZero(dateObj.getDate()) + 'T' +
-                padZero(dateObj.getHours()) + ':' +
-                padZero(dateObj.getMinutes()) + ':' +
-                padZero(dateObj.getSeconds()) + '.' +
-                padMilliseconds(dateObj.getMilliseconds());
+            padZero(dateObj.getMonth() + 1) + '-' +
+            padZero(dateObj.getDate()) + 'T' +
+            padZero(dateObj.getHours()) + ':' +
+            padZero(dateObj.getMinutes()) + ':' +
+            padZero(dateObj.getSeconds()) + (addZulu ? 'Z' : '');
     };
 
     // Default options for toLocaleString
