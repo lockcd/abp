@@ -24,6 +24,9 @@ namespace Volo.Docs.Documents
         
         [JsonPropertyName("keywords")]
         public string[] Keywords { get; set; }
+        
+        [JsonPropertyName("ignoreOnDownload")]
+        public bool IgnoreOnDownload { get; set; }
 
         public bool IsLeaf => !HasChildItems;
 
