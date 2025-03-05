@@ -56,7 +56,7 @@ var abp = abp || {};
 
         var timeZone = abp.clock.timeZone();
         if (abp.clock.supportsMultipleTimezone() && timeZone) {
-            return DateTime.fromObject({
+            return luxon.DateTime.fromObject({
                 year: dateObj.getFullYear(),
                 month: dateObj.getMonth() + 1,
                 day: dateObj.getDate(),
