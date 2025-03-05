@@ -509,6 +509,14 @@ var abp = abp || {};
         }
     };
 
+    datatables.defaultRenderers['time'] = function (value) {
+        if (!value) {
+            return value;
+        } else {
+            return abp.clock.normalizeToLocaleString(value, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+    };
+
     datatables.defaultRenderers['datetime'] = function (value) {
         if (!value) {
             return value;

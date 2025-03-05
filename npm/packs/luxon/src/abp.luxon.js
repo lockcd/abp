@@ -32,7 +32,7 @@ var abp = abp || {};
                 .fromFormat(
                     getObjectValue(form, field),
                     abp.localization.currentCulture.dateTimeFormat.shortDatePattern,
-                    {locale: abp.localization.currentCulture.cultureName}
+                    { locale: abp.localization.currentCulture.cultureName }
                 );
 
             if (!dateTime.invalid) {
@@ -80,19 +80,19 @@ var abp = abp || {};
             return dateString;
         }
 
-        options = options || luxon.DateTime.DATETIME_FULL;
+        options = options || abp.clock.toLocaleStringOptions;
         if (abp.clock.supportsMultipleTimezone()) {
             var timezone = abp.clock.timeZone();
             if (timezone) {
                 return luxon.DateTime.fromJSDate(date)
                     .setZone(timezone)
                     .setLocale(abp.localization.currentCulture.cultureName)
-                    .toLocaleString(Object.assign({}, abp.clock.toLocaleStringOptions, options));
+                    .toLocaleString(options);
             }
         }
 
         return luxon.DateTime.fromJSDate(date)
-                    .setLocale(abp.localization.currentCulture.cultureName)
-                    .toLocaleString(Object.assign({}, abp.clock.toLocaleStringOptions, options));
+            .setLocale(abp.localization.currentCulture.cultureName)
+            .toLocaleString(options);
     }
 })(jQuery);

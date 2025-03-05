@@ -792,7 +792,14 @@ var abp = abp || {};
     };
 
     // Default options for toLocaleString
-    abp.clock.toLocaleStringOptions = abp.clock.toLocaleStringOptions || {};
+    abp.clock.toLocaleStringOptions = abp.clock.toLocaleStringOptions || {
+        "year": "numeric",
+        "month": "long",
+        "day": "numeric",
+        "hour": "numeric",
+        "minute": "numeric",
+        "second": "numeric"
+    };
 
     // Normalize date string to locale date string that will be displayed to user
     abp.clock.normalizeToLocaleString = function (dateString, options) {
@@ -806,7 +813,7 @@ var abp = abp || {};
         }
 
         var culture = abp.localization.currentCulture.cultureName;
-        options = Object.assign({}, abp.clock.toLocaleStringOptions, options || {});
+        options = options || abp.clock.toLocaleStringOptions;
         if (abp.clock.supportsMultipleTimezone()) {
             var timezone = abp.clock.timeZone();
             if (timezone) {
