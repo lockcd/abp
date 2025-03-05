@@ -53,13 +53,23 @@ public class AbpDatePickerTagHelperService : AbpDatePickerBaseTagHelperService<A
                 For = TagHelper.AspFor
             };
 
-            var attributes = new TagHelperAttributeList { { "data-date", "true" }, { "type", "hidden" } };
+            var attributes = new TagHelperAttributeList { { "data-hidden-datepicker", "true" }, { "data-date", "true" }, { "type", "hidden" } };
 
-            if (Clock.SupportsMultipleTimezone && TagHelper.AspFor.Model is DateTime dateTime)
+            if (Clock.SupportsMultipleTimezone)
             {
-                DateTagHelper.Format = "{0:O}";
-                DateTagHelper.Value = Clock.Convert(dateTime).ToString("O");
-                attributes.Add("value", DateTagHelper.Value);
+                if (TagHelper.AspFor.Model is DateTime dateTime)
+                {
+                    DateTagHelper.Format = "{0:O}";
+                    DateTagHelper.Value = Clock.ConvertTo(dateTime).ToString("O");
+                    attributes.Add("value", DateTagHelper.Value);
+                }
+
+                if (TagHelper.AspFor.Model is DateTimeOffset dateTimeOffset)
+                {
+                    DateTagHelper.Format = "{0:O}";
+                    DateTagHelper.Value = Clock.ConvertTo(dateTimeOffset).UtcDateTime.ToString("O");
+                    attributes.Add("value", DateTagHelper.Value);
+                }
             }
 
             DateTagHelperOutput = await DateTagHelper.ProcessAndGetOutputAsync(attributes, context, "input");

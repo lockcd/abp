@@ -26,6 +26,11 @@ public class Clock : IClock, ITransientDependency
 
     public virtual bool SupportsMultipleTimezone => Options.Kind == DateTimeKind.Utc;
 
+    /// <summary>
+    /// Normalizes given <see cref="DateTime"/>.
+    /// </summary>
+    /// <param name="dateTime">DateTime to be normalized.</param>
+    /// <returns>Normalized DateTime</returns>
     public virtual DateTime Normalize(DateTime dateTime)
     {
         if (Kind == DateTimeKind.Unspecified || Kind == dateTime.Kind)
@@ -46,7 +51,12 @@ public class Clock : IClock, ITransientDependency
         return DateTime.SpecifyKind(dateTime, Kind);
     }
 
-    public virtual DateTime Convert(DateTime dateTime)
+    /// <summary>
+    /// Converts given UTC <see cref="DateTime"/> to user's time zone.
+    /// </summary>
+    /// <param name="dateTime">DateTime to be normalized.</param>
+    /// <returns>Converted DateTime</returns>
+    public virtual DateTime ConvertTo(DateTime dateTime)
     {
         if (!SupportsMultipleTimezone ||
             dateTime.Kind != DateTimeKind.Utc ||
@@ -59,7 +69,12 @@ public class Clock : IClock, ITransientDependency
         return TimeZoneInfo.ConvertTime(dateTime, timezoneInfo);
     }
 
-    public virtual DateTimeOffset Convert(DateTimeOffset dateTimeOffset)
+    /// <summary>
+    /// Converts given <see cref="DateTimeOffset"/> to user's time zone.
+    /// </summary>
+    /// <param name="dateTimeOffset">DateTimeOffset to be normalized.</param>
+    /// <returns>Converted DateTimeOffset</returns>
+    public virtual DateTimeOffset ConvertTo(DateTimeOffset dateTimeOffset)
     {
         if (!SupportsMultipleTimezone ||
             CurrentTimezoneProvider.TimeZone.IsNullOrWhiteSpace())
@@ -69,5 +84,29 @@ public class Clock : IClock, ITransientDependency
 
         var timezoneInfo = TimezoneProvider.GetTimeZoneInfo(CurrentTimezoneProvider.TimeZone);
         return TimeZoneInfo.ConvertTime(dateTimeOffset, timezoneInfo);
+    }
+
+    /// <summary>
+    /// Converts given user's <see cref="DateTime"/> to UTC or not.
+    /// </summary>
+    /// <param name="dateTime">DateTime to be normalized.</param>
+    /// <returns>Converted DateTime</returns>
+    public DateTime ConvertFrom(DateTime dateTime)
+    {
+        if (!SupportsMultipleTimezone ||
+            CurrentTimezoneProvider.TimeZone.IsNullOrWhiteSpace())
+        {
+            return dateTime;
+        }
+
+        var timezoneInfo = TimezoneProvider.GetTimeZoneInfo(CurrentTimezoneProvider.TimeZone);
+        var targetDateTime = dateTime;
+        if (dateTime.Kind == DateTimeKind.Utc)
+        {
+            return dateTime;
+        }
+
+        targetDateTime = DateTime.SpecifyKind(targetDateTime, DateTimeKind.Unspecified);
+        return TimeZoneInfo.ConvertTimeToUtc(targetDateTime, timezoneInfo);
     }
 }

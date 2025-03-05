@@ -775,7 +775,7 @@ var abp = abp || {};
         if (abp.clock.supportsMultipleTimezone()) {
             var timeZone = abp.clock.timeZone();
             var now = new Date();
-            var formattedDate = now.toLocaleString('en-US', { timeZone: timeZone, timeZoneName: 'short' });
+            var formattedDate = now.toLocaleString('en-US', { timeZone: timeZone, timeZoneName: 'longOffset' });
             var match = formattedDate.match(/GMT([+-]\d+)/);
             var targetOffsetHours = match ? parseInt(match[1], 10) : 0;
             var dateObj = new Date(dateObj.getTime() - (targetOffsetHours * 60 * 60 * 1000));
@@ -805,14 +805,15 @@ var abp = abp || {};
             return dateString;
         }
 
+        var culture = abp.localization.currentCulture.cultureName;
+        options = Object.assign({}, abp.clock.toLocaleStringOptions, options || {});
         if (abp.clock.supportsMultipleTimezone()) {
             var timezone = abp.clock.timeZone();
             if (timezone) {
-                options = options || {};
-                return date.toLocaleString(abp.localization.currentCulture.cultureName, Object.assign({}, abp.clock.toLocaleStringOptions, options, { timeZone: timezone }));
+                return date.toLocaleString(culture, Object.assign({}, options, { timeZone: timezone }));
             }
         }
-        return date.toLocaleString();
+        return date.toLocaleString(culture, options);
     }
 
     /* FEATURES *************************************************/

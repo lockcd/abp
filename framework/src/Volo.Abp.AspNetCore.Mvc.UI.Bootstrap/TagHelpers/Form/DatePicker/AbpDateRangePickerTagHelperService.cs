@@ -38,7 +38,7 @@ public class AbpDateRangePickerTagHelperService : AbpDatePickerBaseTagHelperServ
     {
         if (TagHelper.AspForStart != null)
         {
-            var startDateAttributes = new TagHelperAttributeList { { "data-start-date", "true" }, { "type", "hidden" } };
+            var startDateAttributes = new TagHelperAttributeList { { "data-hidden-datepicker", "true" }, { "data-start-date", "true" }, { "type", "hidden" } };
             StartDateTagHelper = new InputTagHelper(Generator)
             {
                 ViewContext = TagHelper.ViewContext,
@@ -46,11 +46,21 @@ public class AbpDateRangePickerTagHelperService : AbpDatePickerBaseTagHelperServ
                 InputTypeName = "hidden"
             };
 
-            if (Clock.SupportsMultipleTimezone && TagHelper.AspForStart.Model is DateTime dateTime)
+            if (Clock.SupportsMultipleTimezone)
             {
-                StartDateTagHelper.Format = "{0:O}";
-                StartDateTagHelper.Value = Clock.Convert(dateTime).ToString("O");
-                startDateAttributes.Add("value", StartDateTagHelper.Value);
+                if (TagHelper.AspForStart.Model is DateTime dateTime)
+                {
+                    StartDateTagHelper.Format = "{0:O}";
+                    StartDateTagHelper.Value = Clock.ConvertTo(dateTime).ToString("O");
+                    startDateAttributes.Add("value", StartDateTagHelper.Value);
+                }
+
+                if (TagHelper.AspForStart.Model is DateTimeOffset dateTimeOffset)
+                {
+                    StartDateTagHelper.Format = "{0:O}";
+                    StartDateTagHelper.Value = Clock.ConvertTo(dateTimeOffset).UtcDateTime.ToString("O");
+                    startDateAttributes.Add("value", StartDateTagHelper.Value);
+                }
             }
 
             StartDateTagHelperOutput = await StartDateTagHelper.ProcessAndGetOutputAsync(startDateAttributes, context, "input");
@@ -58,7 +68,7 @@ public class AbpDateRangePickerTagHelperService : AbpDatePickerBaseTagHelperServ
 
         if (TagHelper.AspForEnd != null)
         {
-            var endDateAttributes = new TagHelperAttributeList { { "data-end-date", "true" }, { "type", "hidden" } };
+            var endDateAttributes = new TagHelperAttributeList { { "data-hidden-datepicker", "true" }, { "data-end-date", "true" }, { "type", "hidden" } };
             EndDateTagHelper = new InputTagHelper(Generator)
             {
                 ViewContext = TagHelper.ViewContext,
@@ -66,11 +76,21 @@ public class AbpDateRangePickerTagHelperService : AbpDatePickerBaseTagHelperServ
                 InputTypeName = "hidden"
             };
 
-            if (Clock.SupportsMultipleTimezone && TagHelper.AspForEnd.Model is DateTime dateTime)
+            if (Clock.SupportsMultipleTimezone)
             {
-                EndDateTagHelper.Format = "{0:O}";
-                EndDateTagHelper.Value = Clock.Convert(dateTime).ToString("O");
-                endDateAttributes.Add("value", EndDateTagHelper.Value);
+                if (TagHelper.AspForEnd.Model is DateTime dateTime)
+                {
+                    EndDateTagHelper.Format = "{0:O}";
+                    EndDateTagHelper.Value = Clock.ConvertTo(dateTime).ToString("O");
+                    endDateAttributes.Add("value", EndDateTagHelper.Value);
+                }
+
+                if (TagHelper.AspForEnd.Model is DateTimeOffset dateTimeOffset)
+                {
+                    EndDateTagHelper.Format = "{0:O}";
+                    EndDateTagHelper.Value = Clock.ConvertTo(dateTimeOffset).UtcDateTime.ToString("O");
+                    endDateAttributes.Add("value", EndDateTagHelper.Value);
+                }
             }
 
             EndDateTagHelperOutput = await EndDateTagHelper.ProcessAndGetOutputAsync(endDateAttributes, context, "input");
