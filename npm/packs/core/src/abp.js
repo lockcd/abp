@@ -823,6 +823,24 @@ var abp = abp || {};
         return date.toLocaleString(culture, options);
     }
 
+    abp.clock.browserTimeZone = function () {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    }
+
+    abp.clock.trySetBrowserTimeZoneToCookie = true;
+
+    abp.clock.setBrowserTimeZoneToCookie = function () {
+        if (!abp.clock.trySetBrowserTimeZoneToCookie || !abp.clock.supportsMultipleTimezone() || abp.currentUser.isAuthenticated) {
+            return;
+        }
+
+        abp.utils.setCookieValue('__timezone', abp.clock.browserTimeZone(), new Date(new Date().setFullYear(new Date().getFullYear() + 1)), '/');
+    }
+
+    abp.event.on('abp.configurationInitialized', function () {
+        abp.clock.setBrowserTimeZoneToCookie();
+    });
+
     /* FEATURES *************************************************/
 
     abp.features = abp.features || {};

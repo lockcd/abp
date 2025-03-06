@@ -7,6 +7,7 @@ using Volo.Abp.AspNetCore.Middleware;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Settings;
 using Volo.Abp.Timing;
+using Volo.Abp.Users;
 
 namespace Microsoft.AspNetCore.Timing;
 
@@ -14,7 +15,18 @@ public class AbpTimeZoneMiddleware : AbpMiddlewareBase, ITransientDependency
 {
     public async override Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        var timezone = await GetTimezoneFromRequestAsync(context);
+        if (!context.RequestServices.GetRequiredService<IClock>().SupportsMultipleTimezone)
+        {
+            await next(context);
+            return;
+        }
+
+        string? timezone = null;
+
+        if (!context.RequestServices.GetRequiredService<ICurrentUser>().IsAuthenticated)
+        {
+            timezone = await GetTimezoneFromRequestAsync(context);
+        }
 
         if (timezone.IsNullOrWhiteSpace())
         {

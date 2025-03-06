@@ -26,6 +26,8 @@ public class WebAssemblyCachedApplicationConfigurationClient : ICachedApplicatio
 
     protected IJSRuntime JSRuntime { get; }
 
+    protected IClock Clock { get; }
+
     public WebAssemblyCachedApplicationConfigurationClient(
         AbpApplicationConfigurationClientProxy applicationConfigurationClientProxy,
         ApplicationConfigurationCache cache,
@@ -33,7 +35,8 @@ public class WebAssemblyCachedApplicationConfigurationClient : ICachedApplicatio
         ICurrentTimezoneProvider currentTimezoneProvider,
         AbpApplicationLocalizationClientProxy applicationLocalizationClientProxy,
         ApplicationConfigurationChangedService applicationConfigurationChangedService,
-        IJSRuntime jsRuntime)
+        IJSRuntime jsRuntime,
+        IClock clock)
     {
         ApplicationConfigurationClientProxy = applicationConfigurationClientProxy;
         Cache = cache;
@@ -42,6 +45,7 @@ public class WebAssemblyCachedApplicationConfigurationClient : ICachedApplicatio
         ApplicationLocalizationClientProxy = applicationLocalizationClientProxy;
         ApplicationConfigurationChangedService = applicationConfigurationChangedService;
         JSRuntime = jsRuntime;
+        Clock = clock;
     }
 
     public virtual async Task InitializeAsync()
@@ -76,6 +80,11 @@ public class WebAssemblyCachedApplicationConfigurationClient : ICachedApplicatio
         );
 
         CurrentTimezoneProvider.TimeZone = configurationDto.Timing.TimeZone.Iana.TimeZoneName;
+
+        if (Clock.SupportsMultipleTimezone && !configurationDto.CurrentUser.IsAuthenticated)
+        {
+            await JSRuntime.InvokeVoidAsync("abp.clock.setBrowserTimeZoneToCookie");
+        }
     }
 
     public virtual Task<ApplicationConfigurationDto> GetAsync()

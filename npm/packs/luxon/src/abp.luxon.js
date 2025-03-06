@@ -95,4 +95,8 @@ var abp = abp || {};
             .setLocale(abp.localization.currentCulture.cultureName)
             .toLocaleString(options);
     }
+
+    abp.clock.browserTimeZone = function () {
+        return luxon.DateTime.local().zoneName;
+    }
 })(jQuery);
