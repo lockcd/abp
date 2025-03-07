@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageReference Include="MongoSandbox.Core" Version="1.0.1" />
     <PackageReference Include="MongoSandbox6.runtime.linux-x64" Version="1.0.1" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
     <PackageReference Include="MongoSandbox6.runtime.osx-x64" Version="1.0.1" Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
