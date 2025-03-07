@@ -2,6 +2,13 @@
 
 This document contains **brief release notes** for each ABP Studio release. Release notes only include **major features** and **visible enhancements**. Therefore, they don't include all the development done in the related version. 
 
+## 0.9.23 (2025-02-04)
+
+* Fixed **Open with Terminal** option not working on macOS.
+* Fixed dynamic port assignment for Abp Suite if the default port is unavailable.
+* Added suite templates package to module templates.
+* Added warning message in CLI if the connection string is broken.
+
 ## 0.9.22 (2025-01-22)
 
 * Allowed to display multiple installation notes.
