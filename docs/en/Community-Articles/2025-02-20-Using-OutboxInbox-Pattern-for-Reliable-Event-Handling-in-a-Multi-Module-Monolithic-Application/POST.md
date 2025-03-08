@@ -1,6 +1,6 @@
 # Using Outbox/Inbox Pattern for Reliable Event Handling in a Multi-Module Monolithic Application
 
-This article explains how to implement reliable event handling using the `Outbox/Inbox` pattern in a modular monolithic application with multiple databases. We'll use the `ModularCRM` project as an example.
+This article explains how to implement reliable event handling using the `Outbox/Inbox` pattern in a modular monolithic application with multiple databases. We'll use the `ModularCRM` project as an example (how that project was created is explained in [this document](https://abp.io/docs/latest/tutorials/modular-crm)).
 
 ## Project Background
 
@@ -224,7 +224,7 @@ By introducing the `Outbox/Inbox` pattern, we have achieved:
 3. Modular event processing in a multi-database environment
 
 ModularCRM project not only implements reliable message processing but also demonstrates how to handle multi-database scenarios gracefully in a monolithic application. Project source code: https://github.com/abpframework/abp-samples/tree/master/ModularCrm-OutboxInbox-Pattern
- 
+
 ## Reference
 
 - [Outbox/Inbox for transactional events](https://abp.io/docs/latest/framework/infrastructure/event-bus/distributed#outbox-inbox-for-transactional-events)
