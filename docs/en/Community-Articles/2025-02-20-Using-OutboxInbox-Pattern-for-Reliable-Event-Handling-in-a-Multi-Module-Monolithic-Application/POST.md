@@ -49,7 +49,7 @@ When implementing this flow, we need to ensure:
 - Transaction consistency when modules process messages
 - Reliable message delivery (including persistence, confirmation, and retry mechanisms)
 
-Using only the ABP framework's `DistributedEventBus` cannot meet these requirements, so we need to add a new mechanism.
+Using the default implementation of the ABP framework's distributed event bus cannot meet these requirements, so we need to add a new mechanism that is also provided by the ABP Framework.
 
 ## Outbox/Inbox Pattern Solution
 
@@ -121,6 +121,8 @@ Configure<AbpDistributedEventBusOptions>(options =>
     });
 });
 ```
+
+> Here, the `EventSelector` and `HandlerSelector` checks only a single type. If you have multiple events and event handlers, you can check the given type if it is included in an array of types.
 
 **Product Module Configuration**
 
