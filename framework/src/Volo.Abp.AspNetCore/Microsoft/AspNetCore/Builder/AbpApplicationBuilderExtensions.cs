@@ -9,8 +9,10 @@ using Microsoft.AspNetCore.StaticAssets;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Volo.Abp;
+using Volo.Abp.AspNetCore;
 using Volo.Abp.AspNetCore.Auditing;
 using Volo.Abp.AspNetCore.ExceptionHandling;
 using Volo.Abp.AspNetCore.Security;
@@ -183,6 +185,21 @@ public static class AbpApplicationBuilderExtensions
             // MapStaticAssets in development mode will have a performance issue if there are many static files.
             // https://github.com/dotnet/aspnetcore/issues/59673
             app.UseStaticFiles();
+
+            if (!staticAssetsManifestPath.IsNullOrWhiteSpace())
+            {
+                app.ApplicationServices.GetRequiredService<ILogger<AbpAspNetCoreModule>>().LogWarning(
+                    $"The staticAssetsManifestPath({staticAssetsManifestPath}) parameter your provided in MapAbpStaticAssets method is ignored in development mode.");
+            }
+
+            var blazorClientStaticAssetsManifest = Path.Combine(AppContext.BaseDirectory, $"{environment.ApplicationName}.Client.staticwebassets.endpoints.json");
+            if (File.Exists(blazorClientStaticAssetsManifest))
+            {
+                // We have a blazor client project and we need to map the static assets from the client project.
+                var blazorHostStaticAssetsManifest = Path.Combine(AppContext.BaseDirectory, $"{environment.ApplicationName}.staticwebassets.endpoints.json");
+                File.Copy(blazorClientStaticAssetsManifest, blazorHostStaticAssetsManifest, true);
+                return endpoints.MapStaticAssets(blazorHostStaticAssetsManifest);
+            }
 
             // Volo.Abp.AspNetCore.staticwebassets.endpoints.json is an empty file. Just compatible with the return type of MapAbpStaticAssets.
             var tempStaticAssetsManifestPath = Path.Combine(AppContext.BaseDirectory, "Volo.Abp.AspNetCore.staticwebassets.endpoints.json");
