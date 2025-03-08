@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Hosting;
@@ -192,8 +193,14 @@ public static class AbpApplicationBuilderExtensions
                     $"The staticAssetsManifestPath({staticAssetsManifestPath}) parameter your provided in MapAbpStaticAssets method is ignored in development mode.");
             }
 
-            var blazorClientStaticAssetsManifest = Path.Combine(AppContext.BaseDirectory, $"{environment.ApplicationName}.Client.staticwebassets.endpoints.json");
-            if (File.Exists(blazorClientStaticAssetsManifest))
+            var blazorClientProjectPaths = new[]
+            {
+                Path.Combine(AppContext.BaseDirectory, $"{environment.ApplicationName}.Client.staticwebassets.endpoints.json"),
+                Path.Combine(AppContext.BaseDirectory, $"{environment.ApplicationName.RemovePostFix(".Host")}.Blazor.staticwebassets.endpoints.json"),
+            };
+
+            var blazorClientStaticAssetsManifest = blazorClientProjectPaths.FirstOrDefault(File.Exists);
+            if (blazorClientStaticAssetsManifest != null)
             {
                 // We have a blazor client project and we need to map the static assets from the client project.
                 var blazorHostStaticAssetsManifest = Path.Combine(AppContext.BaseDirectory, $"{environment.ApplicationName}.staticwebassets.endpoints.json");
