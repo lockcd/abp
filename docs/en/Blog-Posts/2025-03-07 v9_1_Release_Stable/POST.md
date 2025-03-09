@@ -2,7 +2,7 @@
 
 ![](cover-image.png)
 
-Today, [ABP](https://abp.io/) 9.1 stable version has been released today. 
+We are glad to announce that [ABP](https://abp.io/) 9.1 stable version has been released today. 
 
 ## What's New With Version 9.1?
 
@@ -24,9 +24,9 @@ You can upgrade your existing solutions with either ABP Studio or ABP CLI. In th
 
 If you are already using the ABP Studio, you can upgrade it to the latest version to align it with ABP v9.1. ABP Studio periodically checks for updates in the background, and when a new version of ABP Studio is available, you will be notified through a modal. Then, you can update it by confirming the opened modal. See [the documentation](https://abp.io/docs/latest/studio/installation#upgrading) for more info.
 
-After upgrading the ABP Studio, then you can open your solution in the application, and simply click the **Switch to stable** action button to instantly upgrade your solution:
+After upgrading the ABP Studio, then you can open your solution in the application, and simply click the **Upgrade ABP Packages** action button to instantly upgrade your solution:
 
-![](switch-to-stable.png)
+![](upgrade-abp-packages.png)
 
 ### Upgrading via ABP CLI
 
