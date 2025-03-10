@@ -1,7 +1,5 @@
 # ABP.IO Platform 9.1 Final Has Been Released!
 
-![](cover-image.png)
-
 We are glad to announce that [ABP](https://abp.io/) 9.1 stable version has been released today. 
 
 ## What's New With Version 9.1?
