@@ -18,8 +18,31 @@ public class DomainEvents_Tests : DomainEvents_Tests<AbpEntityFrameworkCoreTestM
 {
 }
 
-public class AbpEntityChangeOptions_DomainEvents_Tests : AbpEntityChangeOptions_DomainEvents_Tests<AbpEntityFrameworkCoreTestModule>
+public class AbpEntityChangeOptions_DomainEvents_PublishEntityUpdatedEventWhenNavigationChanges_Tests : AbpEntityChangeOptions_DomainEvents_Tests<AbpEntityFrameworkCoreTestModule>
 {
+    protected override void AfterAddApplication(IServiceCollection services)
+    {
+        services.Configure<AbpEntityChangeOptions>(options =>
+        {
+            options.PublishEntityUpdatedEventWhenNavigationChanges = false;
+        });
+
+        base.AfterAddApplication(services);
+    }
+}
+
+public class AbpEntityChangeOptions_DomainEvents_IgnoreEntityChangeSelectorList_Tests : AbpEntityChangeOptions_DomainEvents_Tests<AbpEntityFrameworkCoreTestModule>
+{
+    protected override void AfterAddApplication(IServiceCollection services)
+    {
+        services.Configure<AbpEntityChangeOptions>(options =>
+        {
+            options.PublishEntityUpdatedEventWhenNavigationChanges = true;
+            options.IgnoredNavigationEntitySelectors.Add("DisableAllEntity", _ => true);
+        });
+
+        base.AfterAddApplication(services);
+    }
 }
 
 public class AbpEfCoreDomainEvents_Tests : EntityFrameworkCoreTestBase
