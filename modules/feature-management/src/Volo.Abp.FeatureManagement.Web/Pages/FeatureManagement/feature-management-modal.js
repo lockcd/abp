@@ -4,6 +4,7 @@ var abp = abp || {};
 
     let l = abp.localization.getResource("AbpFeatureManagement");
     abp.modals.FeatureManagement = function () {
+
         abp.ResourceLoader.loadScript('/client-proxies/featureManagement-proxy.js');
         $('#ResetToDefaults').click(function (e) {
             abp.message.confirm(l('AreYouSureToResetToDefault'))
@@ -15,6 +16,7 @@ var abp = abp || {};
                             abp.notify.success(l('ResetedToDefault'));
                         });
                         setTimeout(function () {
+                            $("#FeatureManagementForm").trigger('abp-ajax-success');
                             $('#featureManagmentModal').modal('hide');
                         }, 500);
                     }
