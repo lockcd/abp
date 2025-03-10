@@ -14,7 +14,7 @@
     "Body": "Corpo",
     "TestEmailSubject": "Prova l&#39;e-mail {0}",
     "TestEmailBody": "Prova il corpo del messaggio email qui",
-    "SuccessfullySent": "Inviato con successo",
+    "SentSuccessfully": "Inviato con successo",
     "MailSendingFailed": "Invio della posta fallito, controlla la tua configurazione email e riprova.",
     "Send": "Inviare",
     "Menu:Emailing": "Invio di e-mail",

@@ -14,7 +14,7 @@
     "Body": "Thân hình",
     "TestEmailSubject": "Kiểm tra email {0}",
     "TestEmailBody": "Kiểm tra nội dung email tại đây",
-    "SuccessfullySent": "Đã gửi thành công",
+    "SentSuccessfully": "Gửi thành công",
     "MailSendingFailed": "Gửi email thất bại. Vui lòng kiểm tra cấu hình email của bạn và thử lại.",
     "Send": "Gửi",
     "Menu:Emailing": "Gửi email",
