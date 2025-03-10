@@ -132,6 +132,80 @@ If that's a problem for your workers, you have the following options:
 * Stop the background workers (set `AbpBackgroundWorkerOptions.IsEnabled` to `false`) in all application instances except one of them, so only the single instance runs the workers.
 * Stop the background workers (set `AbpBackgroundWorkerOptions.IsEnabled` to `false`) in all application instances and create a dedicated application (maybe a console application running in its own container or a Windows Service running in the background) to execute all the background tasks. This can be a good option if your background workers consume high system resources (CPU, RAM or Disk), so you can deploy that background application to a dedicated server and your background tasks don't affect your application's performance.
 
+
+### Multiple Applications Use Same Storage
+
+If you have multiple applications using one storage as background jobs and workers(`Default, Hangfire, RabbitMQ, and Quartz`), You should set the provider options to use the application name to isolate.
+
+#### Default Background Job/Workers
+
+Set `ApplicationName` of `AbpBackgroundJobWorkerOptions` to your application name.
+
+````csharp
+public override void PreConfigureServices(ServiceConfigurationContext context)
+{
+    PreConfigure<AbpBackgroundJobWorkerOptions>(options =>
+    {
+        options.ApplicationName = context.Services.GetApplicationName()!;
+    });
+}
+````
+
+#### Hangfire Background Job/Workers
+
+Set `DefaultQueuePrefix` of `AbpHangfireOptions` to your application name.
+
+````csharp
+public override void ConfigureServices(ServiceConfigurationContext context)
+{
+    Configure<AbpHangfireOptions>(options =>
+    {
+        options.DefaultQueuePrefix = context.Services.GetApplicationName()!;
+    });
+}
+````
+
+#### Quartz Background Job/Workers
+
+Set `quartz.scheduler.instanceName` to your application name.
+
+````csharp
+public override void PreConfigureServices(ServiceConfigurationContext context)
+{
+    var configuration = context.Services.GetConfiguration();
+    PreConfigure<AbpQuartzOptions>(options =>
+    {
+        options.Properties = new NameValueCollection
+        {
+            ["quartz.scheduler.instanceName"] = context.Services.GetApplicationName(),
+
+            ["quartz.jobStore.dataSource"] = "BackgroundJobsDemoApp",
+            ["quartz.jobStore.type"] = "Quartz.Impl.AdoJobStore.JobStoreTX, Quartz",
+            ["quartz.jobStore.tablePrefix"] = "QRTZ_",
+            ["quartz.serializer.type"] = "json",
+            ["quartz.dataSource.BackgroundJobsDemoApp.connectionString"] = configuration.GetConnectionString("Default"),
+            ["quartz.dataSource.BackgroundJobsDemoApp.provider"] = "SqlServer",
+            ["quartz.jobStore.driverDelegateType"] = "Quartz.Impl.AdoJobStore.SqlServerDelegate, Quartz",
+        };
+    });
+}
+````
+
+#### RabbitMQ Background Job
+
+Set `DefaultQueueNamePrefix` and `DefaultDelayedQueueNamePrefix` of `AbpRabbitMqBackgroundJobOptions` to your application name.
+
+````csharp
+public override void PreConfigureServices(ServiceConfigurationContext context)
+{
+    PreConfigure<AbpRabbitMqBackgroundJobOptions>(options =>
+    {
+        options.DefaultQueueNamePrefix = context.Services.GetApplicationName()!.EndsWith('.') + options.DefaultQueueNamePrefix;
+        options.DefaultDelayedQueueNamePrefix = context.Services.GetApplicationName()!.EndsWith('.') + options.DefaultDelayedQueueNamePrefix;
+    });
+}
+````
+
 ## Integrations
 
 Background worker system is extensible and you can change the default background worker manager with your own implementation or on of the pre-built integrations.
