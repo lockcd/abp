@@ -6,7 +6,7 @@ Our team had an amazing time at BASTA\! Frankfurt 2025, held from March 3 to 8 a
 
 **Event Highlights**  
 
-![](Screenshot_2025-03-04_at_13.47.28.webp)  
+![](Screenshot_2025-03-04_at_13.47.28.webp)
 
 ![](20250304_153010.webp)
 
