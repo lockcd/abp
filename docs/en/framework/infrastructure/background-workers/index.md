@@ -133,13 +133,13 @@ If that's a problem for your workers, you have the following options:
 * Stop the background workers (set `AbpBackgroundWorkerOptions.IsEnabled` to `false`) in all application instances and create a dedicated application (maybe a console application running in its own container or a Windows Service running in the background) to execute all the background tasks. This can be a good option if your background workers consume high system resources (CPU, RAM or Disk), so you can deploy that background application to a dedicated server and your background tasks don't affect your application's performance.
 
 
-### Multiple Applications Use Same Storage
+### Using the Same Storage for Background Jobs & Workers
 
-If you have multiple applications using one storage as background jobs and workers(`Default, Hangfire, RabbitMQ, and Quartz`), You should set the provider options to use the application name to isolate.
+If multiple applications share the same storage for background jobs and workers (`Default, Hangfire, RabbitMQ, and Quartz`), you should configure the provider options to use the application name for isolation.
 
 #### Default Background Job/Workers
 
-Set `ApplicationName` of `AbpBackgroundJobWorkerOptions` to your application name.
+Set `ApplicationName` property in `AbpBackgroundJobWorkerOptions` to your application's name:
 
 ````csharp
 public override void PreConfigureServices(ServiceConfigurationContext context)
@@ -153,7 +153,7 @@ public override void PreConfigureServices(ServiceConfigurationContext context)
 
 #### Hangfire Background Job/Workers
 
-Set `DefaultQueuePrefix` of `AbpHangfireOptions` to your application name.
+Set `DefaultQueuePrefix` property in `AbpHangfireOptions` to your application's name:
 
 ````csharp
 public override void ConfigureServices(ServiceConfigurationContext context)
@@ -167,7 +167,7 @@ public override void ConfigureServices(ServiceConfigurationContext context)
 
 #### Quartz Background Job/Workers
 
-Set `quartz.scheduler.instanceName` to your application name.
+Set `quartz.scheduler.instanceName` property to your application's name:
 
 ````csharp
 public override void PreConfigureServices(ServiceConfigurationContext context)
@@ -193,7 +193,7 @@ public override void PreConfigureServices(ServiceConfigurationContext context)
 
 #### RabbitMQ Background Job
 
-Set `DefaultQueueNamePrefix` and `DefaultDelayedQueueNamePrefix` of `AbpRabbitMqBackgroundJobOptions` to your application name.
+Set `DefaultQueueNamePrefix` and `DefaultDelayedQueueNamePrefix` properties in `AbpRabbitMqBackgroundJobOptions` to your application's name:
 
 ````csharp
 public override void PreConfigureServices(ServiceConfigurationContext context)

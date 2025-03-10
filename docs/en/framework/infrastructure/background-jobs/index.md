@@ -236,13 +236,13 @@ Background Jobs module implements `IBackgroundJobStore` using various data acces
 
 > Background Jobs module is already installed to the startup templates by default and it works based on your ORM/data access choice.
 
-### Multiple Applications Use Same Storage
+### Using the Same Storage for Background Jobs & Workers
 
-If you have multiple applications using one storage as background jobs and workers(`Default, Hangfire, RabbitMQ, and Quartz`), You should set the provider options to use the application name to isolate.
+If multiple applications share the same storage for background jobs and workers (`Default, Hangfire, RabbitMQ, and Quartz`), you should configure the provider options to use the application name for isolation.
 
 #### Default Background Job/Workers
 
-Set `ApplicationName` of `AbpBackgroundJobWorkerOptions` to your application name.
+Set `ApplicationName` property in `AbpBackgroundJobWorkerOptions` to your application's name:
 
 ````csharp
 public override void PreConfigureServices(ServiceConfigurationContext context)
@@ -256,7 +256,7 @@ public override void PreConfigureServices(ServiceConfigurationContext context)
 
 #### Hangfire Background Job/Workers
 
-Set `DefaultQueuePrefix` of `AbpHangfireOptions` to your application name.
+Set `DefaultQueuePrefix` property in `AbpHangfireOptions` to your application's name:
 
 ````csharp
 public override void ConfigureServices(ServiceConfigurationContext context)
@@ -270,7 +270,7 @@ public override void ConfigureServices(ServiceConfigurationContext context)
 
 #### Quartz Background Job/Workers
 
-Set `quartz.scheduler.instanceName` to your application name.
+Set the `quartz.scheduler.instanceName` property to your application's name:
 
 ````csharp
 public override void PreConfigureServices(ServiceConfigurationContext context)
@@ -296,7 +296,7 @@ public override void PreConfigureServices(ServiceConfigurationContext context)
 
 #### RabbitMQ Background Job
 
-Set `DefaultQueueNamePrefix` and `DefaultDelayedQueueNamePrefix` of `AbpRabbitMqBackgroundJobOptions` to your application name.
+Set `DefaultQueueNamePrefix` and `DefaultDelayedQueueNamePrefix` properties in `AbpRabbitMqBackgroundJobOptions` to your application's name:
 
 ````csharp
 public override void PreConfigureServices(ServiceConfigurationContext context)
