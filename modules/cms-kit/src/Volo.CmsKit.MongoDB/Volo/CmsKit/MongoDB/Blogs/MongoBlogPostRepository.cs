@@ -23,7 +23,7 @@ public class MongoBlogPostRepository : MongoDbRepository<CmsKitMongoDbContext, B
     private readonly MarkedItemManager _markedItemManager;
     private EntityTagManager _entityTagManager;
     public MongoBlogPostRepository(
-        IMongoDbContextProvider<CmsKitMongoDbContext> dbContextProvider, 
+        IMongoDbContextProvider<CmsKitMongoDbContext> dbContextProvider,
         MarkedItemManager markedItemManager,
         EntityTagManager entityTagManager) : base(
         dbContextProvider)
@@ -63,7 +63,6 @@ public class MongoBlogPostRepository : MongoDbRepository<CmsKitMongoDbContext, B
         var tagFilteredEntityIds = await GetEntityIdsByTagId(tagId, cancellationToken);
 
         var favoriteUserFilteredEntityIds = await GetFavoriteEntityIdsByUserId(favoriteUserId, cancellationToken);
-        
         return await (await GetQueryableAsync(cancellationToken))
             .WhereIf(tagFilteredEntityIds.Any(), x => tagFilteredEntityIds.Contains(x.Id))
             .WhereIf(favoriteUserFilteredEntityIds.Any(), x => favoriteUserFilteredEntityIds.Contains(x.Id))
@@ -89,7 +88,7 @@ public class MongoBlogPostRepository : MongoDbRepository<CmsKitMongoDbContext, B
         cancellationToken = GetCancellationToken(cancellationToken);
         var dbContext = await GetDbContextAsync(cancellationToken);
         var blogPostQueryable = await GetQueryableAsync();
-        
+
         var tagFilteredEntityIds = await GetEntityIdsByTagId(tagId, cancellationToken);
 
         var favoriteUserFilteredEntityIds = await GetFavoriteEntityIdsByUserId(favoriteUserId, cancellationToken);
@@ -134,7 +133,7 @@ public class MongoBlogPostRepository : MongoDbRepository<CmsKitMongoDbContext, B
 
         var entityIds =
             await _entityTagManager.GetEntityIdsFilteredByTagAsync(tagId.Value, CurrentTenant.Id, cancellationToken);
-            
+
         foreach (var entityId in entityIds)
         {
             if (Guid.TryParse(entityId, out var parsedEntityId))
@@ -156,7 +155,7 @@ public class MongoBlogPostRepository : MongoDbRepository<CmsKitMongoDbContext, B
 
         var entityIds =
             await _markedItemManager.GetEntityIdsFilteredByUserAsync(userId.Value, BlogPostConsts.EntityType, CurrentTenant.Id, cancellationToken);
-            
+
         foreach (var entityId in entityIds)
         {
             if (Guid.TryParse(entityId, out var parsedEntityId))
@@ -202,10 +201,10 @@ public class MongoBlogPostRepository : MongoDbRepository<CmsKitMongoDbContext, B
             ?? throw new EntityNotFoundException(typeof(CmsUser), id);
     }
 
-    private async Task<IQueryable<CmsUser>> CreateAuthorsQueryableAsync(CancellationToken cancellationToken = default)
+    protected virtual async Task<IQueryable<CmsUser>> CreateAuthorsQueryableAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken = GetCancellationToken(cancellationToken);
-        
+
         var blogPostQueryable = (await GetQueryableAsync())
             .Where(x => x.Status == BlogPostStatus.Published);
 
@@ -229,7 +228,7 @@ public class MongoBlogPostRepository : MongoDbRepository<CmsKitMongoDbContext, B
             .AnyAsync(x => x.Status == BlogPostStatus.WaitingForReview, cancellationToken);
     }
 
-    public async Task UpdateBlogAsync(Guid sourceBlogId, Guid? targetBlogId, CancellationToken cancellationToken = default)
+    public virtual async Task UpdateBlogAsync(Guid sourceBlogId, Guid? targetBlogId, CancellationToken cancellationToken = default)
     {
         cancellationToken = GetCancellationToken(cancellationToken);
         var blogPosts = await (await GetQueryableAsync(cancellationToken)).Where(x => x.BlogId == sourceBlogId).ToListAsync(cancellationToken);
@@ -239,13 +238,18 @@ public class MongoBlogPostRepository : MongoDbRepository<CmsKitMongoDbContext, B
             {
                 blogPost.SetBlogId(targetBlogId.Value);
             }
-            
+
             await UpdateManyAsync(blogPosts, false, cancellationToken);
         }
         else
         {
-            
+
             await DeleteManyAsync(blogPosts, false, cancellationToken);
         }
+    }
+
+    public virtual async Task DeleteByBlogIdAsync(Guid blogId, CancellationToken cancellationToken = default)
+    {
+        await DeleteAsync(x => x.BlogId == blogId, cancellationToken: cancellationToken);
     }
 }
