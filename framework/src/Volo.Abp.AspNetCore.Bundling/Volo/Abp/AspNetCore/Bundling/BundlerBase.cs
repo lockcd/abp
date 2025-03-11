@@ -1,31 +1,27 @@
 using System;
 using System.Text;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Minify;
 
-namespace Volo.Abp.AspNetCore.Mvc.UI.Bundling;
+namespace Volo.Abp.AspNetCore.Bundling;
 
 public abstract class BundlerBase : IBundler, ITransientDependency
 {
     private static string[] _minFileSuffixes = { "min", "prod" };
 
     public ILogger<BundlerBase> Logger { get; set; }
-
-    protected IWebHostEnvironment HostEnvironment { get; }
     protected IMinifier Minifier { get; }
     protected AbpBundlingOptions BundlingOptions { get; }
 
     protected BundlerBase(
-        IWebHostEnvironment hostEnvironment,
         IMinifier minifier,
         IOptions<AbpBundlingOptions> bundlingOptions)
     {
-        HostEnvironment = hostEnvironment;
         Minifier = minifier;
         BundlingOptions = bundlingOptions.Value;
 
@@ -123,7 +119,7 @@ public abstract class BundlerBase : IBundler, ITransientDependency
 
     protected virtual IFileInfo GetFileInfo(IBundlerContext context, string file)
     {
-        var fileInfo = HostEnvironment.WebRootFileProvider.GetFileInfo(file);
+        var fileInfo = FindFileInfo(file);
 
         if (!fileInfo.Exists)
         {
@@ -150,7 +146,7 @@ public abstract class BundlerBase : IBundler, ITransientDependency
     {
         foreach (var suffix in _minFileSuffixes)
         {
-            var fileInfo = HostEnvironment.WebRootFileProvider.GetFileInfo(
+            var fileInfo = FindFileInfo(
                 $"{file.RemovePostFix($".{FileExtension}")}.{suffix}.{FileExtension}"
             );
 
@@ -162,6 +158,8 @@ public abstract class BundlerBase : IBundler, ITransientDependency
 
         return null;
     }
+
+    protected abstract IFileInfo FindFileInfo(string file);
 
     protected virtual string ProcessBeforeAddingToTheBundle(IBundlerContext context, string filePath, string fileContent)
     {
