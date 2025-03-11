@@ -161,6 +161,16 @@ ABP defines **a setting**, named `Abp.Timing.TimeZone`, that can be used to set 
 
 See the [setting documentation](../infrastructure/settings.md) to learn more about the setting system.
 
+### UseAbpTimeZone Middleware
+
+The `app.UseAbpTimeZone()` middleware is used to set the time zone for the current request.
+
+    *  It will get timezone from settings, the order is `User` -> `Tenant` -> `Application/Global`.
+    *  If current request is anonymous, it will get timezone from the request header/cookie/form/query string. the key is `__timezone`.
+
+> If you want to get current timezone, you can inject `ICurrentTimezoneProvider` service.
+> Please add this middleware after authentication.
+
 ### ITimezoneProvider
 
 `ITimezoneProvider` is a service to simple convert [Windows Time Zone Id](https://support.microsoft.com/en-us/help/973627/microsoft-time-zone-index-values) values to [Iana Time Zone Name](https://www.iana.org/time-zones) values and vice verse. It also provides methods to get list of these time zones and get a `TimeZoneInfo` with a given name.
