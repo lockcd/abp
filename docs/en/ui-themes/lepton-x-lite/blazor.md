@@ -66,7 +66,7 @@ Update `Routes.razor` file in `Blazor.Client` project as below:
 ````csharp
 @using Volo.Abp.AspNetCore.Components.Web.LeptonXLiteTheme.Themes.LeptonXLite
 @using Volo.Abp.AspNetCore.Components.WebAssembly.WebApp
-<Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="WebAppAdditionalAssembliesHelper.GetAssemblies<BSTestBlazorClientModule>()">
+<Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="WebAppAdditionalAssembliesHelper.GetAssemblies<YourBlazorClientModule>()">
     <Found Context="routeData">
         <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)">
             <NotAuthorized>
