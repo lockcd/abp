@@ -94,19 +94,14 @@ public class Clock : IClock, ITransientDependency
     public DateTime ConvertFrom(DateTime dateTime)
     {
         if (!SupportsMultipleTimezone ||
+            dateTime.Kind == DateTimeKind.Utc ||
             CurrentTimezoneProvider.TimeZone.IsNullOrWhiteSpace())
         {
             return dateTime;
         }
 
         var timezoneInfo = TimezoneProvider.GetTimeZoneInfo(CurrentTimezoneProvider.TimeZone);
-        var targetDateTime = dateTime;
-        if (dateTime.Kind == DateTimeKind.Utc)
-        {
-            return dateTime;
-        }
-
-        targetDateTime = DateTime.SpecifyKind(targetDateTime, DateTimeKind.Unspecified);
-        return TimeZoneInfo.ConvertTimeToUtc(targetDateTime, timezoneInfo);
+        dateTime = DateTime.SpecifyKind(dateTime, DateTimeKind.Unspecified);
+        return TimeZoneInfo.ConvertTimeToUtc(dateTime, timezoneInfo);
     }
 }
