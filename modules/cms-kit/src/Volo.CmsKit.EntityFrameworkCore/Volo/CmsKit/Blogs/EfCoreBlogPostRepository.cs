@@ -176,27 +176,32 @@ public class EfCoreBlogPostRepository : EfCoreRepository<ICmsKitDbContext, BlogP
             ?? throw new EntityNotFoundException(typeof(CmsUser), id);
     }
 
-    private async Task<IQueryable<CmsUser>> CreateAuthorsQueryableAsync()
+    protected virtual async Task<IQueryable<CmsUser>> CreateAuthorsQueryableAsync()
     {
         return (await GetDbContextAsync()).BlogPosts.Select(x => x.Author).Distinct();
     }
-    
+
     public virtual async Task<bool> HasBlogPostWaitingForReviewAsync(CancellationToken cancellationToken = default)
     {
         return await (await GetDbSetAsync())
             .AnyAsync(x => x.Status == BlogPostStatus.WaitingForReview, GetCancellationToken(cancellationToken));
     }
-    
-    public async Task UpdateBlogAsync(Guid sourceBlogId, Guid? targetBlogId = null, CancellationToken cancellationToken = default)
+
+    public virtual async Task UpdateBlogAsync(Guid sourceBlogId, Guid? targetBlogId = null, CancellationToken cancellationToken = default)
     {
         if (targetBlogId != null)
         {
             await (await GetDbSetAsync()).Where(x => x.BlogId == sourceBlogId).ExecuteUpdateAsync(x => x.SetProperty(b => b.BlogId, targetBlogId.Value), GetCancellationToken(cancellationToken));
-            
+
         }
         else
         {
             await (await GetDbSetAsync()).Where(x => x.BlogId == sourceBlogId).ExecuteDeleteAsync(GetCancellationToken(cancellationToken));
         }
+    }
+
+    public virtual async Task DeleteByBlogIdAsync(Guid blogId, CancellationToken cancellationToken = default)
+    {
+        await DeleteAsync(x => x.BlogId == blogId, cancellationToken: cancellationToken);
     }
 }
