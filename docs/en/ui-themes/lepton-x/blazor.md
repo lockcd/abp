@@ -22,14 +22,14 @@ LeptonX theme is implemented and ready to use with ABP. No custom implementation
   dotnet add package Volo.Abp.AspNetCore.Components.WebAssembly.LeptonXTheme.Bundling --prerelease
   ```
 
-- Remove **Volo.Abp.AspNetCore.Components.WebAssembly.BasicTheme.Bundling** reference from the project since it's not necessary after switching to LeptonX Lite.
+- Remove **Volo.Abp.AspNetCore.Components.WebAssembly.LeptonTheme.Bundling** reference from the project since it's not necessary after switching to LeptonX Lite.
 
 - Remove the old theme from the **DependsOn** attribute in your module class and add the **AbpAspNetCoreComponentsWebAssemblyLeptonXThemeBundlingModule** type to the **DependsOn** attribute.
 
 ```diff
 [DependsOn(
-     // Remove BasicTheme module from DependsOn attribute
--    typeof(AbpAspNetCoreComponentsWebAssemblyBasicThemeBundlingModule),
+     // Remove LeptonTheme module from DependsOn attribute
+-    typeof(AbpAspNetCoreComponentsWebAssemblyLeptonThemeBundlingModule),
 
     // Add LeptonX Lite module to DependsOn attribute
 +    typeof(AbpAspNetCoreComponentsWebAssemblyLeptonXThemeBundlingModule),
@@ -42,14 +42,14 @@ LeptonX theme is implemented and ready to use with ABP. No custom implementation
   dotnet add package Volo.Abp.AspNetCore.Components.WebAssembly.LeptonXTheme --prerelease
   ```
 
-- Remove **Volo.Abp.AspNetCore.Components.WebAssembly.BasicTheme** reference from the project since it's not necessary after switching to LeptonX Lite.
+- Remove **Volo.Abp.AspNetCore.Components.WebAssembly.LeptonTheme** reference from the project since it's not necessary after switching to LeptonX Lite.
 
 - Remove the old theme from the **DependsOn** attribute in your module class and add the **AbpAspNetCoreComponentsWebAssemblyLeptonXThemeModule** type to the **DependsOn** attribute.
 
 ```diff
 [DependsOn(
-     // Remove BasicTheme module from DependsOn attribute
--    typeof(AbpAspNetCoreComponentsWebAssemblyBasicThemeModule),
+     // Remove LeptonTheme module from DependsOn attribute
+-    typeof(AbpAspNetCoreComponentsWebAssemblyLeptonThemeModule),
 
     // Add LeptonX Lite module to DependsOn attribute
 +    typeof(AbpAspNetCoreComponentsWebAssemblyLeptonXThemeModule),
@@ -140,7 +140,6 @@ Update `Routes.razor` file in `Blazor.Client` project as below:
   - Add following namespace at the top of the page.
     ```csharp
     @using Volo.Abp.AspNetCore.Components.Server.LeptonXTheme.Bundling
-    @using Volo.Abp.AspNetCore.Components.Server.LeptonXTheme.Components
     ```
   - Then replace script & style bunles as following
     ```
