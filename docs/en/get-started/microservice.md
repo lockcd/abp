@@ -96,6 +96,8 @@ Click the Next button to see *Additional Options* selection:
 
 If you unchecked the *Kubernetes Configuration* option, the solution will not include the Kubernetes configuration files which include the Helm charts and other Kubernetes related files. You can also specify *Social Logins*; if you uncheck this option, the solution will not be configured for social login. Lastly, you can specify the *Include Tests* option to include the test projects in the solution.
 
+Click the Next button to see *Additional Services* screen:
+
 ![abp-studio-new-solution-dialog-additional-services](images/abp-studio-new-solution-dialog-additional-services.png)
 
 On that screen, allows you to include extra microservices in your ABP solution during the creation process. This feature lets you extend your solution with business-specific services right from the start.
