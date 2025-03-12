@@ -1,6 +1,6 @@
 ﻿@typeparam TItem
 <CascadingValue Value="this" IsFixed="true">
-    @if ( Type == ActionType.Dropdown )
+    @if ( Type == ActionType.Dropdown || (Type == ActionType.Button && DisabledOrNoActions()))
     {
         <Dropdown Disabled="@DisabledOrNoActions()">
             <Tooltip Text="@(DisabledOrNoActions() ? UiLocalizer["EntityActionsDisabledTooltip"] : string.Empty)">

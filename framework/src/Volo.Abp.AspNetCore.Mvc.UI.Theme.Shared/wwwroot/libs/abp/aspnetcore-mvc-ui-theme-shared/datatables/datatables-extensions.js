@@ -84,12 +84,9 @@ var abp = abp || {};
         };
 
         var _createButtonDropdown = function (record, field, tableInstance) {
-            if (field.items.length === 1) {
+            if (field.items.length === 1 && getVisibilityValue(field.items[0].visible, record, tableInstance)) {
                 var firstItem = field.items[0];
-                if (!getVisibilityValue(firstItem.visible, record, tableInstance)) {
-                    return $('');
-                }
-
+                
                 var $button = $('<button type="button" class="btn btn-primary btn-sm abp-action-button"></button>');
 
                 if (firstItem.displayNameHtml) {
