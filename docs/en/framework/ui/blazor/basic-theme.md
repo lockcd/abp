@@ -50,20 +50,37 @@ Update `Routes.razor` file in `Blazor.Client` project as below:
 
 * Add `AbpAspNetCoreComponentsServerBasicThemeModule` into the `[DependsOn(...)]` attribute for your [module class](../../architecture/modularity/basics.md) in the your Blazor UI project.
 
-* Perform following changes in `Pages/_Host.cshtml` file
+* Perform following changes in `App.razor` file
   * Add usings at the top of the page.
     ```html
     @using Volo.Abp.AspNetCore.Components.Server.BasicTheme.Bundling
-    @using Volo.Abp.AspNetCore.Components.Web.BasicTheme.Themes.Basic
     ```
-  * Add Basic theme style bundles between `<head>` tags.
-    ```html
-    <abp-style-bundle name="@BlazorBasicThemeBundles.Styles.Global" />
+  * Then replace script & style bunles as following
     ```
-  * Add `App` component of Basic Theme in the body section of page.
-    ```html
-    <component type="typeof(App)" render-mode="Server" />
+    <AbpStyles BundleName="@BlazorBasicThemeBundles.Styles.Global" />
     ```
+
+    ```
+    <AbpScripts BundleName="@BlazorBasicThemeBundles.Scripts.Global" />
+    ```
+
+Update `Routes.razor` file as below:
+
+````csharp
+@using Volo.Abp.AspNetCore.Components.Web.BasicTheme.Themes.Basic
+@using Volo.Abp.AspNetCore.Components.Web.Theming.Routing
+@using Microsoft.Extensions.Options
+@inject IOptions<AbpRouterOptions> RouterOptions
+<Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="RouterOptions.Value.AdditionalAssemblies">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)">
+            <NotAuthorized>
+                <RedirectToLogin />
+            </NotAuthorized>
+        </AuthorizeRouteView>
+    </Found>
+</Router>
+````
 
 {{end}}
 

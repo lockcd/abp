@@ -120,27 +120,37 @@ Update `Routes.razor` file in `Blazor.Client` project as below:
     });
   ```
 
-- Update `_Host.cshtml` file. _(located under **Pages** folder by default.)_
-
-  - Add following usings to Locate **App** and **BlazorLeptonXLiteThemeBundles** classes.
+- Update `App.razor` file. _(located under **Components** folder by default.)_
+  - Add following namespace at the top of the page.
     ```csharp
-    @using Volo.Abp.AspNetCore.Components.Web.LeptonXLiteTheme.Themes.LeptonXLite
-    @using Volo.Abp.AspNetCore.Components.Server.LeptonXLiteTheme.Bundling
+    @ using Volo.Abp.AspNetCore.Components.Server.LeptonXLiteTheme.Bundling
     ```
-  - Then replace script & style bundles as following:
-    ```diff
-    // Remove following line
-    - <abp-style-bundle name="@BlazorBasicThemeBundles.Styles.Global" />
-    // Add following line instead
-    + <abp-style-bundle name="@BlazorLeptonXLiteThemeBundles.Styles.Global" />
+  - Then replace script & style bunles as following
+    ```
+    <AbpStyles BundleName="@BlazorLeptonXLiteThemeBundles.Styles.Global" />
     ```
 
-    ```diff
-    // Remove following line
-    - <abp-script-bundle name="@BlazorBasicThemeBundles.Scripts.Global" />
-    // Add following line instead
-    + <abp-script-bundle name="@BlazorLeptonXLiteThemeBundles.Scripts.Global" />
     ```
+    <AbpScripts BundleName="@BlazorLeptonXLiteThemeBundles.Scripts.Global" />
+    ```
+
+Update `Routes.razor` file as below:
+
+````csharp
+@using Volo.Abp.AspNetCore.Components.Web.LeptonXLiteTheme.Themes.LeptonXLite
+@using Volo.Abp.AspNetCore.Components.Web.Theming.Routing
+@using Microsoft.Extensions.Options
+@inject IOptions<AbpRouterOptions> RouterOptions
+<Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="RouterOptions.Value.AdditionalAssemblies">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)">
+            <NotAuthorized>
+                <RedirectToLogin />
+            </NotAuthorized>
+        </AuthorizeRouteView>
+    </Found>
+</Router>
+````
 
 {{end}}
 

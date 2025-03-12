@@ -13,37 +13,95 @@ LeptonX theme is implemented and ready to use with ABP. No custom implementation
 
 {{if UI == "Blazor"}}
 
-- Add **Volo.Abp.AspNetCore.Components.WebAssembly.LeptonXTheme** package to your **Blazor WASM** application.
+- Complete the [MVC Razor Pages Installation](asp-net-core.md#installation) for the **HttpApi.Host** application first. _If the solution is tiered/micro-service, complete the MVC steps for all MVC applications such as **HttpApi.Host** and if Auth Server is separated, install to the **OpenIddict**_.
+
+
+- Add **Volo.Abp.AspNetCore.Components.WebAssembly.LeptonXTheme.Bundling** package to your **Blazor** application with the following command:
+
   ```bash
-  dotnet add package Volo.Abp.AspNetCore.Components.WebAssembly.LeptonXTheme
+  dotnet add package Volo.Abp.AspNetCore.Components.WebAssembly.LeptonXTheme.Bundling --prerelease
   ```
 
-- Remove old theme from **DependsOn** attribute in your module class and add **AbpAspNetCoreComponentsWebAssemblyLeptonXThemeModule** type to **DependsOn** attribute.
+- Remove **Volo.Abp.AspNetCore.Components.WebAssembly.BasicTheme.Bundling** reference from the project since it's not necessary after switching to LeptonX Lite.
+
+- Remove the old theme from the **DependsOn** attribute in your module class and add the **AbpAspNetCoreComponentsWebAssemblyLeptonXThemeBundlingModule** type to the **DependsOn** attribute.
 
 ```diff
 [DependsOn(
--    typeof(LeptonThemeManagementBlazorModule),
--    typeof(AbpAspNetCoreComponentsWebAssemblyLeptonThemeModule),
-+    typeof(AbpAspNetCoreComponentsWebAssemblyLeptonXThemeModule)
+     // Remove BasicTheme module from DependsOn attribute
+-    typeof(AbpAspNetCoreComponentsWebAssemblyBasicThemeBundlingModule),
+
+    // Add LeptonX Lite module to DependsOn attribute
++    typeof(AbpAspNetCoreComponentsWebAssemblyLeptonXThemeBundlingModule),
 )]
 ```
 
-- Change startup `App` component with the LeptonX one.
-  - Add following using declaration and remove your old theme using declaration.
-    ```csharp
-    using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components;
-    ```
+- Add **Volo.Abp.AspNetCore.Components.WebAssembly.LeptonXTheme** package to your **Blazor.Client** application with the following command:
 
-  - Make sure `App` component in following block is `Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.App`
-    ```csharp
-        // Make sure the 'App' comes from 'Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components' namespace.
-        builder.RootComponents.Add<App>("#ApplicationContainer");
-    ```
-    - If you can't remove or not sure which one is the old theme's using statements, you can use full name of that class:
-        ```csharp
-        builder.RootComponents.Add<Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.App>("#ApplicationContainer");
-        ```
+  ```bash
+  dotnet add package Volo.Abp.AspNetCore.Components.WebAssembly.LeptonXTheme --prerelease
+  ```
 
+- Remove **Volo.Abp.AspNetCore.Components.WebAssembly.BasicTheme** reference from the project since it's not necessary after switching to LeptonX Lite.
+
+- Remove the old theme from the **DependsOn** attribute in your module class and add the **AbpAspNetCoreComponentsWebAssemblyLeptonXThemeModule** type to the **DependsOn** attribute.
+
+```diff
+[DependsOn(
+     // Remove BasicTheme module from DependsOn attribute
+-    typeof(AbpAspNetCoreComponentsWebAssemblyBasicThemeModule),
+
+    // Add LeptonX Lite module to DependsOn attribute
++    typeof(AbpAspNetCoreComponentsWebAssemblyLeptonXThemeModule),
+)]
+```
+
+Update `Routes.razor` file in `Blazor.Client` project as below:
+
+````csharp
+@using Microsoft.Extensions.Options
+@using Microsoft.Extensions.Localization
+@using global::Localization.Resources.AbpUi
+@using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme
+@using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components
+@using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout
+@using Volo.Abp.AspNetCore.Components.Web.Theming.Routing
+@using Volo.Abp.AspNetCore.Components.WebAssembly.WebApp
+@inject IOptions<AbpRouterOptions> RouterOptions
+@inject IOptions<LeptonXThemeBlazorOptions> LayoutOptions
+@inject IStringLocalizer<AbpUiResource> UiLocalizer
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="RouterOptions.Value.AppAssembly" AdditionalAssemblies="WebAppAdditionalAssembliesHelper.GetAssemblies<YourBlazorClientModule>()">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@LayoutOptions.Value.Layout">
+                <NotAuthorized>
+                    @if (context.User?.Identity?.IsAuthenticated != true)
+                    {
+                        <RedirectToLogin/>
+                    }
+                    else
+                    {
+                        <ErrorView
+                            Title="@UiLocalizer["403Message"]"
+                            HttpStatusCode="403"
+                            Message="@UiLocalizer["403MessageDetail"]"/>
+                    }
+                </NotAuthorized>
+            </AuthorizeRouteView>
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@LayoutOptions.Value.Layout">
+                <ErrorView
+                    Title="@UiLocalizer["404Message"]"
+                    HttpStatusCode="404"
+                    Message="@UiLocalizer["404MessageDetail"]"/>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+
+````
 {{end}}
 
 
@@ -78,22 +136,67 @@ LeptonX theme is implemented and ready to use with ABP. No custom implementation
     });
   ```
 
-- Update `_Host.cshtml` file. _(located under **Pages** folder by default.)_
-  - Add following usings to Locate **App** and **BlazorLeptonXThemeBundles** classes.
+- Update `App.razor` file. _(located under **Components** folder by default.)_
+  - Add following namespace at the top of the page.
     ```csharp
-    @using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components
     @using Volo.Abp.AspNetCore.Components.Server.LeptonXTheme.Bundling
+    @using Volo.Abp.AspNetCore.Components.Server.LeptonXTheme.Components
     ```
   - Then replace script & style bunles as following
-    ```diff
-    - <abp-style-bundle name="@BlazorBasicThemeBundles.Styles.Global" />
-    + <abp-style-bundle name="@BlazorLeptonXThemeBundles.Styles.Global" />
+    ```
+    <AbpStyles BundleName="@BlazorLeptonXThemeBundles.Styles.Global" />
     ```
 
-    ```diff
-    - <abp-script-bundle name="@BlazorBasicThemeBundles.Scripts.Global" />
-    + <abp-script-bundle name="@BlazorLeptonXThemeBundles.Scripts.Global" />
     ```
+    <AbpStyles BundleName="@BlazorLeptonXThemeBundles.Styles.Global" />
+    ```
+
+Update `Routes.razor` file as below:
+
+````csharp
+@using Microsoft.Extensions.Options
+@using Microsoft.Extensions.Localization
+@using global::Localization.Resources.AbpUi
+@using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme
+@using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components
+@using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout
+@using Volo.Abp.AspNetCore.Components.Web.Theming.Routing
+@using Volo.Abp.AspNetCore.Components.WebAssembly.WebApp
+@inject IOptions<AbpRouterOptions> RouterOptions
+@inject IOptions<LeptonXThemeBlazorOptions> LayoutOptions
+@inject IStringLocalizer<AbpUiResource> UiLocalizer
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="RouterOptions.Value.AdditionalAssemblies">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@LayoutOptions.Value.Layout">
+                <NotAuthorized>
+                    @if (context.User?.Identity?.IsAuthenticated != true)
+                    {
+                        <RedirectToLogin/>
+                    }
+                    else
+                    {
+                        <ErrorView
+                            Title="@UiLocalizer["403Message"]"
+                            HttpStatusCode="403"
+                            Message="@UiLocalizer["403MessageDetail"]"/>
+                    }
+                </NotAuthorized>
+            </AuthorizeRouteView>
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@LayoutOptions.Value.Layout">
+                <ErrorView
+                    Title="@UiLocalizer["404Message"]"
+                    HttpStatusCode="404"
+                    Message="@UiLocalizer["404MessageDetail"]"/>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+````
+
 {{end}}
 
 ---
@@ -201,7 +304,7 @@ You can override layouts by following the steps below:
 using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout;
 using Volo.Abp.DependencyInjection;
 
-namespace LeptonXLite.DemoApp.Blazor.MyComponents
+namespace LeptonX.DemoApp.Blazor.MyComponents
 {
     [ExposeServices(typeof(SideMenuLayout))]
     [Dependency(ReplaceServices = true)]
@@ -248,7 +351,7 @@ If you need to replace the component, you can follow the steps below.
 using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout.Common;
 using Volo.Abp.DependencyInjection;
 
-namespace LeptonXLite.DemoApp.Blazor.MyComponents
+namespace LeptonX.DemoApp.Blazor.MyComponents
 {
     [ExposeServices(typeof(Breadcrumbs))]
     [Dependency(ReplaceServices = true)]
@@ -281,7 +384,7 @@ namespace LeptonXLite.DemoApp.Blazor.MyComponents
 using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout.Common;
 using Volo.Abp.DependencyInjection;
 
-namespace LeptonXLite.DemoApp.Blazor.MyComponents
+namespace LeptonX.DemoApp.Blazor.MyComponents
 {
     [ExposeServices(typeof(ContentToolbar))]
     [Dependency(ReplaceServices = true)]
@@ -314,7 +417,7 @@ namespace LeptonXLite.DemoApp.Blazor.MyComponents
 using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout.Common;
 using Volo.Abp.DependencyInjection;
 
-namespace LeptonXLite.DemoApp.Blazor.MyComponents
+namespace LeptonX.DemoApp.Blazor.MyComponents
 {
     [ExposeServices(typeof(GeneralSettings))]
     [Dependency(ReplaceServices = true)]
@@ -347,7 +450,7 @@ namespace LeptonXLite.DemoApp.Blazor.MyComponents
 using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout.Common;
 using Volo.Abp.DependencyInjection;
 
-namespace LeptonXLite.DemoApp.Blazor.MyComponents
+namespace LeptonX.DemoApp.Blazor.MyComponents
 {
     [ExposeServices(typeof(MobileGeneralSettings))]
     [Dependency(ReplaceServices = true)]
@@ -386,7 +489,7 @@ Components used in the side menu layout.
 using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout.SideMenu.Navigation;
 using Volo.Abp.DependencyInjection;
 
-namespace LeptonXLite.DemoApp.Blazor.MyComponents
+namespace LeptonX.DemoApp.Blazor.MyComponents
 {
     [ExposeServices(typeof(MainMenu))]
     [Dependency(ReplaceServices = true)]
@@ -417,7 +520,7 @@ namespace LeptonXLite.DemoApp.Blazor.MyComponents
 using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout.SideMenu.Navigation;
 using Volo.Abp.DependencyInjection;
 
-namespace LeptonXLite.DemoApp.Blazor.MyComponents
+namespace LeptonX.DemoApp.Blazor.MyComponents
 {
     [ExposeServices(typeof(MainMenu))]
     [Dependency(ReplaceServices = true)]
@@ -450,7 +553,7 @@ namespace LeptonXLite.DemoApp.Blazor.MyComponents
 using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout.SideMenu.Navigation;
 using Volo.Abp.DependencyInjection;
 
-namespace LeptonXLite.DemoApp.Blazor.MyComponents
+namespace LeptonX.DemoApp.Blazor.MyComponents
 {
     [ExposeServices(typeof(MobileNavbar))]
     [Dependency(ReplaceServices = true)]
@@ -483,7 +586,7 @@ namespace LeptonXLite.DemoApp.Blazor.MyComponents
 using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout.SideMenu.MainHeader;
 using Volo.Abp.DependencyInjection;
 
-namespace LeptonXLite.DemoApp.Blazor.MyComponents
+namespace LeptonX.DemoApp.Blazor.MyComponents
 {
     [ExposeServices(typeof(MainHeader))]
     [Dependency(ReplaceServices = true)]
@@ -520,7 +623,7 @@ If you need to replace the component, you can follow the steps below.
 using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout.SideMenu.MainHeader;
 using Volo.Abp.DependencyInjection;
 
-namespace LeptonXLite.DemoApp.Blazor.MyComponents
+namespace LeptonX.DemoApp.Blazor.MyComponents
 {
     [ExposeServices(typeof(MainHeaderBranding))]
     [Dependency(ReplaceServices = true)]
@@ -557,7 +660,7 @@ If you need to replace the component, you can follow the steps below.
 using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout.SideMenu.MainHeader;
 using Volo.Abp.DependencyInjection;
 
-namespace LeptonXLite.DemoApp.Blazor.MyComponents
+namespace LeptonX.DemoApp.Blazor.MyComponents
 {
     [ExposeServices(typeof(MainHeaderToolbar))]
     [Dependency(ReplaceServices = true)]
@@ -596,7 +699,7 @@ Components used in the top menu layout.
 using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout.TopMenu.Navigation;
 using Volo.Abp.DependencyInjection;
 
-namespace LeptonXLite.DemoApp.Blazor.MyComponents
+namespace LeptonX.DemoApp.Blazor.MyComponents
 {
     [ExposeServices(typeof(MainMenu))]
     [Dependency(ReplaceServices = true)]
@@ -627,7 +730,7 @@ namespace LeptonXLite.DemoApp.Blazor.MyComponents
 using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout.TopMenu.Navigation;
 using Volo.Abp.DependencyInjection;
 
-namespace LeptonXLite.DemoApp.Blazor.MyComponents
+namespace LeptonX.DemoApp.Blazor.MyComponents
 {
     [ExposeServices(typeof(MainMenu))]
     [Dependency(ReplaceServices = true)]
@@ -660,7 +763,7 @@ namespace LeptonXLite.DemoApp.Blazor.MyComponents
 using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout.TopMenu.Navigation;
 using Volo.Abp.DependencyInjection;
 
-namespace LeptonXLite.DemoApp.Blazor.MyComponents
+namespace LeptonX.DemoApp.Blazor.MyComponents
 {
     [ExposeServices(typeof(MobileNavbar))]
     [Dependency(ReplaceServices = true)]
@@ -693,7 +796,7 @@ namespace LeptonXLite.DemoApp.Blazor.MyComponents
 using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout.TopMenu.MainHeader;
 using Volo.Abp.DependencyInjection;
 
-namespace LeptonXLite.DemoApp.Blazor.MyComponents
+namespace LeptonX.DemoApp.Blazor.MyComponents
 {
     [ExposeServices(typeof(MainHeader))]
     [Dependency(ReplaceServices = true)]
@@ -728,7 +831,7 @@ Application branding can be customized with the `IBrandingProvider`. See the [Br
 using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout.TopMenu.MainHeader;
 using Volo.Abp.DependencyInjection;
 
-namespace LeptonXLite.DemoApp.Blazor.MyComponents
+namespace LeptonX.DemoApp.Blazor.MyComponents
 {
     [ExposeServices(typeof(MainHeaderBranding))]
     [Dependency(ReplaceServices = true)]
@@ -765,7 +868,7 @@ If you need to replace the component, you can follow the steps below.
 using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout.TopMenu.MainHeader;
 using Volo.Abp.DependencyInjection;
 
-namespace LeptonXLite.DemoApp.Blazor.MyComponents
+namespace LeptonX.DemoApp.Blazor.MyComponents
 {
     [ExposeServices(typeof(MainHeaderToolbar))]
     [Dependency(ReplaceServices = true)]
