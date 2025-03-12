@@ -196,16 +196,19 @@ When the C# application is connected to ABP Studio, it starts sending telemetry 
 ![csharp-application-context-menu-monitor](images/solution-runner/csharp-application-context-menu-monitor.png)
 
 - `Browse`: ABP Studio includes a browser tool for accessing websites and running applications. You can click this option to view the application in the ABP Studio browser. However, this option is only accessible if the application is started.
+- Health Status : If Health Check endpoints are defined, it allows you to browse Health UI and see the latest health check response.
 - `Requests`: It opens the *HTTP Requests* tab with adding the selected application filter. You can view all *HTTP Requests* received by your applications.
 - `Exceptions`: We can display all exceptions on this tab. It opens the *Exceptions* tab with selected application.
 - `Logs`: Clicking this option opens the *Logs* tab with adding the selected application filter.
 
 ### Properties
 
-We can open the *Application Properties* window to change *Launch url*, *Kubernetes service* and *run* information. To access the *Application Properties* window, navigate to a C# application, right-click to view the context menu, and select the Properties option.
+We can open the *Application Properties* window to change *Launch url*, *Health check endpoints*,  *Kubernetes service* and *run* information. To access the *Application Properties* window, navigate to a C# application, right-click to view the context menu, and select the Properties option.
 
 ![solutioın-runner-properties](images/solution-runner/solutioın-runner-properties.png)
 
+- **Health check endpoint**: Endpoint for controlling the health status of the application periodically. If the application doesn't have a endpoint for health check, you can enter `/` to use the home page of the application as health check endpoint.
+- **Health UI endpoint**: Endpoint of the Health UI page of the application.
 - **Skip build before starting**: When enabled, application is started without build and it makes starting faster. This is useful when you are working on a single application out of multiple, so you don't need to build others everytime they start.
 - **Watch changes while running**: When enabled, you should see an *eye* icon next to the application name.
 
