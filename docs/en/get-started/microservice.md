@@ -49,7 +49,11 @@ On that screen, you can decide on your database provider by selecting one of the
 
 ![abp-studio-new-solution-dialog-database-configurations](images/abp-studio-new-solution-dialog-database-configurations-microservice.png)
 
-Here, select the DBMS right for you, then click the *Next* button to navigate to the *UI Framework* selection:
+Here, select the DBMS right for you, then click the *Next* button to navigate to the *Multi-Tenancy* selection:
+
+![abp-studio-new-solution-dialog-multi-tenancy](images/abp-studio-new-solution-dialog-multi-tenancy.png)
+
+On that screen, you can enable multi-tenancy for your solution. After selecting this option, click the Next button to proceed to the *UI Framework* selection screen.
 
 ![abp-studio-new-solution-dialog-ui-framework](images/abp-studio-new-solution-dialog-ui-framework-microservice.png)
 
@@ -66,6 +70,10 @@ Pick the one best for you, or select the *None* if you don't want a mobile appli
 ![abp-studio-new-solution-dialog-public-web-site](images/abp-studio-new-solution-dialog-public-web-site.png)
 
 You can select a public website to be created in your solution. The public website is a simple landing page that can be used to introduce your product, provide documentation, and so on.
+
+![abp-studio-new-solution-dialog-dynamic-localization](images/abp-studio-new-solution-dialog-dynamic-localization.png)
+
+On that screen, you can enable dynamic localization. After selecting this option, click the Next button to proceed to the *Optional Modules* selection screen.
 
 ![abp-studio-new-microservice-solution-dialog-optional-modules](images/abp-studio-new-microservice-solution-dialog-optional-modules.png)
 
@@ -87,6 +95,10 @@ Click the Next button to see *Additional Options* selection:
 ![abp-studio-new-solution-dialog-additional-options](images/abp-studio-new-solution-dialog-additional-options-microservice.png)
 
 If you unchecked the *Kubernetes Configuration* option, the solution will not include the Kubernetes configuration files which include the Helm charts and other Kubernetes related files. You can also specify *Social Logins*; if you uncheck this option, the solution will not be configured for social login. Lastly, you can specify the *Include Tests* option to include the test projects in the solution.
+
+![abp-studio-new-solution-dialog-additional-services](images/abp-studio-new-solution-dialog-additional-services.png)
+
+On that screen, allows you to include extra microservices in your ABP solution during the creation process. This feature lets you extend your solution with business-specific services right from the start.
 
 Now, we are ready to allow ABP Studio to create our solution. Just click the *Create* button and let the ABP Studio do the rest for you. After clicking the *Create* button, the dialog is closed and your solution is loaded into ABP Studio:
 
