@@ -4,8 +4,6 @@ Our team had an amazing time at BASTA\! Frankfurt 2025, held from March 3 to 8 a
 
 **Event Highlights**  
 
-![](Screenshot_2025-03-04_at_13.47.28.webp)
-
 ![](20250304_153010.webp)
 
 ![](20250304_153413.webp)
@@ -13,6 +11,8 @@ Our team had an amazing time at BASTA\! Frankfurt 2025, held from March 3 to 8 a
 The conference hosted many talented developers as speakers. One of them was İsmail Çağdaş who’s a lead developer from ABP team who talked about the concepts of monoliths and microservices. He explained how modular monoliths combine the strengths of these two architectures, using the ABP Framework as an example to showcase its modularity features and demonstrate how to build and develop a modular monolith application. 
 
 **ABP’S Presence**  
+
+![](IMG_4732-2000px.webp)
 
 ![](IMG_4770-2000px.webp)
 
