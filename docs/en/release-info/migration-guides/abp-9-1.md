@@ -6,4 +6,4 @@ You might need to update some constant names due to the OpenIddict 6.0 upgrade, 
 
 - [OpenIddict 5.x to 6.x Migration Guide](./openiddict5-to-6.md)
 
-In addition, ABP version 9.1 has been upgraded to incorporate Angular version 19. Consequently, we recommend migrating your application to Angular v19 [Angular v19](https://angular.dev/update-guide) to ensure compatibility.
+In addition, ABP version 9.1 has been upgraded to incorporate Angular version 19. Consequently, we recommend migrating your application to [Angular v19](https://angular.dev/update-guide) to ensure compatibility.
