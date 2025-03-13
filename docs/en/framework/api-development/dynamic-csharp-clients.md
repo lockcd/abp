@@ -164,6 +164,7 @@ context.Services.AddHttpClientProxies(
 `remoteServiceConfigurationName` parameter matches the service endpoint configured via `AbpRemoteServiceOptions`. If the `BookStore` endpoint is not defined then it fallbacks to the `Default` endpoint.
 
 #### Remote Service Configuration Provider
+
 You may need to get the remote service configuration for a specific remote service in some cases. For this, you can use the `IRemoteServiceConfigurationProvider` interface.
 
 **Example: Get the remote service configuration for the "BookStore" remote service**
