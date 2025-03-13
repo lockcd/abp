@@ -244,6 +244,29 @@ context.Services.AddStaticHttpClientProxies(
 
 `remoteServiceConfigurationName` parameter matches the service endpoint configured via `AbpRemoteServiceOptions`. If the `BookStore` endpoint is not defined then it fallbacks to the `Default` endpoint.
 
+#### Remote Service Configuration Provider
+Some times you may need to get the remote service configuration for a specific remote service in specific cases. For this, you can use the `RemoteServiceConfigurationProvider` interface.
+
+**Example: Get the remote service configuration for the "BookStore" remote service**
+
+````csharp
+public class MyService : ITransientDependency
+{
+    private readonly RemoteServiceConfigurationProvider _remoteServiceConfigurationProvider;
+
+    public MyService(RemoteServiceConfigurationProvider remoteServiceConfigurationProvider)
+    {
+        _remoteServiceConfigurationProvider = remoteServiceConfigurationProvider;
+    }
+
+    public async Task GetRemoteServiceConfiguration()
+    {
+        var configuration = await _remoteServiceConfigurationProvider.GetConfigurationAsync("BookStore");
+        Console.WriteLine(configuration.BaseUrl);
+    }
+}
+````
+
 ### Retry/Failure Logic & Polly Integration
 
 If you want to add retry logic for the failing remote HTTP calls for the client proxies, you can configure the `AbpHttpClientBuilderOptions` in the `PreConfigureServices` method of your module class.

@@ -163,6 +163,29 @@ context.Services.AddHttpClientProxies(
 
 `remoteServiceConfigurationName` parameter matches the service endpoint configured via `AbpRemoteServiceOptions`. If the `BookStore` endpoint is not defined then it fallbacks to the `Default` endpoint.
 
+#### Remote Service Configuration Provider
+Some times you may need to get the remote service configuration for a specific remote service in specific cases. For this, you can use the `RemoteServiceConfigurationProvider` interface.
+
+**Example: Get the remote service configuration for the "BookStore" remote service**
+
+````csharp
+public class MyService : ITransientDependency
+{
+    private readonly RemoteServiceConfigurationProvider _remoteServiceConfigurationProvider;
+
+    public MyService(RemoteServiceConfigurationProvider remoteServiceConfigurationProvider)
+    {
+        _remoteServiceConfigurationProvider = remoteServiceConfigurationProvider;
+    }
+
+    public async Task GetRemoteServiceConfiguration()
+    {
+        var configuration = await _remoteServiceConfigurationProvider.GetConfigurationAsync("BookStore");
+        Console.WriteLine(configuration.BaseUrl);
+    }
+}
+````
+
 ### As Default Services
 
 When you create a service proxy for `IBookAppService`, you can directly inject the `IBookAppService` to use the proxy client (as shown in the usage section). You can pass `asDefaultServices: false` to the `AddHttpClientProxies` method to disable this feature.
@@ -203,6 +226,8 @@ public override void PreConfigureServices(ServiceConfigurationContext context)
 ````
 
 This example uses the [Microsoft.Extensions.Http.Polly](https://www.nuget.org/packages/Microsoft.Extensions.Http.Polly) package. You also need to import the `Polly` namespace (`using Polly;`) to be able to use the `WaitAndRetryAsync` method.
+
+
 
 ## See Also
 
