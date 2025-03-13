@@ -14,7 +14,7 @@
     "Body": "Líkami",
     "TestEmailSubject": "Prófunartölvupóstur {0}",
     "TestEmailBody": "Prófaðu meginmál tölvupósts hér",
-    "SuccessfullySent": "Tókst sent",
+    "SentSuccessfully": "Tókst að senda",
     "MailSendingFailed": "Tölvupóstur sendist ekki. Athugaðu tölvupóst stillingar þínar og reyndu aftur.",
     "Send": "Senda",
     "Menu:Emailing": "Senda tölvupóst",
