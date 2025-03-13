@@ -171,16 +171,16 @@ You may need to get the remote service configuration for a specific remote servi
 ````csharp
 public class MyService : ITransientDependency
 {
-    private readonly RemoteServiceConfigurationProvider _remoteServiceConfigurationProvider;
+    private readonly IRemoteServiceConfigurationProvider _remoteServiceConfigurationProvider;
 
-    public MyService(RemoteServiceConfigurationProvider remoteServiceConfigurationProvider)
+    public MyService(IRemoteServiceConfigurationProvider remoteServiceConfigurationProvider)
     {
         _remoteServiceConfigurationProvider = remoteServiceConfigurationProvider;
     }
 
     public async Task GetRemoteServiceConfiguration()
     {
-        var configuration = await _remoteServiceConfigurationProvider.GetConfigurationAsync("BookStore");
+        var configuration = await _remoteServiceConfigurationProvider.GetConfigurationOrDefaultAsync("BookStore");
         Console.WriteLine(configuration.BaseUrl);
     }
 }
