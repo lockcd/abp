@@ -22,7 +22,7 @@
         />
       }
       @case ('hidden') {
-        <input [formControlName]="prop.name" type="hidden" />
+        <input [formControlName]="prop.name" type="hidden"/>
       }
       @case ('checkbox') {
         <div class="form-check" validationTarget>
@@ -62,24 +62,29 @@
       }
       @case ('multiselect') {
         <ng-template [ngTemplateOutlet]="label"></ng-template>
-        <select
-          #field
-          [id]="prop.id"
+        <!--        <select
+                  #field
+                  [id]="prop.id"
+                  [formControlName]="prop.name"
+                  [abpDisabled]="disabled"
+                  multiple="multiple"
+                  class="form-select form-control"
+                >
+                  @for (option of options$ | async; track option.value) {
+                    <option [ngValue]="option.value">
+                      @if (prop.isExtra) {
+                        {{ '::' + option.key | abpLocalization }}
+                      } @else {
+                        {{ option.key }}
+                      }
+                    </option>
+                  }
+                </select>-->
+        <abp-extensible-form-multi-select
+          [prop]="prop"
+          [options]="options$ | async"
           [formControlName]="prop.name"
-          [abpDisabled]="disabled"
-          multiple="multiple"
-          class="form-select form-control"
-        >
-          @for (option of options$ | async; track option.value) {
-            <option [ngValue]="option.value">
-              @if (prop.isExtra) {
-                {{ '::' + option.key | abpLocalization }}
-              } @else {
-                {{ option.key }}
-              }
-            </option>
-          }
-        </select>
+          [abpDisabled]="disabled"/>
       }
       @case ('typeahead') {
         <ng-template [ngTemplateOutlet]="label"></ng-template>
@@ -100,7 +105,7 @@
             [class.is-invalid]="typeahead.classList.contains('is-invalid')"
             class="form-control"
           />
-          <input [formControlName]="prop.name" type="hidden" />
+          <input [formControlName]="prop.name" type="hidden"/>
         </div>
       }
       @case ('date') {
@@ -122,7 +127,7 @@
       }
       @case ('dateTime') {
         <ng-template [ngTemplateOutlet]="label"></ng-template>
-        <abp-extensible-date-time-picker [prop]="prop" [meridian]="meridian$ | async" />
+        <abp-extensible-date-time-picker [prop]="prop" [meridian]="meridian$ | async"/>
       }
       @case ('textarea') {
         <ng-template [ngTemplateOutlet]="label"></ng-template>

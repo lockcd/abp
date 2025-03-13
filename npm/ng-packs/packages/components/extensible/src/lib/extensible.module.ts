@@ -20,6 +20,7 @@ import {
 import { PropDataDirective } from './directives/prop-data.directive';
 import { CreateInjectorPipe } from './pipes/create-injector.pipe';
 import { DisabledDirective } from '@abp/ng.theme.shared';
+import {ExtensibleFormMultiselectComponent} from "./components/multi-select/extensible-form-multiselect.component";
 
 const importWithExport = [
   DisabledDirective,
@@ -31,6 +32,7 @@ const importWithExport = [
   CreateInjectorPipe,
   ExtensibleFormComponent,
   ExtensibleTableComponent,
+  ExtensibleFormMultiselectComponent
 ];
 @NgModule({
   declarations: [],
