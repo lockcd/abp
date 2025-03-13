@@ -22,7 +22,7 @@ const EXTENSIBLE_FORM_MULTI_SELECT_CONTROL_VALUE_ACCESSOR = {
             class="form-check-input"
             [disabled]="disabled"
             [checked]="isChecked(option.value)"
-            (change)="onCheckboxChange(option.value, $event)"
+            (change)="onCheckboxChange(option.value, $event.target.checked)"
           />
           @if (prop().isExtra) {
             {{ '::' + option.key | abpLocalization }}
@@ -44,6 +44,9 @@ export class ExtensibleFormMultiselectComponent implements ControlValueAccessor 
   selectedValues: any[] = [];
   disabled = false;
 
+  private onChange: (value: any) => void = () => {};
+  private onTouched: () => void = () => {};
+
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
   }
@@ -52,23 +55,17 @@ export class ExtensibleFormMultiselectComponent implements ControlValueAccessor 
     return this.selectedValues.includes(value);
   }
 
-  onCheckboxChange(value: any, event: any): void {
-    const checked = event.target.checked;
-
-    if (checked) {
-      this.selectedValues.push(value);
-    } else {
-      this.selectedValues = this.selectedValues.filter(item => item !== value);
-    }
+  onCheckboxChange(value: any, checked: boolean): void {
+    this.selectedValues = checked
+      ? [...this.selectedValues, value]
+      : this.selectedValues.filter(item => item !== value);
 
     this.onChange(this.selectedValues);
     this.onTouched();
   }
 
   writeValue(value: any[]): void {
-    if (Array.isArray(value)) {
-      this.selectedValues = value;
-    }
+    this.selectedValues = Array.isArray(value) ? [...value] : [];
   }
 
   registerOnChange(fn: any): void {
@@ -78,8 +75,4 @@ export class ExtensibleFormMultiselectComponent implements ControlValueAccessor 
   registerOnTouched(fn: any): void {
     this.onTouched = fn;
   }
-
-  private onChange(fn: any): void {}
-
-  private onTouched(): any {}
 }
