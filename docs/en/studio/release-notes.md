@@ -2,6 +2,10 @@
 
 This document contains **brief release notes** for each ABP Studio release. Release notes only include **major features** and **visible enhancements**. Therefore, they don't include all the development done in the related version. 
 
+## 0.9.25 (2025-03-12)
+
+* Added ready/health check for solution runner.
+
 ## 0.9.24 (2025-03-11)
 
 * Added automatic installation of necessary dependencies.
