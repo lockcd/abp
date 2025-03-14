@@ -311,14 +311,37 @@ public class BookService
 
 MongoDB supports multi-document transactions starting from the version 4.0 and the ABP supports it. However, the [startup template](../../../solution-templates) **disables** transactions by default. If your MongoDB **server** supports transactions, you can enable the it in the *YourProjectMongoDbModule* class:
 
-```csharp
-Configure<AbpUnitOfWorkDefaultOptions>(options =>
-{
-    options.TransactionBehavior = UnitOfWorkTransactionBehavior.Auto;
-});
+Remove the following code to enable transactions:
+
+```diff
+- context.Services.AddAlwaysDisableUnitOfWorkTransaction();
+- Configure<AbpUnitOfWorkDefaultOptions>(options =>
+- {
+- 	options.TransactionBehavior = UnitOfWorkTransactionBehavior.Disabled;
+- });
 ```
 
-> Or you can delete this code since this is already the default behavior.
+#### Create Test MongoDB in Docker to support transactions
+
+You can use below `docker-compose.yml` file to create a test MongoDB **ReplicaSet** instance that supports transactions, The connection string will be `mongodb://localhost:27017/YourProjectName?replicaSet=rs0`.
+
+```yaml
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:8.0
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
+    ports:
+      - 27017:27017
+    healthcheck:
+      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'127.0.0.1:27017'}]}) }" | mongosh --port 27017 --quiet
+      interval: 5s
+      timeout: 30s
+      start_period: 0s
+      start_interval: 1s
+      retries: 30
+```
 
 ### Advanced Topics
 
