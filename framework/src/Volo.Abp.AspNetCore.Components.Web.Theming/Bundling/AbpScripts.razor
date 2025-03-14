@@ -29,7 +29,6 @@
         if (!ApplicationState.TryTakeFromJson<string>(PrerenderedKey, out _))
         {
             // We are in prerendering mode
-            ScriptFiles = [];
             if (!BundleName.IsNullOrWhiteSpace())
             {
                 ScriptFiles = (await BundleManager.GetScriptBundleFilesAsync(BundleName!)).ToList();

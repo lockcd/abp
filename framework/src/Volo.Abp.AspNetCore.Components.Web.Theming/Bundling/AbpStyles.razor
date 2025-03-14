@@ -29,7 +29,6 @@
         if (!ApplicationState.TryTakeFromJson<List<string>>(PrerenderedKey, out var scriptFiles))
         {
             // We are in prerendering mode
-            StyleFiles = [];
             if (!BundleName.IsNullOrWhiteSpace())
             {
                 StyleFiles = (await BundleManager.GetStyleBundleFilesAsync(BundleName!)).ToList();
