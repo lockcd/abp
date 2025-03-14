@@ -309,7 +309,7 @@ public class BookService
 
 ### Transactions
 
-MongoDB supports multi-document transactions starting from the version 4.0 and the ABP supports it. However, the [startup template](../../../solution-templates) **disables** transactions by default. If your MongoDB **server** supports transactions, you can enable the it in the *YourProjectMongoDbModule* class:
+MongoDB supports multi-document transactions starting from the version 4.0 and the ABP supports it. However, the [startup template](../../../solution-templates) **disables** transactions by default. If your MongoDB **server** supports transactions, you can enable them in the *YourProjectMongoDbModule* class:
 
 Remove the following code to enable transactions:
 
@@ -321,9 +321,9 @@ Remove the following code to enable transactions:
 - });
 ```
 
-#### Create Test MongoDB in Docker to support transactions
+#### Setting up a Transaction-Enabled MongoDB Replica Set in Docker
 
-You can use below `docker-compose.yml` file to create a test MongoDB **ReplicaSet** instance that supports transactions, The connection string will be `mongodb://localhost:27017/YourProjectName?replicaSet=rs0`.
+Use the following `docker-compose.yml` to create a local MongoDB Replica Set that supports transactions. The connection string will be `mongodb://localhost:27017/YourProjectName?replicaSet=rs0`.
 
 ```yaml
 version: "3.8"
