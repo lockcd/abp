@@ -11,54 +11,6 @@ You can then easily change your BLOB storage without changing your application c
 If you want to create reusable application modules, you don't need to make assumption about how the BLOBs are stored.
 ABP BLOB Storage system is also compatible to other ABP features like multi-tenancy.
 
-## Required Dependencies
-
-The Blob Storing Database module depends on the following ABP modules:
-- ABP BlobStoring module
-
-## Installation Steps
-
-1. Add the following NuGet packages to your project:
-   - `Volo.Abp.BlobStoring.Database.EntityFrameworkCore` (for EF Core)
-   - `Volo.Abp.BlobStoring.Database.MongoDB` (for MongoDB)
-
-2. Add the following module dependencies to your module class:
-
-```csharp
-[DependsOn(
-    typeof(AbpBlobStoringDatabaseEntityFrameworkCoreModule) // Or AbpBlobStoringDatabaseMongoDBModule
-)]
-public class YourModule : AbpModule
-{
-}
-```
-
-## Database Integration
-
-### EntityFramework Core Configuration
-
-For `EntityFrameworkCore`, add the following configuration to the `OnModelCreating` method of your `DbContext` class:
-
-```csharp
-using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
-
-protected override void OnModelCreating(ModelBuilder builder)
-{
-    base.OnModelCreating(builder);
-
-    builder.ConfigureBlobStoring();
-    
-    // ... other configurations
-}
-```
-
-Then create a new migration and apply it to the database:
-
-```bash
-dotnet ef migrations add Added_BlobStoring
-dotnet ef database update
-```
-
-## 6. **Documentation**
+## Documentation
 
 For detailed information and usage instructions, please visit the [BLOB Storing documentation](https://abp.io/docs/latest/framework/infrastructure/blob-storing). 

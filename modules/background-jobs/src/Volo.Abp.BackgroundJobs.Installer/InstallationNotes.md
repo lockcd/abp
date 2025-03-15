@@ -7,50 +7,6 @@ Background jobs are used to queue some tasks to be executed in the background. Y
 
 Background jobs are **persistent** that means they will be **re-tried** and **executed** later even if your application crashes.
 
-## Installation Steps
-
-1. Add the following NuGet packages to your project:
-   - `Volo.Abp.BackgroundJobs.EntityFrameworkCore` (for EF Core)
-   - `Volo.Abp.BackgroundJobs.MongoDB` (for MongoDB)
-
-2. Add the following module dependencies to your module class:
-
-```csharp
-[DependsOn(
-    typeof(AbpBackgroundJobsDomainModule),
-    typeof(AbpBackgroundJobsDomainSharedModule),
-    typeof(AbpBackgroundJobsEntityFrameworkCoreModule) // For EF Core
-    // OR typeof(AbpBackgroundJobsMongoDbModule) // For MongoDB
-)]
-public class YourModule : AbpModule
-{
-}
-```
-
-## EntityFramework Core Configuration
-
-For `EntityFrameworkCore`, further configuration is needed in the `OnModelCreating` method of your `DbContext` class:
-
-```csharp
-using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
-
-protected override void OnModelCreating(ModelBuilder builder)
-{
-    base.OnModelCreating(builder);
-
-    builder.ConfigureBackgroundJobs();
-    
-    //...
-}
-```
-
-Also, you will need to create a new migration and apply it to the database:
-
-```bash
-dotnet ef migrations add Added_BackgroundJobs
-dotnet ef database update
-```
-
 ## Documentation
 
 For detailed information and usage instructions, please visit the [Background Jobs documentation](https://abp.io/docs/latest/framework/infrastructure/background-jobs). 

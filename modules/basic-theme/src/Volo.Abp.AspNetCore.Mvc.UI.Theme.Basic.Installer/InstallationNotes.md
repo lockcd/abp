@@ -8,24 +8,6 @@ If you are looking for a professional, enterprise ready theme, you can check the
 
 See the [Theming document](https://github.com/abpframework/abp/blob/rel-9.1/docs/en/framework/ui/mvc-razor-pages/theming.md) to learn about themes.
 
-## Installation Steps
-
-The Basic Theme module is pre-installed in the ABP MVC startup templates. If you need to manually install it, follow these steps:
-
-1. Add the following NuGet package to your project:
-   - `Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic`
-
-2. Add the following module dependency to your module class:
-
-```csharp
-[DependsOn(
-    typeof(AbpAspNetCoreMvcUiThemeBasicModule)
-)]
-public class YourModule : AbpModule
-{
-}
-```
-
 ## Documentation
 
 For detailed information and usage instructions, please visit the [Basic Theme documentation](https://abp.io/docs/latest/framework/ui/mvc-razor-pages/basic-theme).

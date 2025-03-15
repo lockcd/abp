@@ -11,60 +11,20 @@ Key features of the Docs module:
 - Multi-language support
 - Admin interface for documentation management
 
-## Installation Steps
 
-1. Add the following NuGet packages to your project:
-   - `Volo.Docs.Application`
-   - `Volo.Docs.HttpApi`
-   - `Volo.Docs.Web` (for MVC UI)
-   - `Volo.Docs.EntityFrameworkCore` (for EF Core)
-   - `Volo.Docs.MongoDB` (for MongoDB)
+## Required Configurations
 
-   For the admin UI:
-   - `Volo.Docs.Admin.Application`
-   - `Volo.Docs.Admin.HttpApi`
-   - `Volo.Docs.Admin.Web`
+The Docs module requires **permission** settings to be configured after installation and database update.
 
-2. Add the following module dependencies to your module class:
+### Update Database
 
-```csharp
-[DependsOn(
-    typeof(DocsApplicationModule),
-    typeof(DocsHttpApiModule),
-    typeof(DocsWebModule), // For MVC UI
-    typeof(DocsEntityFrameworkCoreModule), // Or DocsMongoDbModule
-    typeof(DocsAdminApplicationModule),
-    typeof(DocsAdminHttpApiModule),
-    typeof(DocsAdminWebModule)
-)]
-public class YourModule : AbpModule
-{
-}
-```
+The Docs module requires database migrations to be applied. Following installation, you must update the database to create the necessary tables.
 
-## EntityFramework Core Configuration
+### Permissions
 
-For `EntityFrameworkCore`, add the following configuration to the `OnModelCreating` method of your `DbContext` class:
+Enable the following permissions for the roles that require access to the Docs module:
 
-```csharp
-using Volo.Docs.EntityFrameworkCore;
-
-protected override void OnModelCreating(ModelBuilder builder)
-{
-    base.OnModelCreating(builder);
-
-    builder.ConfigureDocs();
-    
-    // ... other configurations
-}
-```
-
-Then create a new migration and apply it to the database:
-
-```bash
-dotnet ef migrations add Added_Docs
-dotnet ef database update
-```
+![Docs Permissions](docs-permissions.png)
 
 ## Documentation
 

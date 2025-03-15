@@ -4,90 +4,44 @@ The ABP CMS Kit module provides a set of reusable Content Management System (CMS
 
 This module is part of the ABP Framework and provides features like comments, ratings, tags, blogs, and more to help you build content-rich applications.
 
-## Required Dependencies
+## Required Configurations
 
-The CMS Kit module depends on the following modules:
-- Blob Storing module (for media management)
+The CmsKit module requires **permission** settings to be configured after installation. Ensure that the necessary roles have the appropriate access rights for managing blogs, posts, comments and others.
 
-## Installation Steps
+### Enable CmsKit
 
-You can manually add the required NuGet packages:
-
-1. Add the following NuGet packages to your project:
-   - `Volo.CmsKit.Public.Application` (for public features)
-   - `Volo.CmsKit.Public.HttpApi` (for public API)
-   - `Volo.CmsKit.Public.Web` (for public UI)
-   - `Volo.CmsKit.EntityFrameworkCore` (for EF Core)
-   - `Volo.CmsKit.MongoDB` (for MongoDB)
-   // admin
-   - `Volo.CmsKit.Admin.Application` (for admin features)
-   - `Volo.CmsKit.Admin.HttpApi` (for admin API)
-   - `Volo.CmsKit.Admin.Web` (for admin UI)
-
-
-
-2. Add the following module dependencies to your module class:
+To enable the CmsKit module, add the following line to the `GlobalFeatureConfigurator` class of your module:
 
 ```csharp
-[DependsOn(
-    typeof(CmsKitAdminApplicationModule), // For admin features
-    typeof(CmsKitPublicApplicationModule), // For public features
-    typeof(CmsKitAdminHttpApiModule), // For admin API
-    typeof(CmsKitPublicHttpApiModule), // For public API
-    typeof(CmsKitAdminWebModule), // For admin UI
-    typeof(CmsKitPublicWebModule), // For public UI
-    typeof(CmsKitEntityFrameworkCoreModule) // For EF Core
-    // OR typeof(CmsKitMongoDbModule) // For MongoDB
-)]
-public class YourModule : AbpModule
+public static void Configure()
 {
+    OneTimeRunner.Run(() =>
+    {
+        /* You can configure (enable/disable) global features of the used modules here.
+        * Please refer to the documentation to learn more about the Global Features System:
+        * https://docs.abp.io/en/abp/latest/Global-Features
+        */
+        
+        GlobalFeatureManager.Instance.Modules.CmsKit(cmsKit =>
+        {
+            cmsKit.EnableAll();
+            // or
+            // cmsKit.Tags.Enable();
+            // cmsKit.Comments.Enable();
+        });
+    });
 }
 ```
 
-### EntityFramework Core Configuration
+### Database Migrations
 
-For `EntityFrameworkCore`, further configuration is needed in the `OnModelCreating` method of your `DbContext` class:
+The CmsKit module requires database migrations to be applied. After enable **CmsKit**, Add a new migration and update the database to create the necessary tables.
 
-```csharp
-using Volo.CmsKit.EntityFrameworkCore;
+### Permissions
 
-protected override void OnModelCreating(ModelBuilder builder)
-{
-    base.OnModelCreating(builder);
+Enable the following permissions for the roles that require access to the CmsKit module:
 
-    builder.ConfigureCmsKit();
-    
-    //...
-}
-```
-
-Also, you will need to create a new migration and apply it to the database:
-
-```bash
-dotnet ef migrations add Added_CmsKit
-dotnet ef database update
-```
-
-## Feature Management
-
-By default, all CMS Kit features are disabled. You need to enable the features you want to use in your application. Open the `GlobalFeatureConfigurator` class in the `Domain.Shared` project and add the following code to the `Configure` method:
-
-```csharp
-GlobalFeatureManager.Instance.Modules.CmsKit(cmsKit =>
-{
-    // Enable all features
-    cmsKit.EnableAll();
-    
-    // Or enable specific features
-    // cmsKit.Comments.Enable();
-    // cmsKit.Tags.Enable();
-    // cmsKit.Ratings.Enable();
-    // cmsKit.Reactions.Enable();
-    // cmsKit.Blogs.Enable();
-    // cmsKit.Pages.Enable();
-    // cmsKit.MediaDescriptors.Enable();
-});
-```
+![CmsKit Permissions](cmskit-permissions.png)
 
 ## Documentation
 
