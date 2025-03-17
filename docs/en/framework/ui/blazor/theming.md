@@ -106,22 +106,35 @@ using Volo.Abp.Bundling;
 
 namespace MyTheme
 {
-    public class MyThemeBundleContributor : IBundleContributor
+    public class MyThemeBundleContributor : BundleContributor
     {
-        public void AddScripts(BundleContext context)
+        public override void ConfigureBundle(BundleConfigurationContext context)
         {
-
-        }
-
-        public void AddStyles(BundleContext context)
-        {
-            context.Add("_content/MyTheme/styles.css");
+            context.Files.AddIfNotContains("_content/MyTheme/styles.css");
         }
     }
 }
 ````
 
-`styles.css` file should be added into the `wwwroot` folder of the theme project for this example. When you use the `abp bundle` command, this class is automatically discovered and executed to add the style to the page.
+```cs
+[DependsOn(
+    typeof(AbpAspNetCoreComponentsWebAssemblyThemingBundlingModule)
+)]
+public class MyBlazorWebAssemblyBundlingModule : AbpModule
+{
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
+        Configure<AbpBundlingOptions>(options =>
+        {
+            // Add style bundle
+            options.StyleBundles.Get(BlazorWebAssemblyStandardBundles.Styles.Global)
+                .AddContributors(typeof(MyThemeBundleContributor));
+        });
+    }
+}
+```
+
+`styles.css` file should be added into the `wwwroot` folder of the theme project for this example. 
 
 See the [Global Styles and Scripts](global-scripts-styles.md) document for more. 
 

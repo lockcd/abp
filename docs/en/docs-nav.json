@@ -784,78 +784,6 @@
               "isIndex": true
             },
             {
-              "text": "Module Development Best Practices",
-              "items": [
-                {
-                  "text": "Overview",
-                  "path": "framework/architecture/best-practices",
-                  "isIndex": true
-                },
-                {
-                  "text": "Module Architecture",
-                  "path": "framework/architecture/best-practices/module-architecture.md"
-                },
-                {
-                  "text": "Domain Layer",
-                  "items": [
-                    {
-                      "text": "Overview",
-                      "path": "framework/architecture/best-practices/domain-layer-overview.md",
-                      "isIndex": true
-                    },
-                    {
-                      "text": "Entities",
-                      "path": "framework/architecture/best-practices/entities.md"
-                    },
-                    {
-                      "text": "Repositories",
-                      "path": "framework/architecture/best-practices/repositories.md"
-                    },
-                    {
-                      "text": "Domain Services",
-                      "path": "framework/architecture/best-practices/domain-services.md"
-                    }
-                  ]
-                },
-                {
-                  "text": "Application Layer",
-                  "items": [
-                    {
-                      "text": "Overview",
-                      "path": "framework/architecture/best-practices/application-layer-overview.md",
-                      "isIndex": true
-                    },
-                    {
-                      "text": "Application Services",
-                      "path": "framework/architecture/best-practices/application-services.md"
-                    },
-                    {
-                      "text": "Data Transfer Objects",
-                      "path": "framework/architecture/best-practices/data-transfer-objects.md"
-                    }
-                  ]
-                },
-                {
-                  "text": "Data Access",
-                  "items": [
-                    {
-                      "text": "Overview",
-                      "path": "framework/architecture/best-practices/data-access-overview.md",
-                      "isIndex": true
-                    },
-                    {
-                      "text": "Entity Framework Core Integration",
-                      "path": "framework/architecture/best-practices/entity-framework-core-integration.md"
-                    },
-                    {
-                      "text": "MongoDB Integration",
-                      "path": "framework/architecture/best-practices/mongodb-integration.md"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
               "text": "Modularity",
               "items": [
                 {
@@ -970,7 +898,8 @@
               "items": [
                 {
                   "text": "Overview",
-                  "path": "framework/architecture/best-practices"
+                  "path": "framework/architecture/best-practices",
+                  "isIndex": true
                 },
                 {
                   "text": "Module Architecture",
@@ -981,7 +910,8 @@
                   "items": [
                     {
                       "text": "Overview",
-                      "path": "framework/architecture/best-practices/domain-layer-overview.md"
+                      "path": "framework/architecture/best-practices/domain-layer-overview.md",
+                      "isIndex": true
                     },
                     {
                       "text": "Entities",
@@ -1002,7 +932,8 @@
                   "items": [
                     {
                       "text": "Overview",
-                      "path": "framework/architecture/best-practices/application-layer-overview.md"
+                      "path": "framework/architecture/best-practices/application-layer-overview.md",
+                      "isIndex": true
                     },
                     {
                       "text": "Application Services",
@@ -1019,7 +950,8 @@
                   "items": [
                     {
                       "text": "Overview",
-                      "path": "framework/architecture/best-practices/data-access-overview.md"
+                      "path": "framework/architecture/best-practices/data-access-overview.md",
+                      "isIndex": true
                     },
                     {
                       "text": "Entity Framework Core Integration",
@@ -1032,7 +964,7 @@
                   ]
                 }
               ]
-            }
+            },
           ]
         },
         {
