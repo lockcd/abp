@@ -442,6 +442,7 @@ $projects = (
     "source-code/Volo.Abp.Users.SourceCode",
 
     # modules/virtual-file-explorer
+    "modules/virtual-file-explorer/src/Volo.Abp.VirtualFileExplorer.Contracts",
     "modules/virtual-file-explorer/src/Volo.Abp.VirtualFileExplorer.Web",
     "modules/virtual-file-explorer/src/Volo.Abp.VirtualFileExplorer.Installer",
     "source-code/Volo.Abp.VirtualFileExplorer.SourceCode",
