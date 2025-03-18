@@ -131,7 +131,7 @@ Vue.component('counter-component', {
 });
 ```
 
-> _Do not replicate `new Vue({})` code block in the file. It's already in the `Index.cshtml.js` file. Keep it as it is._
+> _Do not replicate `new Vue({})` code block in the file. It's already in the `Index.cshtml.js` file. Keep it at the bottom of the file as it is._
 
 Run the application and you should see the following output:
 
