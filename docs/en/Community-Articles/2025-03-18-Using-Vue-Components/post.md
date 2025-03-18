@@ -2,13 +2,13 @@
 
 In modern web development, integrating dynamic front-end frameworks with server-side technologies has become increasingly essential for creating responsive and interactive applications. This article explores how to effectively use Vue components within Razor Pages in an ABP Framework application. We will delve into the process of consuming endpoints through ABP Client Proxies, leveraging ABP's powerful localization features to enhance user experience, and implementing ABP permissions to ensure secure access control. By the end of this guide, you will have a comprehensive understanding of how to seamlessly blend Vue.js with Razor Pages, empowering you to build robust and user-friendly applications.
 
-This arcitle won't use any SPA approach. The goal of this article to use Razor Pages with simple Vue components to eliminate jQuery while developing MVC application.
+This article won't use any SPA approach. The goal of this article is to use Razor Pages with simple Vue components to eliminate jQuery while developing MVC application.
 
 ## Creating the Solution
 
-Let's create a simple TODO list application to demonstrate how to use Vue components in Razor Pages. I'll build a really simple backend without connection to a database for demonstration purposes. We will focus to the frontend part.
+Let's create a simple TODO list application to demonstrate how to use Vue components in Razor Pages. I'll build a really simple backend without a connection to a database for demonstration purposes. We will focus on the frontend part.
 
-- Creating solution with ABP CLI:
+- Creating a solution with ABP CLI:
 
 ```bash
 abp new MyTodoApp -t app-nolayers -csf
@@ -16,7 +16,7 @@ abp new MyTodoApp -t app-nolayers -csf
 
 ## Configure Vue
 
-We need to add `@abp/vue` package to the project to use Vue components.
+We need to add the `@abp/vue` package to the project to use Vue components.
 
 ```bash
 npm install @abp/vue
@@ -28,7 +28,7 @@ npm install @abp/vue
 abp install-libs
 ```
 
-As a last step, we need to configure our bundle in `ConfigureBundles` method in `MyTodoAppModule.cs` file:
+As a last step, we need to configure our bundle in the `ConfigureBundles` method in the `MyTodoAppModule.cs` file:
 
 ```csharp
 private void ConfigureBundles()
@@ -53,7 +53,7 @@ private void ConfigureBundles()
 }
 ```
 
-> If your IDE doesn't recognize `VueScriptContributor`, you can add it manually:
+> If your IDE doesn't recognize the namespace of the `VueScriptContributor`, you can add it manually:
 >
 > ```csharp
 > using Volo.Abp.AspNetCore.Mvc.UI.Packages.Vue;
@@ -67,7 +67,7 @@ Let's create a simple Vue component to display the TODO list.
 
 ### Passing a simple message to the component
 
-- Remove existing html coes in `Index.cshtml` and replace with the following code:
+- Remove existing HTML codes in `Index.cshtml` and replace with the following code:
 
 ```html
 <div id="vue-app">
@@ -75,7 +75,7 @@ Let's create a simple Vue component to display the TODO list.
 </div>
 ```
 
-- Navigate to `Index.cshtml.js` file and add the following code:
+- Navigate to the `Index.cshtml.js` file and add the following code:
 ```js
 Vue.component('todo-component', {
     template: '<div>Hello, {{ message }}</div>',
@@ -216,7 +216,7 @@ public override void Define(IPermissionDefinitionContext context)
 
 ### Building the Vue Component: Using ABP Localization, Authorization and Client Proxy
 
-Since the component it directly loaded into the page, we can access the `abp` object in the page. 
+Since the component it directly loaded into the page, we can access the `abp` object on the page. 
 
 So we can use:
 
