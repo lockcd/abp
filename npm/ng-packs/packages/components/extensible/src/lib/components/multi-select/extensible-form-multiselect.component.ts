@@ -2,8 +2,7 @@ import { Component, ChangeDetectionStrategy, forwardRef, input } from '@angular/
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ABP, LocalizationModule } from '@abp/ng.core';
-import { BaseThemeSharedModule } from '@abp/ng.theme.shared';
-import { FormProp } from '@abp/ng.components/extensible';
+import { FormProp } from '../../models/form-props';
 
 const EXTENSIBLE_FORM_MULTI_SELECT_CONTROL_VALUE_ACCESSOR = {
   provide: NG_VALUE_ACCESSOR,
@@ -34,7 +33,7 @@ const EXTENSIBLE_FORM_MULTI_SELECT_CONTROL_VALUE_ACCESSOR = {
     </div>
   `,
   providers: [EXTENSIBLE_FORM_MULTI_SELECT_CONTROL_VALUE_ACCESSOR],
-  imports: [BaseThemeSharedModule, LocalizationModule, CommonModule, ReactiveFormsModule],
+  imports: [LocalizationModule, CommonModule, ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExtensibleFormMultiselectComponent implements ControlValueAccessor {
