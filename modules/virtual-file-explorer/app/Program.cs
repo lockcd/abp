@@ -1,7 +1,7 @@
 using Serilog;
 using Serilog.Events;
 
-namespace DempApp;
+namespace DemoApp;
 
 public class Program
 {
@@ -21,10 +21,10 @@ public class Program
                 .UseAutofac()
                 .UseSerilog();
 
-            await builder.AddApplicationAsync<DempAppModule>();
+            await builder.AddApplicationAsync<DemoAppModule>();
             var app = builder.Build();
             await app.InitializeApplicationAsync();
-            Log.Information("Starting DempApp.");
+            Log.Information("Starting DemoApp.");
             await app.RunAsync();
             return 0;
         }
@@ -35,7 +35,7 @@ public class Program
                 throw;
             }
 
-            Log.Fatal(ex, "DempApp terminated unexpectedly!");
+            Log.Fatal(ex, "DemoApp terminated unexpectedly!");
             return 1;
         }
         finally

@@ -1,6 +1,6 @@
 ﻿using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
-namespace DempApp.Pages;
+namespace DemoApp.Pages;
 
 public class IndexModel : AbpPageModel
 {
