@@ -290,6 +290,8 @@ Vue.component('todo-component', {
             myTodoApp.todo.addTodoItem(this.newTodo);
             this.newTodo = { description: '', isDone: false };
             this.todos.push(this.newTodo);
+
+            // Preferrable, you can load entire list of todos again.
             // this.loadTodos();
         },
         async loadTodos() {
