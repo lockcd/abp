@@ -1,4 +1,4 @@
-# Using Vue components in your Razor Pages ABP Application
+# Using Vue components in a Razor Pages ABP Application
 
 In modern web development, integrating dynamic front-end frameworks with server-side technologies has become increasingly essential for creating responsive and interactive applications. This article explores how to effectively use Vue components within Razor Pages in an ABP Framework application. We will delve into the process of consuming endpoints through ABP Client Proxies, leveraging ABP's powerful localization features to enhance user experience, and implementing ABP permissions to ensure secure access control. By the end of this guide, you will have a comprehensive understanding of how to seamlessly blend Vue.js with Razor Pages, empowering you to build robust and user-friendly applications.
 
