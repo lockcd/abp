@@ -164,11 +164,6 @@ public class TodoAppService : MyTodoAppAppService, ITodoAppService
         await Task.Delay(1500);
         return Items;
     }
-
-    public async Task<string> GetMessageAsync()
-    {
-        return "Hello World";
-    }
 }
 ```
 
@@ -189,7 +184,6 @@ public interface ITodoAppService
 {
     Task<List<TodoItem>> GetAllAsync();
     Task<TodoItem> AddTodoItemAsync(TodoItem input);
-    Task<string> GetMessageAsync();
 }
 ```
 
