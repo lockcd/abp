@@ -19,46 +19,6 @@ The following NuGet packages are required for the Feature Management module:
 - `Volo.Abp.FeatureManagement.Blazor.Server` (for Blazor Server UI)
 - `Volo.Abp.FeatureManagement.Blazor.WebAssembly` (for Blazor WebAssembly UI)
 
-## Module Dependencies
-
-```csharp
-[DependsOn(
-    typeof(AbpFeatureManagementApplicationModule),
-    typeof(AbpFeatureManagementHttpApiModule),
-    typeof(AbpFeatureManagementEntityFrameworkCoreModule), // Or AbpFeatureManagementMongoDbModule
-    typeof(AbpFeatureManagementWebModule), // For MVC UI
-    // typeof(AbpFeatureManagementBlazorWebAssemblyModule), // For Blazor WebAssembly UI
-    // typeof(AbpFeatureManagementBlazorServerModule) // For Blazor Server UI
-)]
-public class YourModule : AbpModule
-{
-}
-```
-
-## EntityFramework Core Configuration
-
-For `EntityFrameworkCore`, add the following configuration to the `OnModelCreating` method of your `DbContext` class:
-
-```csharp
-using Volo.Abp.FeatureManagement.EntityFrameworkCore;
-
-protected override void OnModelCreating(ModelBuilder builder)
-{
-    base.OnModelCreating(builder);
-
-    builder.ConfigureFeatureManagement();
-    
-    // ... other configurations
-}
-```
-
-Then create a new migration and apply it to the database:
-
-```bash
-dotnet ef migrations add Added_FeatureManagement
-dotnet ef database update
-```
-
 ## Documentation
 
 For detailed information and usage instructions, please visit the [Feature Management Module documentation](https://abp.io/docs/latest/Modules/Feature-Management). 
