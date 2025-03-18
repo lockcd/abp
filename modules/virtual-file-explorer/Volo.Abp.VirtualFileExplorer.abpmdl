@@ -7,10 +7,10 @@
   },
   "packages": {
     "Volo.Abp.VirtualFileExplorer.DemoApp": {
-      "path": "app/DempApp.abppkg",
+      "path": "app/DemoApp.abppkg",
       "folder": "app"
     },
-    "Volo.Abp.VirtualFileExplorer.Web": {
+    "Volo.Abp.VirtualFileExplorer.Contracts": {
       "path": "src/Volo.Abp.VirtualFileExplorer.Contracts/Volo.Abp.VirtualFileExplorer.Contracts.abppkg",
       "folder": "src"
     },

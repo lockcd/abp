@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Volo.Abp.VirtualFileExplore
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Volo.Abp.VirtualFileExplorer.Contracts", "src\Volo.Abp.VirtualFileExplorer.Contracts\Volo.Abp.VirtualFileExplorer.Contracts.csproj", "{21FC5247-29FF-4D02-BB6A-8A739AC5640D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DempApp", "app\DempApp.csproj", "{C447E4F2-7FCA-49B6-8249-7E04C9E26BAD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoApp", "app\DemoApp.csproj", "{C447E4F2-7FCA-49B6-8249-7E04C9E26BAD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
