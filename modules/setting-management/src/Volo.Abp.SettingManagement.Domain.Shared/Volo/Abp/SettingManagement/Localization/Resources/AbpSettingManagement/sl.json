@@ -14,7 +14,7 @@
     "Body": "Telo",
     "TestEmailSubject": "Preskusno e-poštno sporočilo {0}",
     "TestEmailBody": "Tukaj preizkusite telo e-poštnega sporočila",
-    "SuccessfullySent": "Uspešno poslano",
+    "SentSuccessfully": "Poslano uspešno",
     "MailSendingFailed": "Pošiljanje e-pošte ni uspelo, preverite konfiguracijo e-pošte in poskusite znova.",
     "Send": "Pošlji",
     "Menu:Emailing": "Pošiljanje po e-pošti",
