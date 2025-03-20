@@ -1,68 +1,43 @@
-using System;
-using System.IO;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Volo.Abp.AspNetCore.Bundling;
-using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap;
-using Volo.Abp.AspNetCore.VirtualFileSystem;
+using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
 using Volo.Abp.Bundling.Styles;
-using Volo.Abp.AspNetCore.Mvc.Libs;
-using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap;
-using Volo.Abp.Data;
-using Volo.Abp.Minify;
 using Volo.Abp.Modularity;
+using Volo.Abp.Threading;
 using Volo.Abp.VirtualFileSystem;
 
-namespace Volo.Abp.AspNetCore.Mvc.UI.Bundling;
+namespace Volo.Abp.AspNetCore.Components.MauiBlazor.Bundling;
 
 [DependsOn(
-    typeof(AbpAspNetCoreMvcUiBootstrapModule),
+    typeof(AbpAspNetCoreComponentsMauiBlazorModule),
     typeof(AbpAspNetCoreBundlingModule)
-    )]
-public class AbpAspNetCoreMvcUiBundlingModule : AbpModule
+)]
+public class AbpAspNetCoreComponentsMauiBlazorBundlingModule : AbpModule
 {
-    public override void ConfigureServices(ServiceConfigurationContext context)
+	public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
-        if (!context.Services.IsDataMigrationEnvironment())
-        {
-            Configure<AbpMvcLibsOptions>(options =>
-            {
-                options.CheckLibs = true;
-            });
-        }
+        AsyncHelper.RunSync(() => OnApplicationInitializationAsync(context));
     }
 
     public async override Task OnApplicationInitializationAsync(ApplicationInitializationContext context)
     {
-        var environment = context.GetEnvironmentOrNull();
-        if (environment != null)
-        {
-            environment.WebRootFileProvider =
-                new CompositeFileProvider(
-                    context.GetEnvironment().WebRootFileProvider,
-                    context.ServiceProvider.GetRequiredService<IWebContentFileProvider>()
-                );
-        }
-
         await InitialGlobalAssetsAsync(context);
     }
 
     protected virtual async Task InitialGlobalAssetsAsync(ApplicationInitializationContext context)
     {
         var bundlingOptions = context.ServiceProvider.GetRequiredService<IOptions<AbpBundlingOptions>>().Value;
-        var logger = context.ServiceProvider.GetRequiredService<ILogger<AbpAspNetCoreMvcUiBundlingModule>>();
+        var logger = context.ServiceProvider.GetRequiredService<ILogger<AbpAspNetCoreComponentsMauiBlazorBundlingModule>>();
         if (!bundlingOptions.GlobalAssets.Enabled)
         {
             return;
         }
 
         var bundleManager = context.ServiceProvider.GetRequiredService<BundleManager>();
-        var webHostEnvironment = context.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+        var mauiBlazorContentFileProvider = context.ServiceProvider.GetRequiredService<IMauiBlazorContentFileProvider>();
         var dynamicFileProvider = context.ServiceProvider.GetRequiredService<IDynamicFileProvider>();
         if (!bundlingOptions.GlobalAssets.GlobalStyleBundleName.IsNullOrWhiteSpace())
         {
@@ -70,8 +45,8 @@ public class AbpAspNetCoreMvcUiBundlingModule : AbpModule
             var styles = string.Empty;
             foreach (var file in styleFiles)
             {
-                var fileInfo = webHostEnvironment.WebRootFileProvider?.GetFileInfo(file.FileName);
-                if (fileInfo == null || !fileInfo.Exists)
+                var fileInfo = mauiBlazorContentFileProvider.GetFileInfo(file.FileName);
+                if (!fileInfo.Exists)
                 {
                     logger.LogError($"Could not find the file: {file.FileName}");
                     continue;
@@ -104,8 +79,8 @@ public class AbpAspNetCoreMvcUiBundlingModule : AbpModule
             var scripts = string.Empty;
             foreach (var file in scriptFiles)
             {
-                var fileInfo = webHostEnvironment.WebRootFileProvider?.GetFileInfo(file.FileName);
-                if (fileInfo == null || !fileInfo.Exists)
+                var fileInfo = mauiBlazorContentFileProvider.GetFileInfo(file.FileName);
+                if (!fileInfo.Exists)
                 {
                     logger.LogError($"Could not find the file: {file.FileName}");
                     continue;
