@@ -138,6 +138,15 @@ You have three options:
 
 ![account-pro-secect-account](../images/account-pro-select-account.png)
 
+All available prompt parameters:
+
+| **Parameter**    | **Description**                                                                                             |
+|------------------|-------------------------------------------------------------------------------------------------------------|
+| `login`          | Forces the user to re-authenticate, even if they are already logged in.                                      |
+| `consent`        | Forces the user to re-consent to the requested permissions, even if they have consented before.             |
+| `select_account` | Forces the user to select an account, even if they are already logged in (especially relevant if multiple accounts are available). |
+| `none`           | Does not trigger any prompt. If the user is not logged in, or their consent is not granted, it will return an error or redirect accordingly. |
+
 ## Social / External Logins
 
 The account module implements a social/external login system. All you need to do is to install & configure the provider you want to use.
