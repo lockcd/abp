@@ -104,6 +104,39 @@ If you use `Social / External Logins`, It is automatically called for authentica
 
 ![account-pro-module-local-login-setting](../images/account-pro-module-local-login-setting.png)
 
+### Switching users during OAuth login
+
+If you have an OAuth/Auth Server application using the Account Pro module, you can pass the `prompt=select_account` parameter to force the user to select an account.
+
+Example to pass `prompt=select_account` parameter in OpenIdConnect:
+
+```csharp
+.AddAbpOpenIdConnect("oidc", options =>
+{
+    // ...
+    options.Events = new OpenIdConnectEvents
+    {
+        OnRedirectToIdentityProvider = redirectContext =>
+        {
+            redirectContext.ProtocolMessage.Prompt = "select_account";
+            return Task.CompletedTask;
+        }
+    };
+    // ...
+});
+```
+
+![account-pro-secect-account](../images/account-pro-select-account-parameter.png)
+
+You have three options:
+
+- Continue: The login process will continue with the current account.
+- Switch to another account: Will be redirected to the login page to log in with another account.
+- Create a new account: Will be redirected to the register page to create a new account.
+
+> The OAuth login process will continue after the user selects one of the options.
+
+![account-pro-secect-account](../images/account-pro-select-account.png)
 
 ## Social / External Logins
 
