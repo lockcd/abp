@@ -1,4 +1,4 @@
-import { ConfigStateService, LocalizationModule, TrackByService } from '@abp/ng.core';
+import { ConfigStateService, CoreModule, LocalizationModule, TrackByService } from '@abp/ng.core';
 import {
   FeatureDto,
   FeatureGroupDto,
@@ -31,6 +31,7 @@ enum ValueTypes {
   templateUrl: './feature-management.component.html',
   exportAs: 'abpFeatureManagement',
   imports: [
+    CoreModule,
     ThemeSharedModule,
     LocalizationModule,
     FormsModule,
