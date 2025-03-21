@@ -918,6 +918,8 @@ Usage:
 abp bundle [options]
 ````
 
+> This command is no longer needed if you are using Global Assets feature. See [Managing Global Scripts & Styles](../framework/ui/blazor/global-scripts-styles.md) for more information.
+
 #### Options
 
 * ```--working-directory``` or ```-wd```: Specifies the working directory. This option is useful when executing directory doesn't contain a Blazor project file.

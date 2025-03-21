@@ -202,46 +202,11 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
         }
     }
 
-    public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    public async override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
         try
         {
-            foreach (var entityEntry in AbpEfCoreNavigationHelper.GetChangedEntityEntries())
-            {
-                if (EntityChangeOptions.Value.PublishEntityUpdatedEventWhenNavigationChanges)
-                {
-                    if (entityEntry.State == EntityState.Unchanged)
-                    {
-                        ApplyAbpConceptsForModifiedEntity(entityEntry, true);
-                    }
-
-                    if (entityEntry.Entity is ISoftDelete && entityEntry.Entity.As<ISoftDelete>().IsDeleted)
-                    {
-                        EntityChangeEventHelper.PublishEntityDeletedEvent(entityEntry.Entity);
-                    }
-                    else
-                    {
-                        EntityChangeEventHelper.PublishEntityUpdatedEvent(entityEntry.Entity);
-                    }
-                }
-                else if (entityEntry.Properties.Any(x => x.IsModified && (x.Metadata.ValueGenerated == ValueGenerated.Never || x.Metadata.ValueGenerated == ValueGenerated.OnAdd)))
-                {
-                    if (entityEntry.Properties.Where(x => x.IsModified).All(x => x.Metadata.IsForeignKey()))
-                    {
-                        // Skip `PublishEntityDeletedEvent/PublishEntityUpdatedEvent` if only foreign keys have changed.
-                        break;
-                    }
-
-                    if (entityEntry.Entity is ISoftDelete && entityEntry.Entity.As<ISoftDelete>().IsDeleted)
-                    {
-                        EntityChangeEventHelper.PublishEntityDeletedEvent(entityEntry.Entity);
-                    }
-                    else
-                    {
-                        EntityChangeEventHelper.PublishEntityUpdatedEvent(entityEntry.Entity);
-                    }
-                }
-            }
+            await PublishEventsForChangedEntityOnSaveChangeAsync();
 
             var auditLog = AuditingManager?.Current?.Log;
             List<EntityChangeInfo>? entityChangeList = null;
@@ -294,6 +259,55 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
             ChangeTracker.AutoDetectChangesEnabled = true;
             AbpEfCoreNavigationHelper.RemoveChangedEntityEntries();
         }
+    }
+
+    protected virtual Task PublishEventsForChangedEntityOnSaveChangeAsync()
+    {
+        foreach (var entityEntry in AbpEfCoreNavigationHelper.GetChangedEntityEntries())
+        {
+            if (EntityChangeOptions.Value.PublishEntityUpdatedEventWhenNavigationChanges)
+            {
+                var ignoredEntity = EntityChangeOptions.Value.IgnoredNavigationEntitySelectors.Any(selector => selector.Predicate(entityEntry.Entity.GetType()));
+                var onlyForeignKeyModifiedEntity = entityEntry.State == EntityState.Modified && entityEntry.Properties.Where(x => x.IsModified).All(x => x.Metadata.IsForeignKey());
+                if ((entityEntry.State == EntityState.Unchanged && ignoredEntity) || onlyForeignKeyModifiedEntity && ignoredEntity)
+                {
+                    continue;
+                }
+
+                if (entityEntry.State == EntityState.Unchanged)
+                {
+                    ApplyAbpConceptsForModifiedEntity(entityEntry, true);
+                }
+
+                if (entityEntry.Entity is ISoftDelete && entityEntry.Entity.As<ISoftDelete>().IsDeleted)
+                {
+                    EntityChangeEventHelper.PublishEntityDeletedEvent(entityEntry.Entity);
+                }
+                else
+                {
+                    EntityChangeEventHelper.PublishEntityUpdatedEvent(entityEntry.Entity);
+                }
+            }
+            else if (entityEntry.Properties.Any(x => x.IsModified && (x.Metadata.ValueGenerated == ValueGenerated.Never || x.Metadata.ValueGenerated == ValueGenerated.OnAdd)))
+            {
+                if (entityEntry.Properties.Where(x => x.IsModified).All(x => x.Metadata.IsForeignKey()))
+                {
+                    // Skip `PublishEntityDeletedEvent/PublishEntityUpdatedEvent` if only foreign keys have changed.
+                    break;
+                }
+
+                if (entityEntry.Entity is ISoftDelete && entityEntry.Entity.As<ISoftDelete>().IsDeleted)
+                {
+                    EntityChangeEventHelper.PublishEntityDeletedEvent(entityEntry.Entity);
+                }
+                else
+                {
+                    EntityChangeEventHelper.PublishEntityUpdatedEvent(entityEntry.Entity);
+                }
+            }
+        }
+
+        return Task.CompletedTask;
     }
 
     protected virtual void PublishEntityEvents(EntityEventReport changeReport)
@@ -428,7 +442,9 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
                         EntityChangeEventHelper.PublishEntityUpdatedEvent(entry.Entity);
                     }
                 }
-                else if (EntityChangeOptions.Value.PublishEntityUpdatedEventWhenNavigationChanges && AbpEfCoreNavigationHelper.IsNavigationEntryModified(entry))
+                else if (EntityChangeOptions.Value.PublishEntityUpdatedEventWhenNavigationChanges &&
+                         EntityChangeOptions.Value.IgnoredNavigationEntitySelectors.All(selector => !selector.Predicate(entry.Entity.GetType())) &&
+                         AbpEfCoreNavigationHelper.IsNavigationEntryModified(entry))
                 {
                     ApplyAbpConceptsForModifiedEntity(entry, true);
                     if (entry.Entity is ISoftDelete && entry.Entity.As<ISoftDelete>().IsDeleted)
@@ -464,7 +480,9 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
 
         if (EntityChangeOptions.Value.PublishEntityUpdatedEventWhenNavigationChanges)
         {
-            foreach (var entry in AbpEfCoreNavigationHelper.GetChangedEntityEntries().Where(x => x.State == EntityState.Unchanged))
+            foreach (var entry in AbpEfCoreNavigationHelper.GetChangedEntityEntries()
+                         .Where(x => x.State == EntityState.Unchanged)
+                         .Where(x=> EntityChangeOptions.Value.IgnoredNavigationEntitySelectors.All(selector => !selector.Predicate(x.Entity.GetType()))))
             {
                 UpdateConcurrencyStamp(entry);
             }

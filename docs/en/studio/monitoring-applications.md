@@ -59,6 +59,7 @@ In the data grid, details for each application are displayed. It's possible to s
 
 - `Name`: The name of the application.
 - `State`: The state of the application. It can take on several values such as *Scheduled*, *Starting*, *Started*, *Stopping* and *Stopped*. In the event of an application crash during its starting, the state is mark as *Scheduled*, we can cancel the starting process at that stage.
+- `Health` : The health state of the application. Clicking on the icon shows the latest health check response. Displays `N/A` if the application is not running or health check is not configured for the application.
 - `Instances`: Indicates the count of running instances for the application. This value is particularly helpful when scaling the application within a Kubernetes, providing visibility into the number of currently active instances.
 - `Uptime`: The time elapsed since the application started.
 - `Requests`: The number of HTTP requests received by the application.

@@ -14,7 +14,7 @@
     "Body": "Körper",
     "TestEmailSubject": "Test-E-Mail {0}",
     "TestEmailBody": "Testen Sie hier die E-Mail-Textnachricht",
-    "SuccessfullySent": "Erfolgreich gesendet",
+    "SentSuccessfully": "Erfolgreich gesendet",
     "MailSendingFailed": "E-Mail-Versand fehlgeschlagen. Bitte überprüfen Sie Ihre E-Mail-Konfiguration und versuchen Sie es erneut.",
     "Send": "Schicken",
     "Menu:Emailing": "E-Mail senden",
