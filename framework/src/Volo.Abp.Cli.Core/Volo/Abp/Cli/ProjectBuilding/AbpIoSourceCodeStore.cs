@@ -131,7 +131,6 @@ public class AbpIoSourceCodeStore : ISourceCodeStore, ITransientDependency
                 }
             }
 
-            Logger.LogWarning(currentCliVersion.ToString());
             if (outputWarning)
             {
                 Logger.LogWarning(userSpecifiedVersion
