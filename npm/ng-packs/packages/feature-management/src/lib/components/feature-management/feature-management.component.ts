@@ -1,4 +1,4 @@
-import { ConfigStateService, CoreModule, LocalizationModule, TrackByService } from '@abp/ng.core';
+import { ConfigStateService, LocalizationModule, TrackByService } from '@abp/ng.core';
 import {
   FeatureDto,
   FeatureGroupDto,
@@ -13,7 +13,7 @@ import {
   ToasterService,
 } from '@abp/ng.theme.shared';
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
-import { NgTemplateOutlet } from '@angular/common';
+import { CommonModule, NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { finalize } from 'rxjs/operators';
@@ -31,7 +31,7 @@ enum ValueTypes {
   templateUrl: './feature-management.component.html',
   exportAs: 'abpFeatureManagement',
   imports: [
-    CoreModule,
+    CommonModule,
     ThemeSharedModule,
     LocalizationModule,
     FormsModule,
