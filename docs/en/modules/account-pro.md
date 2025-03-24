@@ -155,7 +155,7 @@ The application startup template comes with **Twitter**, **Google** and **Micros
 
 ![account-pro-external-login-settings](../images/account-pro-external-login-settings.png)
 
-The social/External login system is compatible with the multi-tenancy. Each tenant can configure their own provider settings if your application is multi-tenant.
+The social/External login system is compatible with the multi-tenancy. Each tenant can enable or disable the external login provider and configure their own provider settings if your application is multi-tenant.
 
 ### Install a new External Login
 
