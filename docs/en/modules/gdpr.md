@@ -48,7 +48,14 @@ The "Personal Data" page is used to manage personal data requests. You can view 
 
 ![gdpr](../images/gdpr-personal-data-page.png)
 
-To see the other features of the GDPR module, visit [the module description page](https://abp.io/modules/Volo.Gdpr).
+The GDPR module is designed for distributed architectures. When a user requests their personal data, the module publishes two events:
+
+- `GdprUserDataRequestedEto`: Triggers personal data collectors to prepare user data
+- `GdprUserDataDeletionRequestedEto`: Triggers personal data collectors to delete user data
+
+You can subscribe to these events to implement custom data collection and deletion logic in your modules. See the [Distributed Events](#distributed-events) section for more details.
+
+> To see the other features of the GDPR module, visit [the module description page](https://abp.io/modules/Volo.Gdpr).
 
 ## Options
 
@@ -227,8 +234,13 @@ This [Event Transfer Object](../framework/infrastructure/event-bus/distributed#e
 
 ### GdprUserDataPreparedEto
 
-This [Event Transfer Object](../framework/infrastructure/event-bus/distributed#event-transfer-object) is used to save the collected personal data into a single JSON file by module.
+This [Event Transfer Object](../framework/infrastructure/event-bus/distributed#event-transfer-object) is used to save the collected personal data into a single JSON file per module. Typically, you don't need to implement this event handler since the module already has an implementation that returns the collected data within a zip file containing multiple JSON files, with each file containing data collected from a specific module.
 
+### GdprUserDataDeletionRequestedEto
+
+This [Event Transfer Object](../framework/infrastructure/event-bus/distributed#event-transfer-object) is published when a user requests to permanently delete their personal data and account. By default, only the `IdentityGdprEventHandler` in the [Identity Pro Module](../modules/identity-pro) subscribes to this event to anonymize the user's data and delete their account (using soft-delete unless configured otherwise).
+
+If you want to delete additional sensitive user data stored in other modules, you can subscribe to this event and implement custom deletion (or anonymization) logic in those modules.
 
 ## Cookie Consent
 
