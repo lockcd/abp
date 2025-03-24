@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
@@ -48,6 +51,24 @@ public class AuthorizeController : AbpOpenIdDictControllerBase
                 {
                     RedirectUri = Request.PathBase + Request.Path + QueryString.Create(parameters)
                 });
+        }
+
+        // If prompt=select_account was specified by the client application,
+        // We will redirect the user to the select_account page.
+        if (request.HasPromptValue(OpenIddictConstants.PromptValues.SelectAccount))
+        {
+            // To avoid endless login -> authorization redirects, the prompt=login flag
+            // is removed from the authorization request payload before redirecting the user.
+            var prompt = string.Join(" ", request.GetPromptValues().Remove(OpenIddictConstants.PromptValues.SelectAccount));
+
+            var parameters = Request.HasFormContentType ?
+                Request.Form.Where(parameter => parameter.Key != OpenIddictConstants.Parameters.Prompt).ToList() :
+                Request.Query.Where(parameter => parameter.Key != OpenIddictConstants.Parameters.Prompt).ToList();
+
+            parameters.Add(KeyValuePair.Create(OpenIddictConstants.Parameters.Prompt, new StringValues(prompt)));
+
+            var selectAccountPath = HttpContext.RequestServices.GetRequiredService<IOptions<AbpOpenIddictAspNetCoreOptions>>().Value.SelectAccountPage;
+            return Redirect(Url.Content($"{selectAccountPath}?RedirectUri={UrlEncoder.Default.Encode(Request.PathBase + Request.Path + QueryString.Create(parameters))}"));
         }
 
         // Retrieve the user principal stored in the authentication cookie.

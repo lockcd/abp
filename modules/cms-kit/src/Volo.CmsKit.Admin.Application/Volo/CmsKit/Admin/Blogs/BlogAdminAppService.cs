@@ -27,8 +27,8 @@ public class BlogAdminAppService : CmsKitAdminAppServiceBase, IBlogAdminAppServi
 
     public BlogAdminAppService(
         IBlogRepository blogRepository,
-        BlogManager blogManager, 
-        IBlogPostRepository blogPostRepository, 
+        BlogManager blogManager,
+        IBlogPostRepository blogPostRepository,
         BlogFeatureManager blogFeatureManager = null)
     {
         BlogRepository = blogRepository;
@@ -56,7 +56,7 @@ public class BlogAdminAppService : CmsKitAdminAppServiceBase, IBlogAdminAppServi
             input.Sorting,
             input.MaxResultCount,
             input.SkipCount);
-        
+
         var blogDtos = new PagedResultDto<BlogDto>(totalCount, ObjectMapper.Map<List<Blog>, List<BlogDto>>(blogs.Select(x => x.Blog).ToList()));
 
         foreach (var blogDto in blogDtos.Items)
@@ -66,11 +66,11 @@ public class BlogAdminAppService : CmsKitAdminAppServiceBase, IBlogAdminAppServi
 
         return blogDtos;
     }
-    
+
     public virtual async Task<ListResultDto<BlogDto>> GetAllListAsync()
     {
         var blogs = await BlogRepository.GetListWithBlogPostCountAsync(maxResultCount: int.MaxValue);
-        
+
         var blogDtos = new ListResultDto<BlogDto>(ObjectMapper.Map<List<Blog>, List<BlogDto>>(blogs.Select(x => x.Blog).ToList()));
 
         foreach (var blogDto in blogDtos.Items)
@@ -86,7 +86,7 @@ public class BlogAdminAppService : CmsKitAdminAppServiceBase, IBlogAdminAppServi
     {
         var blog = await BlogManager.CreateAsync(input.Name, input.Slug);
         input.MapExtraPropertiesTo(blog);
-        
+
         await BlogRepository.InsertAsync(blog, autoSave: true);
 
         await BlogFeatureManager.SetDefaultsAsync(blog.Id);
@@ -107,7 +107,7 @@ public class BlogAdminAppService : CmsKitAdminAppServiceBase, IBlogAdminAppServi
 
         return ObjectMapper.Map<Blog, BlogDto>(blog);
     }
-    
+
     [Authorize(CmsKitAdminPermissions.Blogs.Delete)]
     public virtual async Task MoveAllBlogPostsAsync(Guid blogId, Guid? assignToBlogId)
     {
@@ -116,9 +116,9 @@ public class BlogAdminAppService : CmsKitAdminAppServiceBase, IBlogAdminAppServi
     }
 
     [Authorize(CmsKitAdminPermissions.Blogs.Delete)]
-    public virtual Task DeleteAsync(Guid id)
+    public virtual async Task DeleteAsync(Guid id)
     {
-        
-        return BlogRepository.DeleteAsync(id);
+        await BlogPostRepository.DeleteByBlogIdAsync(id);
+        await BlogRepository.DeleteAsync(id);
     }
 }

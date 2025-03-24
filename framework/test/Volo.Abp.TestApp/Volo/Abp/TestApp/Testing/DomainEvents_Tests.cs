@@ -259,16 +259,6 @@ public abstract class AbpEntityChangeOptions_DomainEvents_Tests<TStartupModule> 
         LocalEventBus = GetRequiredService<ILocalEventBus>();
     }
 
-    protected override void AfterAddApplication(IServiceCollection services)
-    {
-        services.Configure<AbpEntityChangeOptions>(options =>
-        {
-            options.PublishEntityUpdatedEventWhenNavigationChanges = false;
-        });
-
-        base.AfterAddApplication(services);
-    }
-
     [Fact]
     public async Task Should_Not_Trigger_Domain_Events_For_Aggregate_Root_When_Navigation_Changes_Tests()
     {
