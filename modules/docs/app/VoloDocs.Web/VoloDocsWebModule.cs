@@ -36,6 +36,7 @@ using Volo.Abp.PermissionManagement.HttpApi;
 using Volo.Abp.Validation.Localization;
 using Volo.Docs.Documents.FullSearch.Elastic;
 using Volo.Abp.Caching.StackExchangeRedis;
+using Volo.Docs.Common.Documents;
 
 namespace VoloDocs.Web
 {
@@ -169,6 +170,11 @@ namespace VoloDocs.Web
                 options.EnableGoogleTranslate = true;
                 options.EnableGoogleProgrammableSearchEngine = true;
                 options.GoogleSearchEngineId = "77c7266532da1427f";
+            });
+            
+            Configure<DocsDocumentPdfGeneratorOptions>(options =>
+            {
+                options.BaseUrl = configuration["App:selfUrl"];
             });
         }
 

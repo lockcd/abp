@@ -1,4 +1,4 @@
-﻿namespace Volo.Docs.HtmlConverting
+﻿namespace Volo.Docs.Documents.Rendering
 {
     public class DocumentPartialTemplateContent
     {

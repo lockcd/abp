@@ -19,6 +19,7 @@ using Volo.Abp.Data;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.EventBus.Local;
 using Volo.Docs.Documents;
+using Volo.Docs.Documents.Rendering;
 using Volo.Docs.HtmlConverting;
 using Volo.Docs.Models;
 using Volo.Docs.Projects;
@@ -96,7 +97,7 @@ namespace Volo.Docs.Pages.Documents.Project
         private readonly IDocumentAppService _documentAppService;
         private readonly IDocumentToHtmlConverterFactory _documentToHtmlConverterFactory;
         private readonly IProjectAppService _projectAppService;
-        private readonly IDocumentSectionRenderer _documentSectionRenderer;
+        private readonly IWebDocumentSectionRenderer _webDocumentSectionRenderer;
         private readonly DocsUiOptions _uiOptions;
 
         protected IDocsLinkGenerator DocsLinkGenerator => LazyServiceProvider.LazyGetRequiredService<IDocsLinkGenerator>();
@@ -108,17 +109,16 @@ namespace Volo.Docs.Pages.Documents.Project
             IDocumentToHtmlConverterFactory documentToHtmlConverterFactory,
             IProjectAppService projectAppService,
             IOptions<DocsUiOptions> options,
-            IDocumentSectionRenderer documentSectionRenderer)
+            IWebDocumentSectionRenderer webDocumentSectionRenderer)
         {
             ObjectMapperContext = typeof(DocsWebModule);
 
             _documentAppService = documentAppService;
             _documentToHtmlConverterFactory = documentToHtmlConverterFactory;
             _projectAppService = projectAppService;
-            _documentSectionRenderer = documentSectionRenderer;
+            _webDocumentSectionRenderer = webDocumentSectionRenderer;
             _uiOptions = options.Value;
-
-
+            
             LocalizationResourceType = typeof(DocsResource);
         }
 
@@ -561,11 +561,11 @@ namespace Volo.Docs.Pages.Documents.Project
 
                 var partialTemplates = await GetDocumentPartialTemplatesAsync();
 
-                DocumentNavigationsDto = await _documentSectionRenderer.GetDocumentNavigationsAsync(Document.Content);
+                DocumentNavigationsDto = await _webDocumentSectionRenderer.GetDocumentNavigationsAsync(Document.Content);
 
                 try
                 {
-                    Document.Content = await _documentSectionRenderer.RenderAsync(Document.Content, UserPreferences, partialTemplates);
+                    Document.Content = await _webDocumentSectionRenderer.RenderAsync(Document.Content, UserPreferences, partialTemplates);
                 }
                 catch (Exception e)
                 {
@@ -619,7 +619,7 @@ namespace Volo.Docs.Pages.Documents.Project
 
         private async Task<List<DocumentPartialTemplateContent>> GetDocumentPartialTemplatesAsync()
         {
-            var partialTemplatesInDocument = await _documentSectionRenderer.GetPartialTemplatesInDocumentAsync(Document.Content);
+            var partialTemplatesInDocument = await _webDocumentSectionRenderer.GetPartialTemplatesInDocumentAsync(Document.Content);
 
             if (!partialTemplatesInDocument?.Any(t => t.Parameters != null) ?? true)
             {
@@ -772,7 +772,9 @@ namespace Volo.Docs.Pages.Documents.Project
                 return;
             }
 
-            var availableParameters = await _documentSectionRenderer.GetAvailableParametersAsync(Document.Content);
+            var availableParameters = await _webDocumentSectionRenderer.GetAvailableParametersAsync(Document.Content);
+            var parameterCombinations = new List<Dictionary<string, string>>();
+            GenerateCombinations(0, availableParameters.Keys.ToList(),availableParameters,new Dictionary<string, string>(), parameterCombinations);
 
             DocumentPreferences = new DocumentParametersDto
             {
@@ -813,10 +815,31 @@ namespace Volo.Docs.Pages.Documents.Project
         {
             if (!DocumentPreferences?.Parameters?.Any() ?? true)
             {
-                return;
+                return; 
             }
 
             AlternativeOptionLinkQueries = CollectAlternativeOptionLinksRecursively();
+        }
+        
+        void GenerateCombinations(
+            int keyIndex, 
+            List<string> parameterKeys , 
+            Dictionary<string,List<string>> parameters,
+            Dictionary<string, string> currentCombination, 
+            List<Dictionary<string, string>> parameterCombinations )
+        {
+            if (keyIndex == parameterKeys.Count)
+            {
+                parameterCombinations.Add(new Dictionary<string, string>(currentCombination));
+                return;
+            }
+
+            var currentKey = parameterKeys[keyIndex];
+            foreach (var value in parameters[currentKey])
+            {
+                currentCombination[currentKey] = value;
+                GenerateCombinations(keyIndex + 1,parameterKeys, parameters, currentCombination,parameterCombinations);
+            }
         }
 
         private List<string> CollectAlternativeOptionLinksRecursively(int index = 0)

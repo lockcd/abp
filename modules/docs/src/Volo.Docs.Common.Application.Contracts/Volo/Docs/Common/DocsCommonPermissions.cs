@@ -8,7 +8,7 @@ namespace Volo.Docs.Common
 
         public static class Documents
         {
-            public const string PdfCreation = GroupName + ".PdfCreation";
+            public const string PdfGeneration = GroupName + ".PdfGeneration";
         }
 
         public static string[] GetAll()

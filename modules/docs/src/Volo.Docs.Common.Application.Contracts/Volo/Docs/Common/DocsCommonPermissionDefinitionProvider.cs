@@ -10,7 +10,7 @@ namespace Volo.Docs.Common
         {
             var group = context.AddGroup(DocsCommonPermissions.GroupName, L("Permission:DocumentManagement.Common"));
 
-            group.AddPermission(DocsCommonPermissions.Documents.PdfCreation, L("Permission:PdfCreation"));
+            group.AddPermission(DocsCommonPermissions.Documents.PdfGeneration, L("Permission:PdfGeneration"));
         }
 
         private static LocalizableString L(string name)

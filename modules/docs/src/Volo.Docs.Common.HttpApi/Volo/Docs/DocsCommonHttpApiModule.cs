@@ -1,25 +1,24 @@
-﻿using Localization.Resources.AbpUi;
+using Localization.Resources.AbpUi;
+using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
-using Volo.Docs.Localization;
-using Microsoft.Extensions.DependencyInjection;
 using Volo.Docs.Common;
+using Volo.Docs.Localization;
 
-namespace Volo.Docs.Admin
+namespace Volo.Docs
 {
     [DependsOn(
-        typeof(DocsAdminApplicationContractsModule),
-        typeof(AbpAspNetCoreMvcModule),
-        typeof(DocsCommonHttpApiModule)
-        )]
-    public class DocsAdminHttpApiModule : AbpModule
+        typeof(DocsCommonApplicationContractsModule),
+        typeof(AbpAspNetCoreMvcModule)
+    )]
+    public class DocsCommonHttpApiModule : AbpModule
     {
         public override void PreConfigureServices(ServiceConfigurationContext context)
         {
             PreConfigure<IMvcBuilder>(mvcBuilder =>
             {
-                mvcBuilder.AddApplicationPartIfNotExists(typeof(DocsAdminHttpApiModule).Assembly);
+                mvcBuilder.AddApplicationPartIfNotExists(typeof(DocsCommonHttpApiModule).Assembly);
             });
         }
 
