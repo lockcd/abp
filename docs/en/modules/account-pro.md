@@ -155,7 +155,7 @@ The application startup template comes with **Twitter**, **Google** and **Micros
 
 ![account-pro-external-login-settings](../images/account-pro-external-login-settings.png)
 
-The social/External login system is compatible with the multi-tenancy. Each tenant can configure their own provider settings if your application is multi-tenant.
+The social/External login system is compatible with the multi-tenancy. Each tenant can enable or disable the external login provider and configure their own provider settings if your application is multi-tenant.
 
 ### Install a new External Login
 
@@ -179,7 +179,7 @@ context.Services.AddAuthentication()
         facebook.Scope.Add("public_profile");
     })
     .WithDynamicOptions<FacebookOptions>(
-        FacebookDefaults.AuthenticationScheme,
+        FacebookDefaults.AuthenticationScheme, // Facebook
         options =>
         {
             options.WithProperty(x => x.AppId);
@@ -190,6 +190,18 @@ context.Services.AddAuthentication()
 
 * `AddFacebook()` is the standard method that you can set hard-coded configuration.
 * `WithDynamicOptions<FacebookOptions>` is provided by the Account Module which makes possible to configure the provided properties on the UI.
+
+#### Localize Provider Properties
+
+You can add following translation to localize the properties of the external login providers:
+
+`en.json`:
+
+````json
+"ExternalProvider:Facebook": "Facebook",
+"ExternalProvider:Facebook:AppId": "App ID",
+"ExternalProvider:Facebook:AppSecret": "App Secret",
+````
 
 ### IPostConfigureAccountExternalProviderOptions
 
