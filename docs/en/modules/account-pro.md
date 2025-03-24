@@ -179,7 +179,7 @@ context.Services.AddAuthentication()
         facebook.Scope.Add("public_profile");
     })
     .WithDynamicOptions<FacebookOptions>(
-        FacebookDefaults.AuthenticationScheme,
+        FacebookDefaults.AuthenticationScheme, // Facebook
         options =>
         {
             options.WithProperty(x => x.AppId);
@@ -190,6 +190,18 @@ context.Services.AddAuthentication()
 
 * `AddFacebook()` is the standard method that you can set hard-coded configuration.
 * `WithDynamicOptions<FacebookOptions>` is provided by the Account Module which makes possible to configure the provided properties on the UI.
+
+#### Localize Provider Properties
+
+You can add following translation to localize the properties of the external login providers:
+
+`en.json`:
+
+````json
+"ExternalProvider:Facebook": "Facebook",
+"ExternalProvider:Facebook:AppId": "App ID",
+"ExternalProvider:Facebook:AppSecret": "App Secret",
+````
 
 ### IPostConfigureAccountExternalProviderOptions
 
