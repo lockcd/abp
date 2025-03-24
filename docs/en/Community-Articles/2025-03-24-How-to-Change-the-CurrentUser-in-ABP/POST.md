@@ -2,7 +2,7 @@
 
 [ABP Framework](https://abp.io/) provides a powerful service for accessing information about the currently authenticated user in your application. Understanding how to use and modify this service (`ICurrentUser`) is essential for both basic and certain advanced scenarios. 
 
-In this article, we'll explore the `CurrentUser` service, its use cases, and how to change it when necessary.
+In this article, we'll explore the [`CurrentUser` service](https://abp.io/docs/latest/framework/infrastructure/current-user), its use cases, and how to change it when necessary.
 
 ## Understanding the ICurrentUser Service
 
