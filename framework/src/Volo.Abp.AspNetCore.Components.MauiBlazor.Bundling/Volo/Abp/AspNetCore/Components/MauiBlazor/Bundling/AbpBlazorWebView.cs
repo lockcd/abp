@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components.WebView.Maui;
 using Microsoft.Extensions.FileProviders;
-using Volo.Abp.VirtualFileSystem;
+using Microsoft.Maui;
 
 namespace Volo.Abp.AspNetCore.Components.MauiBlazor.Bundling;
 
