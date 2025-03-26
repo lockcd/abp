@@ -14,7 +14,7 @@
     "Body": "Gövde",
     "TestEmailSubject": "Test email {0}",
     "TestEmailBody": "E-posta gövdesi mesajını burada test edin",
-    "SuccessfullySent": "Başarıyla gönderildi",
+    "SentSuccessfully": "Gönderildi",
     "MailSendingFailed": "E-posta gönderme başarısız, lütfen e-posta yapılandırmanızı kontrol edin ve tekrar deneyin.",
     "Send": "Gönder",
     "Menu:Emailing": "Email",
