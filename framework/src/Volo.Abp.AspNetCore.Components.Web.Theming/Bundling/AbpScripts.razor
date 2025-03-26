@@ -1,8 +1,6 @@
-@using Volo.Abp
 @implements IDisposable
 @inject IComponentBundleManager BundleManager
-@inject PersistentComponentState PersistentComponentState
-
+@inject PersistentComponentState ApplicationState
 @if (ScriptFiles != null)
 {
     foreach (var file in ScriptFiles)
@@ -12,6 +10,9 @@
 }
 
 @code {
+
+    private const string PrerenderedKey = "abp_script_prerendered";
+
     [Parameter]
     public List<string>? WebAssemblyScriptFiles { get; set; }
 
@@ -20,37 +21,33 @@
 
     private List<string>? ScriptFiles { get; set; }
 
-    private PersistingComponentStateSubscription persistingSubscription;
+    private PersistingComponentStateSubscription _persistingSubscription;
 
     protected override async Task OnInitializedAsync()
     {
-        if (BundleName == null)
+        _persistingSubscription = ApplicationState.RegisterOnPersisting(Callback);
+        if (!ApplicationState.TryTakeFromJson<string>(PrerenderedKey, out _))
         {
-            throw new AbpException("The BundleName parameter of the AbpScripts component can not be null!");
-        }
-
-        persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistScriptFiles);
-
-        if (PersistentComponentState.TryTakeFromJson<List<string>>(nameof(ScriptFiles), out var restoredStyleFiles))
-        {
-            ScriptFiles = restoredStyleFiles;
+            // We are in prerendering mode
+            if (!BundleName.IsNullOrWhiteSpace())
+            {
+                ScriptFiles = (await BundleManager.GetScriptBundleFilesAsync(BundleName!)).ToList();
+            }
         }
         else
         {
-            ScriptFiles = (await BundleManager.GetScriptBundleFilesAsync(BundleName!)).ToList();
-        }
-
-        if (WebAssemblyScriptFiles != null)
-        {
-            ScriptFiles?.AddRange(WebAssemblyScriptFiles);
+            if (OperatingSystem.IsBrowser() && WebAssemblyScriptFiles != null)
+            {
+                ScriptFiles = WebAssemblyScriptFiles;
+            }
         }
     }
 
-    private Task PersistScriptFiles()
+    private Task Callback()
     {
-        PersistentComponentState.PersistAsJson(nameof(ScriptFiles), ScriptFiles);
+        ApplicationState.PersistAsJson(PrerenderedKey, PrerenderedKey);
         return Task.CompletedTask;
     }
 
-    public void Dispose() => persistingSubscription.Dispose();
+    public void Dispose() => _persistingSubscription.Dispose();
 }

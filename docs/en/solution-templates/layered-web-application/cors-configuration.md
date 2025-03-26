@@ -8,8 +8,8 @@
     "Path": "solution-templates/layered-web-application/blob-storing"
   },
   "Next": {
-    "Name": "Helm Charts and Kubernetes",
-    "Path": "solution-templates/layered-web-application/helm-charts-and-kubernetes"
+    "Name": "Health Check Configuration",
+    "Path": "solution-templates/layered-web-application/health-check-configuration"
   }
 }
 ```

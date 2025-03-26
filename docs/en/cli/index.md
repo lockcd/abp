@@ -910,13 +910,15 @@ abp logout
 
 ### bundle
 
-This command generates script and style references for ABP Blazor WebAssembly and MAUI Blazor project and updates the **index.html** file. It helps developers to manage dependencies required by ABP modules easily.  In order ```bundle``` command to work, its **executing directory** or passed ```--working-directory``` parameter's directory must contain a Blazor or MAUI Blazor project file(*.csproj).
+This command generates script and style references for ABP Blazor WebAssembly and MAUI Blazor project and updates the **index.html** file. It helps developers to manage dependencies required by ABP modules easily.  In order for ```bundle``` command to work, its **executing directory** or passed ```--working-directory``` parameter's directory must contain a Blazor or MAUI Blazor project file(*.csproj).
 
 Usage:
 
 ````bash
 abp bundle [options]
 ````
+
+> This command is no longer needed if you are using Global Assets feature. See [Managing Global Scripts & Styles](../framework/ui/blazor/global-scripts-styles.md) for more information.
 
 #### Options
 
