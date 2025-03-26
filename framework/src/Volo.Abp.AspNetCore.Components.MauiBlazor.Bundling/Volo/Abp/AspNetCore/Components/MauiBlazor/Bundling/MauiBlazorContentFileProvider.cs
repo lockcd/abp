@@ -1,6 +1,9 @@
+using System;
+using System.IO;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Maui.Controls.PlatformConfiguration;
+using Microsoft.Maui.Storage;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.VirtualFileSystem;
 
