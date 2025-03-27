@@ -64,8 +64,8 @@ We recommend using `DateTimeOffset` to store time because it has timezone inform
 The `IClock` service has 2 methods to convert a given `UTC` time to the user time:
 
 ```csharp
-DateTime ConvertTo(DateTime dateTime)
-DateTimeOffset ConvertTo(DateTimeOffset dateTimeOffset)
+DateTime ConvertToUserTime(utcDateTime dateTime)
+DateTimeOffset ConvertToUserTime(DateTimeOffset dateTimeOffset)
 ```
 
 > If `SupportsMultipleTimezone` is `false` or `dateTime.Kind` is not `Utc` or no timezone is set, it will return the given `DateTime` or `DateTimeOffset` without any changes.
@@ -78,7 +78,7 @@ If the user's timezone is `Europe/Istanbul`
 // 2025-03-01T05:30:00Z
 var utcTime = new DateTime(2025, 3, 1, 5, 30, 0, DateTimeKind.Utc);
 
-var userTime = Clock.ConvertTo(utcTime);
+var userTime = Clock.ConvertToUserTime(utcTime);
 
 // Europe/Istanbul has 3 hours difference with UTC. So, the result will be 3 hours later.
 userTime.Kind.ShouldBe(DateTimeKind.Unspecified);
@@ -89,7 +89,7 @@ userTime.ToString("O").ShouldBe("2025-03-01T08:30:00");
 // 2025-03-01T05:30:00Z
 var utcTime = new DateTimeOffset(new DateTime(2025, 3, 1, 5, 30, 0, DateTimeKind.Utc), TimeSpan.Zero);
 
-var userTime = Clock.ConvertTo(utcTime);
+var userTime = Clock.ConvertToUserTime(utcTime);
 
 // Europe/Istanbul has 3 hours difference with UTC. So, the result will be 3 hours later.
 userTime.Offset.ShouldBe(TimeSpan.FromHours(3));
@@ -101,7 +101,7 @@ userTime.ToString("O").ShouldBe("2025-03-01T08:30:00.0000000+03:00");
 The `IClock` service has 1 method to convert a given user time to UTC.
 
 ```csharp
-DateTime ConvertFrom(DateTime dateTime)
+DateTime ConvertToUtc(DateTime dateTime)
 ```
 
 > If `SupportsMultipleTimezone` is `false` or `dateTime.Kind` is `Utc` or no timezone is set, it will return the given `DateTime` without any changes.
@@ -114,7 +114,7 @@ If the user's timezone is `Europe/Istanbul`
 // 2025-03-01T05:30:00
 var userTime = new DateTime(2025, 3, 1, 5, 30, 0, DateTimeKind.Unspecified); //Same as Local
 
-var utcTime = Clock.ConvertFrom(userTime);
+var utcTime = Clock.ConvertToUtc(userTime);
 
 // Europe/Istanbul has 3 hours difference with UTC. So, the result will be 3 hours earlier.
 utcTime.Kind.ShouldBe(DateTimeKind.Utc);
@@ -195,9 +195,9 @@ In the API response, we usually use the ISO 8601 format time, as you can see, af
 
 In the `AuthServer` project, we handle time conversion in a simple way:
 1. First, we get the `Meeting` entities from the database using `IRepository<Meeting, Guid>`. At this point, all `DateTime` values are in UTC.
-2. Then, when displaying the times in the view, we use `Clock.ConvertTo` to show them in the user's timezone.
+2. Then, when displaying the times in the view, we use `Clock.ConvertToUserTime` to show them in the user's timezone.
 
-> Note: The `ConvertTo` method will only convert times if multi-timezone support is enabled in the application.
+> Note: The `ConvertToUserTime` method will only convert times if multi-timezone support is enabled in the application.
 
 ```csharp
 public class IndexModel : AbpPageModel
@@ -239,11 +239,11 @@ public class IndexModel : AbpPageModel
 				{
 					<tr>
 						<td>@meeting.Subject</td>
-						<td>@Clock.ConvertTo(meeting.StartTime) ➡️ @Clock.ConvertTo(meeting.EndTime)</td>
-						<td>@Clock.ConvertTo(meeting.ActualStartTime)</td>
-						<td>@(meeting.CanceledTime.HasValue ? Clock.ConvertTo(meeting.CanceledTime.Value) : "N/A")</td>
-						<td>@Clock.ConvertTo(meeting.ReminderTime).DateTime</td>
-						<td>@(meeting.FollowUpTime.HasValue ? Clock.ConvertTo(meeting.FollowUpTime.Value).DateTime : "N/A")</td>
+						<td>@Clock.ConvertToUserTime(meeting.StartTime) ➡️ @Clock.ConvertToUserTime(meeting.EndTime)</td>
+						<td>@Clock.ConvertToUserTime(meeting.ActualStartTime)</td>
+						<td>@(meeting.CanceledTime.HasValue ? Clock.ConvertToUserTime(meeting.CanceledTime.Value) : "N/A")</td>
+						<td>@Clock.ConvertToUserTime(meeting.ReminderTime).DateTime</td>
+						<td>@(meeting.FollowUpTime.HasValue ? Clock.ConvertToUserTime(meeting.FollowUpTime.Value).DateTime : "N/A")</td>
 						<td>@meeting.Description</td>
 					</tr>
 				}
@@ -441,7 +441,7 @@ In short, we use the `abp.clock.normalizeToLocaleString` method to display time,
 
 ### Handling Timezone in Blazor
 
-We cannot automatically complete some work in `Blazor UI`, we need to inject `IClock` and use the `ConvertTo` and `ConvertFrom` methods to display and create/update entities.
+We cannot automatically complete some work in `Blazor UI`, we need to inject `IClock` and use the `ConvertToUserTime` and `ConvertToUtc` methods to display and create/update entities.
 
 Below is a complete `Meeting` page, please refer to the usage of `Clock` in it.
 
@@ -501,35 +501,35 @@ Below is a complete `Meeting` page, please refer to the usage of `Clock` in it.
                                 Field="@nameof(MeetingDto.StartTime)"
                                 Caption="@(L["StartTime"] + "/" + L["EndTime"])">
                     <DisplayTemplate>
-                        @Clock.ConvertTo(context.StartTime).ToString("yyyy-MM-dd HH:mm:ss") ➡️ @Clock.ConvertTo(context.EndTime).ToString("yyyy-MM-dd HH:mm:ss")
+                        @Clock.ConvertToUserTime(context.StartTime).ToString("yyyy-MM-dd HH:mm:ss") ➡️ @Clock.ConvertToUserTime(context.EndTime).ToString("yyyy-MM-dd HH:mm:ss")
                     </DisplayTemplate>
                 </DataGridColumn>
                 <DataGridColumn TItem="MeetingDto"
                                 Field="@nameof(MeetingDto.ActualStartTime)"
                                 Caption="@L["ActualStartTime"]">
                     <DisplayTemplate>
-                        @Clock.ConvertTo(context.ActualStartTime).ToString("yyyy-MM-dd HH:mm:ss")
+                        @Clock.ConvertToUserTime(context.ActualStartTime).ToString("yyyy-MM-dd HH:mm:ss")
                     </DisplayTemplate>
                 </DataGridColumn>
                 <DataGridColumn TItem="MeetingDto"
                                 Field="@nameof(MeetingDto.CanceledTime)"
                                 Caption="@L["CanceledTime"]">
                     <DisplayTemplate>
-                        @(context.CanceledTime.HasValue ? Clock.ConvertTo(context.CanceledTime.Value).ToString("yyyy-MM-dd HH:mm:ss") : "N/A")
+                        @(context.CanceledTime.HasValue ? Clock.ConvertToUserTime(context.CanceledTime.Value).ToString("yyyy-MM-dd HH:mm:ss") : "N/A")
                     </DisplayTemplate>
                 </DataGridColumn>
                 <DataGridColumn TItem="MeetingDto"
                                 Field="@nameof(MeetingDto.ReminderTime)"
                                 Caption="@L["ReminderTime"]">
                     <DisplayTemplate>
-                        @(Clock.ConvertTo(context.ReminderTime).ToString("yyyy-MM-dd HH:mm:ss") )
+                        @(Clock.ConvertToUserTime(context.ReminderTime).ToString("yyyy-MM-dd HH:mm:ss") )
                           </DisplayTemplate>
                 </DataGridColumn>
                 <DataGridColumn TItem="MeetingDto"
                                 Field="@nameof(MeetingDto.FollowUpTime)"
                                 Caption="@L["FollowUpTime"]">
                     <DisplayTemplate>
-                        @(context.FollowUpTime.HasValue ? Clock.ConvertTo(context.FollowUpTime.Value).ToString("yyyy-MM-dd HH:mm:ss") : "N/A")
+                        @(context.FollowUpTime.HasValue ? Clock.ConvertToUserTime(context.FollowUpTime.Value).ToString("yyyy-MM-dd HH:mm:ss") : "N/A")
                     </DisplayTemplate>
                 </DataGridColumn>
                 <DataGridColumn TItem="MeetingDto"
@@ -694,15 +694,15 @@ Below is a complete `Meeting` page, please refer to the usage of `Clock` in it.
     {
         if (SelectedDates.Count == 2 && SelectedDates[0].HasValue && SelectedDates[1].HasValue)
         {
-            NewEntity.StartTime = Clock.ConvertFrom(SelectedDates[0]!.Value);
-            NewEntity.EndTime = Clock.ConvertFrom(SelectedDates[1]!.Value);
+            NewEntity.StartTime = Clock.ConvertToUtc(SelectedDates[0]!.Value);
+            NewEntity.EndTime = Clock.ConvertToUtc(SelectedDates[1]!.Value);
         }
 
-        NewEntity.ActualStartTime = Clock.ConvertFrom(NewEntity.ActualStartTime);
-        NewEntity.CanceledTime = NewEntity.CanceledTime.HasValue ? Clock.ConvertFrom(NewEntity.CanceledTime.Value) : null;
+        NewEntity.ActualStartTime = Clock.ConvertToUtc(NewEntity.ActualStartTime);
+        NewEntity.CanceledTime = NewEntity.CanceledTime.HasValue ? Clock.ConvertToUtc(NewEntity.CanceledTime.Value) : null;
 
-        NewEntity.ReminderTime = Clock.ConvertFrom(NewEntity.ReminderTime.DateTime);
-        NewEntity.FollowUpTime = NewEntity.FollowUpTime.HasValue ? Clock.ConvertFrom(NewEntity.FollowUpTime.Value.DateTime) : null;
+        NewEntity.ReminderTime = Clock.ConvertToUtc(NewEntity.ReminderTime.DateTime);
+        NewEntity.FollowUpTime = NewEntity.FollowUpTime.HasValue ? Clock.ConvertToUtc(NewEntity.FollowUpTime.Value.DateTime) : null;
 
         return Task.CompletedTask;
     }
@@ -711,23 +711,23 @@ Below is a complete `Meeting` page, please refer to the usage of `Clock` in it.
     {
         await base.OpenEditModalAsync(entity);
 
-        SelectedDates = new List<DateTime?> { Clock.ConvertTo(EditingEntity.StartTime), Clock.ConvertTo(EditingEntity.EndTime) };
-        EditingEntity.ActualStartTime = Clock.ConvertTo(EditingEntity.ActualStartTime);
-        EditingEntity.CanceledTime = EditingEntity.CanceledTime.HasValue ? Clock.ConvertTo(EditingEntity.CanceledTime.Value) : null;
-        EditingEntity.ReminderTime = Clock.ConvertTo(EditingEntity.ReminderTime);
-        EditingEntity.FollowUpTime = EditingEntity.FollowUpTime.HasValue ? Clock.ConvertTo(EditingEntity.FollowUpTime.Value) : null;
+        SelectedDates = new List<DateTime?> { Clock.ConvertToUserTime(EditingEntity.StartTime), Clock.ConvertToUserTime(EditingEntity.EndTime) };
+        EditingEntity.ActualStartTime = Clock.ConvertToUserTime(EditingEntity.ActualStartTime);
+        EditingEntity.CanceledTime = EditingEntity.CanceledTime.HasValue ? Clock.ConvertToUserTime(EditingEntity.CanceledTime.Value) : null;
+        EditingEntity.ReminderTime = Clock.ConvertToUserTime(EditingEntity.ReminderTime);
+        EditingEntity.FollowUpTime = EditingEntity.FollowUpTime.HasValue ? Clock.ConvertToUserTime(EditingEntity.FollowUpTime.Value) : null;
     }
 
     protected override Task OnUpdatingEntityAsync()
     {
         if (SelectedDates.Count == 2 && SelectedDates[0].HasValue && SelectedDates[1].HasValue)
         {
-            EditingEntity.StartTime = Clock.ConvertFrom(SelectedDates[0]!.Value);
-            EditingEntity.EndTime = Clock.ConvertFrom(SelectedDates[1]!.Value);
+            EditingEntity.StartTime = Clock.ConvertToUtc(SelectedDates[0]!.Value);
+            EditingEntity.EndTime = Clock.ConvertToUtc(SelectedDates[1]!.Value);
         }
 
-        EditingEntity.ActualStartTime = Clock.ConvertFrom(EditingEntity.ActualStartTime);
-        EditingEntity.CanceledTime = EditingEntity.CanceledTime.HasValue ? Clock.ConvertFrom(EditingEntity.CanceledTime.Value) : null;
+        EditingEntity.ActualStartTime = Clock.ConvertToUtc(EditingEntity.ActualStartTime);
+        EditingEntity.CanceledTime = EditingEntity.CanceledTime.HasValue ? Clock.ConvertToUtc(EditingEntity.CanceledTime.Value) : null;
 
         return Task.CompletedTask;
     }
