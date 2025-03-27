@@ -6,6 +6,10 @@
   "Previous": {
     "Name": "BLOB Storing",
     "Path": "solution-templates/single-layer-web-application/blob-storing"
+  },
+  "Next": {
+    "Name": "Health Check Configuration",
+    "Path": "solution-templates/single-layer-web-application/health-check-configuration"
   }
 }
 ```

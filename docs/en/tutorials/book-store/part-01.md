@@ -36,22 +36,6 @@ abp install-libs
 
 > We suggest you install [Yarn v1.22+ (not v2)](https://classic.yarnpkg.com/en/docs/install) to prevent possible package inconsistencies, if you haven't installed it yet.
 
-{{if UI=="Blazor" || UI=="BlazorWebApp"}}
-
-### Bundling and Minification
-
-`abp bundle` command offers bundling and minification support for client-side resources (JavaScript and CSS files) for Blazor projects. This command automatically run when you create a new solution with the [ABP CLI](../../cli).
-
-However, sometimes you might need to run this command manually. To update script & style references without worrying about dependencies, ordering, etc. in a project, you can run this command in the directory of your `*.Blazor.Client` project:
-
-```bash
-abp bundle
-```
-
-> For more details about managing style and script references in Blazor or MAUI Blazor apps, see [Managing Global Scripts & Styles](../../framework/ui/blazor/global-scripts-styles.md).
-
-{{end}}
-
 ## Create the Book Entity
 
 **Domain layer** in the startup template is separated into two projects:
