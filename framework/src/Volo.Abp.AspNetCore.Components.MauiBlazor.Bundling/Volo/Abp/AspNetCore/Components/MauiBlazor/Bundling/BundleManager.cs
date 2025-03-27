@@ -119,7 +119,7 @@ public class BundleManager : BundleManagerBase, ITransientDependency
         #if DEBUG
                 return true;
         #else
-                retur false;
+                return false;
         #endif
     }
 
