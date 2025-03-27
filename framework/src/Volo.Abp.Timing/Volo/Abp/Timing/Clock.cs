@@ -87,7 +87,7 @@ public class Clock : IClock, ITransientDependency
     }
 
     /// <summary>
-    /// Converts given user's <see cref="DateTime"/> to UTC or not.
+    /// Converts given <see cref="DateTime"/> to UTC if the given time is not UTC and the current clock provider supports multiple time zones.
     /// </summary>
     /// <param name="dateTime">DateTime to be normalized.</param>
     /// <returns>Converted DateTime</returns>
