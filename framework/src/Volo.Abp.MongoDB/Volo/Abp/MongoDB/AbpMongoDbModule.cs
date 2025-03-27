@@ -4,6 +4,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using Volo.Abp.Domain;
+using Volo.Abp.Domain.Entities.Events.Distributed;
 using Volo.Abp.Domain.Repositories.MongoDB;
 using Volo.Abp.Modularity;
 using Volo.Abp.MongoDB.DependencyInjection;
@@ -48,5 +49,11 @@ public class AbpMongoDbModule : AbpModule
             typeof(IMongoDbContextEventInbox<>),
             typeof(MongoDbContextEventInbox<>)
         );
+
+        Configure<AbpDistributedEntityEventOptions>(options =>
+        {
+            options.IgnoreEventSelectors.Add<OutgoingEventRecord>();
+            options.IgnoreEventSelectors.Add<IncomingEventRecord>();
+        });
     }
 }
