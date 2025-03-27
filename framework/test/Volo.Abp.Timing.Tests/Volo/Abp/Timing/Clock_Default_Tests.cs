@@ -22,7 +22,7 @@ public class Clock_Default_Tests : AbpIntegratedTest<AbpTimingTestModule>
         using(_currentTimezoneProvider.Change("Europe/Istanbul"))
         {
             var dateTime = new DateTime(2025, 3, 1, 5, 30, 0, DateTimeKind.Utc);
-            var convertedDateTime = _clock.ConvertTo(dateTime);
+            var convertedDateTime = _clock.ConvertToUserTime(dateTime);
             convertedDateTime.Kind.ShouldBe(DateTimeKind.Utc);
             convertedDateTime.ToString("O").ShouldBe("2025-03-01T05:30:00.0000000Z");
         }
@@ -30,7 +30,7 @@ public class Clock_Default_Tests : AbpIntegratedTest<AbpTimingTestModule>
         using(_currentTimezoneProvider.Change("Europe/Istanbul"))
         {
             var dateTime = new DateTime(2025, 3, 1, 5, 30, 0, DateTimeKind.Local);
-            var convertedDateTime = _clock.ConvertTo(dateTime);
+            var convertedDateTime = _clock.ConvertToUserTime(dateTime);
             convertedDateTime.Kind.ShouldBe(DateTimeKind.Local);
             convertedDateTime.ToString("O").ShouldBe(dateTime.ToString("O"));
         }
@@ -38,7 +38,7 @@ public class Clock_Default_Tests : AbpIntegratedTest<AbpTimingTestModule>
         using(_currentTimezoneProvider.Change(null))
         {
             var dateTime = new DateTime(2025, 3, 1, 5, 30, 0, DateTimeKind.Local);
-            var convertedDateTime = _clock.ConvertTo(dateTime);
+            var convertedDateTime = _clock.ConvertToUserTime(dateTime);
             convertedDateTime.Kind.ShouldBe(DateTimeKind.Local);
             convertedDateTime.ToString("O").ShouldBe(dateTime.ToString("O"));
         }
@@ -50,7 +50,7 @@ public class Clock_Default_Tests : AbpIntegratedTest<AbpTimingTestModule>
         using(_currentTimezoneProvider.Change("Europe/Istanbul"))
         {
             var dateTimeOffset = new DateTimeOffset(new DateTime(2025, 3, 1, 5, 30, 0, DateTimeKind.Utc), TimeSpan.Zero);
-            var convertedDateTimeOffset = _clock.ConvertTo(dateTimeOffset);
+            var convertedDateTimeOffset = _clock.ConvertToUserTime(dateTimeOffset);
             convertedDateTimeOffset.Offset.ShouldBe(TimeSpan.Zero);
             convertedDateTimeOffset.ShouldBe(dateTimeOffset);
         }
@@ -58,7 +58,7 @@ public class Clock_Default_Tests : AbpIntegratedTest<AbpTimingTestModule>
         using(_currentTimezoneProvider.Change("Europe/Istanbul"))
         {
             var dateTimeOffset = new DateTimeOffset(new DateTime(2025, 3, 1, 5, 30, 0, DateTimeKind.Unspecified), TimeSpan.Zero);
-            var convertedDateTimeOffset = _clock.ConvertTo(dateTimeOffset);
+            var convertedDateTimeOffset = _clock.ConvertToUserTime(dateTimeOffset);
             convertedDateTimeOffset.Offset.ShouldBe(TimeSpan.Zero);
             convertedDateTimeOffset.ShouldBe(dateTimeOffset);
         }
@@ -66,7 +66,7 @@ public class Clock_Default_Tests : AbpIntegratedTest<AbpTimingTestModule>
         using(_currentTimezoneProvider.Change("Europe/Istanbul"))
         {
             var dateTimeOffset = new DateTimeOffset(new DateTime(2025, 3, 1, 5, 30, 0, DateTimeKind.Unspecified), TimeSpan.FromHours(3));
-            var convertedDateTimeOffset = _clock.ConvertTo(dateTimeOffset);
+            var convertedDateTimeOffset = _clock.ConvertToUserTime(dateTimeOffset);
             convertedDateTimeOffset.Offset.ShouldBe(TimeSpan.FromHours(3));
             convertedDateTimeOffset.ShouldBe(dateTimeOffset);
         }
@@ -74,7 +74,7 @@ public class Clock_Default_Tests : AbpIntegratedTest<AbpTimingTestModule>
         using(_currentTimezoneProvider.Change("Europe/Istanbul"))
         {
             var dateTimeOffset = new DateTimeOffset(new DateTime(2025, 3, 1, 5, 30, 0, DateTimeKind.Unspecified), TimeSpan.FromHours(8));
-            var convertedDateTimeOffset = _clock.ConvertTo(dateTimeOffset);
+            var convertedDateTimeOffset = _clock.ConvertToUserTime(dateTimeOffset);
             convertedDateTimeOffset.Offset.ShouldBe(TimeSpan.FromHours(8));
             convertedDateTimeOffset.ShouldBe(dateTimeOffset);
         }
@@ -86,7 +86,7 @@ public class Clock_Default_Tests : AbpIntegratedTest<AbpTimingTestModule>
         using(_currentTimezoneProvider.Change("Europe/Istanbul"))
         {
             var dateTime = new DateTime(2025, 3, 1, 5, 30, 0, DateTimeKind.Unspecified);
-            var convertedDateTime = _clock.ConvertFrom(dateTime);
+            var convertedDateTime = _clock.ConvertToUtc(dateTime);
             convertedDateTime.Kind.ShouldBe(DateTimeKind.Unspecified);
             convertedDateTime.ShouldBe(dateTime);
         }
@@ -94,7 +94,7 @@ public class Clock_Default_Tests : AbpIntegratedTest<AbpTimingTestModule>
         using(_currentTimezoneProvider.Change("Europe/Istanbul"))
         {
             var dateTime = new DateTime(2025, 3, 1, 5, 30, 0, DateTimeKind.Local);
-            var convertedDateTime = _clock.ConvertFrom(dateTime);
+            var convertedDateTime = _clock.ConvertToUtc(dateTime);
             convertedDateTime.Kind.ShouldBe(DateTimeKind.Local);
             convertedDateTime.ShouldBe(dateTime);
         }
@@ -102,7 +102,7 @@ public class Clock_Default_Tests : AbpIntegratedTest<AbpTimingTestModule>
         using(_currentTimezoneProvider.Change("Europe/Istanbul"))
         {
             var dateTime = new DateTime(2025, 3, 1, 5, 30, 0, DateTimeKind.Utc);
-            var convertedDateTime = _clock.ConvertFrom(dateTime);
+            var convertedDateTime = _clock.ConvertToUtc(dateTime);
             convertedDateTime.Kind.ShouldBe(DateTimeKind.Utc);
             convertedDateTime.ShouldBe(dateTime);
         }

@@ -29,21 +29,21 @@ public interface IClock
     /// <summary>
     /// Converts given UTC <see cref="DateTime"/> to user's time zone.
     /// </summary>
-    /// <param name="dateTime">DateTime to be normalized.</param>
+    /// <param name="utcDateTime">DateTime to be normalized.</param>
     /// <returns>Converted DateTime</returns>
-    DateTime ConvertTo(DateTime dateTime);
+    DateTime ConvertToUserTime(DateTime utcDateTime);
 
     /// <summary>
     /// Converts given <see cref="DateTimeOffset"/> to user's time zone.
     /// </summary>
     /// <param name="dateTimeOffset">DateTimeOffset to be normalized.</param>
     /// <returns>Converted DateTimeOffset</returns>
-    DateTimeOffset ConvertTo(DateTimeOffset dateTimeOffset);
+    DateTimeOffset ConvertToUserTime(DateTimeOffset dateTimeOffset);
 
     /// <summary>
-    /// Converts given user's <see cref="DateTime"/> to UTC or not.
+    /// Converts given <see cref="DateTime"/> to UTC if the given time is not UTC and the current clock provider supports multiple time zones.
     /// </summary>
     /// <param name="dateTime">DateTime to be normalized.</param>
     /// <returns>Converted DateTime</returns>
-    DateTime ConvertFrom(DateTime dateTime);
+    DateTime ConvertToUtc(DateTime dateTime);
 }

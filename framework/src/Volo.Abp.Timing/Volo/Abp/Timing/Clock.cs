@@ -54,19 +54,19 @@ public class Clock : IClock, ITransientDependency
     /// <summary>
     /// Converts given UTC <see cref="DateTime"/> to user's time zone.
     /// </summary>
-    /// <param name="dateTime">DateTime to be normalized.</param>
+    /// <param name="utcDateTime">DateTime to be normalized.</param>
     /// <returns>Converted DateTime</returns>
-    public virtual DateTime ConvertTo(DateTime dateTime)
+    public virtual DateTime ConvertToUserTime(DateTime utcDateTime)
     {
         if (!SupportsMultipleTimezone ||
-            dateTime.Kind != DateTimeKind.Utc ||
+            utcDateTime.Kind != DateTimeKind.Utc ||
             CurrentTimezoneProvider.TimeZone.IsNullOrWhiteSpace())
         {
-            return dateTime;
+            return utcDateTime;
         }
 
         var timezoneInfo = TimezoneProvider.GetTimeZoneInfo(CurrentTimezoneProvider.TimeZone);
-        return TimeZoneInfo.ConvertTime(dateTime, timezoneInfo);
+        return TimeZoneInfo.ConvertTime(utcDateTime, timezoneInfo);
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ public class Clock : IClock, ITransientDependency
     /// </summary>
     /// <param name="dateTimeOffset">DateTimeOffset to be normalized.</param>
     /// <returns>Converted DateTimeOffset</returns>
-    public virtual DateTimeOffset ConvertTo(DateTimeOffset dateTimeOffset)
+    public virtual DateTimeOffset ConvertToUserTime(DateTimeOffset dateTimeOffset)
     {
         if (!SupportsMultipleTimezone ||
             CurrentTimezoneProvider.TimeZone.IsNullOrWhiteSpace())
@@ -91,7 +91,7 @@ public class Clock : IClock, ITransientDependency
     /// </summary>
     /// <param name="dateTime">DateTime to be normalized.</param>
     /// <returns>Converted DateTime</returns>
-    public DateTime ConvertFrom(DateTime dateTime)
+    public DateTime ConvertToUtc(DateTime dateTime)
     {
         if (!SupportsMultipleTimezone ||
             dateTime.Kind == DateTimeKind.Utc ||

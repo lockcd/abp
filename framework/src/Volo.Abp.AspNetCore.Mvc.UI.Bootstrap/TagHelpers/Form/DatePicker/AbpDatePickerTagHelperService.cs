@@ -60,14 +60,14 @@ public class AbpDatePickerTagHelperService : AbpDatePickerBaseTagHelperService<A
                 if (TagHelper.AspFor.Model is DateTime dateTime)
                 {
                     DateTagHelper.Format = "{0:O}";
-                    DateTagHelper.Value = Clock.ConvertTo(dateTime).ToString("O");
+                    DateTagHelper.Value = Clock.ConvertToUserTime(dateTime).ToString("O");
                     attributes.Add("value", DateTagHelper.Value);
                 }
 
                 if (TagHelper.AspFor.Model is DateTimeOffset dateTimeOffset)
                 {
                     DateTagHelper.Format = "{0:O}";
-                    DateTagHelper.Value = Clock.ConvertTo(dateTimeOffset).UtcDateTime.ToString("O");
+                    DateTagHelper.Value = Clock.ConvertToUserTime(dateTimeOffset).UtcDateTime.ToString("O");
                     attributes.Add("value", DateTagHelper.Value);
                 }
             }
