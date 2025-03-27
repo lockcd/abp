@@ -51,7 +51,7 @@ public override void PreConfigureServices(ServiceConfigurationContext context)
 
 ### Docs Module: Added "Alternative Words" to Filter Items
 
-The ABP Docs module now supports "alternative words" to enhance the search functionality when filtering documentation items. This feature addresses a common user experience issue where users might search using terminology different from what appears in the documentation.
+[ABP's Docs Module](https://abp.io/docs/9.2/modules/docs) now supports "alternative words" to enhance the search functionality when filtering documentation items. This feature addresses a common user experience issue where users might search using terminology different from what appears in the documentation.
 
 For example, when a user searches for "Error" in the documentation, they may actually be looking for content related to "Exception Handling." With this new feature, documentation items can now be configured with alternative keywords that are considered during filtering.
 
@@ -71,7 +71,7 @@ When users search or filter content, the system now considers both the original 
 
 ABP v9.2 RC introduces a new BLOB storage provider for [Bunny Storage](https://bunny.net/storage/), a global edge storage solution. This addition expands ABP's BLOB Storage options beyond the existing providers like Azure, AWS, and others.
 
-The Bunny BLOB Storage Provider allows ABP applications to seamlessly integrate with Bunny's CDN-backed storage service, which offers high-performance content delivery through its global network.
+The [Bunny BLOB Storage Provider](https://abp.io/docs/9.2/framework/infrastructure/blob-storing/bunny) allows ABP applications to seamlessly integrate with Bunny's CDN-backed storage service, which offers high-performance content delivery through its global network.
 
 To use this new provider, you'll need to:
 
