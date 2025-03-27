@@ -21,7 +21,105 @@ There are a few breaking changes in this version that may affect your applicatio
 In this section, I will introduce some major features released in this version.
 Here is a brief list of titles explained in the next sections:
 
-//TODO: Add the list of titles
+* Added `ApplicationName` Property to Isolate Background Jobs & Background Workers
+* Docs Module: Added "Alternative Words" to Filter Items
+* Introducing the Bunny BLOB Storage Provider
+* Upgraded `MongoDB.Driver` to v3.1.0
+* Identity Pro Module: Require Email Verification to Register
+
+### Added ApplicationName Property to Isolate Background Jobs & Background Workers
+
+ABP's [Background Jobs Module](https://abp.io/docs/latest/modules/background-jobs) has been enhanced with a new `ApplicationName` property that helps isolate jobs and workers across multiple applications sharing the same database.
+
+Previously, when different applications used the BackgroundJobs module and shared a database, an application might encounter jobs that didn't belong to it. This would lead to failed processing attempts and marking jobs as `IsAbandoned = true` with a "Undefined background job for the job name" error, preventing these jobs from ever being executed.
+
+With the new `ApplicationName` property, applications now properly filter jobs at the repository level, ensuring each application only processes job types it recognizes. This prevents the incorrect abandonment of jobs and ensures consistent behavior in multi-application scenarios.
+
+You can set `ApplicationName` of `AbpBackgroundJobWorkerOptions` to your application name to isolate jobs and workers across multiple applications sharing the same database:
+
+```csharp
+public override void PreConfigureServices(ServiceConfigurationContext context)
+{
+    PreConfigure<AbpBackgroundJobWorkerOptions>(options =>
+    {
+        options.ApplicationName = context.Services.GetApplicationName()!;
+    });
+}
+```
+
+> For more information, please refer to the [Background Jobs Module](https://abp.io/docs/latest/modules/background-jobs) documentation and the [PR](https://github.com/abpframework/abp/pull/22169) that added this feature.
+
+### Docs Module: Added "Alternative Words" to Filter Items
+
+The ABP Docs module now supports "alternative words" to enhance the search functionality when filtering documentation items. This feature addresses a common user experience issue where users might search using terminology different from what appears in the documentation.
+
+For example, when a user searches for "Error" in the documentation, they may actually be looking for content related to "Exception Handling." With this new feature, documentation items can now be configured with alternative keywords that are considered during filtering.
+
+The implementation allows defining optional "keywords" for items in the navigation tree. For example:
+
+```json
+{
+  "text": "Exception Handling",
+  "path": "framework/fundamentals/exception-handling.md",
+  "keywords": ["Error", "Another Value"]
+}
+```
+
+When users search or filter content, the system now considers both the original text and these alternative keywords, improving discoverability of relevant documentation sections. This enhancement makes the documentation more accessible and user-friendly, especially for newcomers who might not be familiar with the exact terminology used in the ABP documentation.
+
+### Introducing the Bunny BLOB Storage Provider
+
+ABP v9.2 RC introduces a new BLOB storage provider for [Bunny Storage](https://bunny.net/storage/), a global edge storage solution. This addition expands ABP's BLOB Storage options beyond the existing providers like Azure, AWS, and others.
+
+The Bunny BLOB Storage Provider allows ABP applications to seamlessly integrate with Bunny's CDN-backed storage service, which offers high-performance content delivery through its global network.
+
+To use this new provider, you'll need to:
+
+* Run `abp add-package Volo.Abp.BlobStoring.Bunny` command.
+* And then configure the provider in your module's `ConfigureServices` method:
+
+```csharp
+Configure<AbpBlobStoringOptions>(options =>
+{
+    options.Containers.ConfigureDefault(container =>
+    {
+        container.UseBunny(bunny =>
+        {
+            bunny.StorageZoneName = "your-storage-zone";
+            bunny.ApiKey = "your-api-key";
+            bunny.Region = "your-region"; // de, ny, la, sg, or sy
+        });
+    });
+});
+```
+
+This integration provides ABP applications with an efficient and globally distributed storage solution, particularly beneficial for applications requiring fast content delivery across different geographical regions. To use this new provider and make the related configurations, you can refer to the [Bunny Storage Provider](https://abp.io/docs/9.2/framework/infrastructure/blob-storing/bunny) documentation always.
+
+> This new BLOB Storage provider is contributed by [@suhaib-mousa](https://github.com/suhaib-mousa). Thanks to him for his contribution! 
+> We are always happy to see the community contributing to the ABP Framework and encouraging them to contribute more.
+
+### Upgraded `MongoDB.Driver` to `v3.1.0`
+
+ABP v9.2 RC includes an upgrade to `MongoDB.Driver` version `3.1.0`. This significant version bump from previous releases brings several improvements and new features that benefit ABP applications using MongoDB as their database.
+
+The upgrade provides:
+
+* Async/Await Support: Write non-blocking, asynchronous code easily.
+* Fluent API: Build queries and updates intuitively with Builders.
+* LINQ Support: Use LINQ for querying MongoDB collections.
+* and more ...
+
+> For more information, please refer to the [MongoDB.Driver release notes](https://github.com/mongodb/mongo-csharp-driver/releases/tag/v3.1.0).
+
+We have prepared a [migration guide](https://abp.io/docs/9.2/release-info/migration-guides/MongoDB-Driver-2-to-3) for this upgrade. Please refer to it to learn more about the changes and how to migrate your application.
+
+### Identity Pro Module: Require Email Verification to Register
+
+[ABP Identity Pro module](https://abp.io/docs/9.2/modules/identity-pro) has been enhanced with a new feature that allows administrators to require email verification during the registration process. This security improvement ensures that users must verify their email addresses before their registration is considered complete. Enabling this feature is especially important for applications that want to prevent spam registrations.
+
+Administrators can enable or disable this feature through the **Identity management -> Identity Verification (tab)** settings page (by checking the `Enforce email verification to register` checkbox):
+
+![require-email-verification.png](./require-email-verification-for-register.png)
 
 ### New ABP Community Articles
 
