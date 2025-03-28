@@ -208,24 +208,22 @@ public class EfCoreOrganizationUnitRepository
         int maxResultCount = int.MaxValue,
         int skipCount = 0,
         string filter = null,
+        bool includeChildren = false,
         bool includeDetails = false,
         CancellationToken cancellationToken = default)
     {
-        var query = await CreateGetMembersFilteredQueryAsync(organizationUnit, filter);
+        var query = await CreateGetMembersFilteredQueryAsync(organizationUnit, filter, includeChildren);
 
         return await query.IncludeDetails(includeDetails).OrderBy(sorting.IsNullOrEmpty() ? nameof(IdentityUser.UserName) : sorting)
                     .PageBy(skipCount, maxResultCount)
                     .ToListAsync(GetCancellationToken(cancellationToken));
     }
 
-    public virtual async Task<List<Guid>> GetMemberIdsAsync(Guid id, CancellationToken cancellationToken = default)
+    public virtual async Task<List<Guid>> GetMemberIdsAsync(Guid id, bool includeChildren = false, CancellationToken cancellationToken = default)
     {
-        var dbContext = await GetDbContextAsync();
-
-        return await (from userOu in dbContext.Set<IdentityUserOrganizationUnit>()
-            join user in dbContext.Users on userOu.UserId equals user.Id
-            where userOu.OrganizationUnitId == id
-            select user.Id).ToListAsync(cancellationToken);
+        var organizationUnit = await GetAsync(id, cancellationToken: cancellationToken);
+        var query = await CreateGetMembersFilteredQueryAsync(organizationUnit, null, includeChildren);
+        return await query.Select(x => x.Id).ToListAsync(cancellationToken);
     }
 
     public virtual async Task<int> GetMembersCountAsync(
