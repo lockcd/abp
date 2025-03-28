@@ -193,7 +193,7 @@ public class MongoOrganizationUnitRepository
         CancellationToken cancellationToken = default)
     {
         cancellationToken = GetCancellationToken(cancellationToken);
-        var query = await CreateGetMembersFilteredQueryAsync(organizationUnit, filter, cancellationToken);
+        var query = await CreateGetMembersFilteredQueryAsync(organizationUnit, filter, false, cancellationToken);
         return await query
             .OrderBy(sorting.IsNullOrEmpty() ? nameof(IdentityUser.UserName) : sorting)
             .As<IMongoQueryable<IdentityUser>>()
@@ -212,10 +212,11 @@ public class MongoOrganizationUnitRepository
     public virtual async Task<int> GetMembersCountAsync(
         OrganizationUnit organizationUnit,
         string filter = null,
+        bool includeChildren = false,
         CancellationToken cancellationToken = default)
     {
         cancellationToken = GetCancellationToken(cancellationToken);
-        var query = await CreateGetMembersFilteredQueryAsync(organizationUnit, filter, cancellationToken);
+        var query = await CreateGetMembersFilteredQueryAsync(organizationUnit, filter, includeChildren, cancellationToken);
         return await query.CountAsync(cancellationToken);
     }
 
@@ -286,8 +287,27 @@ public class MongoOrganizationUnitRepository
     protected virtual async Task<IMongoQueryable<IdentityUser>> CreateGetMembersFilteredQueryAsync(
         OrganizationUnit organizationUnit,
         string filter = null,
+        bool includeChildren = false,
         CancellationToken cancellationToken = default)
     {
+        if (includeChildren)
+        {
+            var childrenIds = await (await GetMongoQueryableAsync(cancellationToken))
+                .Where(ou => ou.Code.StartsWith(organizationUnit.Code))
+                .Select(ou => ou.Id)
+                .ToListAsync(GetCancellationToken(cancellationToken));
+
+            return (await GetMongoQueryableAsync<IdentityUser>(cancellationToken))
+                .Where(u => u.OrganizationUnits.Any(uou => childrenIds.Contains(uou.OrganizationUnitId)))
+                .WhereIf<IdentityUser, IMongoQueryable<IdentityUser>>(
+                    !filter.IsNullOrWhiteSpace(),
+                    u =>
+                        u.UserName.Contains(filter) ||
+                        u.Email.Contains(filter) ||
+                        (u.PhoneNumber != null && u.PhoneNumber.Contains(filter))
+                );
+        }
+
         return (await GetMongoQueryableAsync<IdentityUser>(cancellationToken))
             .Where(u => u.OrganizationUnits.Any(uou => uou.OrganizationUnitId == organizationUnit.Id))
             .WhereIf<IdentityUser, IMongoQueryable<IdentityUser>>(

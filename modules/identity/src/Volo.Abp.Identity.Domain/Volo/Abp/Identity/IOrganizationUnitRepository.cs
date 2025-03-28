@@ -110,6 +110,7 @@ public interface IOrganizationUnitRepository : IBasicRepository<OrganizationUnit
     Task<int> GetMembersCountAsync(
         OrganizationUnit organizationUnit,
         string filter = null,
+        bool includeChildren = false,
         CancellationToken cancellationToken = default
     );
 

@@ -231,9 +231,10 @@ public class EfCoreOrganizationUnitRepository
     public virtual async Task<int> GetMembersCountAsync(
         OrganizationUnit organizationUnit,
         string filter = null,
+        bool includeChildren = false,
         CancellationToken cancellationToken = default)
     {
-        var query = await CreateGetMembersFilteredQueryAsync(organizationUnit, filter);
+        var query = await CreateGetMembersFilteredQueryAsync(organizationUnit, filter, includeChildren);
 
         return await query.CountAsync(GetCancellationToken(cancellationToken));
     }
@@ -324,14 +325,33 @@ public class EfCoreOrganizationUnitRepository
         dbContext.Set<IdentityUserOrganizationUnit>().RemoveRange(ouMembersQuery);
     }
 
-    protected virtual async Task<IQueryable<IdentityUser>> CreateGetMembersFilteredQueryAsync(OrganizationUnit organizationUnit, string filter = null)
+    protected virtual async Task<IQueryable<IdentityUser>> CreateGetMembersFilteredQueryAsync(
+        OrganizationUnit organizationUnit,
+        string filter = null,
+        bool includeChildren = false)
     {
         var dbContext = await GetDbContextAsync();
 
-        var query = from userOu in dbContext.Set<IdentityUserOrganizationUnit>()
-                    join user in dbContext.Users on userOu.UserId equals user.Id
-                    where userOu.OrganizationUnitId == organizationUnit.Id
-                    select user;
+        IQueryable<IdentityUser> query;
+        if (includeChildren)
+        {
+            var childrenIds = await (await GetDbSetAsync())
+                .Where(ou => ou.Code.StartsWith(organizationUnit.Code))
+                .Select(x => x.Id)
+                .ToListAsync();
+
+            query = from userOu in dbContext.Set<IdentityUserOrganizationUnit>()
+                join user in dbContext.Users on userOu.UserId equals user.Id
+                where childrenIds.Contains(userOu.OrganizationUnitId)
+                select user;
+        }
+        else
+        {
+            query = from userOu in dbContext.Set<IdentityUserOrganizationUnit>()
+                join user in dbContext.Users on userOu.UserId equals user.Id
+                where userOu.OrganizationUnitId == organizationUnit.Id
+                select user;
+        }
 
         if (!filter.IsNullOrWhiteSpace())
         {
