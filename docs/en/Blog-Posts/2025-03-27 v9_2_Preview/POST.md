@@ -26,6 +26,7 @@ Here is a brief list of titles explained in the next sections:
 * Introducing the Bunny BLOB Storage Provider
 * Upgraded `MongoDB.Driver` to v3.1.0
 * Identity Pro Module: Require Email Verification to Register
+* Switching users during OAuth login
 
 ### Added ApplicationName Property to Isolate Background Jobs & Background Workers
 
@@ -120,6 +121,14 @@ We have prepared a [migration guide](https://abp.io/docs/9.2/release-info/migrat
 Administrators can enable or disable this feature through the **Identity management -> Identity Verification (tab)** settings page (by checking the `Enforce email verification to register` checkbox):
 
 ![require-email-verification.png](./require-email-verification-for-register.png)
+
+### Switching users during OAuth login
+
+If you have an OAuth/Auth Server application using the [ABP Account Pro module](https://abp.io/docs/9.2/modules/account-pro) , you can pass the `prompt=select_account` parameter to force the user to select an account.
+
+![select-account.png](./select-account.png)
+
+For more information, please refer to the [Switching users during OAuth login](https://abp.io/docs/9.2/modules/account-pro#switching-users-during-oauth-login) documentation.
 
 ### New ABP Community Articles
 
