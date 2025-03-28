@@ -4,9 +4,20 @@ This document contains **brief release notes** for each release. Release notes o
 
 > If you want to read the release notes for each ABP Studio release, check it out from [here](../studio/release-notes.md).
 
+## 9.2 (2025-03-25)
+
+This is currently a RC (release-candidate) and you can see the detailed **[blog post / announcement](https://abp.io/community/articles/abp-platform-9.2-rc-has-been-released-jpq072nh)** for the v9.2 release.
+
+* Added `ApplicationName` Property to Isolate Background Jobs & Background Workers
+* Docs Module: Added "Alternative Words" to Filter Items
+* Introducing the [Bunny BLOB Storage Provider](../framework/infrastructure/blob-storing/bunny.md)
+* Upgraded `MongoDB.Driver` to **v3.1.0**
+* Identity Pro Module: Require Email Verification to Register
+* Switching users during OAuth login
+
 ## 9.1 (2025-01-16)
 
-This is currently a RC (release-candidate) and you can see the detailed **[blog post / announcement](https://abp.io/blog/abp-9-1-release-candidate)** for the v9.1 release.
+See the detailed **[blog post / announcement](https://abp.io/community/articles/abp.io-platform-9.1-final-has-been-released-h96a56qa)** for the v9.1 release.
 
 * Upgraded to Angular 19
 * Upgraded to OpenIddict 6.0
