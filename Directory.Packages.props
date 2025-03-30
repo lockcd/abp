@@ -44,8 +44,8 @@
     <PackageVersion Include="MongoSandbox6.runtime.win-x64" Version="1.0.1" />
     <PackageVersion Include="FluentValidation" Version="11.10.0" />
     <PackageVersion Include="Google.Cloud.Storage.V1" Version="4.10.0" />
-    <PackageVersion Include="Hangfire.AspNetCore" Version="1.8.17" />
-    <PackageVersion Include="Hangfire.SqlServer" Version="1.8.17" />
+    <PackageVersion Include="Hangfire.AspNetCore" Version="1.8.18" />
+    <PackageVersion Include="Hangfire.SqlServer" Version="1.8.18" />
     <PackageVersion Include="HtmlSanitizer" Version="8.1.870" />
     <PackageVersion Include="IdentityModel" Version="7.0.0" />
     <PackageVersion Include="IdentityServer4" Version="4.1.2" />
@@ -142,7 +142,7 @@
     <PackageVersion Include="Quartz.Extensions.DependencyInjection" Version="3.13.0" />
     <PackageVersion Include="Quartz.Plugins.TimeZoneConverter" Version="3.13.0" />
     <PackageVersion Include="Quartz.Serialization.Json" Version="3.13.0" />
-    <PackageVersion Include="RabbitMQ.Client" Version="6.8.1" />
+    <PackageVersion Include="RabbitMQ.Client" Version="7.1.2" />
     <PackageVersion Include="Rebus" Version="8.6.0" />
     <PackageVersion Include="Rebus.ServiceProvider" Version="10.2.0" />
     <PackageVersion Include="Scriban" Version="5.10.0" />
