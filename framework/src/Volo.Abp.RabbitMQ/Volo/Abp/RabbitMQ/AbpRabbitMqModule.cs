@@ -19,7 +19,6 @@ public class AbpRabbitMqModule : AbpModule
         {
             foreach (var connectionFactory in options.Connections.Values)
             {
-                connectionFactory.DispatchConsumersAsync = true;
                 connectionFactory.AutomaticRecoveryEnabled = false;
             }
         });
