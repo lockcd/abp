@@ -225,7 +225,7 @@ public class RabbitMqDistributedEventBus : DistributedEventBusBase, IRabbitMqDis
         OutboxConfig outboxConfig)
     {
         using (var channel = await (await ConnectionPool.GetAsync(AbpRabbitMqEventBusOptions.ConnectionName))
-                   .CreateChannelAsync(new CreateChannelOptions(publisherConfirmationsEnabled: true, publisherConfirmationTrackingEnabled: true)))
+                   .CreateChannelAsync(new CreateChannelOptions(publisherConfirmationsEnabled: true, publisherConfirmationTrackingEnabled: true, new ThrottlingRateLimiter(256))))
         {
             var outgoingEventArray = outgoingEvents.ToArray();
 
@@ -298,8 +298,7 @@ public class RabbitMqDistributedEventBus : DistributedEventBusBase, IRabbitMqDis
         Guid? eventId = null,
         string? correlationId = null)
     {
-        using (var channel = await (await ConnectionPool.GetAsync(AbpRabbitMqEventBusOptions.ConnectionName))
-                   .CreateChannelAsync(new CreateChannelOptions(publisherConfirmationsEnabled: true, publisherConfirmationTrackingEnabled: true)))
+        using (var channel = await (await ConnectionPool.GetAsync(AbpRabbitMqEventBusOptions.ConnectionName)).CreateChannelAsync())
         {
             await PublishAsync(channel, eventName, body, headersArguments, eventId, correlationId);
         }
@@ -335,7 +334,7 @@ public class RabbitMqDistributedEventBus : DistributedEventBusBase, IRabbitMqDis
         await channel.BasicPublishAsync(
             exchange: AbpRabbitMqEventBusOptions.ExchangeName,
             routingKey: eventName,
-            mandatory: true,
+            mandatory: false,
             basicProperties: properties,
             body: body
         );
@@ -350,9 +349,7 @@ public class RabbitMqDistributedEventBus : DistributedEventBusBase, IRabbitMqDis
 
         try
         {
-            using (var temporaryChannel = await(await ConnectionPool.GetAsync(AbpRabbitMqEventBusOptions.ConnectionName))
-                       .CreateChannelAsync(new CreateChannelOptions(publisherConfirmationsEnabled: true,
-                           publisherConfirmationTrackingEnabled: true)))
+            using (var temporaryChannel = await (await ConnectionPool.GetAsync(AbpRabbitMqEventBusOptions.ConnectionName)).CreateChannelAsync())
             {
                 await temporaryChannel.ExchangeDeclarePassiveAsync(AbpRabbitMqEventBusOptions.ExchangeName);
             }

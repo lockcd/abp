@@ -39,18 +39,25 @@ public class ConnectionPool : IConnectionPool, ISingletonDependency
         {
             using (await Semaphore.LockAsync())
             {
-                var connectionFactory = Options.Connections.GetOrDefault(connectionName);
                 try
                 {
-                    connection = await GetConnectionAsync(connectionName, connectionFactory);
-                    Connections.TryAdd(connectionName, connection);
-
-                    if (!connection.IsOpen)
+                    var connectionFactory = Options.Connections.GetOrDefault(connectionName);
+                    if (Connections.TryGetValue(connectionName, out var existingConnection2))
                     {
-                        connection.Dispose();
-                        Connections.TryRemove(connectionName, out _);
+                        connection = existingConnection2;
+                    }
+                    else
+                    {
                         connection = await GetConnectionAsync(connectionName, connectionFactory);
                         Connections.TryAdd(connectionName, connection);
+
+                        if (!connection.IsOpen)
+                        {
+                            connection.Dispose();
+                            Connections.TryRemove(connectionName, out _);
+                            connection = await GetConnectionAsync(connectionName, connectionFactory);
+                            Connections.TryAdd(connectionName, connection);
+                        }
                     }
                 }
                 catch (Exception)

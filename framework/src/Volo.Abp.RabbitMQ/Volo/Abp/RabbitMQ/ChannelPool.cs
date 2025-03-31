@@ -49,14 +49,14 @@ public class ChannelPool : IChannelPool, ISingletonDependency
         {
             using (await Semaphore.LockAsync())
             {
-                if (!Channels.TryGetValue(channelName, out var channel))
+                if (Channels.TryGetValue(channelName, out var existingChannelPoolItem2))
                 {
-                    poolItem = new ChannelPoolItem(await CreateChannelAsync(channelName, connectionName));
-                    Channels.TryAdd(channelName, poolItem);
+                    poolItem = existingChannelPoolItem2;
                 }
                 else
                 {
-                    poolItem = channel;
+                    poolItem = new ChannelPoolItem(await CreateChannelAsync(channelName, connectionName));
+                    Channels.TryAdd(channelName, poolItem);
                 }
             }
         }
@@ -70,8 +70,15 @@ public class ChannelPool : IChannelPool, ISingletonDependency
 
             using (await Semaphore.LockAsync())
             {
-                poolItem = new ChannelPoolItem(await CreateChannelAsync(channelName, connectionName));
-                Channels.TryAdd(channelName, poolItem);
+                if (Channels.TryGetValue(channelName, out var existingChannelPoolItem3))
+                {
+                    poolItem = existingChannelPoolItem3;
+                }
+                else
+                {
+                    poolItem = new ChannelPoolItem(await CreateChannelAsync(channelName, connectionName));
+                    Channels.TryAdd(channelName, poolItem);
+                }
             }
 
             poolItem.Acquire();
