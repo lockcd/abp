@@ -159,6 +159,10 @@ This section covers the ABP infrastructure related to managing time zones.
 
 ABP defines **a setting**, named `Abp.Timing.TimeZone`, that can be used to set and get the time zone for a user, [tenant](../architecture/multi-tenancy) or globally for the application. The default value is `UTC`.
 
+You can change your host/tenant global time zone in the [Settings Management UI](../../modules/setting-management#setting-management-ui)
+
+The [Account Pro Module](../../modules/account-pro#Time-Zone-Setting) supports user to set their own time zone in the account settings page.
+
 See the [setting documentation](../infrastructure/settings.md) to learn more about the setting system.
 
 ### UseAbpTimeZone Middleware
