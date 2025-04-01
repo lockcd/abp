@@ -758,15 +758,17 @@ If the timezone settings change, then all times will be converted to the new tim
 
 ![](mvc-list-utc1.png)
 
-## Timezone in Anonymous Request
+## Browser Timezone Detection
 
-If the current user is not logged in, then we can only use the default timezone, but this might not be suitable for some anonymous users. The best way is to use the timezone of the anonymous user's browser.
+When no timezone setting is configured, ABP's MVC, Blazor, and Angular applications will automatically detect the browser's timezone during initialization. The detected timezone is then stored in either the request's Cookie or Header.
 
-ABP's MVC, Blazor will detect the timezone of anonymous users during initialization and write it to the request's Cookie or Header/QueryString/Form. This allows the backend to get the timezone of anonymous users and use it to display time.
+This functionality is implemented by the `UseAbpTimeZone` middleware, which follows a specific order to determine the appropriate timezone:
 
-This work is done by the `UseAbpTimeZone` middleware. If the request is anonymous, then it will try to get the timezone from the request's Cookie or Header/QueryString/Form, if it cannot get it, then it will use the default timezone. For authenticated requests, it will use the timezone setting of the current user.
+1. First, it attempts to retrieve the timezone from the application/tenant/user settings
+2. If no setting is found, it tries to get the timezone from the request information, including Cookie, Header, QueryString, and Form
+3. Finally, if no timezone information is found, it falls back to using the server's timezone as the default
 
-> The timezone key is `__timezone`
+> The timezone information is stored using the key `__timezone`
 
 ## TimeZoneApp Source Code
 
@@ -775,4 +777,3 @@ You can download and view the [TimeZoneApp source code](https://github.com/malim
 ## Summary
 
 Through this article, we learned how to handle timezone in different types of UIs. I hope this article is helpful to you. If you have any questions, please contact me at any time.
-
