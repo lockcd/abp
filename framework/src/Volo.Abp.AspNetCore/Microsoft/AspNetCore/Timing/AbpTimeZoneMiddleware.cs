@@ -34,10 +34,9 @@ public class AbpTimeZoneMiddleware : AbpMiddlewareBase, ITransientDependency
             timezone = await settingProvider.GetOrNullAsync(TimingSettingNames.TimeZone);
         }
 
-        if (timezone.IsNullOrEmpty())
+        if (timezone.IsNullOrWhiteSpace())
         {
-            await next(context);
-            return;
+            timezone = context.RequestServices.GetRequiredService<ITimezoneProvider>().GetCurrentIanaTimezoneName();
         }
 
         var currentTimezoneProvider = context.RequestServices.GetRequiredService<ICurrentTimezoneProvider>();

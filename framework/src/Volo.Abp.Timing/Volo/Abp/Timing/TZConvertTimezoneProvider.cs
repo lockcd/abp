@@ -32,4 +32,15 @@ public class TZConvertTimezoneProvider : ITimezoneProvider, ITransientDependency
     {
         return TZConvert.GetTimeZoneInfo(windowsOrIanaTimeZoneId);
     }
+
+    public virtual string GetCurrentWindowsTimezoneName()
+    {
+        return TimeZoneInfo.Local.StandardName;;
+    }
+
+    public virtual string GetCurrentIanaTimezoneName()
+    {
+        var timezone = GetCurrentWindowsTimezoneName();
+        return TZConvert.WindowsToIana(timezone);
+    }
 }

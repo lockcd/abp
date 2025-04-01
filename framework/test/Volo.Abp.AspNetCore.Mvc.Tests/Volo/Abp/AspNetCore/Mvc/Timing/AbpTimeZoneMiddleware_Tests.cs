@@ -18,11 +18,13 @@ namespace Volo.Abp.AspNetCore.Mvc.Timing;
 public class AbpTimeZoneMiddleware_Tests : AspNetCoreMvcTestBase
 {
     private readonly ICurrentTimezoneProvider _currentTimezoneProvider;
+    private readonly ITimezoneProvider _timezoneProvider;
     private readonly FakeUserClaims _fakeRequiredService;
 
     public AbpTimeZoneMiddleware_Tests()
     {
         _currentTimezoneProvider = GetRequiredService<ICurrentTimezoneProvider>();
+        _timezoneProvider = GetRequiredService<ITimezoneProvider>();
         _fakeRequiredService = GetRequiredService<FakeUserClaims>();
     }
 
@@ -40,7 +42,7 @@ public class AbpTimeZoneMiddleware_Tests : AspNetCoreMvcTestBase
         using (_currentTimezoneProvider.Change("UTC"))
         {
             var result = await Client.GetStringAsync("api/timing-test");
-            result.ShouldBe("UTC");
+            result.ShouldBe(_timezoneProvider.GetCurrentIanaTimezoneName());
         }
 
         // Query string
@@ -87,14 +89,15 @@ public class AbpTimeZoneMiddleware_Tests : AspNetCoreMvcTestBase
         using (_currentTimezoneProvider.Change("Europe/Berlin"))
         {
             var result = await Client.GetStringAsync("api/timing-test");
-            result.ShouldBe("UTC");
+
+            result.ShouldBe(_timezoneProvider.GetCurrentIanaTimezoneName());
         }
 
         // Query string
         using (_currentTimezoneProvider.Change("Europe/Berlin"))
         {
             var result = await Client.GetStringAsync("api/timing-test?__timezone=Europe/Istanbul");
-            result.ShouldBe("UTC");
+            result.ShouldBe(_timezoneProvider.GetCurrentIanaTimezoneName());
         }
 
         // Header

@@ -14,4 +14,8 @@ public interface ITimezoneProvider
     string IanaToWindows(string ianaTimeZoneName);
 
     TimeZoneInfo GetTimeZoneInfo(string windowsOrIanaTimeZoneId);
+
+    string GetCurrentWindowsTimezoneName();
+
+    string GetCurrentIanaTimezoneName();
 }

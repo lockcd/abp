@@ -8,7 +8,7 @@ In this article, we'll show you step by step how to handle multi-timezone in the
 
 ## Timezone Settings
 
-The ABP framework provides a setting called `Abp.Timing.TimeZone` for setting and getting the timezone of users, tenants, or applications. The default value is `UTC`. Check out the [Timing documentation](https://abp.io/docs/latest/framework/infrastructure/timing) for more information.
+The ABP framework provides a setting called `Abp.Timing.TimeZone` for setting and getting the timezone of users, tenants, or applications. The default value is empty, which means the application will use the server's time zone. Check out the [Timing documentation](https://abp.io/docs/latest/framework/infrastructure/timing) for more information.
 
 ## ISO 8601 Date Time Format
 
