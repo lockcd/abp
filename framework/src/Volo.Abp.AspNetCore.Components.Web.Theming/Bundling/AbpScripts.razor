@@ -5,7 +5,12 @@
 {
     foreach (var file in ScriptFiles)
     {
-        <script src="@file"></script>
+        var src = file;
+        if (!AppBasePath.IsNullOrWhiteSpace())
+        {
+            src = AppBasePath.EnsureEndsWith('/') + file.RemovePreFix("/");
+        }
+        <script src="@src"></script>
     }
 }
 
@@ -18,6 +23,9 @@
 
     [Parameter]
     public string? BundleName { get; set; }
+
+    [Parameter]
+    public string? AppBasePath { get; set; }
 
     private List<string>? ScriptFiles { get; set; }
 
