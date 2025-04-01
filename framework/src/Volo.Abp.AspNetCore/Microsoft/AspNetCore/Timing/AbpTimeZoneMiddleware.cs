@@ -21,21 +21,19 @@ public class AbpTimeZoneMiddleware : AbpMiddlewareBase, ITransientDependency
             return;
         }
 
-        string? timezone = null;
+        // Try to get the timezone from the setting system first
+        var settingProvider = context.RequestServices.GetRequiredService<ISettingProvider>();
+        var timezone = await settingProvider.GetOrNullAsync(TimingSettingNames.TimeZone);
 
-        if (!context.RequestServices.GetRequiredService<ICurrentUser>().IsAuthenticated)
+        if (timezone.IsNullOrWhiteSpace())
         {
+            // Try to get the timezone from the HTTP request if the setting is not available
             timezone = await GetTimezoneFromRequestAsync(context);
         }
 
         if (timezone.IsNullOrWhiteSpace())
         {
-            var settingProvider = context.RequestServices.GetRequiredService<ISettingProvider>();
-            timezone = await settingProvider.GetOrNullAsync(TimingSettingNames.TimeZone);
-        }
-
-        if (timezone.IsNullOrWhiteSpace())
-        {
+            // Try to get the timezone from the current running server if the setting and request are not available
             timezone = context.RequestServices.GetRequiredService<ITimezoneProvider>().GetCurrentIanaTimezoneName();
         }
 
