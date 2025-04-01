@@ -1,15 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Shouldly;
-using Volo.Abp.AspNetCore.Mvc.Authorization;
-using Volo.Abp.Security.Claims;
+using Volo.Abp.Settings;
 using Volo.Abp.Timing;
 using Xunit;
 
@@ -19,13 +15,10 @@ public class AbpTimeZoneMiddleware_Tests : AspNetCoreMvcTestBase
 {
     private readonly ICurrentTimezoneProvider _currentTimezoneProvider;
     private readonly ITimezoneProvider _timezoneProvider;
-    private readonly FakeUserClaims _fakeRequiredService;
-
     public AbpTimeZoneMiddleware_Tests()
     {
         _currentTimezoneProvider = GetRequiredService<ICurrentTimezoneProvider>();
         _timezoneProvider = GetRequiredService<ITimezoneProvider>();
-        _fakeRequiredService = GetRequiredService<FakeUserClaims>();
     }
 
     protected override void ConfigureServices(IServiceCollection services)
@@ -42,7 +35,7 @@ public class AbpTimeZoneMiddleware_Tests : AspNetCoreMvcTestBase
         using (_currentTimezoneProvider.Change("UTC"))
         {
             var result = await Client.GetStringAsync("api/timing-test");
-            result.ShouldBe(_timezoneProvider.GetCurrentIanaTimezoneName());
+            result.ShouldBe(GetLocalTimeZone());
         }
 
         // Query string
@@ -78,51 +71,79 @@ public class AbpTimeZoneMiddleware_Tests : AspNetCoreMvcTestBase
         }
     }
 
-    [Fact]
-    public async Task Should_Not_Override_TimeZone_Setting_By_Request_For_Authenticated_User()
+    private string GetLocalTimeZone()
     {
-        _fakeRequiredService.Claims.AddRange(new[]
+        if (TimeZoneInfo.Local.HasIanaId)
         {
-            new Claim(AbpClaimTypes.UserId, AuthTestController.FakeUserId.ToString())
-        });
+            return TimeZoneInfo.Local.Id;
+        }
 
-        using (_currentTimezoneProvider.Change("Europe/Berlin"))
+        return TimeZoneInfo.TryConvertWindowsIdToIanaId(TimeZoneInfo.Local.Id, out var ianaName)
+            ? ianaName
+            : null;
+    }
+}
+
+
+public class AbpTimeZoneMiddleware_With_SettingValue_Tests : AspNetCoreMvcTestBase
+{
+    private readonly ICurrentTimezoneProvider _currentTimezoneProvider;
+    public AbpTimeZoneMiddleware_With_SettingValue_Tests()
+    {
+        _currentTimezoneProvider = GetRequiredService<ICurrentTimezoneProvider>();
+    }
+
+    protected override void ConfigureServices(IServiceCollection services)
+    {
+        var settingStore = Substitute.For<ISettingProvider>();
+        settingStore.GetOrNullAsync(TimingSettingNames.TimeZone).Returns("Asia/Shanghai");
+        services.AddSingleton(settingStore);
+
+        services.Configure<AbpClockOptions>(options =>
+        {
+            options.Kind = DateTimeKind.Utc;
+        });
+    }
+
+    [Fact]
+    public async Task Should_Not_Override_TimeZone_Setting_By_Request()
+    {
+        using (_currentTimezoneProvider.Change("UTC"))
         {
             var result = await Client.GetStringAsync("api/timing-test");
-
-            result.ShouldBe(_timezoneProvider.GetCurrentIanaTimezoneName());
+            result.ShouldBe("Asia/Shanghai");
         }
 
         // Query string
-        using (_currentTimezoneProvider.Change("Europe/Berlin"))
+        using (_currentTimezoneProvider.Change("UTC"))
         {
             var result = await Client.GetStringAsync("api/timing-test?__timezone=Europe/Istanbul");
-            result.ShouldBe(_timezoneProvider.GetCurrentIanaTimezoneName());
+            result.ShouldBe("Asia/Shanghai");
         }
 
         // Header
-        using (_currentTimezoneProvider.Change("Europe/Berlin"))
+        using (_currentTimezoneProvider.Change("UTC"))
         {
-            Client.DefaultRequestHeaders.Add("__timezone", "Asia/Shanghai");
+            Client.DefaultRequestHeaders.Add("__timezone", "Europe/Istanbul");
             var result = await Client.GetStringAsync("api/timing-test");
-            result.ShouldBe("UTC");
+            result.ShouldBe("Asia/Shanghai");
         }
 
         // Form
-        using (_currentTimezoneProvider.Change("Europe/Berlin"))
+        using (_currentTimezoneProvider.Change("UTC"))
         {
             Client.DefaultRequestHeaders.Remove("__timezone");
-            var result = await Client.PostAsync("api/timing-test", new FormUrlEncodedContent(new[] {new KeyValuePair<string, string>("__timezone", "Europe/Germany")}));
-            (await result.Content.ReadAsStringAsync()).ShouldBe("UTC");
+            var result = await Client.PostAsync("api/timing-test", new FormUrlEncodedContent(new[] {new KeyValuePair<string, string>("__timezone", "Europe/Istanbul")}));
+            (await result.Content.ReadAsStringAsync()).ShouldBe("Asia/Shanghai");
         }
 
         // Cookie
-        using (_currentTimezoneProvider.Change("Europe/Berlin"))
+        using (_currentTimezoneProvider.Change("UTC"))
         {
             Client.DefaultRequestHeaders.Remove("__timezone");
             Client.DefaultRequestHeaders.Add("Cookie", "__timezone=Europe/Istanbul");
             var result = await Client.GetStringAsync("api/timing-test");
-            result.ShouldBe("UTC");
+            result.ShouldBe("Asia/Shanghai");
         }
     }
 }

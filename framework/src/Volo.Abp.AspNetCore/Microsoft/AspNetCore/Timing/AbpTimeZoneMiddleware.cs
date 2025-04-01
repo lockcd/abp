@@ -34,7 +34,7 @@ public class AbpTimeZoneMiddleware : AbpMiddlewareBase, ITransientDependency
         if (timezone.IsNullOrWhiteSpace())
         {
             // Try to get the timezone from the current running server if the setting and request are not available
-            timezone = context.RequestServices.GetRequiredService<ITimezoneProvider>().GetCurrentIanaTimezoneName();
+            timezone = await GetLocalTimeZoneAsync();
         }
 
         var currentTimezoneProvider = context.RequestServices.GetRequiredService<ICurrentTimezoneProvider>();
@@ -66,5 +66,17 @@ public class AbpTimeZoneMiddleware : AbpMiddlewareBase, ITransientDependency
         }
 
         return null;
+    }
+
+    protected virtual Task<string?> GetLocalTimeZoneAsync()
+    {
+        if (TimeZoneInfo.Local.HasIanaId)
+        {
+            return Task.FromResult<string?>(TimeZoneInfo.Local.Id);
+        }
+
+        return TimeZoneInfo.TryConvertWindowsIdToIanaId(TimeZoneInfo.Local.Id, out var ianaName)
+            ? Task.FromResult<string?>(ianaName)
+            : Task.FromResult<string?>(null);
     }
 }
