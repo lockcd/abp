@@ -60,8 +60,7 @@ Configure<AbpClockOptions>(options =>
 
 Write this inside of the `ConfigureServices` method of your [module](../architecture/modularity/basics.md).
 
-> The default `Kind` is `Unspecified`, which actually makes the **Clock** as it doesn't exist at all. Either make it `Utc` or `Local` if you want to get the benefit of the Clock system.
-
+> The default `Kind` is `Unspecified`, which effectively disables the **Clock** functionality. Either make it `Utc` or `Local` if you want to get the benefit of the Clock system.
 ### DateTime Normalization
 
 Another important function of the `IClock` is to normalize `DateTime` objects.
