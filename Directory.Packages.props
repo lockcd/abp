@@ -44,8 +44,8 @@
     <PackageVersion Include="MongoSandbox6.runtime.win-x64" Version="1.0.1" />
     <PackageVersion Include="FluentValidation" Version="11.10.0" />
     <PackageVersion Include="Google.Cloud.Storage.V1" Version="4.10.0" />
-    <PackageVersion Include="Hangfire.AspNetCore" Version="1.8.17" />
-    <PackageVersion Include="Hangfire.SqlServer" Version="1.8.17" />
+    <PackageVersion Include="Hangfire.AspNetCore" Version="1.8.18" />
+    <PackageVersion Include="Hangfire.SqlServer" Version="1.8.18" />
     <PackageVersion Include="HtmlSanitizer" Version="8.1.870" />
     <PackageVersion Include="IdentityModel" Version="7.0.0" />
     <PackageVersion Include="IdentityServer4" Version="4.1.2" />
