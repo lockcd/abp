@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.JSInterop;
 using Volo.Abp.AspNetCore.Components.Web.Security;
 using Volo.Abp.AspNetCore.Mvc.ApplicationConfigurations;
@@ -79,11 +80,13 @@ public class WebAssemblyCachedApplicationConfigurationClient : ICachedApplicatio
             configurationDto.CurrentTenant.Name
         );
 
-        CurrentTimezoneProvider.TimeZone = configurationDto.Timing.TimeZone.Iana.TimeZoneName;
-
-        if (Clock.SupportsMultipleTimezone && !configurationDto.CurrentUser.IsAuthenticated)
+        if (Clock.SupportsMultipleTimezone)
         {
-            await JSRuntime.InvokeVoidAsync("abp.clock.setBrowserTimeZoneToCookie");
+            CurrentTimezoneProvider.TimeZone = !configurationDto.Timing.TimeZone.Iana.TimeZoneName.IsNullOrWhiteSpace()
+                ? configurationDto.Timing.TimeZone.Iana.TimeZoneName
+                : await JSRuntime.InvokeAsync<string>("abp.clock.getBrowserTimeZone");
+
+            await JSRuntime.InvokeAsync<string>("abp.clock.setBrowserTimeZoneToCookie");
         }
     }
 
