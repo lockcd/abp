@@ -105,6 +105,7 @@ public class AbpBlazorClientHttpMessageHandler : DelegatingHandler, ITransientDe
     {
         if (!_currentTimezoneProvider.TimeZone.IsNullOrWhiteSpace())
         {
+            request.Headers.Remove(TimeZoneConsts.DefaultTimeZoneKey);
             request.Headers.Add(TimeZoneConsts.DefaultTimeZoneKey, _currentTimezoneProvider.TimeZone);
         }
 
