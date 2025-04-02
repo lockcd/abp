@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.JSInterop;
 using Volo.Abp.AspNetCore.Mvc.ApplicationConfigurations;
 using Volo.Abp.AspNetCore.Mvc.ApplicationConfigurations.ClientProxies;
 using Volo.Abp.AspNetCore.Mvc.Client;
@@ -21,19 +23,27 @@ namespace Volo.Abp.AspNetCore.Components.MauiBlazor
 
         protected ICurrentTimezoneProvider CurrentTimezoneProvider { get; }
 
+        protected IJSRuntime JSRuntime { get; }
+
+        protected IClock Clock { get; }
+
         public MauiBlazorCachedApplicationConfigurationClient(
             AbpApplicationConfigurationClientProxy applicationConfigurationClientProxy,
             ApplicationConfigurationCache cache,
             ICurrentTenantAccessor currentTenantAccessor,
             ICurrentTimezoneProvider currentTimezoneProvider,
             AuthenticationStateProvider authenticationStateProvider,
-            AbpApplicationLocalizationClientProxy applicationLocalizationClientProxy)
+            AbpApplicationLocalizationClientProxy applicationLocalizationClientProxy,
+            IJSRuntime jsRuntime,
+            IClock clock)
         {
             ApplicationConfigurationClientProxy = applicationConfigurationClientProxy;
             Cache = cache;
             CurrentTenantAccessor = currentTenantAccessor;
             CurrentTimezoneProvider = currentTimezoneProvider;
             ApplicationLocalizationClientProxy = applicationLocalizationClientProxy;
+            JSRuntime = jsRuntime;
+            Clock = clock;
 
             authenticationStateProvider.AuthenticationStateChanged += async _ => { await InitializeAsync(); };
         }
@@ -56,13 +66,21 @@ namespace Volo.Abp.AspNetCore.Components.MauiBlazor
             );
 
             configurationDto.Localization.Resources = localizationDto.Resources;
-            CurrentTimezoneProvider.TimeZone = configurationDto.Timing.TimeZone.Iana.TimeZoneName;
 
             Cache.Set(configurationDto);
 
             CurrentTenantAccessor.Current = new BasicTenantInfo(
                 configurationDto.CurrentTenant.Id,
                 configurationDto.CurrentTenant.Name);
+
+            if (Clock.SupportsMultipleTimezone)
+            {
+                CurrentTimezoneProvider.TimeZone = !configurationDto.Timing.TimeZone.Iana.TimeZoneName.IsNullOrWhiteSpace()
+                    ? configurationDto.Timing.TimeZone.Iana.TimeZoneName
+                    : await JSRuntime.InvokeAsync<string>("abp.clock.getBrowserTimeZone");
+
+                await JSRuntime.InvokeAsync<string>("abp.clock.setBrowserTimeZoneToCookie");
+            }
         }
 
         public virtual Task<ApplicationConfigurationDto> GetAsync()
