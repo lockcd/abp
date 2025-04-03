@@ -362,8 +362,21 @@ public class MongoIdentityUserRepository : MongoDbRepository<IAbpIdentityMongoDb
 
     public virtual async Task UpdateOrganizationAsync(Guid sourceOrganizationId, Guid? targetOrganizationId, CancellationToken cancellationToken = default)
     {
+        var sourceOrganizationUnit = await (await GetQueryableAsync<OrganizationUnit>(cancellationToken))
+            .Where(x => x.Id == sourceOrganizationId)
+            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+        if (sourceOrganizationUnit == null)
+        {
+            throw new EntityNotFoundException(typeof(OrganizationUnit), sourceOrganizationId);
+        }
+
+        var allSourceOrganizationIds = await (await GetQueryableAsync<OrganizationUnit>(cancellationToken))
+            .Where(x => x.Code.StartsWith(sourceOrganizationUnit.Code))
+            .Select(x => x.Id)
+            .ToListAsync(cancellationToken: cancellationToken);
+
         var users = await (await GetQueryableAsync(cancellationToken))
-            .Where(x => x.OrganizationUnits.Any(r => r.OrganizationUnitId == sourceOrganizationId))
+            .Where(x => x.OrganizationUnits.Any(r => allSourceOrganizationIds.Contains(r.OrganizationUnitId)))
             .ToListAsync(GetCancellationToken(cancellationToken));
 
         foreach (var user in users)
@@ -458,7 +471,7 @@ public class MongoIdentityUserRepository : MongoDbRepository<IAbpIdentityMongoDb
         {
             return query.Where(x => x.Id == id);
         }
-        
+
         if (roleId.HasValue)
         {
             var organizationUnitIds = (await GetQueryableAsync<OrganizationUnit>(cancellationToken))
