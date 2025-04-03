@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories.MongoDB;
 using Volo.Abp.MongoDB;
 
@@ -367,7 +368,11 @@ public class MongoIdentityUserRepository : MongoDbRepository<IAbpIdentityMongoDb
 
         foreach (var user in users)
         {
-            user.RemoveOrganizationUnit(sourceOrganizationId);
+            foreach (var organizationId in allSourceOrganizationIds)
+            {
+                user.RemoveOrganizationUnit(organizationId);
+            }
+
             if (targetOrganizationId.HasValue)
             {
                 user.AddOrganizationUnit(targetOrganizationId.Value);
