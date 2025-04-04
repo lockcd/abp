@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -85,7 +86,7 @@ public class AuthorizeController : AbpOpenIdDictControllerBase
             TempData["IgnoreSelectAccount"] = true;
 
             var selectAccountPath = HttpContext.RequestServices.GetRequiredService<IOptions<AbpOpenIddictAspNetCoreOptions>>().Value.SelectAccountPage.RemovePostFix("/");
-            return Redirect(Url.Content($"{selectAccountPath}?RedirectUri={Request.PathBase + Request.Path + QueryString.Create(Request.HasFormContentType ? Request.Form : Request.Query)}"));
+            return Redirect(Url.Content($"{selectAccountPath}?RedirectUri={UrlEncoder.Default.Encode(Request.PathBase + Request.Path + QueryString.Create(Request.HasFormContentType ? Request.Form : Request.Query))}"));
         }
 
         // Retrieve the profile of the logged in user.
