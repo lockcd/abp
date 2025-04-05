@@ -311,7 +311,7 @@ ABP microservice startup template provides [pre-configured Helm charts](../../so
 
 In the section *Generating Proxy Classes for the Integration Service* above, we added a new configuration to the `appsettings.json` file of the Ordering microservice. We should configure the corresponding Helm chart configuration to keep it synchronized.
 
-Open the `etc\helm\mycloudcrm\charts\ordering\templates\ordering.yaml` file in a text editor, and add the following lines under the `env` section, just like the other values present (be careful on indents since it is critical in YAML files):
+Open the `etc\helm\cloudcrm\charts\ordering\templates\ordering.yaml` file in a text editor, and add the following lines under the `env` section, just like the other values present (be careful on indents since it is critical in YAML files):
 
 ````yaml
 - name: "RemoteServices__CatalogService__BaseUrl"
