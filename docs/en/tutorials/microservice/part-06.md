@@ -315,7 +315,7 @@ Open the `etc\helm\mycloudcrm\charts\ordering\templates\ordering.yaml` file in a
 
 ````yaml
 - name: "RemoteServices__CatalogService__BaseUrl"
-  value: "http://{{{{ .Release.Name }}}}-catalog"
+  value: "http://{%{{{ .Release.Name }}}%}-catalog"
 ````
 
 With this simple configuration, now the Ordering module can discover the catalog microservice's URL inside your Kubernetes cluster.
