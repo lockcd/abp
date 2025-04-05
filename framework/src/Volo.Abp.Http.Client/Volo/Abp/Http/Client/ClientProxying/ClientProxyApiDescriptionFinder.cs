@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.FileProviders.Physical;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Http.Modeling;
 using Volo.Abp.Json;
 using Volo.Abp.VirtualFileSystem;
-using Volo.Abp.VirtualFileSystem.Embedded;
 
 namespace Volo.Abp.Http.Client.ClientProxying;
 
@@ -32,9 +30,7 @@ public class ClientProxyApiDescriptionFinder : IClientProxyApiDescriptionFinder,
 
     public virtual ActionApiDescriptionModel? FindAction(string methodName)
     {
-        return ActionApiDescriptionModels.TryGetValue(methodName, out var model)
-            ? model
-            : null;
+        return ActionApiDescriptionModels.TryGetValue(methodName, out var model) ? model : null;
     }
 
     public virtual ApplicationApiDescriptionModel GetApiDescription()
@@ -54,7 +50,6 @@ public class ClientProxyApiDescriptionFinder : IClientProxyApiDescriptionFinder,
             foreach (var actionItem in controller.Actions.Values)
             {
                 var actionKey = $"{appServiceType}.{actionItem.Name}.{string.Join("-", actionItem.ParametersOnMethod.Select(x => x.Type))}";
-
                 if (!ActionApiDescriptionModels.ContainsKey(actionKey))
                 {
                     ActionApiDescriptionModels.Add(actionKey, actionItem);
@@ -92,39 +87,19 @@ public class ClientProxyApiDescriptionFinder : IClientProxyApiDescriptionFinder,
 
     protected virtual void GetGenerateProxyFileInfos(List<IFileInfo> fileInfoList, string path = "")
     {
-        foreach (var directoryContent in VirtualFileProvider.GetDirectoryContents(path))
+        foreach (var fileInfo in VirtualFileProvider.GetDirectoryContents(path))
         {
-            if (directoryContent.IsDirectory)
+            if (fileInfo.IsDirectory)
             {
-                GetGenerateProxyFileInfos(fileInfoList, GetDirectoryContentPath(path, directoryContent));
+                GetGenerateProxyFileInfos(fileInfoList, path + fileInfo.Name.EnsureStartsWith('/'));
             }
             else
             {
-                if (directoryContent.Name.EndsWith("generate-proxy.json"))
+                if (fileInfo.Name.EndsWith("generate-proxy.json", StringComparison.OrdinalIgnoreCase))
                 {
-                    fileInfoList.Add(VirtualFileProvider.GetFileInfo(GetProxyFileInfoPath(path, directoryContent)));
+                    fileInfoList.Add(fileInfo);
                 }
             }
         }
-    }
-
-    protected virtual string GetDirectoryContentPath(string rootPath, IFileInfo fileInfo)
-    {
-        return fileInfo switch
-        {
-            PhysicalDirectoryInfo physicalDirectoryInfo => rootPath + physicalDirectoryInfo.Name.EnsureStartsWith('/'),
-            VirtualDirectoryFileInfo => fileInfo.PhysicalPath!,
-            _ => rootPath + fileInfo.Name.EnsureStartsWith('/')
-        };
-    }
-
-    protected virtual string GetProxyFileInfoPath(string rootPath, IFileInfo fileInfo)
-    {
-        return fileInfo switch
-        {
-            EmbeddedResourceFileInfo embeddedFileInfo => embeddedFileInfo.VirtualPath,
-            InMemoryFileInfo inMemoryFileInfo => inMemoryFileInfo.DynamicPath,
-            _ => rootPath + fileInfo.Name.EnsureStartsWith('/')
-        };
     }
 }
