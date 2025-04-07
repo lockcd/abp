@@ -15,7 +15,7 @@
       let-selectFn="selectFn">
       @if (_selectionType !== 'single') {
       <div class="form-check">
-        <input class="form-check-input table-check" type="checkbox" [checked]="allRowsSelected" style="height: 17.5px; width: 17.5px;"
+        <input class="form-check-input table-check" type="checkbox" [checked]="allRowsSelected"
           (change)="selectFn(!allRowsSelected)" />
       </div>
       }
