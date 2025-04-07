@@ -27,48 +27,25 @@ public class ConnectionPool : IConnectionPool, ISingletonDependency
 
     public virtual async Task<IConnection> GetAsync(string? connectionName = null)
     {
-        connectionName ??= RabbitMqConnections.DefaultConnectionName;
-
-        IConnection connection;
-
-        if (Connections.TryGetValue(connectionName, out var existingConnection))
+        using (await Semaphore.LockAsync())
         {
-            connection = existingConnection;
-        }
-        else
-        {
-            using (await Semaphore.LockAsync())
+            connectionName ??= RabbitMqConnections.DefaultConnectionName;
+
+            if (Connections.TryGetValue(connectionName, out var existingConnection) && existingConnection.IsOpen)
             {
-                try
-                {
-                    var connectionFactory = Options.Connections.GetOrDefault(connectionName);
-                    if (Connections.TryGetValue(connectionName, out var existingConnection2))
-                    {
-                        connection = existingConnection2;
-                    }
-                    else
-                    {
-                        connection = await GetConnectionAsync(connectionName, connectionFactory);
-                        Connections.TryAdd(connectionName, connection);
-
-                        if (!connection.IsOpen)
-                        {
-                            connection.Dispose();
-                            Connections.TryRemove(connectionName, out _);
-                            connection = await GetConnectionAsync(connectionName, connectionFactory);
-                            Connections.TryAdd(connectionName, connection);
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                    Connections.TryRemove(connectionName, out _);
-                    throw;
-                }
+                return existingConnection;
             }
-        }
 
-        return connection;
+            if(existingConnection != null)
+            {
+                await existingConnection.DisposeAsync();
+            }
+
+            var connectionFactory = Options.Connections.GetOrDefault(connectionName);
+            var connection = await GetConnectionAsync(connectionName, connectionFactory);
+            Connections[connectionName] = connection;
+            return connection;
+        }
     }
 
     protected virtual async Task<IConnection> GetConnectionAsync(string connectionName, ConnectionFactory connectionFactory)
@@ -80,7 +57,7 @@ public class ConnectionPool : IConnectionPool, ISingletonDependency
             : await connectionFactory.CreateConnectionAsync(hostnames);
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         if (_isDisposed)
         {
@@ -93,7 +70,7 @@ public class ConnectionPool : IConnectionPool, ISingletonDependency
         {
             try
             {
-                connection.Dispose();
+                await connection.DisposeAsync();
             }
             catch
             {

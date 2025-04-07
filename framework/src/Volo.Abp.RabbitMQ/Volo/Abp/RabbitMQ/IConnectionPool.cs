@@ -4,7 +4,7 @@ using RabbitMQ.Client;
 
 namespace Volo.Abp.RabbitMQ;
 
-public interface IConnectionPool : IDisposable
+public interface IConnectionPool : IAsyncDisposable
 {
     Task<IConnection> GetAsync(string? connectionName = null);
 }
