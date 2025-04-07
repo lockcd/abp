@@ -65,7 +65,7 @@ public class ChannelPool : IChannelPool, ISingletonDependency
 
         if (poolItem.Channel.IsClosed)
         {
-            poolItem.Dispose();
+            await poolItem.DisposeAsync();
             Channels.TryRemove(channelName, out _);
 
             using (await Semaphore.LockAsync())
@@ -106,7 +106,7 @@ public class ChannelPool : IChannelPool, ISingletonDependency
         }
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         if (IsDisposed)
         {
@@ -134,10 +134,12 @@ public class ChannelPool : IChannelPool, ISingletonDependency
             try
             {
                 poolItem.WaitIfInUse(remainingWaitDuration);
-                poolItem.Dispose();
+                await poolItem.DisposeAsync();
             }
             catch
-            { }
+            {
+                // ignored
+            }
 
             poolItemDisposeStopwatch.Stop();
 
@@ -158,7 +160,7 @@ public class ChannelPool : IChannelPool, ISingletonDependency
         Channels.Clear();
     }
 
-    protected class ChannelPoolItem : IDisposable
+    protected class ChannelPoolItem : IAsyncDisposable
     {
         public IChannel Channel { get; }
 
@@ -208,9 +210,9 @@ public class ChannelPool : IChannelPool, ISingletonDependency
             }
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            Channel.Dispose();
+            await Channel.DisposeAsync();
         }
     }
 
