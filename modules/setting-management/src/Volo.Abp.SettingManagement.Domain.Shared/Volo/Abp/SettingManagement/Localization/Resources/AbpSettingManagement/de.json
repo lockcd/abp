@@ -21,6 +21,8 @@
     "Menu:TimeZone": "Zeitzone",
     "DisplayName:Timezone": "Zeitzone",
     "TimezoneHelpText": "Diese Einstellung wird anwendungsweit oder mandantenbasiert verwendet.",
+    "DefaultTimeZone": "Standardzeitzone",
+    "DefaultTimeZoneInfo": "Die Standardzeitzone wird versuchen, die Zeitzone des Browsers oder des Servers zu verwenden.",
     "SmtpHost": "Gastgeber",
     "SmtpPort": "Hafen",
     "SmtpUserName": "Nutzername",
