@@ -1,28 +1,27 @@
 import { Pipe, PipeTransform, Injectable, inject } from '@angular/core';
-import { TimezoneService } from '../services';
+import { LocalizationService, TimezoneService } from '../services';
 
 @Injectable()
 @Pipe({
-  name: 'utcToLocal',
-  standalone: false,
+  name: 'abpUtcToLocal',
 })
 export class UtcToLocalPipe implements PipeTransform {
   protected readonly timezoneService = inject(TimezoneService);
-  private readonly timezone: string;
-
-  constructor() {
-    this.timezone = this.timezoneService.getTimezone();
-  }
+  protected readonly localizationService = inject(LocalizationService);
 
   transform(
     value: string | Date | null | undefined,
-    locale: string = navigator.language,
     options?: Intl.DateTimeFormatOptions,
-  ): string {
+  ): string | Date {
     if (!value) return '';
 
     try {
-      const utcDate = new Date(value + 'Z'); // Ensure it's treated as UTC
+      const dateInput = new Date(value);
+
+      if (isNaN(dateInput.getTime())) {
+        // Invalid date
+        return '';
+      }
 
       const formatOptions: Intl.DateTimeFormatOptions = options || {
         year: 'numeric',
@@ -32,14 +31,14 @@ export class UtcToLocalPipe implements PipeTransform {
         minute: '2-digit',
       };
 
-      const formatter = new Intl.DateTimeFormat(locale, {
+      const formatter = new Intl.DateTimeFormat('en-US', {
         ...formatOptions,
-        timeZone: this.timezone,
+        timeZone: this.timezoneService.getTimezone(),
       });
 
-      return formatter.format(utcDate);
+      return formatter.format(dateInput);
     } catch (err) {
-      return '';
+      return value;
     }
   }
 }

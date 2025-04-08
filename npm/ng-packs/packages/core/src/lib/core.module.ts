@@ -65,7 +65,6 @@ const standaloneDirectives = [
     ShortDateTimePipe,
     ShortTimePipe,
     ShortDatePipe,
-    UtcToLocalPipe,
     ...standaloneDirectives,
   ],
   imports: [
@@ -74,6 +73,7 @@ const standaloneDirectives = [
     ReactiveFormsModule,
     RouterModule,
     LocalizationModule,
+    UtcToLocalPipe,
     ...standaloneDirectives,
   ],
   declarations: [
@@ -87,7 +87,6 @@ const standaloneDirectives = [
     ShortDateTimePipe,
     ShortTimePipe,
     ShortDatePipe,
-    UtcToLocalPipe,
   ],
   providers: [LocalizationPipe, provideHttpClient(withInterceptorsFromDi())],
 })
