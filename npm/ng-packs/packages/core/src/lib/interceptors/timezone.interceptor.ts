@@ -3,7 +3,9 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/c
 import { TimezoneService } from '../services';
 import { Observable } from 'rxjs';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class TimezoneInterceptor implements HttpInterceptor {
   protected readonly timezoneService = inject(TimezoneService);
 
