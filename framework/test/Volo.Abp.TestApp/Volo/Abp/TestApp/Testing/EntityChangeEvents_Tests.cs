@@ -34,7 +34,7 @@ public abstract class EntityChangeEvents_Tests<TStartupModule> : TestAppTestBase
     {
         services.Configure<AbpDistributedEntityEventOptions>(options =>
         {
-            options.IgnoreEventSelectors.Add<City>();
+            options.IgnoredEventSelectors.Add<City>();
         });
     }
 

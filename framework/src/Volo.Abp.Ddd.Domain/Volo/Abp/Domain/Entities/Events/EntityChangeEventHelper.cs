@@ -69,7 +69,7 @@ public class EntityChangeEventHelper : IEntityChangeEventHelper, ITransientDepen
     private bool ShouldPublishDistributedEventForEntity(object entity)
     {
         var entityType = ProxyHelper.UnProxy(entity).GetType();
-        return !DistributedEntityEventOptions.IgnoreEventSelectors.IsMatch(entityType) &&
+        return !DistributedEntityEventOptions.IgnoredEventSelectors.IsMatch(entityType) &&
                DistributedEntityEventOptions.AutoEventSelectors.IsMatch(entityType);
     }
 

@@ -52,8 +52,8 @@ public class AbpMongoDbModule : AbpModule
 
         Configure<AbpDistributedEntityEventOptions>(options =>
         {
-            options.IgnoreEventSelectors.Add<OutgoingEventRecord>();
-            options.IgnoreEventSelectors.Add<IncomingEventRecord>();
+            options.IgnoredEventSelectors.Add<OutgoingEventRecord>();
+            options.IgnoredEventSelectors.Add<IncomingEventRecord>();
         });
     }
 }
