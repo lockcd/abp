@@ -142,7 +142,7 @@ There are exciting articles contributed by the ABP community as always. I will h
 * [How to Change the CurrentUser in ABP?](https://abp.io/community/articles/how-to-change-the-currentuser-in-abp-i3uu1m7g) by [Engincan Veske](https://github.com/EngincanV)
 
 
-Thanks to the ABP Community for all the content they have published. You can also [post your ABP-related (text or video) content](https://abp.io/community/posts/submit) to the ABP Community.
+Thanks to the ABP Community for all the content they have published. You can also [post your ABP-related (text or video) content](https://abp.io/community/posts/create) to the ABP Community.
 
 ## Conclusion
 
