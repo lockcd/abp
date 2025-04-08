@@ -304,3 +304,18 @@ Now, the Ordering service displays the product name instead of the product ID. W
 > **Design Tip**
 >
 > It is suggested that you keep that type of communication to a minimum and not couple your services with each other. It can make your solution complicated and may also decrease your system performance. When you need to do it, think about performance and try to make some optimizations. For example, if the Ordering service frequently needs product data, you can use a kind of [cache layer](../../framework/fundamentals/caching.md), so it doesn't make frequent requests to the Catalog service.
+
+### Updating the Kubernetes Configuration
+
+ABP microservice startup template provides [pre-configured Helm charts](../../solution-templates/microservice/helm-charts-and-kubernetes.md) to deploy your solution to Kubernetes. When you develop your solution, you should also care about configurations of these charts if you want to keep them up to date and working.
+
+In the section *Generating Proxy Classes for the Integration Service* above, we added a new configuration to the `appsettings.json` file of the Ordering microservice. We should configure the corresponding Helm chart configuration to keep it synchronized.
+
+Open the `etc\helm\cloudcrm\charts\ordering\templates\ordering.yaml` file in a text editor, and add the following lines under the `env` section, just like the other values present (be careful on indents since it is critical in YAML files):
+
+````yaml
+- name: "RemoteServices__CatalogService__BaseUrl"
+  value: "http://{%{{{ .Release.Name }}}%}-catalog"
+````
+
+With this simple configuration, now the Ordering module can discover the catalog microservice's URL inside your Kubernetes cluster.

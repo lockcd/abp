@@ -5,7 +5,12 @@
 {
     foreach (var file in StyleFiles)
     {
-        <link rel="stylesheet" href="@file" />
+        var href = file;
+        if (!AppBasePath.IsNullOrWhiteSpace())
+        {
+            href = AppBasePath.EnsureEndsWith('/') + file.RemovePreFix("/");
+        }
+        <link rel="stylesheet" href="@href" />
     }
 }
 
@@ -18,6 +23,9 @@
 
     [Parameter]
     public string? BundleName { get; set; }
+
+    [Parameter]
+    public string? AppBasePath { get; set; }
 
     private List<string>? StyleFiles { get; set; }
 
