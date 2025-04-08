@@ -273,6 +273,12 @@ Users who register via both local registration and external/social login using t
 
 ![require-local-password-on-social-account-linking](../images/require-local-password-on-social-account-linking.png)
 
+### Time Zone Setting
+
+Users can to set their own time zone in the account settings page if application is [supports multiple timezones](../framework/infrastructure/timing.md#clock-options).
+
+![account-pro-time-zone-setting](../images/account-pro-time-zone-setting.png)
+
 ## Internals
 
 ### Settings
