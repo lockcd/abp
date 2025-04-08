@@ -30,6 +30,7 @@ import { ShortTimePipe } from './pipes/short-time.pipe';
 import { ShortDatePipe } from './pipes/short-date.pipe';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { provideAbpCoreChild, provideAbpCore, withOptions } from './providers';
+import { UtcToLocalPipe } from './pipes';
 
 const standaloneDirectives = [
   AutofocusDirective,
@@ -64,6 +65,7 @@ const standaloneDirectives = [
     ShortDateTimePipe,
     ShortTimePipe,
     ShortDatePipe,
+    UtcToLocalPipe,
     ...standaloneDirectives,
   ],
   imports: [
@@ -85,6 +87,7 @@ const standaloneDirectives = [
     ShortDateTimePipe,
     ShortTimePipe,
     ShortDatePipe,
+    UtcToLocalPipe,
   ],
   providers: [LocalizationPipe, provideHttpClient(withInterceptorsFromDi())],
 })
