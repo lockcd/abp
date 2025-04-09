@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform, Injectable, inject } from '@angular/core';
-import { LocalizationService, TimezoneService } from '../services';
+import { ConfigStateService, LocalizationService, TimezoneService } from '../services';
 
 @Injectable()
 @Pipe({
@@ -7,13 +7,10 @@ import { LocalizationService, TimezoneService } from '../services';
 })
 export class UtcToLocalPipe implements PipeTransform {
   protected readonly timezoneService = inject(TimezoneService);
+  protected readonly configState = inject(ConfigStateService);
   protected readonly localizationService = inject(LocalizationService);
 
-  transform(
-    value: string | Date | null | undefined,
-    apply: boolean,
-    options?: Intl.DateTimeFormatOptions,
-  ): string | Date {
+  transform(value: string | Date | null | undefined, apply: boolean): string | Date {
     if (!apply) return value;
     if (!value) return '';
 
@@ -24,21 +21,10 @@ export class UtcToLocalPipe implements PipeTransform {
         // Invalid date
         return '';
       }
-
-      const formatOptions: Intl.DateTimeFormatOptions = options || {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      };
-      console.log(this.timezoneService.getTimezone());
-      const formatter = new Intl.DateTimeFormat('en-US', {
-        ...formatOptions,
+      const localization = this.configState.getOne('localization');
+      return dateInput.toLocaleString(localization?.currentCulture?.cultureName ?? 'en-US', {
         timeZone: this.timezoneService.getTimezone(),
       });
-
-      return formatter.format(dateInput);
     } catch (err) {
       return value;
     }
