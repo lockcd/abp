@@ -31,6 +31,7 @@ import {
   LocalizationModule,
   PermissionDirective,
   PermissionService,
+  UtcToLocalPipe,
 } from '@abp/ng.core';
 import {
   AbpVisibleDirective,
@@ -64,6 +65,7 @@ const DEFAULT_ACTIONS_COLUMN_WIDTH = 150;
     NgxDatatableListDirective,
     PermissionDirective,
     LocalizationModule,
+    UtcToLocalPipe,
     AsyncPipe,
     NgTemplateOutlet,
     NgComponentOutlet,
@@ -234,5 +236,9 @@ export class ExtensibleTableComponent<R = any> implements OnChanges, AfterViewIn
       this.data = [];
       this.cdr.markForCheck();
     });
+  }
+
+  isDateType(prop: EntityProp<R>) {
+    return prop.type === ePropType.Date || prop.type === ePropType.DateTime;
   }
 }

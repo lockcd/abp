@@ -11,8 +11,10 @@ export class UtcToLocalPipe implements PipeTransform {
 
   transform(
     value: string | Date | null | undefined,
+    apply: boolean,
     options?: Intl.DateTimeFormatOptions,
   ): string | Date {
+    if (!apply) return value;
     if (!value) return '';
 
     try {
@@ -30,7 +32,7 @@ export class UtcToLocalPipe implements PipeTransform {
         hour: '2-digit',
         minute: '2-digit',
       };
-
+      console.log(this.timezoneService.getTimezone());
       const formatter = new Intl.DateTimeFormat('en-US', {
         ...formatOptions,
         timeZone: this.timezoneService.getTimezone(),
