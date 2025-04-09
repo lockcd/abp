@@ -10,10 +10,14 @@ export class TimezoneService {
   protected readonly document = inject(DOCUMENT);
   private readonly cookieKey = '__timezone';
   private timeZoneNameFromSettings: string | null | undefined;
+  public isUtcClockEnabled: boolean | undefined;
 
   constructor() {
     this.configState.getOne$('timing').subscribe(timezoneSettings => {
       this.timeZoneNameFromSettings = timezoneSettings?.timeZone?.iana?.timeZoneName;
+    });
+    this.configState.getOne$('clock').subscribe(clock => {
+      this.isUtcClockEnabled = clock?.kind === 'Utc';
     });
   }
 
@@ -27,7 +31,9 @@ export class TimezoneService {
   }
 
   setTimezone(timezone: string): void {
-    this.document.cookie = `${this.cookieKey}=${timezone}; path=/`;
+    if (this.isUtcClockEnabled) {
+      this.document.cookie = `${this.cookieKey}=${timezone}; path=/`;
+    }
   }
 
   convertUtcToLocal(date: string | Date): Date {
