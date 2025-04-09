@@ -1,12 +1,15 @@
 # Release Notes
 
-This document contains **brief release notes** for each release. Release notes only include **major features** and **visible enhancements**. They don't include all the development done in the related version. To see raw and detailed change logs for every release, please check <a href="https://github.com/abpframework/abp/milestones?state=closed" target="_blank">the related milestone</a> and [the change logs page](https://abp.io/pro-releases) (only for paid license holders).
+This document contains **brief release notes** for each release. Release notes only include **major features** and **visible enhancements**. They don't include all the development done in the related version.
 
-> If you want to read the release notes for each ABP Studio release, check it out from [here](../studio/release-notes.md).
+Also see the following notes about ABP releases:
 
-## 9.1 (2025-01-16)
+* [ABP Studio release notes](../studio/release-notes.md)
+* [Change logs for ABP pro packages](https://abp.io/pro-releases)
 
-This is currently a RC (release-candidate) and you can see the detailed **[blog post / announcement](https://abp.io/blog/abp-9-1-release-candidate)** for the v9.1 release.
+## 9.1 (2025-03-05)
+
+See the detailed **[blog post / announcement](https://abp.io/community/articles/abp.io-platform-9.1-final-has-been-released-h96a56qa)** for the v9.1 release.
 
 * Upgraded to Angular 19
 * Upgraded to OpenIddict 6.0
