@@ -3,6 +3,7 @@ import {
   provideHttpClient,
   withInterceptorsFromDi,
   withXsrfConfiguration,
+  HTTP_INTERCEPTORS,
 } from '@angular/common/http';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -31,6 +32,7 @@ import { ShortDatePipe } from './pipes/short-date.pipe';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { provideAbpCoreChild, provideAbpCore, withOptions } from './providers';
 import { UtcToLocalPipe } from './pipes';
+import { TimezoneInterceptor } from './interceptors';
 
 const standaloneDirectives = [
   AutofocusDirective,
@@ -88,7 +90,15 @@ const standaloneDirectives = [
     ShortTimePipe,
     ShortDatePipe,
   ],
-  providers: [LocalizationPipe, provideHttpClient(withInterceptorsFromDi())],
+  providers: [
+    LocalizationPipe,
+    provideHttpClient(withInterceptorsFromDi()),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TimezoneInterceptor,
+      multi: true,
+    },
+  ],
 })
 export class BaseCoreModule {}
 

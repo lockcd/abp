@@ -10,8 +10,7 @@ export class UtcToLocalPipe implements PipeTransform {
   protected readonly configState = inject(ConfigStateService);
   protected readonly localizationService = inject(LocalizationService);
 
-  transform(value: string | Date | null | undefined, apply: boolean): string | Date {
-    if (!apply) return value;
+  transform(value: string | Date | null | undefined): string | Date {
     if (!value) return '';
 
     try {
@@ -21,11 +20,16 @@ export class UtcToLocalPipe implements PipeTransform {
         // Invalid date
         return '';
       }
+
       const localization = this.configState.getOne('localization');
-      return dateInput.toLocaleString(localization?.currentCulture?.cultureName ?? 'en-US', {
-        timeZone: this.timezoneService.getTimezone(),
-      });
+      const locale = localization?.currentCulture?.cultureName ?? 'en-US';
+      const options: Intl.DateTimeFormatOptions = this.timezoneService.isUtcClockEnabled
+        ? { timeZone: this.timezoneService.getTimezone() }
+        : undefined;
+      console.log(locale, options);
+      return dateInput.toLocaleString(locale, options);
     } catch (err) {
+      console.log(err);
       return value;
     }
   }

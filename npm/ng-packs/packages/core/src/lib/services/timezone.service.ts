@@ -13,8 +13,8 @@ export class TimezoneService {
   public isUtcClockEnabled: boolean | undefined;
 
   constructor() {
-    this.configState.getOne$('timing').subscribe(timezoneSettings => {
-      this.timeZoneNameFromSettings = timezoneSettings?.timeZone?.iana?.timeZoneName;
+    this.configState.getOne$('setting').subscribe(settings => {
+      this.timeZoneNameFromSettings = settings?.values?.['Abp.Timing.TimeZone'];
     });
     this.configState.getOne$('clock').subscribe(clock => {
       this.isUtcClockEnabled = clock?.kind === 'Utc';
@@ -26,8 +26,10 @@ export class TimezoneService {
   }
 
   getTimezone(): string {
-    const fromCookie = this.getCookie(this.cookieKey);
-    return this.timeZoneNameFromSettings || fromCookie || this.getBrowserTimezone();
+    if (!this.isUtcClockEnabled) {
+      return this.getBrowserTimezone();
+    }
+    return this.timeZoneNameFromSettings || this.getBrowserTimezone();
   }
 
   setTimezone(timezone: string): void {

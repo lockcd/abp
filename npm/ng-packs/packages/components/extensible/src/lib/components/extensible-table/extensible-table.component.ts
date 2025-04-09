@@ -237,8 +237,4 @@ export class ExtensibleTableComponent<R = any> implements OnChanges, AfterViewIn
       this.cdr.markForCheck();
     });
   }
-
-  isDateType(prop: EntityProp<R>) {
-    return prop.type === ePropType.Date || prop.type === ePropType.DateTime;
-  }
 }
