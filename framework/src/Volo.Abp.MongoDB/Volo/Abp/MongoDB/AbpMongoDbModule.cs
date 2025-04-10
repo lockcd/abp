@@ -1,6 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using Volo.Abp.Domain;
+using Volo.Abp.Domain.Entities.Events.Distributed;
 using Volo.Abp.Domain.Repositories.MongoDB;
 using Volo.Abp.Modularity;
 using Volo.Abp.MongoDB.DependencyInjection;
@@ -19,6 +23,8 @@ public class AbpMongoDbModule : AbpModule
 
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
+        BsonSerializer.TryRegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+
         context.Services.TryAddTransient(
             typeof(IMongoDbContextProvider<>),
             typeof(UnitOfWorkMongoDbContextProvider<>)
@@ -43,5 +49,11 @@ public class AbpMongoDbModule : AbpModule
             typeof(IMongoDbContextEventInbox<>),
             typeof(MongoDbContextEventInbox<>)
         );
+
+        Configure<AbpDistributedEntityEventOptions>(options =>
+        {
+            options.IgnoredEventSelectors.Add<OutgoingEventRecord>();
+            options.IgnoredEventSelectors.Add<IncomingEventRecord>();
+        });
     }
 }
