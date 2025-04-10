@@ -38,6 +38,7 @@ public class UpdateCommand : IConsoleCommand, ITransientDependency
         var directory = commandLineArgs.Options.GetOrNull(Options.SolutionPath.Short, Options.SolutionPath.Long) ??
                         Directory.GetCurrentDirectory();
         var version = commandLineArgs.Options.GetOrNull(Options.Version.Short, Options.Version.Long);
+        var leptonXVersion = commandLineArgs.Options.GetOrNull(Options.LeptonXVersion.Short, Options.LeptonXVersion.Long);
 
         if (updateNuget || !updateNpm)
         {
@@ -120,6 +121,7 @@ public class UpdateCommand : IConsoleCommand, ITransientDependency
         sb.AppendLine("-sn|--solution-name                         (Specify the solution name)");
         sb.AppendLine("--check-all                                 (Check the new version of each package separately)");
         sb.AppendLine("-v|--version <version>                      (default: latest version)");
+        sb.AppendLine("-lv|--leptonx-version <version>             (default: latest LeptonX version)");
         sb.AppendLine("");
         sb.AppendLine("Some examples:");
         sb.AppendLine("");
@@ -166,6 +168,12 @@ public class UpdateCommand : IConsoleCommand, ITransientDependency
         {
             public const string Short = "v";
             public const string Long = "version";
+        }
+
+        public static class LeptonXVersion
+        {
+            public const string Short = "lv";
+            public const string Long = "leptonx-version";
         }
     }
 }
