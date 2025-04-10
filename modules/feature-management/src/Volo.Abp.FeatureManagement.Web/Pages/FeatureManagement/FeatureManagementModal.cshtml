@@ -21,6 +21,7 @@
 }
 
 <abp-script src="/Pages/FeatureManagement/feature-management-modal.js" />
+<abp-style src="/Pages/FeatureManagement/feature-management-modal.css" />
 
 <form method="post" asp-page="/FeatureManagement/FeatureManagementModal" data-script-class="abp.modals.FeatureManagement" id="FeatureManagementForm">
     <abp-modal id="featureManagmentModal" size="Large">
@@ -39,7 +40,7 @@
                         <abp-tab title="@featureGroup.DisplayName" name="v-pills-tab-@featureGroup.GetNormalizedGroupName()">
                             <h4>@featureGroup.DisplayName</h4>
                             <hr class="mt-2 mb-3"/>
-                            <div class="custom-scroll-content">
+                            <div class="custom-scroll-content" style="height: 400px;">
                                 <div class="pl-1 pt-1">
                                     @for (var j = 0; j < featureGroup.Features.Count; j++)
                                     {
