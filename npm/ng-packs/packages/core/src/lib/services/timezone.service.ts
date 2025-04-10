@@ -25,7 +25,7 @@ export class TimezoneService {
     return Intl.DateTimeFormat().resolvedOptions().timeZone;
   }
 
-  getTimezone(): string {
+  get timezone(): string {
     if (!this.isUtcClockEnabled) {
       return this.getBrowserTimezone();
     }

@@ -10,8 +10,7 @@ export class TimezoneInterceptor implements HttpInterceptor {
   protected readonly timezoneService = inject(TimezoneService);
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const timezone = this.timezoneService.getTimezone();
-    console.log(timezone);
+    const timezone = this.timezoneService.timezone;
     if (timezone) {
       req = req.clone({
         setHeaders: {

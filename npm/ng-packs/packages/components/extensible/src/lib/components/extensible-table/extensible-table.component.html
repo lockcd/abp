@@ -49,7 +49,7 @@
         <ng-container *abpPermission="prop.permission; runChangeDetection: false">
           <ng-container *abpVisible="row['_' + prop.name]?.visible">
             @if (!row['_' + prop.name].component) {
-              @if (prop.type === 'datetime') {
+              @if (prop.type === 'datetime' || prop.type === 'date' || prop.type === 'time') {
                 <div
                   [innerHTML]="
                   !prop.isExtra
