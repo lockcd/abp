@@ -17,7 +17,6 @@ export class UtcToLocalPipe implements PipeTransform {
       const dateInput = new Date(value);
 
       if (isNaN(dateInput.getTime())) {
-        // Invalid date
         return '';
       }
 
@@ -26,10 +25,8 @@ export class UtcToLocalPipe implements PipeTransform {
       const options: Intl.DateTimeFormatOptions = this.timezoneService.isUtcClockEnabled
         ? { timeZone: this.timezoneService.getTimezone() }
         : undefined;
-      console.log(locale, options);
       return dateInput.toLocaleString(locale, options);
     } catch (err) {
-      console.log(err);
       return value;
     }
   }
