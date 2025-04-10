@@ -73,8 +73,6 @@ public class WebAssemblyCachedApplicationConfigurationClient : ICachedApplicatio
             await JSRuntime.InvokeVoidAsync("abp.utils.removeOidcUser");
         }
 
-        ApplicationConfigurationChangedService.NotifyChanged();
-
         CurrentTenantAccessor.Current = new BasicTenantInfo(
             configurationDto.CurrentTenant.Id,
             configurationDto.CurrentTenant.Name
@@ -88,6 +86,8 @@ public class WebAssemblyCachedApplicationConfigurationClient : ICachedApplicatio
 
             await JSRuntime.InvokeAsync<string>("abp.clock.setBrowserTimeZoneToCookie");
         }
+
+        ApplicationConfigurationChangedService.NotifyChanged();
     }
 
     public virtual Task<ApplicationConfigurationDto> GetAsync()
