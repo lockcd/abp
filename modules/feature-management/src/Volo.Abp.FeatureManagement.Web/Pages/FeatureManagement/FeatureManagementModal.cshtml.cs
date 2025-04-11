@@ -87,8 +87,7 @@ public class FeatureManagementModal : AbpPageModel
 
     public bool IsDisabled(FeatureDto featureDto)
     {
-        return featureDto.Provider.Name != ProviderName &&
-               featureDto.Provider.Name  != DefaultValueFeatureValueProvider.ProviderName;
+        return featureDto.Provider.Name != ProviderName && featureDto.Provider.Name != DefaultValueFeatureValueProvider.ProviderName;
     }
 
     public class FeatureGroupViewModel
