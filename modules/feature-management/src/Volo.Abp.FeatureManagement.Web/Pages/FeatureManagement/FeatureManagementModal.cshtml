@@ -51,20 +51,21 @@
 
                                             @if (feature.ValueType is ToggleStringValueType)
                                             {
-                                                <abp-input asp-for="@feature.Value"
-                                                           type="checkbox"
-                                                           class="d-inline"
-                                                           abp-id-name="@Model.FeatureGroups[i].Features[j].BoolValue"
-                                                           label="@feature.DisplayName"
-                                                           group-data-feature-name="@feature.Name"
-                                                           group-data-parent-name="@(feature.ParentName ?? "")"
-                                                           group-style="margin-inline-start: @(feature.Depth * 20)px"/>
+                                                <div class="@(Model.IsDisabled(feature) ? "disabled-container" : "")">
+                                                    <abp-input asp-for="@feature.Value"
+                                                               type="checkbox"
+                                                               class="d-inline"
+                                                               abp-id-name="@Model.FeatureGroups[i].Features[j].BoolValue"
+                                                               label="@feature.DisplayName"
+                                                               group-data-feature-name="@feature.Name"
+                                                               group-data-parent-name="@(feature.ParentName ?? "")"
+                                                               group-style="margin-inline-start: @(feature.Depth * 20)px"/>
 
-                                                @if (feature.Description != null)
-                                                {
-                                                    <div class="form-text" style="margin-inline-start: @(feature.Depth * 20)px">@feature.Description</div>
-                                                }
-
+                                                    @if (feature.Description != null)
+                                                    {
+                                                        <div class="form-text" style="margin-inline-start: @(feature.Depth * 20)px">@feature.Description</div>
+                                                    }
+                                                </div>
                                             }
 
                                             @if (feature.ValueType is FreeTextStringValueType)
@@ -74,42 +75,45 @@
                                                 {
                                                     type = "number";
                                                 }
-
-                                                <abp-input asp-for="@feature.Value"
-                                                           label="@feature.DisplayName"
-                                                           abp-id-name="@Model.FeatureGroups[i].Features[j].Value"
-                                                           type="@type"
-                                                           group-data-feature-name="@feature.Name"
-                                                           group-data-parent-name="@(feature.ParentName ?? "")"
-                                                           group-style="margin-inline-start: @(feature.Depth * 25)px"/>
-                                                @if (feature.Description != null)
-                                                {
-                                                    <div class="form-text" style="margin-inline-start: @(feature.Depth * 25)px">@feature.Description</div>
-                                                }
-                                            }
-
-                                            @if (feature.ValueType is SelectionStringValueType selectType)
-                                            {
-                                                <div data-feature-name="@feature.Name" data-parent-name="@(feature.ParentName ?? "")" style="margin-inline-start: @(feature.Depth * 25)px" class="mb-3">
-                                                    <label class="form-label" for="@feature.Name">@feature.DisplayName</label>
-
-                                                    <select id="@feature.Name" name="FeatureGroups[@i].Features[@j].Value" class="form-select">
-                                                        @foreach (var item in selectType.ItemSource.Items)
-                                                        {
-                                                            if (item.Value == feature.Value)
-                                                            {
-                                                                <option value="@item.Value" selected="selected"> @CreateHtmlLocalizer(item.DisplayText.ResourceName).GetString(item.DisplayText.Name) </option>
-                                                            }
-                                                            else
-                                                            {
-                                                                <option value="@item.Value"> @CreateHtmlLocalizer(item.DisplayText.ResourceName).GetString(item.DisplayText.Name) </option>
-                                                            }
-                                                        }
-                                                    </select>
+                                                <div class="@(Model.IsDisabled(feature) ? "disabled-container" : "")">
+                                                    <abp-input asp-for="@feature.Value"
+                                                               label="@feature.DisplayName"
+                                                               abp-id-name="@Model.FeatureGroups[i].Features[j].Value"
+                                                               type="@type"
+                                                               group-data-feature-name="@feature.Name"
+                                                               group-data-parent-name="@(feature.ParentName ?? "")"
+                                                               group-style="margin-inline-start: @(feature.Depth * 25)px"/>
                                                     @if (feature.Description != null)
                                                     {
                                                         <div class="form-text" style="margin-inline-start: @(feature.Depth * 25)px">@feature.Description</div>
                                                     }
+                                                </div>
+                                            }
+
+                                            @if (feature.ValueType is SelectionStringValueType selectType)
+                                            {
+                                                <div class="@(Model.IsDisabled(feature) ? "disabled-container" : "")">
+                                                    <div data-feature-name="@feature.Name" data-parent-name="@(feature.ParentName ?? "")" style="margin-inline-start: @(feature.Depth * 25)px" class="mb-3">
+                                                        <label class="form-label" for="@feature.Name">@feature.DisplayName</label>
+
+                                                        <select id="@feature.Name" name="FeatureGroups[@i].Features[@j].Value" class="form-select">
+                                                            @foreach (var item in selectType.ItemSource.Items)
+                                                            {
+                                                                if (item.Value == feature.Value)
+                                                                {
+                                                                    <option value="@item.Value" selected="selected"> @CreateHtmlLocalizer(item.DisplayText.ResourceName).GetString(item.DisplayText.Name) </option>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <option value="@item.Value"> @CreateHtmlLocalizer(item.DisplayText.ResourceName).GetString(item.DisplayText.Name) </option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                        @if (feature.Description != null)
+                                                        {
+                                                            <div class="form-text" style="margin-inline-start: @(feature.Depth * 25)px">@feature.Description</div>
+                                                        }
+                                                    </div>
                                                 </div>
                                             }
 

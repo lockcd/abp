@@ -25,9 +25,9 @@ public class FeatureManagementModal : AbpPageModel
     [HiddenInput]
     [BindProperty(SupportsGet = true)]
     public string ProviderKey { get; set; }
-    
+
     [HiddenInput]
-    [BindProperty(SupportsGet = true)] 
+    [BindProperty(SupportsGet = true)]
     public string ProviderKeyDisplayName { get; set; }
 
     [BindProperty]
@@ -83,6 +83,12 @@ public class FeatureManagementModal : AbpPageModel
         );
 
         return NoContent();
+    }
+
+    public bool IsDisabled(FeatureDto featureDto)
+    {
+        return featureDto.Provider.Name != ProviderName &&
+               featureDto.Provider.Name  != DefaultValueFeatureValueProvider.ProviderName;
     }
 
     public class FeatureGroupViewModel

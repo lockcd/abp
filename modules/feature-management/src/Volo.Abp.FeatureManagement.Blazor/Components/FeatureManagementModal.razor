@@ -57,7 +57,7 @@
                                                 var selectedValue = SelectionStringValues[feature.Name];
                                                 <Field Style="@GetFeatureStyles(feature)">
                                                     <FieldLabel>@feature.DisplayName</FieldLabel>
-                                                    <Select TValue="string" SelectedValue="selectedValue" SelectedValueChanged="s => SelectionStringValues[feature.Name] = s">
+                                                    <Select TValue="string" Disabled="disabled" SelectedValue="selectedValue" SelectedValueChanged="s => SelectionStringValues[feature.Name] = s">
                                                         @foreach (var item in items)
                                                         {
                                                             <SelectItem Value="@item.Value">
@@ -75,7 +75,7 @@
                                             if (feature.ValueType is ToggleStringValueType)
                                             {
                                                 <Field Style="@GetFeatureStyles(feature)">
-                                                    <Check TValue="bool" Checked="@ToggleValues[feature.Name]" CheckedChanged="@(async (v) => await OnSelectedValueChangedAsync(v, feature))">
+                                                    <Check TValue="bool" Disabled="disabled" Checked="@ToggleValues[feature.Name]" CheckedChanged="@(async (v) => await OnSelectedValueChangedAsync(v, feature))">
                                                         @feature.DisplayName
                                                     </Check>
                                                     @if (feature.Description != null)
