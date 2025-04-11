@@ -167,7 +167,7 @@ public class NpmPackagesUpdater : ITransientDependency
         bool includePreRc = false)
     {
         var packagesUpdated = false;
-        var fileContent = await File.ReadAllTextAsync(filePath);
+        var fileContent = File.ReadAllText(filePath);
         var packageJson = JObject.Parse(fileContent);
         var abpPackages = GetAbpPackagesFromPackageJson(packageJson);
 
@@ -189,8 +189,8 @@ public class NpmPackagesUpdater : ITransientDependency
 
         var updatedContent = packageJson.ToString(Formatting.Indented);
 
-        await File.WriteAllTextAsync(filePath, updatedContent);
-
+        File.WriteAllText(filePath, updatedContent);
+        
         return packagesUpdated;
     }
 
@@ -210,7 +210,7 @@ public class NpmPackagesUpdater : ITransientDependency
 
         if (!specifiedVersion.IsNullOrWhiteSpace())
         {
-            if (package.Name.Contains("leptonx", StringComparison.InvariantCultureIgnoreCase) && !specifiedLeptonXVersion.IsNullOrWhiteSpace())
+            if (package.Name.IndexOf("leptonx", StringComparison.InvariantCultureIgnoreCase) > 0 && !specifiedLeptonXVersion.IsNullOrWhiteSpace())
             {
                 if (!SpecifiedVersionExists(specifiedLeptonXVersion, package))
                 {
