@@ -15,49 +15,54 @@ export class UtcToLocalPipe implements PipeTransform {
 
   transform(
     value: string | Date | null | undefined,
-    propType: 'date' | 'datetime' | 'time',
+    type: 'date' | 'datetime' | 'time',
   ): string | Date {
     if (!value) return '';
 
-    try {
-      let format: string;
-      switch (propType) {
-        case 'date':
-          format = getShortDateFormat(this.configState);
-          break;
-        case 'datetime':
-          format = getShortDateShortTimeFormat(this.configState);
-          break;
-        case 'time':
-          format = getShortTimeFormat(this.configState);
-          break;
-        default:
-          format = getShortDateShortTimeFormat(this.configState);
-      }
+    const date = new Date(value);
+    if (isNaN(date.getTime())) return '';
 
+    const format = this.getFormat(type);
+
+    try {
       if (this.timezoneService.isUtcClockEnabled) {
         const timeZone = this.timezoneService.timezone;
         const options: Intl.DateTimeFormatOptions = { timeZone };
-        let localeStr: string;
-        switch (propType) {
-          case 'date':
-            localeStr = new Date(value).toLocaleDateString(this.locale, options);
-            break;
-          case 'datetime':
-            localeStr = new Date(value).toLocaleString(this.locale, options);
-            break;
-          case 'time':
-            localeStr = new Date(value).toLocaleTimeString(this.locale, options);
-            break;
-          default:
-            localeStr = new Date(value).toLocaleString(this.locale, options);
-        }
+        const localeStr = this.formatWithIntl(date, type, options);
         return formatDate(localeStr, format, this.locale);
       } else {
         return formatDate(value, format, this.locale, format);
       }
     } catch (err) {
       return value;
+    }
+  }
+
+  private getFormat(propType: 'date' | 'datetime' | 'time'): string {
+    switch (propType) {
+      case 'date':
+        return getShortDateFormat(this.configState);
+      case 'time':
+        return getShortTimeFormat(this.configState);
+      case 'datetime':
+      default:
+        return getShortDateShortTimeFormat(this.configState);
+    }
+  }
+
+  private formatWithIntl(
+    date: Date,
+    propType: 'date' | 'datetime' | 'time',
+    options: Intl.DateTimeFormatOptions,
+  ): string {
+    switch (propType) {
+      case 'date':
+        return date.toLocaleDateString(this.locale, options);
+      case 'time':
+        return date.toLocaleTimeString(this.locale, options);
+      case 'datetime':
+      default:
+        return date.toLocaleString(this.locale, options);
     }
   }
 }

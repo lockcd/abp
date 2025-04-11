@@ -53,8 +53,8 @@
                 <div
                   [innerHTML]="
                   !prop.isExtra
-                    ? (row['_' + prop.name]?.value | async | abpUtcToLocal)
-                    : ('::' + (row['_' + prop.name]?.value | async | abpUtcToLocal) | abpLocalization)
+                    ? (row['_' + prop.name]?.value | async | abpUtcToLocal:prop.type)
+                    : ('::' + (row['_' + prop.name]?.value | async | abpUtcToLocal:prop.type) | abpLocalization)
                 "
                   (click)="
                   prop.action && prop.action({ getInjected: getInjected, record: row, index: i })
