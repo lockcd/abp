@@ -155,8 +155,7 @@ Once the timezone is configured, ABP automatically handles the conversion and di
 ![after.png](after.png)
 *(Screenshot of the _Books_ page after setting the timezone, showing the `CreationTime` adjusted to the "Asia/Tokyo" timezone.)*
 
-This feature utilizes the `IClock` service, which provides methods like `ConvertToUserTime` and `ConvertToUtc` to facilitate timezone conversions. By configuring the `Abp.Timing.TimeZone` setting, developers can ensure a consistent and user-friendly experience accross applications with a global user base.
-
+This feature utilizes the `IClock` service, which provides methods like `ConvertToUserTime` and `ConvertToUtc` to facilitate timezone conversions. By configuring the `Abp.Timing.TimeZone` setting, developers can ensure a consistent and user-friendly experience across applications with a global user base.
 > For a more detailed guide on implementing and using this feature, refer to the article: [Developing a Multi-Timezone Application Using the ABP Framework](https://abp.io/community/articles/developing-a-multitimezone-application-using-the-abp-framework-zk7fnrdq). It offers step-by-step instructions and examples for handling multi-timezone scenarios in ABP applications.
 
 ### Identity Pro Module: Require Email Verification to Register
