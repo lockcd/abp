@@ -37,7 +37,12 @@
                     @if (_groups != null && _groups.Any())
                     {
                         <div class="lpx-scroll-pills-container" >
-                            <Tabs @key="_groups" TabPosition="TabPosition.Start" Pills="true" SelectedTab="@_selectedTabName" SelectedTabChanged="@OnSelectedTabChangedAsync">
+                            <Tabs @key="_groups"
+                                  VerticalItemsColumnSize="ColumnSize.Is4.OnDesktop"
+                                  TabPosition="TabPosition.Start"
+                                  Pills="true"
+                                  SelectedTab="@_selectedTabName"
+                                  SelectedTabChanged="@OnSelectedTabChangedAsync">
                                 <Items>
                                     @foreach (var group in _groups)
                                     {
