@@ -69,7 +69,7 @@ public class FeatureManagementModal : AbpPageModel
     {
         var features = new UpdateFeaturesDto
         {
-            Features = FeatureGroups.SelectMany(g => g.Features).Where(x => !x.Value.IsNullOrWhiteSpace() || x.BoolValue.HasValue).Select(f => new UpdateFeatureDto
+            Features = FeatureGroups.SelectMany(g => g.Features).Where(x => !x.IsDisabled).Select(f => new UpdateFeatureDto
             {
                 Name = f.Name,
                 Value = f.Type == nameof(ToggleStringValueType) ? f.BoolValue.ToString() : f.Value
@@ -97,11 +97,13 @@ public class FeatureManagementModal : AbpPageModel
 
     public class FeatureViewModel
     {
+        public bool IsDisabled { get; set; }
+
         public string Name { get; set; }
 
         public string Value { get; set; }
 
-        public bool? BoolValue { get; set; }
+        public bool BoolValue { get; set; }
 
         public string Type { get; set; }
     }
