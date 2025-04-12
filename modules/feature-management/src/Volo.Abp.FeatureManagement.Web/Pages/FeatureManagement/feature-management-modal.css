@@ -2,19 +2,6 @@
     max-height: 400px;
 }
 
-
 .custom-scroll-container > .col-md-4 {
     max-height: 500px;
-}
-
-.disabled-container {
-    pointer-events: none;
-    opacity: 0.5;
-}
-
-.disabled-container input,
-.disabled-container select,
-.disabled-container button {
-    background-color: #e9ecef;
-    color: #6c757d;
 }
