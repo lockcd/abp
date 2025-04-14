@@ -53,11 +53,12 @@ public class Repository_Basic_Tests : Repository_Basic_Tests<AbpMongoDbTestModul
     }
 
     [Fact]
-    public override async Task InsertAsync()
+    public async override Task InsertAsync()
     {
         var person = new Person(Guid.NewGuid(), "New Person", 35);
         person.Phones.Add(new Phone(person.Id, "1234567890"));
         person.SetProperty("test-guid-property", person.Id);
+        person.SetProperty("test-nullable-guid-property", (Guid?)person.Id);
 
         await PersonRepository.InsertAsync(person);
 
@@ -67,6 +68,7 @@ public class Repository_Basic_Tests : Repository_Basic_Tests<AbpMongoDbTestModul
         person.Phones.Count.ShouldBe(1);
         person.Phones.Any(p => p.PersonId == person.Id && p.Number == "1234567890").ShouldBeTrue();
         person.GetProperty<Guid>("test-guid-property").ShouldBe(person.Id);
+        person.GetProperty<Guid?>("test-nullable-guid-property").ShouldBe(person.Id);
     }
 
     [Fact]
