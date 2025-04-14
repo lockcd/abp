@@ -20,7 +20,7 @@ public class AbpMongoDbModule : AbpModule
     static AbpMongoDbModule()
     {
         BsonSerializer.TryRegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
-        BsonTypeMapper.RegisterCustomTypeMapper(typeof(Guid), new AbpCustomGuidMapper());
+        BsonTypeMapper.RegisterCustomTypeMapper(typeof(Guid), new AbpGuidCustomBsonTypeMapper());
     }
 
     public override void PreConfigureServices(ServiceConfigurationContext context)

@@ -3,7 +3,7 @@ using MongoDB.Bson;
 
 namespace Volo.Abp.MongoDB;
 
-public class AbpCustomGuidMapper : ICustomBsonTypeMapper
+public class AbpGuidCustomBsonTypeMapper : ICustomBsonTypeMapper
 {
     public bool TryMapToBsonValue(object value, out BsonValue bsonValue)
     {
