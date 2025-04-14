@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver.Linq;
 using Shouldly;
+using Volo.Abp.Data;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.TestApp;
 using Volo.Abp.TestApp.Domain;
@@ -56,6 +57,7 @@ public class Repository_Basic_Tests : Repository_Basic_Tests<AbpMongoDbTestModul
     {
         var person = new Person(Guid.NewGuid(), "New Person", 35);
         person.Phones.Add(new Phone(person.Id, "1234567890"));
+        person.SetProperty("test-guid-property", person.Id);
 
         await PersonRepository.InsertAsync(person);
 
@@ -64,15 +66,16 @@ public class Repository_Basic_Tests : Repository_Basic_Tests<AbpMongoDbTestModul
         person.Name.ShouldBe("New Person");
         person.Phones.Count.ShouldBe(1);
         person.Phones.Any(p => p.PersonId == person.Id && p.Number == "1234567890").ShouldBeTrue();
+        person.GetProperty<Guid>("test-guid-property").ShouldBe(person.Id);
     }
-    
+
     [Fact]
     public async Task Filter_Case_Insensitive()
     {
         (await CityRepository.GetQueryableAsync()).FirstOrDefault(c => c.Name == "ISTANBUL").ShouldBeNull();
         (await CityRepository.GetQueryableAsync()).FirstOrDefault(c => c.Name == "istanbul").ShouldBeNull();
         (await CityRepository.GetQueryableAsync()).FirstOrDefault(c => c.Name == "Istanbul").ShouldNotBeNull();
-        
+
         (await PersonRepository.GetQueryableAsync()).FirstOrDefault(p => p.Name == "douglas").ShouldNotBeNull();
         (await PersonRepository.GetQueryableAsync()).FirstOrDefault(p => p.Name == "DOUGLAS").ShouldNotBeNull();
         (await PersonRepository.GetQueryableAsync()).FirstOrDefault(p => p.Name == "Douglas").ShouldNotBeNull();
