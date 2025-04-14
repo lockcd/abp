@@ -49,15 +49,13 @@
                                         <Tab Name="@GetNormalizedGroupName(group.Name)">
                                             @if (group.Permissions.Any(x => x.IsGranted))
                                             {
-                                                <span>
-                                                <b>@group.DisplayName ( @(group.Permissions.Count(x => x.IsGranted)) )</b>
-                                            </span>
+                                                <b>@group.DisplayName (@(group.Permissions.Count(x => x.IsGranted)))</b>
                                             }
                                             else
                                             {
-                                                <span>
-                                                @group.DisplayName ( @(group.Permissions.Count(x => x.IsGranted)) )
-                                            </span>
+                                                <small>
+                                                    @group.DisplayName (@(group.Permissions.Count(x => x.IsGranted)))
+                                                </small>
                                             }
                                         </Tab>
                                     }
