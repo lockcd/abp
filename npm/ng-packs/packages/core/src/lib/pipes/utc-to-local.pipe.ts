@@ -1,7 +1,6 @@
 import { Pipe, PipeTransform, Injectable, inject, LOCALE_ID } from '@angular/core';
-import { ConfigStateService, LocalizationService, TimezoneService } from '../services';
+import { ConfigStateService, LocalizationService, TimeService, TimezoneService } from '../services';
 import { getShortDateFormat, getShortDateShortTimeFormat, getShortTimeFormat } from '../utils';
-import { formatDate } from '@angular/common';
 
 @Injectable()
 @Pipe({
@@ -9,6 +8,7 @@ import { formatDate } from '@angular/common';
 })
 export class UtcToLocalPipe implements PipeTransform {
   protected readonly timezoneService = inject(TimezoneService);
+  protected readonly timeService = inject(TimeService);
   protected readonly configState = inject(ConfigStateService);
   protected readonly localizationService = inject(LocalizationService);
   protected readonly locale = inject(LOCALE_ID);
@@ -27,11 +27,9 @@ export class UtcToLocalPipe implements PipeTransform {
     try {
       if (this.timezoneService.isUtcClockEnabled) {
         const timeZone = this.timezoneService.timezone;
-        const options: Intl.DateTimeFormatOptions = { timeZone };
-        const localeStr = this.formatWithIntl(date, type, options);
-        return formatDate(localeStr, format, this.locale);
+        return this.timeService.formatDateWithStandardOffset(date, format, timeZone);
       } else {
-        return formatDate(value, format, this.locale, format);
+        return this.timeService.formatWithoutTimeZone(date, format);
       }
     } catch (err) {
       return value;
@@ -47,22 +45,6 @@ export class UtcToLocalPipe implements PipeTransform {
       case 'datetime':
       default:
         return getShortDateShortTimeFormat(this.configState);
-    }
-  }
-
-  private formatWithIntl(
-    date: Date,
-    propType: 'date' | 'datetime' | 'time',
-    options: Intl.DateTimeFormatOptions,
-  ): string {
-    switch (propType) {
-      case 'date':
-        return date.toLocaleDateString(this.locale, options);
-      case 'time':
-        return date.toLocaleTimeString(this.locale, options);
-      case 'datetime':
-      default:
-        return date.toLocaleString(this.locale, options);
     }
   }
 }
