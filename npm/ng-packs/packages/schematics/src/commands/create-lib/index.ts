@@ -68,10 +68,18 @@ function createLibrary(options: GenerateLibSchema): Rule {
     const target = await resolveProject(tree, options.packageName, null);
     if (!target || options.override) {
       if (options.isModuleTemplate) {
-        return createLibFromModuleTemplate(tree, options);
+        if (options.isStandaloneTemplate) {
+          return createLibFromModuleStandaloneTemplate(tree, options);
+        } else {
+          return createLibFromModuleTemplate(tree, options);
+        }
       }
       if (options.isSecondaryEntrypoint) {
-        return createLibSecondaryEntry(tree, options);
+        if (options.isStandaloneTemplate) {
+          return createLibSecondaryEntryWithStandaloneTemplate(tree, options);
+        } else {
+          return createLibSecondaryEntry(tree, options);
+        }
       }
     } else {
       throw new SchematicsException(
@@ -109,14 +117,32 @@ async function createLibFromModuleTemplate(tree: Tree, options: GenerateLibSchem
       }),
       move(normalize(packagesDir)),
     ]),
-    addLibToWorkspaceIfNotExist(options.packageName, packagesDir),
+    addLibToWorkspaceIfNotExist(options, packagesDir),
   ]);
 }
 
-export function addLibToWorkspaceIfNotExist(name: string, packagesDir: string): Rule {
+async function createLibFromModuleStandaloneTemplate(tree: Tree, options: GenerateLibSchema) {
+  const packagesDir = await resolvePackagesDirFromAngularJson(tree);
+  const packageJson = JSON.parse(tree.read('./package.json')!.toString());
+  const abpVersion = packageJson.dependencies['@abp/ng.core'];
+
+  return chain([
+    applyWithOverwrite(url('./files-package-standalone'), [
+      applyTemplates({
+        ...cases,
+        libraryName: options.packageName,
+        abpVersion,
+      }),
+      move(normalize(packagesDir)),
+    ]),
+    addLibToWorkspaceIfNotExist(options, packagesDir),
+  ]);
+}
+
+export function addLibToWorkspaceIfNotExist(options: GenerateLibSchema, packagesDir: string): Rule {
   return async (tree: Tree) => {
     const workspace = await getWorkspace(tree);
-    const packageName = kebab(name);
+    const packageName = kebab(options.packageName);
     const isProjectExist = workspace.projects.has(packageName);
 
     const projectRoot = join(normalize(packagesDir), packageName);
@@ -130,8 +156,8 @@ export function addLibToWorkspaceIfNotExist(name: string, packagesDir: string): 
         : noop(),
       addLibToWorkspaceFile(projectRoot, packageName),
       updateTsConfig(packageName, pathImportLib),
-      importConfigModuleToDefaultProjectAppModule(workspace, packageName),
-      addRoutingToAppRoutingModule(workspace, packageName),
+      importConfigModuleToDefaultProjectAppModule(workspace, packageName, options),
+      addRoutingToAppRoutingModule(workspace, packageName, options),
     ]);
   };
 }
@@ -169,9 +195,30 @@ export async function createLibSecondaryEntry(tree: Tree, options: GenerateLibSc
   ]);
 }
 
+export async function createLibSecondaryEntryWithStandaloneTemplate(
+  tree: Tree,
+  options: GenerateLibSchema,
+) {
+  const targetLib = await resolveProject(tree, options.target);
+  const packageName = `${kebab(targetLib.name)}/${kebab(options.packageName)}`;
+  const importPath = `${targetLib.definition.root}/${kebab(options.packageName)}`;
+  return chain([
+    applyWithOverwrite(url('./files-secondary-entrypoint-standalone'), [
+      applyTemplates({
+        ...cases,
+        libraryName: options.packageName,
+        target: targetLib.name,
+      }),
+      move(normalize(targetLib.definition.root)),
+      updateTsConfig(packageName, importPath),
+    ]),
+  ]);
+}
+
 export function importConfigModuleToDefaultProjectAppModule(
   workspace: WorkspaceDefinition,
   packageName: string,
+  options: GenerateLibSchema,
 ) {
   return (tree: Tree) => {
     const projectName = readWorkspaceSchema(tree).defaultProject || getFirstApplication(tree).name!;
@@ -182,17 +229,25 @@ export function importConfigModuleToDefaultProjectAppModule(
       return;
     }
     const appModuleContent = appModule.toString();
-    if (appModuleContent.includes(`${camel(packageName)}ConfigModule`)) {
+    if (
+      appModuleContent.includes(
+        options.isStandaloneTemplate
+          ? `provide${pascal(packageName)}Config`
+          : `${camel(packageName)}ConfigModule`,
+      )
+    ) {
       return;
     }
 
-    const forRootStatement = `${pascal(packageName)}ConfigModule.forRoot()`;
+    const rootConfigStatement = options.isStandaloneTemplate
+      ? `provide${pascal(packageName)}Config()`
+      : `${pascal(packageName)}ConfigModule.forRoot()`;
     const text = tree.read(appModulePath);
     if (!text) {
       return;
     }
     const sourceText = text.toString();
-    if (sourceText.includes(forRootStatement)) {
+    if (sourceText.includes(rootConfigStatement)) {
       return;
     }
     const source = ts.createSourceFile(appModulePath, sourceText, ts.ScriptTarget.Latest, true);
@@ -200,8 +255,9 @@ export function importConfigModuleToDefaultProjectAppModule(
     const changes = addImportToModule(
       source,
       appModulePath,
-      forRootStatement,
+      rootConfigStatement,
       `${kebab(packageName)}/config`,
+      options.isStandaloneTemplate,
     );
     const recorder = tree.beginUpdate(appModulePath);
     for (const change of changes) {
@@ -215,7 +271,11 @@ export function importConfigModuleToDefaultProjectAppModule(
   };
 }
 
-export function addRoutingToAppRoutingModule(workspace: WorkspaceDefinition, packageName: string) {
+export function addRoutingToAppRoutingModule(
+  workspace: WorkspaceDefinition,
+  packageName: string,
+  options: GenerateLibSchema,
+) {
   return (tree: Tree) => {
     const projectName = readWorkspaceSchema(tree).defaultProject || getFirstApplication(tree).name!;
     const project = workspace.projects.get(projectName);
@@ -237,7 +297,9 @@ export function addRoutingToAppRoutingModule(workspace: WorkspaceDefinition, pac
       true,
     );
     const importPath = `${kebab(packageName)}`;
-    const importStatement = `() => import('${importPath}').then(m => m.${moduleName}.forLazy())`;
+    const importStatement = options.isStandaloneTemplate
+      ? `() => import('${importPath}').then(m => m.${pascal(packageName)}Routes)`
+      : `() => import('${importPath}').then(m => m.${moduleName}.forLazy())`;
     const routeDefinition = `{ path: '${kebab(packageName)}', loadChildren: ${importStatement} }`;
     const change = addRouteDeclarationToModule(source, `${kebab(packageName)}`, routeDefinition);
 
