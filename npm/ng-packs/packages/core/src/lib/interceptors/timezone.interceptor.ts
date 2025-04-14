@@ -10,6 +10,9 @@ export class TimezoneInterceptor implements HttpInterceptor {
   protected readonly timezoneService = inject(TimezoneService);
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    if (!this.timezoneService.isUtcClockEnabled) {
+      return next.handle(req);
+    }
     const timezone = this.timezoneService.timezone;
     if (timezone) {
       req = req.clone({

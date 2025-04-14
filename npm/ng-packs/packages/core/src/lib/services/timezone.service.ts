@@ -37,17 +37,4 @@ export class TimezoneService {
       this.document.cookie = `${this.cookieKey}=${timezone}; path=/`;
     }
   }
-
-  convertUtcToLocal(date: string | Date): Date {
-    return new Date(date + 'Z');
-  }
-
-  convertLocalToUtc(date: Date): string {
-    return date.toISOString();
-  }
-
-  private getCookie(name: string): string | null {
-    const match = this.document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-    return match ? decodeURIComponent(match[2]) : null;
-  }
 }
