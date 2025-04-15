@@ -119,7 +119,7 @@
     <PackageVersion Include="Microsoft.IdentityModel.Tokens" Version="8.6.0" />
     <PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.6.0" />
     <PackageVersion Include="Minio" Version="6.0.3" />
-    <PackageVersion Include="MongoDB.Driver" Version="3.1.0" />
+    <PackageVersion Include="MongoDB.Driver" Version="3.3.0" />
     <PackageVersion Include="NEST" Version="7.17.5" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="Nito.AsyncEx.Context" Version="5.1.2" />
@@ -142,7 +142,7 @@
     <PackageVersion Include="Quartz.Extensions.DependencyInjection" Version="3.13.0" />
     <PackageVersion Include="Quartz.Plugins.TimeZoneConverter" Version="3.13.0" />
     <PackageVersion Include="Quartz.Serialization.Json" Version="3.13.0" />
-    <PackageVersion Include="RabbitMQ.Client" Version="6.8.1" />
+    <PackageVersion Include="RabbitMQ.Client" Version="7.1.2" />
     <PackageVersion Include="Rebus" Version="8.6.0" />
     <PackageVersion Include="Rebus.ServiceProvider" Version="10.2.0" />
     <PackageVersion Include="Scriban" Version="5.10.0" />
@@ -177,7 +177,7 @@
     <PackageVersion Include="System.Text.Json" Version="9.0.2" />
     <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.6.0" />
     <PackageVersion Include="TencentCloudSDK.Sms" Version="3.0.1142" />
-    <PackageVersion Include="TimeZoneConverter" Version="6.1.0" />
+    <PackageVersion Include="TimeZoneConverter" Version="7.0.0" />
     <PackageVersion Include="Unidecode.NET" Version="2.1.0" />
     <PackageVersion Include="xunit" Version="2.9.2" />
     <PackageVersion Include="xunit.extensibility.execution" Version="2.9.2" />
