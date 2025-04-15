@@ -12,6 +12,7 @@ export type ImportDefinition = {
   path: string;
   importName: string;
   provider?: string;
+  expression?: string;
 };
 
 export const styleMap = new Map<ThemeOptionsEnum, StyleDefinition[]>();
@@ -284,25 +285,30 @@ importMap.set(ThemeOptionsEnum.Lepton, [
 importMap.set(ThemeOptionsEnum.LeptonXLite, [
   {
     path: '@abp/ng.theme.lepton-x',
-    importName: 'ThemeLeptonXModule.forRoot()',
+    importName: 'ThemeLeptonXModule',
+    expression: 'ThemeLeptonXModule.forRoot()',
   },
   {
     path: '@abp/ng.theme.lepton-x/layouts',
-    importName: 'SideMenuLayoutModule.forRoot()',
+    importName: 'SideMenuLayoutModule',
+    expression: 'SideMenuLayoutModule.forRoot()',
   },
   {
     path: '@abp/ng.theme.lepton-x/account',
-    importName: 'AccountLayoutModule.forRoot()',
+    importName: 'AccountLayoutModule',
+    expression: 'AccountLayoutModule.forRoot()',
   },
 ]);
 
 importMap.set(ThemeOptionsEnum.LeptonX, [
   {
     path: '@volosoft/abp.ng.theme.lepton-x',
-    importName: 'ThemeLeptonXModule.forRoot()',
+    importName: 'ThemeLeptonXModule',
+    expression: 'ThemeLeptonXModule.forRoot()',
   },
   {
     path: '@volosoft/abp.ng.theme.lepton-x/layouts',
-    importName: 'SideMenuLayoutModule.forRoot()',
+    importName: 'SideMenuLayoutModule',
+    expression: 'SideMenuLayoutModule.forRoot()',
   },
 ]);

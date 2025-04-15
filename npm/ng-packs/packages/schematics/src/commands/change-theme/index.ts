@@ -6,22 +6,16 @@ import { allStyles, importMap, styleMap } from './style-map';
 import { ChangeThemeOptions } from './model';
 import {
   addRootImport,
-  Change,
+  addRootProvider,
   createDefaultPath,
   getWorkspace,
-  InsertChange,
   isLibrary,
   isStandaloneApp,
   updateWorkspace,
   WorkspaceDefinition,
 } from '../../utils';
 import { ThemeOptionsEnum } from './theme-options.enum';
-import {
-  addProviderToModule,
-  findNodes,
-  getDecoratorMetadata,
-  getMetadataField,
-} from '../../utils/angular/ast-utils';
+import { findNodes, getDecoratorMetadata, getMetadataField } from '../../utils/angular/ast-utils';
 
 export default function (_options: ChangeThemeOptions): Rule {
   return async () => {
@@ -84,6 +78,7 @@ function updateAppModule(selectedProject: string, targetThemeName: ThemeOptionsE
       removeImportFromNgModuleMetadata(appModulePath, targetThemeName),
       removeProviderFromNgModuleMetadata(appModulePath, targetThemeName),
       insertImports(selectedProject, targetThemeName),
+      insertProviders(selectedProject, targetThemeName),
     ]);
   };
 }
@@ -201,7 +196,25 @@ export function removeProviderFromNgModuleMetadata(
 }
 
 export function insertImports(projectName: string, selectedTheme: ThemeOptionsEnum): Rule {
+  return addRootImport(projectName, code => {
+    const selected = importMap.get(selectedTheme);
+    if (!selected || selected.length === 0) return code.code``;
+
+    const expressions: string[] = [];
+
+    for (const { importName, path, expression } of selected) {
+      const imported = code.external(importName, path);
+      expressions.push(expression ?? imported); // default fallback
+    }
+
+    return code.code`${expressions.join(',\n')}`;
+  });
+}
+
+export function insertProviders(projectName: string, selectedTheme: ThemeOptionsEnum): Rule {
   return (host: Tree) => {
+    // const recorder = host.beginUpdate(appModulePath);
+    // const source = createSourceFile(host, appModulePath);
     const selected = importMap.get(selectedTheme);
 
     if (!selected) {
@@ -210,55 +223,25 @@ export function insertImports(projectName: string, selectedTheme: ThemeOptionsEn
 
     const rules: Rule[] = [];
 
-    selected.map(({ importName, path }) => {
-      rules.push(
-        addRootImport(projectName, code => {
-          const configFn = code.external(importName, path);
-          console.log('configFn --->>>', configFn);
-          return code.code`${configFn}`;
-        }),
-      );
-    });
-
-    /*    if (changes.length > 0) {
-      for (const change of changes) {
-        if (change instanceof InsertChange) {
-          recorder.insertLeft(change.order, change.toAdd);
-        }
-      }
-    }
-    host.commitUpdate(recorder);*/
-    console.log(rules);
-    return chain(rules);
-  };
-}
-
-export function insertProviders(appModulePath: string, selectedTheme: ThemeOptionsEnum): Rule {
-  return (host: Tree) => {
-    const recorder = host.beginUpdate(appModulePath);
-    const source = createSourceFile(host, appModulePath);
-    const selected = importMap.get(selectedTheme);
-
-    if (!selected) {
-      return host;
-    }
-
-    const changes: Change[] = [];
-
     selected.map(({ path, provider }) => {
       if (provider) {
-        changes.push(...addProviderToModule(source, appModulePath, provider + '()', path));
+        rules.push(
+          addRootProvider(projectName, code => {
+            const configFn = code.external(provider, path);
+            return code.code`${configFn}()`;
+          }),
+        );
       }
     });
 
-    for (const change of changes) {
+    /*    for (const change of changes) {
       if (change instanceof InsertChange) {
         recorder.insertLeft(change.order, change.toAdd);
       }
-    }
+    }*/
 
-    host.commitUpdate(recorder);
-    return host;
+    // host.commitUpdate(recorder);
+    return chain(rules);
   };
 }
 
