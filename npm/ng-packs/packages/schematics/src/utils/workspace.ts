@@ -13,17 +13,6 @@ export function isLibrary(project: workspaces.ProjectDefinition): boolean {
   return project.extensions['projectType'] === ProjectType.Library;
 }
 
-export function applicationHasStandaloneTemplate(tree: Tree, selectedProject?: string): boolean {
-  const workspace = readWorkspaceSchema(tree);
-  const project = workspace.projects[selectedProject ?? 0];
-
-  const mainPath = project.sourceRoot + '/main.ts';
-  const mainSource = readFileInTree(tree, mainPath);
-  const mainContent = mainSource.toString();
-
-  return mainContent.includes('bootstrapComponent');
-}
-
 export function readEnvironment(tree: Tree, project: workspaces.ProjectDefinition) {
   if (isLibrary(project)) return undefined;
 
@@ -63,7 +52,8 @@ export async function resolveProject<T = any>(
   // @typescript-eslint/no-explicit-any
   notFoundValue: T = NOT_FOUND_VALUE as unknown as any,
 ): Promise<Project | T> {
-  name = name || readWorkspaceSchema(tree).defaultProject || getFirstApplication(tree).name!;
+  // name = name || readWorkspaceSchema(tree).defaultProject || getFirstApplication(tree).name!;
+  name = name || getFirstApplication(tree).name!;
   const workspace = await getWorkspace(tree);
   let definition: Project['definition'] | undefined;
 

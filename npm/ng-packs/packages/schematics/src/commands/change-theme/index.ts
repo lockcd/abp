@@ -5,17 +5,18 @@ import * as ts from 'typescript';
 import { allStyles, importMap, styleMap } from './style-map';
 import { ChangeThemeOptions } from './model';
 import {
-  applicationHasStandaloneTemplate,
+  addRootImport,
   Change,
   createDefaultPath,
+  getWorkspace,
   InsertChange,
   isLibrary,
+  isStandaloneApp,
   updateWorkspace,
   WorkspaceDefinition,
 } from '../../utils';
 import { ThemeOptionsEnum } from './theme-options.enum';
 import {
-  addImportToModule,
   addProviderToModule,
   findNodes,
   getDecoratorMetadata,
@@ -69,16 +70,20 @@ function updateProjectStyle(
 
 function updateAppModule(selectedProject: string, targetThemeName: ThemeOptionsEnum): Rule {
   return async (host: Tree) => {
-    const isStandalone = applicationHasStandaloneTemplate(host, selectedProject);
+    const workspace = await getWorkspace(host);
+    const project = workspace.projects.get(selectedProject);
+    const sourceRoot = project?.sourceRoot || 'src';
+    const isStandalone = isStandaloneApp(host, `${sourceRoot}/main.ts`);
+    console.log('isStandalone --->>>>>', isStandalone);
     const defaultPath = await createDefaultPath(host, selectedProject);
-    const appModulePath = defaultPath + `${isStandalone ? '/app.component.ts' : '/app.module.ts'}`;
+    const appModulePath =
+      defaultPath + `${isStandalone ? `${sourceRoot}/main.ts` : '/app.module.ts'}`;
 
     return chain([
       removeImportPath(appModulePath, targetThemeName),
       removeImportFromNgModuleMetadata(appModulePath, targetThemeName),
       removeProviderFromNgModuleMetadata(appModulePath, targetThemeName),
-      insertImports(appModulePath, targetThemeName, isStandalone),
-      insertProviders(appModulePath, targetThemeName),
+      insertImports(selectedProject, targetThemeName),
     ]);
   };
 }
@@ -195,35 +200,36 @@ export function removeProviderFromNgModuleMetadata(
   };
 }
 
-export function insertImports(
-  appModulePath: string,
-  selectedTheme: ThemeOptionsEnum,
-  isStandalone = false,
-): Rule {
+export function insertImports(projectName: string, selectedTheme: ThemeOptionsEnum): Rule {
   return (host: Tree) => {
-    const recorder = host.beginUpdate(appModulePath);
-    const source = createSourceFile(host, appModulePath);
     const selected = importMap.get(selectedTheme);
 
     if (!selected) {
       return host;
     }
 
-    const changes: Change[] = [];
+    const rules: Rule[] = [];
 
-    selected.map(({ importName, path }) =>
-      changes.push(...addImportToModule(source, appModulePath, importName, path, isStandalone)),
-    );
+    selected.map(({ importName, path }) => {
+      rules.push(
+        addRootImport(projectName, code => {
+          const configFn = code.external(importName, path);
+          console.log('configFn --->>>', configFn);
+          return code.code`${configFn}`;
+        }),
+      );
+    });
 
-    if (changes.length > 0) {
+    /*    if (changes.length > 0) {
       for (const change of changes) {
         if (change instanceof InsertChange) {
           recorder.insertLeft(change.order, change.toAdd);
         }
       }
     }
-    host.commitUpdate(recorder);
-    return host;
+    host.commitUpdate(recorder);*/
+    console.log(rules);
+    return chain(rules);
   };
 }
 
@@ -278,7 +284,7 @@ export function createSourceFile(host: Tree, appModulePath: string): ts.SourceFi
  * @param selectedTheme The selected theme
  * @param getAll If true, returns all import paths
  */
-export function getImportPaths(selectedTheme: ThemeOptionsEnum, getAll: boolean = false) {
+export function getImportPaths(selectedTheme: ThemeOptionsEnum, getAll = false) {
   if (getAll) {
     return Array.from(importMap.values()).reduce((acc, val) => [...acc, ...val], []);
   }

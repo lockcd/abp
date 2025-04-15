@@ -12,19 +12,19 @@ import * as ts from 'typescript';
 
 import { join, normalize } from '@angular-devkit/core';
 import {
-  addImportToModule,
+  addRootImport,
+  addRootProvider,
   addRouteDeclarationToModule,
   applyWithOverwrite,
-  camel,
   getFirstApplication,
   getWorkspace,
   InsertChange,
   interpolate,
   isLibrary,
+  isStandaloneApp,
   JSONFile,
   kebab,
   pascal,
-  readWorkspaceSchema,
   resolveProject,
   updateWorkspace,
 } from '../../utils';
@@ -221,15 +221,44 @@ export function importConfigModuleToDefaultProjectAppModule(
   options: GenerateLibSchema,
 ) {
   return (tree: Tree) => {
-    const projectName = readWorkspaceSchema(tree).defaultProject || getFirstApplication(tree).name!;
+    // const projectName = readWorkspaceSchema(tree).defaultProject || getFirstApplication(tree).name!;
+    const projectName = getFirstApplication(tree).name!;
     const project = workspace.projects.get(projectName);
-    const appModulePath = `${project?.sourceRoot}/app/app.module.ts`;
-    const appModule = tree.read(appModulePath);
-    if (!appModule) {
-      return;
+    const sourceRoot = project?.sourceRoot || 'src';
+
+    const isSourceStandalone = isStandaloneApp(tree, `${sourceRoot}/main.ts`);
+    console.log('isStandalone --->>>>', isSourceStandalone);
+    const rules: Rule[] = [];
+
+    if (options.isStandaloneTemplate) {
+      rules.push(
+        addRootProvider(projectName, code => {
+          const configFn = code.external(
+            `provide${pascal(packageName)}Config`,
+            `${kebab(packageName)}/config`,
+          );
+          return code.code`${configFn}()`;
+        }),
+      );
+    } else {
+      rules.push(
+        addRootImport(projectName, code => {
+          const configFn = code.external(
+            `${pascal(packageName)}ConfigModule`,
+            `${kebab(packageName)}/config`,
+          );
+          return code.code`${configFn}()`;
+        }),
+      );
     }
-    const appModuleContent = appModule.toString();
-    if (
+
+    // const appModulePath = `${project?.sourceRoot}/app/app.module.ts`;
+    // const appModule = tree.read(appModulePath);
+    // if (!appModule) {
+    //  return;
+    // }
+    // const appModuleContent = appModule.toString();
+    /*    if (
       appModuleContent.includes(
         options.isStandaloneTemplate
           ? `provide${pascal(packageName)}Config`
@@ -237,9 +266,9 @@ export function importConfigModuleToDefaultProjectAppModule(
       )
     ) {
       return;
-    }
+    }*/
 
-    const rootConfigStatement = options.isStandaloneTemplate
+    /*    const rootConfigStatement = options.isStandaloneTemplate
       ? `provide${pascal(packageName)}Config()`
       : `${pascal(packageName)}ConfigModule.forRoot()`;
     const text = tree.read(appModulePath);
@@ -257,7 +286,6 @@ export function importConfigModuleToDefaultProjectAppModule(
       appModulePath,
       rootConfigStatement,
       `${kebab(packageName)}/config`,
-      options.isStandaloneTemplate,
     );
     const recorder = tree.beginUpdate(appModulePath);
     for (const change of changes) {
@@ -265,9 +293,9 @@ export function importConfigModuleToDefaultProjectAppModule(
         recorder.insertLeft(change.pos, change.toAdd);
       }
     }
-    tree.commitUpdate(recorder);
+    tree.commitUpdate(recorder);*/
 
-    return;
+    return chain(rules);
   };
 }
 
@@ -275,17 +303,37 @@ export function addRoutingToAppRoutingModule(
   workspace: WorkspaceDefinition,
   packageName: string,
   options: GenerateLibSchema,
-) {
+): Rule {
   return (tree: Tree) => {
-    const projectName = readWorkspaceSchema(tree).defaultProject || getFirstApplication(tree).name!;
+    // const projectName = readWorkspaceSchema(tree).defaultProject || getFirstApplication(tree).name!;
+    const projectName = getFirstApplication(tree).name!;
     const project = workspace.projects.get(projectName);
+    const sourceRoot = project?.sourceRoot || 'src';
+
+    const mainPath = `${sourceRoot}/main.ts`;
+    const isSourceStandalone = isStandaloneApp(tree, mainPath);
+    const pascalName = pascal(packageName);
+    const routePath = `${kebab(packageName)}`;
+
+    if (isSourceStandalone) {
+      return addRootProvider(projectName, code => {
+        const routeExpr = options.isStandaloneTemplate
+          ? `() => import('${routePath}/routes').then(m => m.${pascalName}Routes)`
+          : `() => import('${routePath}').then(m => m.${moduleName}.forLazy())`;
+
+        return code.code`provideRouter([
+            { path: '${routePath}', loadChildren: ${routeExpr} }
+        ])`;
+      });
+    }
+
     const appRoutingModulePath = `${project?.sourceRoot}/app/app-routing.module.ts`;
     const appRoutingModule = tree.read(appRoutingModulePath);
     if (!appRoutingModule) {
       return;
     }
     const appRoutingModuleContent = appRoutingModule.toString();
-    const moduleName = `${pascal(packageName)}Module`;
+    const moduleName = `${pascalName}Module`;
     if (appRoutingModuleContent.includes(moduleName)) {
       return;
     }
@@ -296,12 +344,11 @@ export function addRoutingToAppRoutingModule(
       ts.ScriptTarget.Latest,
       true,
     );
-    const importPath = `${kebab(packageName)}`;
     const importStatement = options.isStandaloneTemplate
-      ? `() => import('${importPath}').then(m => m.${pascal(packageName)}Routes)`
-      : `() => import('${importPath}').then(m => m.${moduleName}.forLazy())`;
-    const routeDefinition = `{ path: '${kebab(packageName)}', loadChildren: ${importStatement} }`;
-    const change = addRouteDeclarationToModule(source, `${kebab(packageName)}`, routeDefinition);
+      ? `() => import('${routePath}').then(m => m.${pascalName}Routes)`
+      : `() => import('${routePath}').then(m => m.${moduleName}.forLazy())`;
+    const routeDefinition = `{ path: '${routePath}', loadChildren: ${importStatement} }`;
+    const change = addRouteDeclarationToModule(source, routePath, routeDefinition);
 
     const recorder = tree.beginUpdate(appRoutingModulePath);
     if (change instanceof InsertChange) {
