@@ -90,6 +90,13 @@ public class FeatureManagementModal : AbpPageModel
         return featureDto.Provider.Name != ProviderName && featureDto.Provider.Name != DefaultValueFeatureValueProvider.ProviderName;
     }
 
+    public string GetShownName(FeatureDto featureDto)
+    {
+        return !IsDisabled(featureDto)
+            ? featureDto.DisplayName
+            : $"{featureDto.DisplayName} ({featureDto.Provider.Name})";
+    }
+
     public class FeatureGroupViewModel
     {
         public List<FeatureViewModel> Features { get; set; }

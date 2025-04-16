@@ -56,7 +56,7 @@
                                                     type="checkbox"
                                                     class="d-inline"
                                                     abp-id-name="@Model.FeatureGroups[i].Features[j].BoolValue"
-                                                    label="@feature.DisplayName"
+                                                    label="@Model.GetShownName(feature)"
                                                     disabled="disabled"
                                                     group-data-feature-name="@feature.Name"
                                                     group-data-parent-name="@(feature.ParentName ?? "")"
@@ -71,7 +71,7 @@
                                             {
                                                 var type = feature.ValueType.Validator is NumericValueValidator ? "number" : "text";
                                                 <abp-input asp-for="@feature.Value"
-                                                    label="@feature.DisplayName"
+                                                    label="@Model.GetShownName(feature)"
                                                     abp-id-name="@Model.FeatureGroups[i].Features[j].Value"
                                                     type="@type"
                                                     disabled="disabled"
@@ -87,7 +87,7 @@
                                             @if (feature.ValueType is SelectionStringValueType selectType)
                                             {
                                                 <div data-feature-name="@feature.Name" data-parent-name="@(feature.ParentName ?? "")" style="margin-inline-start: @(feature.Depth * 25)px" class="mb-3">
-                                                    <label class="form-label" for="@feature.Name">@feature.DisplayName</label>
+                                                    <label class="form-label" for="@feature.Name">@Model.GetShownName(feature)</label>
                                                     <select id="@feature.Name" name="FeatureGroups[@i].Features[@j].Value" class="form-select" @(disabled ? "disabled" : "")>
                                                         @foreach (var item in selectType.ItemSource.Items)
                                                         {
