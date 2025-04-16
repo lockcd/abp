@@ -1,18 +1,18 @@
 using System;
 using System.Collections.Generic;
 using Shouldly;
-using Volo.Abp.Json.Newtonsoft;
 using Xunit;
 
 namespace Volo.Abp.Json;
 
+[Collection("AbpJsonNewtonsoftJsonTest")]
 public class AbpNewtonsoftSerializerProviderTests : AbpJsonNewtonsoftJsonTestBase
 {
-    protected AbpNewtonsoftJsonSerializer JsonSerializer;
+    protected IJsonSerializer JsonSerializer;
 
     public AbpNewtonsoftSerializerProviderTests()
     {
-        JsonSerializer = GetRequiredService<AbpNewtonsoftJsonSerializer>();
+        JsonSerializer = GetRequiredService<IJsonSerializer>();
     }
 
     public class File

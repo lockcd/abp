@@ -13,11 +13,11 @@ namespace Volo.Abp.Json;
 
 public abstract class AbpSystemTextJsonSerializerProviderTestBase : AbpJsonSystemTextJsonTestBase
 {
-    protected AbpSystemTextJsonSerializer JsonSerializer;
+    protected IJsonSerializer JsonSerializer;
 
     public AbpSystemTextJsonSerializerProviderTestBase()
     {
-        JsonSerializer = GetRequiredService<AbpSystemTextJsonSerializer>();
+        JsonSerializer = GetRequiredService<IJsonSerializer>();
     }
 
     public class TestExtensibleObjectClass : ExtensibleObject
@@ -260,6 +260,8 @@ public class AbpSystemTextJsonSerializerProviderDateTimeFormatTests : AbpSystemT
             options.InputDateTimeFormats.Add("yyyy*MM*dd");
             options.OutputDateTimeFormat = "yyyy*MM*dd HH*mm*ss";
         });
+
+        base.AfterAddApplication(services);
     }
 
     [Fact]
@@ -326,6 +328,8 @@ public class AbpSystemTextJsonSerializerProviderDatetimeKindUtcTests : AbpSystem
     {
         Kind = DateTimeKind.Utc;
         services.Configure<AbpClockOptions>(x => x.Kind = Kind);
+
+        base.AfterAddApplication(services);
     }
 }
 
@@ -335,6 +339,8 @@ public class AbpSystemTextJsonSerializerProviderDatetimeKindLocalTests : AbpSyst
     {
         Kind = DateTimeKind.Local;
         services.Configure<AbpClockOptions>(x => x.Kind = Kind);
+
+        base.AfterAddApplication(services);
     }
 }
 
