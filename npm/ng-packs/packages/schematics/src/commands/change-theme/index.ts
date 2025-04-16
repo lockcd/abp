@@ -212,37 +212,22 @@ export function insertImports(projectName: string, selectedTheme: ThemeOptionsEn
 }
 
 export function insertProviders(projectName: string, selectedTheme: ThemeOptionsEnum): Rule {
-  return (host: Tree) => {
-    // const recorder = host.beginUpdate(appModulePath);
-    // const source = createSourceFile(host, appModulePath);
+  return addRootProvider(projectName, code => {
     const selected = importMap.get(selectedTheme);
+    if (!selected || selected.length === 0) return code.code``;
 
-    if (!selected) {
-      return host;
+    const expressions: string[] = [];
+
+    for (const { path, provider } of selected) {
+      if (!provider) {
+        continue;
+      }
+      const imported = code.external(provider, path);
+      expressions.push(`${imported}()`);
     }
 
-    const rules: Rule[] = [];
-
-    selected.map(({ path, provider }) => {
-      if (provider) {
-        rules.push(
-          addRootProvider(projectName, code => {
-            const configFn = code.external(provider, path);
-            return code.code`${configFn}()`;
-          }),
-        );
-      }
-    });
-
-    /*    for (const change of changes) {
-      if (change instanceof InsertChange) {
-        recorder.insertLeft(change.order, change.toAdd);
-      }
-    }*/
-
-    // host.commitUpdate(recorder);
-    return chain(rules);
-  };
+    return code.code`${expressions.join(',\n')}`;
+  });
 }
 
 export function createSourceFile(host: Tree, appModulePath: string): ts.SourceFile {
