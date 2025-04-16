@@ -79,6 +79,7 @@ function updateAppModule(selectedProject: string, targetThemeName: ThemeOptionsE
         : removeProviderFromNgModuleMetadata(appModulePath, targetThemeName),
       insertImports(selectedProject, targetThemeName),
       insertProviders(selectedProject, targetThemeName),
+      formatFile(appModulePath),
     ]);
   };
 }
@@ -351,4 +352,18 @@ export const getAppConfigPath = (host: Tree, mainFilePath: string): string => {
   const bootstrapCall = findBootstrapApplicationCall(host, mainFilePath);
   const appConfig = findAppConfig(bootstrapCall, host, mainFilePath);
   return appConfig?.filePath || '';
+};
+
+export const formatFile = (filePath: string): Rule => {
+  return (tree: Tree) => {
+    const buffer = tree.read(filePath);
+    if (!buffer) return tree;
+
+    const source = ts.createSourceFile(filePath, buffer.toString(), ts.ScriptTarget.Latest, true);
+    const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
+    const formatted = printer.printFile(source);
+
+    tree.overwrite(filePath, formatted);
+    return tree;
+  };
 };
