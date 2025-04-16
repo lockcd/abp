@@ -7,8 +7,7 @@ import { ChangeThemeOptions } from './model';
 import {
   addRootImport,
   addRootProvider,
-  createDefaultPath,
-  getWorkspace,
+  getAppModulePath,
   isLibrary,
   isStandaloneApp,
   updateWorkspace,
@@ -16,6 +15,7 @@ import {
 } from '../../utils';
 import { ThemeOptionsEnum } from './theme-options.enum';
 import { findNodes, getDecoratorMetadata, getMetadataField } from '../../utils/angular/ast-utils';
+import { getMainFilePath } from '../../utils/angular/standalone/util';
 
 export default function (_options: ChangeThemeOptions): Rule {
   return async () => {
@@ -64,14 +64,12 @@ function updateProjectStyle(
 
 function updateAppModule(selectedProject: string, targetThemeName: ThemeOptionsEnum): Rule {
   return async (host: Tree) => {
-    const workspace = await getWorkspace(host);
-    const project = workspace.projects.get(selectedProject);
-    const sourceRoot = project?.sourceRoot || 'src';
-    const isStandalone = isStandaloneApp(host, `${sourceRoot}/main.ts`);
+    const mainFilePath = await getMainFilePath(host, selectedProject);
+    console.log('main file path --->>>>>', mainFilePath);
+    const isStandalone = isStandaloneApp(host, mainFilePath);
     console.log('isStandalone --->>>>>', isStandalone);
-    const defaultPath = await createDefaultPath(host, selectedProject);
-    const appModulePath =
-      defaultPath + `${isStandalone ? `${sourceRoot}/main.ts` : '/app.module.ts'}`;
+    const appModulePath = isStandalone ? mainFilePath : getAppModulePath(host, mainFilePath);
+    console.log('app module path --->>>>>', appModulePath);
 
     return chain([
       removeImportPath(appModulePath, targetThemeName),
