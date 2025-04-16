@@ -15,7 +15,8 @@ import {
 } from '../../utils';
 import { ThemeOptionsEnum } from './theme-options.enum';
 import { findNodes, getDecoratorMetadata, getMetadataField } from '../../utils/angular/ast-utils';
-import { getMainFilePath } from '../../utils/angular/standalone/util';
+import { findBootstrapApplicationCall, getMainFilePath } from '../../utils/angular/standalone/util';
+import { findAppConfig } from '../../utils/angular/standalone/app_config';
 
 export default function (_options: ChangeThemeOptions): Rule {
   return async () => {
@@ -65,11 +66,10 @@ function updateProjectStyle(
 function updateAppModule(selectedProject: string, targetThemeName: ThemeOptionsEnum): Rule {
   return async (host: Tree) => {
     const mainFilePath = await getMainFilePath(host, selectedProject);
-    console.log('main file path --->>>>>', mainFilePath);
     const isStandalone = isStandaloneApp(host, mainFilePath);
-    console.log('isStandalone --->>>>>', isStandalone);
-    const appModulePath = isStandalone ? mainFilePath : getAppModulePath(host, mainFilePath);
-    console.log('app module path --->>>>>', appModulePath);
+    const appModulePath = isStandalone
+      ? getAppConfigPath(host, mainFilePath)
+      : getAppModulePath(host, mainFilePath);
 
     return chain([
       removeImportPath(appModulePath, targetThemeName),
@@ -81,16 +81,16 @@ function updateAppModule(selectedProject: string, targetThemeName: ThemeOptionsE
   };
 }
 
-export function removeImportPath(appModulePath: string, selectedTheme: ThemeOptionsEnum): Rule {
+export function removeImportPath(filePath: string, selectedTheme: ThemeOptionsEnum): Rule {
   return (host: Tree) => {
-    const buffer = host.read(appModulePath);
+    const buffer = host.read(filePath);
     if (!buffer) return host;
 
     const sourceText = buffer.toString('utf-8');
-    const source = ts.createSourceFile(appModulePath, sourceText, ts.ScriptTarget.Latest, true);
-    const recorder = host.beginUpdate(appModulePath);
+    const source = ts.createSourceFile(filePath, sourceText, ts.ScriptTarget.Latest, true);
+    const recorder = host.beginUpdate(filePath);
 
-    const impMap = getImportPaths(selectedTheme, true);
+    const impMap = getImportPaths(selectedTheme, true); // all theme-related imports
 
     const nodes = findNodes(source, ts.isImportDeclaration);
 
@@ -99,9 +99,9 @@ export function removeImportPath(appModulePath: string, selectedTheme: ThemeOpti
       const namedBindings = node.importClause?.namedBindings;
 
       return impMap.some(({ path, importName }) => {
-        const symbol = importName.split('.')[0]; // remove .forRoot()
+        const symbol = importName.split('.')[0]; // Ex: ThemeXModule from ThemeXModule.forRoot()
+        const matchesPath = !!path && importPath === path;
 
-        const matchesPath = path && importPath === path;
         const matchesSymbol =
           !!namedBindings &&
           ts.isNamedImports(namedBindings) &&
@@ -299,4 +299,10 @@ export const styleCompareFn = (item1: string | object, item2: string | object) =
   const o2 = item2 as { bundleName?: string };
 
   return o1.bundleName && o2.bundleName && o1.bundleName == o2.bundleName;
+};
+
+export const getAppConfigPath = (host: Tree, mainFilePath: string): string => {
+  const bootstrapCall = findBootstrapApplicationCall(host, mainFilePath);
+  const appConfig = findAppConfig(bootstrapCall, host, mainFilePath);
+  return appConfig?.filePath || '';
 };
