@@ -92,7 +92,7 @@ export function removeImportPath(filePath: string, selectedTheme: ThemeOptionsEn
     const source = ts.createSourceFile(filePath, sourceText, ts.ScriptTarget.Latest, true);
     const recorder = host.beginUpdate(filePath);
 
-    const impMap = getImportPaths(selectedTheme, true); // all theme-related imports
+    const impMap = getImportPaths(selectedTheme, true);
 
     const nodes = findNodes(source, ts.isImportDeclaration);
 
@@ -101,7 +101,7 @@ export function removeImportPath(filePath: string, selectedTheme: ThemeOptionsEn
       const namedBindings = node.importClause?.namedBindings;
 
       return impMap.some(({ path, importName }) => {
-        const symbol = importName.split('.')[0]; // Ex: ThemeXModule from ThemeXModule.forRoot()
+        const symbol = importName.split('.')[0];
         const matchesPath = !!path && importPath === path;
 
         const matchesSymbol =
@@ -171,20 +171,35 @@ export function removeImportsFromStandaloneProviders(
 
     const sourceText = buffer.toString('utf-8');
     const source = ts.createSourceFile(mainPath, sourceText, ts.ScriptTarget.Latest, true);
-    console.log('remove from standalone main path --->>>>', mainPath);
     const recorder = host.beginUpdate(mainPath);
 
     const impMap = getImportPaths(selectedTheme, true);
-
     const callExpressions = findNodes(source, ts.isCallExpression);
 
     for (const expr of callExpressions) {
-      const text = expr.getText();
+      const exprText = expr.getText();
 
-      const match = impMap.find(({ importName }) => text.includes(importName.split('.')[0]));
+      const match = impMap.find(({ importName, provider }) => {
+        const moduleSymbol = importName?.split('.')[0];
+        return (
+          (moduleSymbol && exprText.includes(moduleSymbol)) ||
+          (provider && exprText.includes(provider))
+        );
+      });
 
       if (match) {
-        recorder.remove(expr.getStart(), expr.getWidth() + 1);
+        const start = expr.getFullStart();
+        const end = expr.getEnd();
+        const nextChar = sourceText.slice(end, end + 1);
+        const prevChar = sourceText.slice(start - 1, start);
+
+        if (nextChar === ',') {
+          recorder.remove(start, end - start + 1);
+        } else if (prevChar === ',') {
+          recorder.remove(start - 1, end - start + 1);
+        } else {
+          recorder.remove(start, end - start);
+        }
       }
     }
 
@@ -253,17 +268,14 @@ export function insertProviders(projectName: string, selectedTheme: ThemeOptions
     const selected = importMap.get(selectedTheme);
     if (!selected || selected.length === 0) return code.code``;
 
-    const expressions: string[] = [];
+    const providers = selected
+      .filter(s => !!s.provider)
+      .map(({ provider, path }) => {
+        const symbol = code.external(provider!, path);
+        return `${symbol}()`;
+      });
 
-    for (const { path, provider } of selected) {
-      if (!provider) {
-        continue;
-      }
-      const imported = code.external(provider, path);
-      expressions.push(`${imported}()`);
-    }
-
-    return code.code`${expressions.join(',\n')}`;
+    return code.code`${providers}`;
   });
 }
 
