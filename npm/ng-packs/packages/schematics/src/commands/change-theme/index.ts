@@ -85,32 +85,37 @@ function updateAppModule(selectedProject: string, targetThemeName: ThemeOptionsE
 
 export function removeImportPath(appModulePath: string, selectedTheme: ThemeOptionsEnum): Rule {
   return (host: Tree) => {
+    const buffer = host.read(appModulePath);
+    if (!buffer) return host;
+
+    const sourceText = buffer.toString('utf-8');
+    const source = ts.createSourceFile(appModulePath, sourceText, ts.ScriptTarget.Latest, true);
     const recorder = host.beginUpdate(appModulePath);
-    const source = createSourceFile(host, appModulePath);
+
     const impMap = getImportPaths(selectedTheme, true);
 
     const nodes = findNodes(source, ts.isImportDeclaration);
 
-    const filteredNodes = nodes.filter(node =>
-      impMap.some(({ path, importName }) => {
-        const sourceModule = node.getFullText();
-        const moduleName = importName.split('.')[0];
+    const filteredNodes = nodes.filter(node => {
+      const importPath = (node.moduleSpecifier as ts.StringLiteral).text;
+      const namedBindings = node.importClause?.namedBindings;
 
-        if (path && sourceModule.match(path)) {
-          return true;
-        }
+      return impMap.some(({ path, importName }) => {
+        const symbol = importName.split('.')[0]; // remove .forRoot()
 
-        return !!(moduleName && sourceModule.match(moduleName));
-      }),
-    );
+        const matchesPath = path && importPath === path;
+        const matchesSymbol =
+          !!namedBindings &&
+          ts.isNamedImports(namedBindings) &&
+          namedBindings.elements.some(e => e.name.text === symbol);
 
-    if (filteredNodes?.length < 1) {
-      return;
+        return matchesPath || matchesSymbol;
+      });
+    });
+
+    for (const node of filteredNodes) {
+      recorder.remove(node.getStart(), node.getWidth());
     }
-
-    filteredNodes.map(importPath =>
-      recorder.remove(importPath.getStart(), importPath.getWidth() + 1),
-    );
 
     host.commitUpdate(recorder);
     return host;
