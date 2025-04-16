@@ -73,8 +73,10 @@ function updateAppModule(selectedProject: string, targetThemeName: ThemeOptionsE
 
     return chain([
       removeImportPath(appModulePath, targetThemeName),
-      removeImportFromNgModuleMetadata(appModulePath, targetThemeName),
-      removeProviderFromNgModuleMetadata(appModulePath, targetThemeName),
+      ...(!isStandalone ? [removeImportFromNgModuleMetadata(appModulePath, targetThemeName)] : []),
+      isStandalone
+        ? removeImportsFromStandaloneProviders(appModulePath, targetThemeName)
+        : removeProviderFromNgModuleMetadata(appModulePath, targetThemeName),
       insertImports(selectedProject, targetThemeName),
       insertProviders(selectedProject, targetThemeName),
     ]);
@@ -154,6 +156,38 @@ export function removeImportFromNgModuleMetadata(
     filteredElements.map(willRemoveModule =>
       recorder.remove(willRemoveModule.getStart(), willRemoveModule.getWidth() + 1),
     );
+    host.commitUpdate(recorder);
+    return host;
+  };
+}
+
+export function removeImportsFromStandaloneProviders(
+  mainPath: string,
+  selectedTheme: ThemeOptionsEnum,
+): Rule {
+  return (host: Tree) => {
+    const buffer = host.read(mainPath);
+    if (!buffer) return host;
+
+    const sourceText = buffer.toString('utf-8');
+    const source = ts.createSourceFile(mainPath, sourceText, ts.ScriptTarget.Latest, true);
+    console.log('remove from standalone main path --->>>>', mainPath);
+    const recorder = host.beginUpdate(mainPath);
+
+    const impMap = getImportPaths(selectedTheme, true);
+
+    const callExpressions = findNodes(source, ts.isCallExpression);
+
+    for (const expr of callExpressions) {
+      const text = expr.getText();
+
+      const match = impMap.find(({ importName }) => text.includes(importName.split('.')[0]));
+
+      if (match) {
+        recorder.remove(expr.getStart(), expr.getWidth() + 1);
+      }
+    }
+
     host.commitUpdate(recorder);
     return host;
   };
