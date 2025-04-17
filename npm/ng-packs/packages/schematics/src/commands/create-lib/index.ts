@@ -33,6 +33,7 @@ import { addLibToWorkspaceFile } from '../../utils/angular-schematic/generate-li
 import * as cases from '../../utils/text';
 import { Exception } from '../../enums/exception';
 import { GenerateLibSchema } from './models/generate-lib-schema';
+import { getMainFilePath } from '../../utils/angular/standalone/util';
 
 export default function (schema: GenerateLibSchema) {
   return async (tree: Tree) => {
@@ -154,7 +155,7 @@ export function addLibToWorkspaceIfNotExist(options: GenerateLibSchema, packages
         : noop(),
       addLibToWorkspaceFile(projectRoot, packageName),
       updateTsConfig(packageName, pathImportLib),
-      importConfigModuleToDefaultProjectAppModule(workspace, packageName, options),
+      importConfigModuleToDefaultProjectAppModule(packageName, options),
       addRoutingToAppRoutingModule(workspace, packageName, options),
     ]);
   };
@@ -214,18 +215,11 @@ export async function createLibSecondaryEntryWithStandaloneTemplate(
 }
 
 export function importConfigModuleToDefaultProjectAppModule(
-  workspace: WorkspaceDefinition,
   packageName: string,
   options: GenerateLibSchema,
 ) {
   return (tree: Tree) => {
-    // const projectName = readWorkspaceSchema(tree).defaultProject || getFirstApplication(tree).name!;
     const projectName = getFirstApplication(tree).name!;
-    const project = workspace.projects.get(projectName);
-    const sourceRoot = project?.sourceRoot || 'src';
-
-    const isSourceStandalone = isStandaloneApp(tree, `${sourceRoot}/main.ts`);
-    console.log('isStandalone --->>>>', isSourceStandalone);
     const rules: Rule[] = [];
 
     if (options.templateType === 'standalone') {
@@ -249,50 +243,6 @@ export function importConfigModuleToDefaultProjectAppModule(
         }),
       );
     }
-
-    // const appModulePath = `${project?.sourceRoot}/app/app.module.ts`;
-    // const appModule = tree.read(appModulePath);
-    // if (!appModule) {
-    //  return;
-    // }
-    // const appModuleContent = appModule.toString();
-    /*    if (
-      appModuleContent.includes(
-        options.isStandaloneTemplate
-          ? `provide${pascal(packageName)}Config`
-          : `${camel(packageName)}ConfigModule`,
-      )
-    ) {
-      return;
-    }*/
-
-    /*    const rootConfigStatement = options.isStandaloneTemplate
-      ? `provide${pascal(packageName)}Config()`
-      : `${pascal(packageName)}ConfigModule.forRoot()`;
-    const text = tree.read(appModulePath);
-    if (!text) {
-      return;
-    }
-    const sourceText = text.toString();
-    if (sourceText.includes(rootConfigStatement)) {
-      return;
-    }
-    const source = ts.createSourceFile(appModulePath, sourceText, ts.ScriptTarget.Latest, true);
-
-    const changes = addImportToModule(
-      source,
-      appModulePath,
-      rootConfigStatement,
-      `${kebab(packageName)}/config`,
-    );
-    const recorder = tree.beginUpdate(appModulePath);
-    for (const change of changes) {
-      if (change instanceof InsertChange) {
-        recorder.insertLeft(change.pos, change.toAdd);
-      }
-    }
-    tree.commitUpdate(recorder);*/
-
     return chain(rules);
   };
 }
@@ -302,60 +252,124 @@ export function addRoutingToAppRoutingModule(
   packageName: string,
   options: GenerateLibSchema,
 ): Rule {
-  return (tree: Tree) => {
-    // const projectName = readWorkspaceSchema(tree).defaultProject || getFirstApplication(tree).name!;
+  return async (tree: Tree) => {
     const projectName = getFirstApplication(tree).name!;
     const project = workspace.projects.get(projectName);
-    const sourceRoot = project?.sourceRoot || 'src';
+    console.log('project --->>>', project);
+    const mainFilePath = await getMainFilePath(tree, projectName);
+    console.log('main file path ---->>>>', mainFilePath);
+    const isSourceStandalone = isStandaloneApp(tree, mainFilePath);
+    console.log('isSourceStandalone ---->>>>', isSourceStandalone);
 
-    const mainPath = `${sourceRoot}/main.ts`;
-    const isSourceStandalone = isStandaloneApp(tree, mainPath);
     const pascalName = pascal(packageName);
     const routePath = `${kebab(packageName)}`;
+    const moduleName = `${pascalName}Module`;
 
     if (isSourceStandalone) {
-      return addRootProvider(projectName, code => {
-        const routeExpr =
-          options.templateType === 'standalone'
-            ? `() => import('${routePath}').then(m => m.${pascalName}Routes)`
-            : `() => import('${routePath}').then(m => m.${moduleName}.forLazy())`;
+      const appRoutesPath = `${project?.sourceRoot}/app/app.routes.ts`;
+      const buffer = tree.read(appRoutesPath);
+      if (!buffer) {
+        throw new SchematicsException(`Cannot find routes file: ${appRoutesPath}`);
+      }
 
-        return code.code`provideRouter([
-            { path: '${routePath}', loadChildren: ${routeExpr} }
-        ])`;
-      });
+      const content = buffer.toString();
+      const source = ts.createSourceFile(appRoutesPath, content, ts.ScriptTarget.Latest, true);
+      const routeExpr =
+        options.templateType === 'standalone'
+          ? `() => import('${routePath}').then(m => m.${pascalName}Routes)`
+          : `() => import('${routePath}').then(m => m.${moduleName}.forLazy())`;
+      const routeToAdd = `{ path: '${routePath}', loadChildren: ${routeExpr} }`;
+      const change = addRouteToRoutesArray(source, 'routes', routeToAdd);
+
+      if (change instanceof InsertChange) {
+        const recorder = tree.beginUpdate(appRoutesPath);
+        recorder.insertLeft(change.pos, change.toAdd);
+        tree.commitUpdate(recorder);
+      }
+    } else {
+      const appRoutingModulePath = `${project?.sourceRoot}/app/app-routing.module.ts`;
+      const appRoutingModule = tree.read(appRoutingModulePath);
+      if (!appRoutingModule) {
+        return;
+      }
+      const appRoutingModuleContent = appRoutingModule.toString();
+      if (appRoutingModuleContent.includes(moduleName)) {
+        return;
+      }
+
+      const source = ts.createSourceFile(
+        appRoutingModulePath,
+        appRoutingModuleContent,
+        ts.ScriptTarget.Latest,
+        true,
+      );
+      const importStatement =
+        options.templateType === 'standalone'
+          ? `() => import('${routePath}').then(m => m.${pascalName}Routes)`
+          : `() => import('${routePath}').then(m => m.${moduleName}.forLazy())`;
+      const routeDefinition = `{ path: '${routePath}', loadChildren: ${importStatement} }`;
+      const change = addRouteDeclarationToModule(source, routePath, routeDefinition);
+
+      const recorder = tree.beginUpdate(appRoutingModulePath);
+      if (change instanceof InsertChange) {
+        recorder.insertLeft(change.pos, change.toAdd);
+      }
+      tree.commitUpdate(recorder);
     }
-
-    const appRoutingModulePath = `${project?.sourceRoot}/app/app-routing.module.ts`;
-    const appRoutingModule = tree.read(appRoutingModulePath);
-    if (!appRoutingModule) {
-      return;
-    }
-    const appRoutingModuleContent = appRoutingModule.toString();
-    const moduleName = `${pascalName}Module`;
-    if (appRoutingModuleContent.includes(moduleName)) {
-      return;
-    }
-
-    const source = ts.createSourceFile(
-      appRoutingModulePath,
-      appRoutingModuleContent,
-      ts.ScriptTarget.Latest,
-      true,
-    );
-    const importStatement =
-      options.templateType === 'standalone'
-        ? `() => import('${routePath}').then(m => m.${pascalName}Routes)`
-        : `() => import('${routePath}').then(m => m.${moduleName}.forLazy())`;
-    const routeDefinition = `{ path: '${routePath}', loadChildren: ${importStatement} }`;
-    const change = addRouteDeclarationToModule(source, routePath, routeDefinition);
-
-    const recorder = tree.beginUpdate(appRoutingModulePath);
-    if (change instanceof InsertChange) {
-      recorder.insertLeft(change.pos, change.toAdd);
-    }
-    tree.commitUpdate(recorder);
-
     return;
   };
+}
+
+export function addRouteToRoutesArray(
+  source: ts.SourceFile,
+  arrayName: string,
+  routeToAdd: string,
+): InsertChange | null {
+  const routesVar = source.statements.find(
+    stmt =>
+      ts.isVariableStatement(stmt) &&
+      stmt.declarationList.declarations.some(
+        decl =>
+          ts.isVariableDeclaration(decl) &&
+          decl.name.getText() === arrayName &&
+          decl.initializer !== undefined &&
+          ts.isArrayLiteralExpression(decl.initializer),
+      ),
+  );
+
+  if (!routesVar || !ts.isVariableStatement(routesVar)) {
+    throw new Error(`Could not find routes array named "${arrayName}".`);
+  }
+
+  const declaration = routesVar.declarationList.declarations.find(
+    decl => decl.name.getText() === arrayName,
+  ) as ts.VariableDeclaration;
+
+  const arrayLiteral = declaration.initializer as ts.ArrayLiteralExpression;
+
+  const getPathValue = (routeText: string): string | null => {
+    const match = routeText.match(/path:\s*['"`](.+?)['"`]/);
+    return match?.[1] ?? null;
+  };
+
+  const newPath = getPathValue(routeToAdd);
+
+  const alreadyExists = arrayLiteral.elements.some(el => {
+    const existingPath = getPathValue(el.getText());
+    return existingPath === newPath;
+  });
+
+  if (alreadyExists) {
+    return null;
+  }
+
+  const insertPos =
+    arrayLiteral.elements.hasTrailingComma || arrayLiteral.elements.length === 0
+      ? arrayLiteral.getEnd() - 1
+      : arrayLiteral.elements[arrayLiteral.elements.length - 1].getEnd();
+
+  const prefix = arrayLiteral.elements.length > 0 ? ',\n  ' : '  ';
+  const toAdd = `${prefix}${routeToAdd}`;
+
+  return new InsertChange(source.fileName, insertPos, toAdd);
 }
