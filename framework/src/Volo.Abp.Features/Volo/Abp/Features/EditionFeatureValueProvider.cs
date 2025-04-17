@@ -32,7 +32,7 @@ public class EditionFeatureValueProvider : FeatureValueProvider
 
     public async override Task<string?> GetOrNullAsync(FeatureDefinition feature)
     {
-        var editionId = await GetEditionIdAsync();
+        var editionId = await FindEditionIdAsync();
         if (editionId == null)
         {
             return null;
@@ -41,7 +41,7 @@ public class EditionFeatureValueProvider : FeatureValueProvider
         return await FeatureStore.GetOrNullAsync(feature.Name, Name, editionId.Value.ToString());
     }
 
-    protected virtual async Task<Guid?> GetEditionIdAsync()
+    protected virtual async Task<Guid?> FindEditionIdAsync()
     {
         var editionId = PrincipalAccessor.Principal?.FindEditionId();
         if (editionId != null)
