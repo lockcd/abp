@@ -12,11 +12,11 @@ import {
   isStandaloneApp,
   updateWorkspace,
   WorkspaceDefinition,
+  getAppConfigPath,
 } from '../../utils';
 import { ThemeOptionsEnum } from './theme-options.enum';
 import { findNodes, getDecoratorMetadata, getMetadataField } from '../../utils/angular/ast-utils';
-import { findBootstrapApplicationCall, getMainFilePath } from '../../utils/angular/standalone/util';
-import { findAppConfig } from '../../utils/angular/standalone/app_config';
+import { getMainFilePath } from '../../utils/angular/standalone/util';
 
 export default function (_options: ChangeThemeOptions): Rule {
   return async () => {
@@ -346,12 +346,6 @@ export const styleCompareFn = (item1: string | object, item2: string | object) =
   const o2 = item2 as { bundleName?: string };
 
   return o1.bundleName && o2.bundleName && o1.bundleName == o2.bundleName;
-};
-
-export const getAppConfigPath = (host: Tree, mainFilePath: string): string => {
-  const bootstrapCall = findBootstrapApplicationCall(host, mainFilePath);
-  const appConfig = findAppConfig(bootstrapCall, host, mainFilePath);
-  return appConfig?.filePath || '';
 };
 
 export const formatFile = (filePath: string): Rule => {

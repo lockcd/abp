@@ -16,6 +16,7 @@ import {
   addRootProvider,
   addRouteDeclarationToModule,
   applyWithOverwrite,
+  findAppRoutesPath,
   getFirstApplication,
   getWorkspace,
   InsertChange,
@@ -255,18 +256,16 @@ export function addRoutingToAppRoutingModule(
   return async (tree: Tree) => {
     const projectName = getFirstApplication(tree).name!;
     const project = workspace.projects.get(projectName);
-    console.log('project --->>>', project);
     const mainFilePath = await getMainFilePath(tree, projectName);
-    console.log('main file path ---->>>>', mainFilePath);
     const isSourceStandalone = isStandaloneApp(tree, mainFilePath);
-    console.log('isSourceStandalone ---->>>>', isSourceStandalone);
 
     const pascalName = pascal(packageName);
     const routePath = `${kebab(packageName)}`;
     const moduleName = `${pascalName}Module`;
 
     if (isSourceStandalone) {
-      const appRoutesPath = `${project?.sourceRoot}/app/app.routes.ts`;
+      const appRoutesPath =
+        findAppRoutesPath(tree, mainFilePath) || `${project?.sourceRoot}/app/app.routes.ts`;
       const buffer = tree.read(appRoutesPath);
       if (!buffer) {
         throw new SchematicsException(`Cannot find routes file: ${appRoutesPath}`);
