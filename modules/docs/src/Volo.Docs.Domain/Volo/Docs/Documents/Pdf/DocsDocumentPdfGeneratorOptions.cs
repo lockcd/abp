@@ -1,24 +1,38 @@
-namespace Volo.Docs.Common.Documents;
+using System;
+using Volo.Docs.Projects;
+
+namespace Volo.Docs.Documents.Pdf;
 
 public class DocsDocumentPdfGeneratorOptions
 {
+    public const string StylePlaceholder = "{{style-placeholder}}";
+    public const string ContentPlaceholder = "{{content-placeholder}}";
+
+    /// <summary>
+    /// The HTML layout for the PDF document.
+    /// </summary>
     public string HtmlLayout { get; set; }
     public string HtmlStyles { get; set; }
-    
     public string BaseUrl { get; set; }
-
+    public string CoverPagePath { get; set; }
+    public TimeSpan PdfFileCacheExpiration { get; set; } = TimeSpan.FromDays(1);
+    public Func<Project, string, string, string> CalculatePdfFileName { get; set; } = (project, version, languageCode) =>
+    {
+        return $"{project.ShortName}_{version}_{languageCode}.pdf";
+    };
+    
     public DocsDocumentPdfGeneratorOptions()
     {
-        HtmlLayout = @"
+        HtmlLayout = $@"
         <!DOCTYPE html>
             <head>
                 <meta charset='utf-8' />
                 <style>
-                    {{style-placeholder}}
+                    {StylePlaceholder}
                 </style>
             </head>
             <body>
-                 {{content-placeholder}}
+                 {ContentPlaceholder}
             </body>
         </html>";
 

@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -15,9 +16,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
+using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.Data;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.EventBus.Local;
+using Volo.Docs.Common;
+using Volo.Docs.Common.Projects;
 using Volo.Docs.Documents;
 using Volo.Docs.Documents.Rendering;
 using Volo.Docs.HtmlConverting;
@@ -90,6 +94,8 @@ namespace Volo.Docs.Pages.Documents.Project
         public bool FullSearchEnabled { get; set; }
 
         public bool IsLatestVersion { get; private set; }
+        
+        public bool HasDownloadPdfPermission { get; set; }
 
         public DocumentNavigationsDto DocumentNavigationsDto { get; private set; }
 
@@ -99,6 +105,7 @@ namespace Volo.Docs.Pages.Documents.Project
         private readonly IProjectAppService _projectAppService;
         private readonly IWebDocumentSectionRenderer _webDocumentSectionRenderer;
         private readonly DocsUiOptions _uiOptions;
+        private readonly IPermissionChecker _permissionChecker;
 
         protected IDocsLinkGenerator DocsLinkGenerator => LazyServiceProvider.LazyGetRequiredService<IDocsLinkGenerator>();
         
@@ -109,7 +116,8 @@ namespace Volo.Docs.Pages.Documents.Project
             IDocumentToHtmlConverterFactory documentToHtmlConverterFactory,
             IProjectAppService projectAppService,
             IOptions<DocsUiOptions> options,
-            IWebDocumentSectionRenderer webDocumentSectionRenderer)
+            IWebDocumentSectionRenderer webDocumentSectionRenderer, 
+            IPermissionChecker permissionChecker)
         {
             ObjectMapperContext = typeof(DocsWebModule);
 
@@ -117,6 +125,7 @@ namespace Volo.Docs.Pages.Documents.Project
             _documentToHtmlConverterFactory = documentToHtmlConverterFactory;
             _projectAppService = projectAppService;
             _webDocumentSectionRenderer = webDocumentSectionRenderer;
+            _permissionChecker = permissionChecker;
             _uiOptions = options.Value;
             
             LocalizationResourceType = typeof(DocsResource);
@@ -136,7 +145,7 @@ namespace Volo.Docs.Pages.Documents.Project
             {
                 return RedirectPermanent(redirectUrl);
             }
-
+            
             return await SetPageAsync();
         }
 
@@ -146,7 +155,7 @@ namespace Volo.Docs.Pages.Documents.Project
             ShowProjectsCombobox = _uiOptions.ShowProjectsCombobox && !_uiOptions.SingleProjectMode.Enable;
             ShowProjectsComboboxLabel = ShowProjectsCombobox && _uiOptions.ShowProjectsComboboxLabel;
             FullSearchEnabled = await _documentAppService.FullSearchEnabledAsync();
-
+            HasDownloadPdfPermission = await _permissionChecker.IsGrantedAsync(DocsCommonPermissions.Documents.PdfGeneration);
             try
             {
                 await SetProjectAsync();

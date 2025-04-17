@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Caching;
 using Volo.Abp.Data;
 using Volo.Abp.Guids;
+using Volo.Docs.Common.Documents;
 using Volo.Docs.Documents;
 using Volo.Docs.Documents.FullSearch.Elastic;
+using Volo.Docs.Documents.Pdf;
 using Volo.Docs.Localization;
 using Volo.Docs.Projects;
 
@@ -21,12 +24,14 @@ namespace Volo.Docs.Admin.Projects
         private readonly IDocumentRepository _documentRepository;
         private readonly IDocumentFullSearch _elasticSearchService;
         private readonly IGuidGenerator _guidGenerator;
+        private readonly IDistributedCache<DocsDocumentPdfCacheItem> _documentPdfCache;
 
         public ProjectAdminAppService(
             IProjectRepository projectRepository,
             IDocumentRepository documentRepository,
             IDocumentFullSearch elasticSearchService,
-            IGuidGenerator guidGenerator)
+            IGuidGenerator guidGenerator, 
+            IDistributedCache<DocsDocumentPdfCacheItem> documentPdfCache)
         {
             ObjectMapperContext = typeof(DocsAdminApplicationModule);
             LocalizationResource = typeof(DocsResource);
@@ -35,6 +40,7 @@ namespace Volo.Docs.Admin.Projects
             _documentRepository = documentRepository;
             _elasticSearchService = elasticSearchService;
             _guidGenerator = guidGenerator;
+            _documentPdfCache = documentPdfCache;
         }
 
         public virtual async Task<PagedResultDto<ProjectDto>> GetListAsync(PagedAndSortedResultRequestDto input)
@@ -175,6 +181,11 @@ namespace Volo.Docs.Admin.Projects
         {
             var projects = await _projectRepository.GetListWithoutDetailsAsync();
             return ObjectMapper.Map<List<ProjectWithoutDetails>, List<ProjectWithoutDetailsDto>>(projects);
+        }
+
+        public virtual async Task DeletePdfFileAsync(DeletePdfFileInput input)
+        {
+            await _documentPdfCache.RemoveAsync(DocsDocumentPdfCacheItem.CalculateCacheKey(input.Id, input.Version, input.LanguageCode));
         }
     }
 }

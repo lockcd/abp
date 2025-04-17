@@ -8,8 +8,8 @@ using Volo.Abp.DependencyInjection;
 using Volo.Abp.Http.Client;
 using Volo.Abp.Http.Client.ClientProxying;
 using Volo.Abp.Http.Modeling;
+using Volo.Docs.Common.Projects;
 using Volo.Docs.Documents;
-using Volo.Docs.Projects;
 
 // ReSharper disable once CheckNamespace
 namespace Volo.Docs.Projects;

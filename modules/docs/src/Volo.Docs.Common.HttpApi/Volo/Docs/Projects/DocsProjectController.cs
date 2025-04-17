@@ -5,12 +5,14 @@ using Asp.Versioning;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.AspNetCore.Mvc;
+using Volo.Docs.Common;
+using Volo.Docs.Common.Projects;
 using Volo.Docs.Documents;
 
 namespace Volo.Docs.Projects
 {
-    [RemoteService(Name = DocsRemoteServiceConsts.RemoteServiceName)]
-    [Area(DocsRemoteServiceConsts.ModuleName)]
+    [RemoteService(Name = DocsCommonRemoteServiceConsts.RemoteServiceName)]
+    [Area(DocsCommonRemoteServiceConsts.ModuleName)]
     [ControllerName("Project")]
     [Route("api/docs/projects")]
     public class DocsProjectController : AbpControllerBase, IProjectAppService

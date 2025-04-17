@@ -4,62 +4,82 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using iText.Html2pdf;
-using iText.Kernel.Pdf;
-using iText.Kernel.Pdf.Action;
 using Markdig;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Volo.Abp;
 using Volo.Abp.Content;
-using Volo.Docs.Documents;
+using Volo.Abp.DependencyInjection;
+using Volo.Abp.Threading;
+using Volo.Docs.Documents.Pdf.IText;
 using Volo.Docs.Documents.Rendering;
 using Volo.Docs.Projects;
 using Volo.Extensions;
-using ITextDocument = iText.Layout.Document;
 
-namespace Volo.Docs.Common.Documents;
+namespace Volo.Docs.Documents.Pdf;
 
-public class DocumentPdfGenerator : IDocumentPdfGenerator
+public class DocumentPdfGenerator : IDocumentPdfGenerator, ITransientDependency
 {
     protected IDocumentSourceFactory DocumentStoreFactory { get; }
     protected IDocumentRepository DocumentRepository { get; }
     protected IDocumentSectionRenderer DocumentSectionRenderer { get; }
-    protected IOptions<DocsDocumentPdfGeneratorOptions> Options { get; }
+    protected IOptions<DocsDocumentPdfGeneratorOptions> Options { get; }  
+    protected IDocumentPdfFileStore DocumentPdfFileStore { get; }
+    protected IPdfRenderer PdfRenderer { get; }
     protected ILogger<DocumentPdfGenerator> Logger { get; set; }
     protected IDocumentSource DocumentSource { get; set; }
     protected DocumentParams DocumentParams { get; set; }
-    protected List<PdfDocumentNode> AllPdfDocumentNodes { get; set; } = new();
+    protected List<PdfDocumentNode> AllPdfDocumentNodes { get; set; } = [];
     protected MarkdownPipeline MarkdownPipeline { get; } = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+    
+    private readonly SemaphoreSlim _syncSemaphore;
 
     public DocumentPdfGenerator(
         IDocumentSourceFactory documentStoreFactory, 
         IDocumentRepository documentRepository,
         IOptions<DocsDocumentPdfGeneratorOptions> options,
-        IDocumentSectionRenderer documentSectionRenderer)
+        IDocumentSectionRenderer documentSectionRenderer,
+        IDocumentPdfFileStore documentPdfFileStore, 
+        IPdfRenderer pdfRenderer)
     {
         DocumentStoreFactory = documentStoreFactory;
         DocumentRepository = documentRepository;
         Options = options;
         DocumentSectionRenderer = documentSectionRenderer;
+        DocumentPdfFileStore = documentPdfFileStore;
+        PdfRenderer = pdfRenderer;
         Logger = NullLogger<DocumentPdfGenerator>.Instance;
+        _syncSemaphore = new SemaphoreSlim(1, 1);
     }
     
     public virtual async Task<IRemoteStreamContent> GenerateAsync(Project project, string version, string languageCode)
     {
-        DocumentSource = DocumentStoreFactory.Create(project.DocumentStoreType);
-        DocumentParams = await GetDocumentParamsAsync(project, version, languageCode);
-        var navigation = await GetNavigationAsync(project, version, languageCode);
+        using (await _syncSemaphore.LockAsync())
+        {
+            var fileName = Options.Value.CalculatePdfFileName(project, version, languageCode);
+            var fileStream = await DocumentPdfFileStore.GetOrNullAsync(project, version, languageCode);
+            
+            if (fileStream != null)
+            {
+                return new RemoteStreamContent(fileStream, fileName, "application/pdf");
+            }
+            
+            DocumentSource = DocumentStoreFactory.Create(project.DocumentStoreType);
+            DocumentParams = await GetDocumentParamsAsync(project, version, languageCode);
+            var navigation = await GetNavigationAsync(project, version, languageCode);
         
-        await SetAllPdfDocumentNodesAsync(navigation.Items, project, version, languageCode);
-        var htmlContent = await ConvertDocumentsToHtmlAsync(AllPdfDocumentNodes);
+            await SetAllPdfDocumentNodesAsync(navigation.Items, project, version, languageCode);
+            var htmlContent = await ConvertDocumentsToHtmlAsync(AllPdfDocumentNodes);
         
-        var pdfStream = await GeneratePdfAsync(htmlContent);
+            var pdfStream = await PdfRenderer.GeneratePdfAsync(htmlContent, AllPdfDocumentNodes);
+            await DocumentPdfFileStore.SetAsync(project, version, languageCode, pdfStream);
         
-        return new RemoteStreamContent(pdfStream, CalculateDocumentPdfFileName(project.ShortName, version, languageCode), "application/pdf");
+            return new RemoteStreamContent(pdfStream, fileName, "application/pdf");
+        }
     }
     
     protected virtual async Task<string> ConvertDocumentsToHtmlAsync(List<PdfDocumentNode> pdfDocumentNodes)
@@ -82,56 +102,6 @@ public class DocumentPdfGenerator : IDocumentPdfGenerator
         }
         
         return contentBuilder.ToString();
-    }
-    
-    protected virtual Task<MemoryStream> GeneratePdfAsync(string htmlContent)
-    {
-        var pdfStream = new MemoryStream();
-        var pdfWrite = new PdfWriter(pdfStream);
-        var pdfDocument = new PdfDocument(pdfWrite);
-        var textDocument = new ITextDocument(pdfDocument);
-        pdfWrite.SetCloseStream(false);
-        
-        var htmlBuilder = new StringBuilder();
-        htmlBuilder.Append(Options.Value.HtmlLayout);
-        htmlBuilder.Replace("{{style-placeholder}}", Options.Value.HtmlStyles);
-        htmlBuilder.Replace("{{content-placeholder}}", htmlContent);
-        
-        var converter = new ConverterProperties();
-        var tagWorkerFactory = new HtmlIdTagWorkerFactory(pdfDocument);
-        converter.SetTagWorkerFactory(tagWorkerFactory);
-        
-        HtmlConverter.ConvertToDocument(htmlBuilder.ToString(), pdfDocument, converter);
-        
-        tagWorkerFactory.AddNamedDestinations();
-        var pdfOutlines = pdfDocument.GetOutlines(false);
-        BuildPdfOutlines(pdfOutlines, AllPdfDocumentNodes);
-                
-        textDocument.Close();
-        pdfStream.Position = 0;
-        return Task.FromResult(pdfStream);
-    }
-
-    private void BuildPdfOutlines(PdfOutline parentOutline, List<PdfDocumentNode> pdfDocumentNodes)
-    {
-        foreach (var pdfDocumentNode in pdfDocumentNodes)
-        {
-            if (pdfDocumentNode.IgnoreOnOutline)
-            {
-                continue;
-            }
-            
-            var outline = parentOutline.AddOutline(pdfDocumentNode.Title);
-            if (!pdfDocumentNode.Id.IsNullOrWhiteSpace())
-            {
-                outline.AddAction(PdfAction.CreateGoTo(pdfDocumentNode.Id));
-            }
-
-            if (pdfDocumentNode.HasChildren)
-            {
-                BuildPdfOutlines(outline, pdfDocumentNode.Children);
-            }
-        }
     }
     
     protected virtual async Task<string> RenderDocumentAsync(PdfDocumentNode pdfDocumentNode)
@@ -164,7 +134,7 @@ public class DocumentPdfGenerator : IDocumentPdfGenerator
                 var pdfDocumentNode = new PdfDocumentNode
                 { 
                     Title = navigation.Text,
-                    IgnoreOnOutline = navigation.Path == "index.md"
+                    IgnoreOnOutline = navigation.Path == Options.Value.CoverPagePath
                 };
                 
                 if (!navigation.Path.IsNullOrWhiteSpace())
@@ -228,11 +198,6 @@ public class DocumentPdfGenerator : IDocumentPdfGenerator
         }
     }
     
-    protected virtual string CalculateDocumentPdfFileName(string projectName, string version, string languageCode)
-    {
-        return $"{projectName.ToLower()}-{languageCode.ToLower()}.pdf";
-    }
-    
     private string NormalizeNavigationPath(string path)
     {
         return !path.EndsWith(".md") ? Path.Combine(path, "index.md") : path;
@@ -249,12 +214,14 @@ public class DocumentPdfGenerator : IDocumentPdfGenerator
         {
             throw new UserFriendlyException($"Cannot validate navigation file '{project.NavigationDocumentName}' for the project {project.Name}.");
         }
-        
-        navigation.Items.Insert(0, new NavigationNode
+
+        if (!Options.Value.CoverPagePath.IsNullOrWhiteSpace())
         {
-            Text = "Index",
-            Path = "index.md"
-        });
+            navigation.Items.Insert(0, new NavigationNode
+            {
+                Path = Options.Value.CoverPagePath
+            });
+        }
         
         return navigation;
     }
@@ -337,7 +304,7 @@ public class DocumentPdfGenerator : IDocumentPdfGenerator
 
     private string SetDocumentTitle(string content, string title)
     {
-        var titleLine = content.Split('\n').FirstOrDefault(x => x.TrimStart().StartsWith("#"));
+        var titleLine = content.Split(Environment.NewLine).FirstOrDefault(x => x.TrimStart().StartsWith("#"));
         if (titleLine == null)
         {
             return content;
@@ -354,7 +321,7 @@ public class DocumentPdfGenerator : IDocumentPdfGenerator
             return title;
         }
         
-        var titleLine = content.Split('\n').FirstOrDefault(x => x.TrimStart().StartsWith("#"));
+        var titleLine = content.Split(Environment.NewLine).FirstOrDefault(x => x.TrimStart().StartsWith("#"));
         if (titleLine == null)
         {
             return title;
@@ -378,8 +345,14 @@ public class DocumentPdfGenerator : IDocumentPdfGenerator
     private string NormalizeHtmlContent(PdfDocumentNode pdfDocumentNode, string htmlContent)
     {
         htmlContent = $"<div class='page' id='{pdfDocumentNode.Id}'>{htmlContent}</div>";
-        
-        htmlContent = Regex.Replace(htmlContent, @"(<img\s+[^>]*)src=""([^""]*)""([^>]*>)", delegate (Match match)
+        htmlContent = ReplaceRelativeImageUrls(pdfDocumentNode, htmlContent);
+
+        return htmlContent;
+    }
+
+    private string ReplaceRelativeImageUrls(PdfDocumentNode pdfDocumentNode, string htmlContent)
+    {
+        return Regex.Replace(htmlContent, @"(<img\s+[^>]*)src=""([^""]*)""([^>]*>)", delegate (Match match)
         {
             if (IsExternalLink(match.Groups[2].Value))
             {
@@ -396,24 +369,11 @@ public class DocumentPdfGenerator : IDocumentPdfGenerator
             return match.Groups[1] + " src=\"" + HttpUtility.HtmlEncode(newImageSource) + "\" " + match.Groups[3];
 
         }, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Multiline);
-
-        return htmlContent;
     }
     
     private bool IsExternalLink(string link)
     {
         return link.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
                link.StartsWith("https://", StringComparison.OrdinalIgnoreCase);
-    }
-
-    protected class PdfDocumentNode
-    {
-        public Document Document { get; set; }
-        public string Title { get; set; }
-        public string Id { get; set; }
-        public List<PdfDocumentNode> Children { get; set; } = [];
-        public DocumentRenderParameters RenderParameters { get; set; }
-        public bool HasChildren => Children.Any();
-        public bool IgnoreOnOutline { get; set; }
     }
 }

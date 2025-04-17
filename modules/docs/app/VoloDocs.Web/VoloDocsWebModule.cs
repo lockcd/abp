@@ -32,11 +32,14 @@ using Localization.Resources.AbpUi;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Volo.Abp.Account;
+using Volo.Abp.BlobStoring;
+using Volo.Abp.BlobStoring.Database;
 using Volo.Abp.PermissionManagement.HttpApi;
 using Volo.Abp.Validation.Localization;
 using Volo.Docs.Documents.FullSearch.Elastic;
 using Volo.Abp.Caching.StackExchangeRedis;
 using Volo.Docs.Common.Documents;
+using Volo.Docs.Documents.Pdf;
 
 namespace VoloDocs.Web
 {
@@ -83,7 +86,7 @@ namespace VoloDocs.Web
             //     options.SingleProjectMode.ProjectName = "abp";
             //     options.MultiLanguageMode = false;
             // });
-
+            
             Configure<DocsElasticSearchOptions>(options =>
             {
                 options.Enable = false;
@@ -175,6 +178,15 @@ namespace VoloDocs.Web
             Configure<DocsDocumentPdfGeneratorOptions>(options =>
             {
                 options.BaseUrl = configuration["App:selfUrl"];
+                options.CoverPagePath = "Index.md";
+            });
+            
+            Configure<AbpBlobStoringOptions>(options =>
+            {
+                options.Containers.ConfigureDefault(container =>
+                {
+                    container.UseDatabase();
+                });
             });
         }
 

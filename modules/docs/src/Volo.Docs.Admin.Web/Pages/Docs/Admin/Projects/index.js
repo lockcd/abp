@@ -16,6 +16,11 @@ $(function () {
         modalClass: 'projectPull',
     });
 
+    var _generatePdfModal = new abp.ModalManager({
+        viewUrl: abp.appPath + 'Docs/Admin/Projects/GeneratePdf',
+        modalClass: 'projectGeneratePdf',
+    });
+
     var _dataTable = $('#ProjectsTable').DataTable(
         abp.libs.datatables.normalizeConfiguration({
             processing: true,
@@ -117,6 +122,17 @@ $(function () {
                                         });
                                 },
                             },
+                            {
+                                text: l('GeneratePdf'),
+                                visible: abp.auth.isGranted(
+                                    'Docs.Admin.Documents'
+                                ),
+                                action: function (data) {
+                                    _generatePdfModal.open({
+                                        Id: data.record.id,
+                                    });
+                                }
+                            }
                         ],
                     },
                 },

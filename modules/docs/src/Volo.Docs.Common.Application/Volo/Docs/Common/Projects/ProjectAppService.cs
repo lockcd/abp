@@ -4,16 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Volo.Abp.Application.Dtos;
-using Volo.Abp.Application.Services;
 using Volo.Abp.Caching;
 using Volo.Abp.Data;
-using Volo.Abp.Guids;
 using Volo.Docs.Caching;
 using Volo.Docs.Documents;
+using Volo.Docs.Projects;
 
-namespace Volo.Docs.Projects
+namespace Volo.Docs.Common.Projects
 {
-    public class ProjectAppService : DocsAppServiceBase, IProjectAppService
+    public class ProjectAppService : DocsCommonAppServiceBase, IProjectAppService
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IDistributedCache<List<VersionInfo>> _versionCache;

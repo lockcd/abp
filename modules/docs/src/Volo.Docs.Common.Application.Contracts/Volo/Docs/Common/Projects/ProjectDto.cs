@@ -2,7 +2,7 @@ using System;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Data;
 
-namespace Volo.Docs.Projects
+namespace Volo.Docs.Common.Projects
 {
     [Serializable]
     public class ProjectDto : EntityDto<Guid>, IHasExtraProperties

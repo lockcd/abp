@@ -5,9 +5,9 @@ using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Navigation;
 using iText.StyledXmlParser.Node;
 
-namespace Volo.Docs.Common.Documents;
+namespace Volo.Docs.Documents.Pdf.IText;
 
-public class HtmlIdTagWorkerFactory: DefaultTagWorkerFactory
+public class HtmlIdTagWorkerFactory : DefaultTagWorkerFactory
 {
     private readonly PdfDocument _pdfDocument;
     private readonly Dictionary<string, int> _pageDestinations = new();

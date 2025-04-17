@@ -22,5 +22,7 @@ namespace Volo.Docs.Admin.Projects
 
         Task ReindexAllAsync();
         Task<List<ProjectWithoutDetailsDto>> GetListWithoutDetailsAsync();
+
+        Task DeletePdfFileAsync(DeletePdfFileInput input);
     }
 }

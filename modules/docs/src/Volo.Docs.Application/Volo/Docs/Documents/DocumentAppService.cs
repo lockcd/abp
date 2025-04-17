@@ -14,6 +14,7 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Caching;
 using Volo.Abp.Data;
 using Volo.Docs.Caching;
+using Volo.Docs.Common.Projects;
 using Volo.Docs.Documents.FullSearch.Elastic;
 using Volo.Docs.Projects;
 using Volo.Extensions;

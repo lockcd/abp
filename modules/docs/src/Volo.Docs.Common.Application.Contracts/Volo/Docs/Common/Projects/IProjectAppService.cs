@@ -2,8 +2,9 @@ using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Docs.Documents;
+using Volo.Docs.Projects;
 
-namespace Volo.Docs.Projects
+namespace Volo.Docs.Common.Projects
 {
     public interface IProjectAppService : IApplicationService
     {

@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Volo.Abp;
 using Volo.Abp.AutoMapper;
+using Volo.Abp.BlobStoring;
+using Volo.Abp.Caching;
 using Volo.Abp.Domain;
 using Volo.Abp.Domain.Entities.Events.Distributed;
 using Volo.Abp.Localization;
@@ -24,7 +25,9 @@ namespace Volo.Docs
     [DependsOn(
         typeof(DocsDomainSharedModule),
         typeof(AbpDddDomainModule),
-        typeof(AbpAutoMapperModule)
+        typeof(AbpAutoMapperModule),
+        typeof(AbpBlobStoringModule),
+        typeof(AbpCachingModule)
         )]
     public class DocsDomainModule : AbpModule
     {
