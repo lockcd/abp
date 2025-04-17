@@ -18,3 +18,4 @@ export * from './text';
 export * from './tree';
 export * from './type';
 export * from './workspace';
+export * from './standalone';
