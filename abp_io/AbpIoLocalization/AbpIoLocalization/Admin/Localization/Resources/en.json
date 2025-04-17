@@ -707,6 +707,16 @@
     "SizeOfTriggerAutoCompactInfo": "Gets or sets the size threshold that triggers auto-compaction. When the cache size exceeds this value, auto-compaction will be performed",
     "AutoCompactPercentage": "Auto Compact Percentage",
     "AutoCompactPercentageInfo": "Gets or sets the percentage of items to remove when auto-compaction is triggered (1-100)",
-    "ClearCaches": "This clears all NuGet content cache"
+    "ClearCaches": "This clears all NuGet content cache",
+    "CacheLatestVersions": "Cache Latest Versions",
+    "VersionCount": "Version Count",
+    "VersionCountInfo": "Gets or sets the number of versions to cache",
+    "IncludeLeptonX": "Include LeptonX",
+    "IncludeLeptonXInfo": "Gets or sets whether to include LeptonX in the cache",
+    "IncludePrerelease": "Include Prerelease",
+    "IncludePrereleaseInfo": "Gets or sets whether to include prerelease versions in the cache",
+    "CacheVersionCount": "Cache Version Count",
+    "CacheVersionCountInfo": "Gets or sets the number of versions to cache",
+    "CacheLatestVersionsInfo": "This caches the latest versions of the NuGet packages"
   }
 }
