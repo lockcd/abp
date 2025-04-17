@@ -22,23 +22,18 @@
       },
       "x-prompt": "Is secondary entrypoint?"
     },
-    "isModuleTemplate": {
-      "description": "Is module template",
-      "type": "boolean",
-      "$default": {
-        "$source": "argv",
-        "index": 2
-      },
-      "x-prompt": "Is module template?"
-    },
-    "isStandaloneTemplate": {
-      "description": "Is standalone template",
-      "type": "boolean",
-      "$default": {
-        "$source": "argv",
-        "index": 3
-      },
-      "x-prompt": "Is standalone template?"
+    "templateType": {
+      "type": "string",
+      "description": "Type of the template",
+      "enum": ["module", "standalone"],
+      "x-prompt": {
+        "message": "Select the type of template to generate:",
+        "type": "list",
+        "items": [
+          { "value": "module", "label": "Module Template" },
+          { "value": "standalone", "label": "Standalone Template" }
+        ]
+      }
     },
     "override": {
       "description": "Override existing files",

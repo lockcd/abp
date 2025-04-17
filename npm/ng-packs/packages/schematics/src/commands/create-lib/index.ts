@@ -67,19 +67,17 @@ function createLibrary(options: GenerateLibSchema): Rule {
   return async (tree: Tree) => {
     const target = await resolveProject(tree, options.packageName, null);
     if (!target || options.override) {
-      if (options.isModuleTemplate) {
-        if (options.isStandaloneTemplate) {
-          return createLibFromModuleStandaloneTemplate(tree, options);
-        } else {
-          return createLibFromModuleTemplate(tree, options);
-        }
-      }
       if (options.isSecondaryEntrypoint) {
-        if (options.isStandaloneTemplate) {
+        if (options.templateType === 'standalone') {
           return createLibSecondaryEntryWithStandaloneTemplate(tree, options);
         } else {
           return createLibSecondaryEntry(tree, options);
         }
+      }
+      if (options.templateType === 'module') {
+        return createLibFromModuleTemplate(tree, options);
+      } else {
+        return createLibFromModuleStandaloneTemplate(tree, options);
       }
     } else {
       throw new SchematicsException(
@@ -230,7 +228,7 @@ export function importConfigModuleToDefaultProjectAppModule(
     console.log('isStandalone --->>>>', isSourceStandalone);
     const rules: Rule[] = [];
 
-    if (options.isStandaloneTemplate) {
+    if (options.templateType === 'standalone') {
       rules.push(
         addRootProvider(projectName, code => {
           const configFn = code.external(
@@ -247,7 +245,7 @@ export function importConfigModuleToDefaultProjectAppModule(
             `${pascal(packageName)}ConfigModule`,
             `${kebab(packageName)}/config`,
           );
-          return code.code`${configFn}()`;
+          return code.code`${configFn}.forRoot()`;
         }),
       );
     }
@@ -317,9 +315,10 @@ export function addRoutingToAppRoutingModule(
 
     if (isSourceStandalone) {
       return addRootProvider(projectName, code => {
-        const routeExpr = options.isStandaloneTemplate
-          ? `() => import('${routePath}/routes').then(m => m.${pascalName}Routes)`
-          : `() => import('${routePath}').then(m => m.${moduleName}.forLazy())`;
+        const routeExpr =
+          options.templateType === 'standalone'
+            ? `() => import('${routePath}').then(m => m.${pascalName}Routes)`
+            : `() => import('${routePath}').then(m => m.${moduleName}.forLazy())`;
 
         return code.code`provideRouter([
             { path: '${routePath}', loadChildren: ${routeExpr} }
@@ -344,9 +343,10 @@ export function addRoutingToAppRoutingModule(
       ts.ScriptTarget.Latest,
       true,
     );
-    const importStatement = options.isStandaloneTemplate
-      ? `() => import('${routePath}').then(m => m.${pascalName}Routes)`
-      : `() => import('${routePath}').then(m => m.${moduleName}.forLazy())`;
+    const importStatement =
+      options.templateType === 'standalone'
+        ? `() => import('${routePath}').then(m => m.${pascalName}Routes)`
+        : `() => import('${routePath}').then(m => m.${moduleName}.forLazy())`;
     const routeDefinition = `{ path: '${routePath}', loadChildren: ${importStatement} }`;
     const change = addRouteDeclarationToModule(source, routePath, routeDefinition);
 

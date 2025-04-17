@@ -11,9 +11,7 @@ export interface GenerateLibSchema {
   /**
    * İs the package has standalone template
    */
-  isStandaloneTemplate: boolean;
-
-  isModuleTemplate: boolean;
+  templateType: 'standalone' | 'module';
 
   override: boolean;
 
