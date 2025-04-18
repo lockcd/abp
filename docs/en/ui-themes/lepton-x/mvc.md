@@ -138,11 +138,9 @@ Layout options of the MVC Razor Pages UI can be manageable by using **LeptonXThe
 > - **_Sidebar.cshtml**
 > - **_Toolbar.cshtml**
 
-#### Customizing Footer Example
+#### Customizing the Footer Section
 
-Add the **_Footer.cshtml** file under the **Themes/LeptonX/Layouts/Application** folder to customize the footer. You can customize the **_Sidebar.cshtml** and **_Toolbar.cshtml** files as well.
-
-![Customizing Footer](images/leptonx-mvc-customizing-footer.png)
+Add the **_Footer.cshtml** file under the **Themes/LeptonX/Layouts/Application** folder to customize the footer:
 
 ```html
 <div class="text-center py-2 lpx-footer">
@@ -151,6 +149,10 @@ Add the **_Footer.cshtml** file under the **Themes/LeptonX/Layouts/Application**
     </span>
 </div>
 ````
+
+![Customizing Footer](images/leptonx-mvc-customizing-footer.png)
+
+> You can customize the **_Sidebar.cshtml** and **_Toolbar.cshtml** files as well.
 
 ### Account Layout
 

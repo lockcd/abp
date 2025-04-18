@@ -316,9 +316,9 @@ namespace LeptonX.DemoApp.Blazor.MyComponents
 
 > Don't forget to remove repeated attributes from the razor page!
 
-#### Customizing Footer Example
+#### Customizing the Footer Section
 
-Add a new `LeptonXFooter.razor` file and override the `Footer` component.
+You can add a new `LeptonXFooter.razor` file and override the `Footer` component as follows:
 
 ```cs
 @using Volo.Abp.DependencyInjection
@@ -343,18 +343,16 @@ Add a new `LeptonXFooter.razor` file and override the `Footer` component.
         </div>
     </div>
 </div>
-````
+```
 
-> If you are using **Top Menu Layout**, You can change the namespace to
+If you are using **Top Menu Layout**, then you can change the namespace as follows:
 
 ```diff
 - @using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout.SideMenu
 + @using Volo.Abp.AspNetCore.Components.Web.LeptonXTheme.Components.ApplicationLayout.TopMenu
 ```
 
-Use above way to customize the other components as well.
-
----
+> You can use the same approach customize the other components always.
 
 
 ## Common Components
