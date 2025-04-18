@@ -19,6 +19,7 @@ import {
   findAppRoutesPath,
   getFirstApplication,
   getWorkspace,
+  hasProviderInStandaloneAppConfig,
   InsertChange,
   interpolate,
   isLibrary,
@@ -219,11 +220,19 @@ export function importConfigModuleToDefaultProjectAppModule(
   packageName: string,
   options: GenerateLibSchema,
 ) {
-  return (tree: Tree) => {
+  return async (tree: Tree) => {
     const projectName = getFirstApplication(tree).name!;
     const rules: Rule[] = [];
 
     if (options.templateType === 'standalone') {
+      const providerAlreadyExists = await hasProviderInStandaloneAppConfig(
+        tree,
+        projectName,
+        `provide${pascal(packageName)}Config`,
+      );
+      if (providerAlreadyExists) {
+        return;
+      }
       rules.push(
         addRootProvider(projectName, code => {
           const configFn = code.external(

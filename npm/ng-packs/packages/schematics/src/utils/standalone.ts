@@ -1,5 +1,5 @@
-import { Tree } from '@angular-devkit/schematics';
-import { findBootstrapApplicationCall } from './angular/standalone/util';
+import { SchematicsException, Tree } from '@angular-devkit/schematics';
+import { findBootstrapApplicationCall, getMainFilePath } from './angular/standalone/util';
 import { findAppConfig } from './angular/standalone/app_config';
 import * as ts from 'typescript';
 import { normalize, Path } from '@angular-devkit/core';
@@ -57,3 +57,38 @@ export function findAppRoutesPath(tree: Tree, mainFilePath: string): Path | null
 
   return null;
 }
+
+export const hasProviderInStandaloneAppConfig = async (
+  host: Tree,
+  projectName: string,
+  providerName: string,
+): Promise<boolean> => {
+  const mainFilePath = await getMainFilePath(host, projectName);
+  const appConfigPath = getAppConfigPath(host, mainFilePath);
+  const buffer = host.read(appConfigPath);
+
+  if (!buffer) {
+    throw new SchematicsException(`Could not read file: ${appConfigPath}`);
+  }
+
+  const source = ts.createSourceFile(
+    appConfigPath,
+    buffer.toString('utf-8'),
+    ts.ScriptTarget.Latest,
+    true,
+  );
+  const callExpressions = source.statements
+    .flatMap(stmt => (ts.isVariableStatement(stmt) ? stmt.declarationList.declarations : []))
+    .flatMap(decl =>
+      decl.initializer && ts.isObjectLiteralExpression(decl.initializer)
+        ? decl.initializer.properties
+        : [],
+    )
+    .filter(ts.isPropertyAssignment)
+    .filter(prop => prop.name.getText() === 'providers');
+
+  if (callExpressions.length === 0) return false;
+
+  const providersArray = callExpressions[0].initializer as ts.ArrayLiteralExpression;
+  return providersArray.elements.some(el => el.getText().includes(providerName));
+};
