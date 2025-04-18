@@ -19,3 +19,4 @@ export * from './tree';
 export * from './type';
 export * from './workspace';
 export * from './standalone';
+export * from './ng-module';
