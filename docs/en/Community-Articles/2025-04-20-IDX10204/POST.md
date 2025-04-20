@@ -1,8 +1,6 @@
-# Common errors in JWT Bearer
+# Common Errors in JWT Bearer Authentication
 
 When implementing JWT Bearer authentication in an ABP(tiered) application, you might occasionally encounter errors starting with `IDX`. These errors are related to JWT Bearer Token validation and this article will help you understand and resolve them.
-
-This article will introduce the principles of JWT Bearer authentication and provide some common error reasons and solutions.
 
 ## Enable JWT Bearer authentication
 
