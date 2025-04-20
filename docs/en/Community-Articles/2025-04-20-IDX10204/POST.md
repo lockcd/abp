@@ -166,7 +166,7 @@ services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 ## References
 
-- [JWT Authentication in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/jwt-auth?view=aspnetcore-8.0)
+- [Configure JWT bearer authentication in ASP.NET Core]([https://learn.microsoft.com/en-us/aspnet/core/security/authentication/jwt-auth?view=aspnetcore-8.0](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/configure-jwt-bearer-authentication))
 - [OpenIddict](https://github.com/openiddict/openiddict-core)
 - [IdentityModel](https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet)
 - [Owl.TokenWildcardIssuerValidator](https://github.com/maliming/Owl.TokenWildcardIssuerValidator)
