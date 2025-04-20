@@ -285,8 +285,8 @@ public override void OnApplicationInitialization(ApplicationInitializationConten
  
 +       app.UseAbpCookieConsent();
         app.UseCorrelationId();
-        app.MapAbpStaticAssets();
         app.UseRouting();
+        app.MapAbpStaticAssets();
         app.UseAbpSecurityHeaders();
         app.UseAuthentication();
 
