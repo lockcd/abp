@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-export const <%= pascal(libraryName) %>Routes: Routes = [
+export const <%= macro(libraryName) %>_ROUTES: Routes = [
   {
     path: '',
     loadComponent: () =>

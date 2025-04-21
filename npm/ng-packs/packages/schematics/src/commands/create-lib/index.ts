@@ -16,9 +16,11 @@ import {
   addRootProvider,
   addRouteDeclarationToModule,
   applyWithOverwrite,
+  findAppRoutesModulePath,
   findAppRoutesPath,
   getFirstApplication,
   getWorkspace,
+  hasImportInNgModule,
   hasProviderInStandaloneAppConfig,
   InsertChange,
   interpolate,
@@ -26,6 +28,7 @@ import {
   isStandaloneApp,
   JSONFile,
   kebab,
+  macro,
   pascal,
   resolveProject,
   updateWorkspace,
@@ -222,17 +225,29 @@ export function importConfigModuleToDefaultProjectAppModule(
 ) {
   return async (tree: Tree) => {
     const projectName = getFirstApplication(tree).name!;
+    const mainFilePath = await getMainFilePath(tree, projectName);
+    const isSourceStandalone = isStandaloneApp(tree, mainFilePath);
     const rules: Rule[] = [];
 
+    const providerAlreadyExists = isSourceStandalone
+      ? await hasProviderInStandaloneAppConfig(
+          tree,
+          projectName,
+          `provide${pascal(packageName)}Config`,
+        )
+      : await hasImportInNgModule(
+          tree,
+          projectName,
+          options.templateType === 'standalone'
+            ? `provide${pascal(packageName)}Config`
+            : `${pascal(packageName)}ConfigModule`,
+          options.templateType === 'standalone' ? 'providers' : 'imports',
+        );
+    if (providerAlreadyExists) {
+      return;
+    }
+
     if (options.templateType === 'standalone') {
-      const providerAlreadyExists = await hasProviderInStandaloneAppConfig(
-        tree,
-        projectName,
-        `provide${pascal(packageName)}Config`,
-      );
-      if (providerAlreadyExists) {
-        return;
-      }
       rules.push(
         addRootProvider(projectName, code => {
           const configFn = code.external(
@@ -269,6 +284,7 @@ export function addRoutingToAppRoutingModule(
     const isSourceStandalone = isStandaloneApp(tree, mainFilePath);
 
     const pascalName = pascal(packageName);
+    const macroName = macro(packageName);
     const routePath = `${kebab(packageName)}`;
     const moduleName = `${pascalName}Module`;
 
@@ -284,7 +300,7 @@ export function addRoutingToAppRoutingModule(
       const source = ts.createSourceFile(appRoutesPath, content, ts.ScriptTarget.Latest, true);
       const routeExpr =
         options.templateType === 'standalone'
-          ? `() => import('${routePath}').then(m => m.${pascalName}Routes)`
+          ? `() => import('${routePath}').then(m => m.${macroName}_ROUTES)`
           : `() => import('${routePath}').then(m => m.${moduleName}.forLazy())`;
       const routeToAdd = `{ path: '${routePath}', loadChildren: ${routeExpr} }`;
       const change = addRouteToRoutesArray(source, 'routes', routeToAdd);
@@ -295,7 +311,12 @@ export function addRoutingToAppRoutingModule(
         tree.commitUpdate(recorder);
       }
     } else {
-      const appRoutingModulePath = `${project?.sourceRoot}/app/app-routing.module.ts`;
+      const appRoutingModulePath = await findAppRoutesModulePath(tree, mainFilePath);
+
+      if (!appRoutingModulePath) {
+        throw new SchematicsException(`Cannot find routing module: ${appRoutingModulePath}`);
+      }
+
       const appRoutingModule = tree.read(appRoutingModulePath);
       if (!appRoutingModule) {
         return;
@@ -313,7 +334,7 @@ export function addRoutingToAppRoutingModule(
       );
       const importStatement =
         options.templateType === 'standalone'
-          ? `() => import('${routePath}').then(m => m.${pascalName}Routes)`
+          ? `() => import('${routePath}').then(m => m.${macroName}_ROUTES)`
           : `() => import('${routePath}').then(m => m.${moduleName}.forLazy())`;
       const routeDefinition = `{ path: '${routePath}', loadChildren: ${importStatement} }`;
       const change = addRouteDeclarationToModule(source, routePath, routeDefinition);
@@ -339,7 +360,7 @@ export function addRouteToRoutesArray(
       stmt.declarationList.declarations.some(
         decl =>
           ts.isVariableDeclaration(decl) &&
-          decl.name.getText() === arrayName &&
+          (decl.name.getText() === arrayName || decl.name.getText() === arrayName.toUpperCase()) &&
           decl.initializer !== undefined &&
           ts.isArrayLiteralExpression(decl.initializer),
       ),
