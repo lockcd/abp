@@ -7,6 +7,21 @@ import { normalize, Path } from '@angular-devkit/core';
 import * as path from 'path';
 import { removeEmptyElementsFromArrayLiteral } from './ast';
 
+/**
+ * Checks whether a specific import or provider exists in the specified metadata
+ * array (`imports`, `providers`, etc.) of the `NgModule` decorator in the AppModule.
+ *
+ * This function locates the AppModule file of the given Angular project,
+ * parses its AST, and inspects the specified metadata array to determine
+ * if it includes an element matching the provided string (e.g., `CommonModule`, `HttpClientModule`).
+ *
+ * @param host - The virtual file system tree used by Angular schematics.
+ * @param projectName - The name of the Angular project.
+ * @param metadataFn - The name (string) to match against the elements of the metadata array.
+ * @param metadataName - The metadata field to search in (e.g., 'imports', 'providers'). Defaults to 'imports'.
+ * @returns A promise that resolves to `true` if the metadata function is found, or `false` otherwise.
+ * @throws SchematicsException if the AppModule file or expected metadata is not found or malformed.
+ */
 export const hasImportInNgModule = async (
   host: Tree,
   projectName: string,
@@ -23,14 +38,9 @@ export const hasImportInNgModule = async (
 
   const source = createSourceFile(host, appModulePath);
 
-  console.log('AppModule content:\n', buffer.toString('utf-8'));
-
   // Get the NgModule decorator metadata
   const ngModuleDecorator = getDecoratorMetadata(source, 'NgModule', '@angular/core')[0];
-  console.log(
-    'Found NgModule decorators:',
-    getDecoratorMetadata(source, 'NgModule', '@angular/core'),
-  );
+
   if (!ngModuleDecorator) {
     throw new SchematicsException('The app module does not found');
   }
@@ -50,6 +60,20 @@ export const hasImportInNgModule = async (
   return elements.some(f => f.getText().match(metadataFn));
 };
 
+/**
+ * Attempts to locate the path of the `AppRoutingModule` file that is imported
+ * within the root AppModule file of an Angular application.
+ *
+ * This function reads the AppModule file (resolved from the main file path),
+ * parses its AST, and searches for an import declaration that imports
+ * `AppRoutingModule`. Once found, it resolves the import path to a normalized
+ * file path relative to the workspace root.
+ *
+ * @param tree - The virtual file system tree used by Angular schematics.
+ * @param mainFilePath - The path to the main entry file of the Angular application (typically `main.ts`).
+ * @returns A normalized workspace-relative path to the AppRoutingModule file if found, or `null` otherwise.
+ * @throws If the route file path is resolved but the file does not exist in the tree.
+ */
 export async function findAppRoutesModulePath(
   tree: Tree,
   mainFilePath: string,
@@ -100,6 +124,17 @@ export async function findAppRoutesModulePath(
   return null;
 }
 
+/**
+ * Cleans up empty or invalid expressions (e.g., extra commas) from the `imports` and `providers`
+ * arrays in the NgModule decorator of an Angular module file.
+ *
+ * This function parses the source file's AST, locates the `NgModule` decorator, and processes
+ * the `imports` and `providers` metadata fields. If these fields contain array literals with
+ * empty slots (such as trailing or double commas), they are removed and the array is rewritten.
+ *
+ * @param source - The TypeScript source file containing the Angular module.
+ * @param recorder - The recorder used to apply changes to the source file.
+ */
 export function cleanEmptyExprFromModule(source: ts.SourceFile, recorder: UpdateRecorder): void {
   const ngModuleNode = getDecoratorMetadata(source, 'NgModule', '@angular/core')[0];
   if (!ngModuleNode) return;

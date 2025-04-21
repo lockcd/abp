@@ -7,12 +7,36 @@ import * as path from 'path';
 import { findNodes } from './angular';
 import { removeEmptyElementsFromArrayLiteral } from './ast';
 
+/**
+ * Retrieves the file path of the application's configuration used in a standalone
+ * Angular application setup.
+ *
+ * This function locates the `bootstrapApplication` call in the main entry file and
+ * resolves the path to the configuration object passed to it (typically `appConfig`).
+ *
+ * @param host - The virtual file system tree used by Angular schematics.
+ * @param mainFilePath - The path to the main entry file of the Angular application (e.g., `main.ts`).
+ * @returns The resolved file path of the application's configuration, or an empty string if not found.
+ */
 export const getAppConfigPath = (host: Tree, mainFilePath: string): string => {
   const bootstrapCall = findBootstrapApplicationCall(host, mainFilePath);
   const appConfig = findAppConfig(bootstrapCall, host, mainFilePath);
   return appConfig?.filePath || '';
 };
 
+/**
+ * Attempts to locate the file path of the `routes` array used in a standalone
+ * Angular application configuration.
+ *
+ * This function resolves the application's config file (typically where `routes` is defined or imported),
+ * parses the file, and inspects its import declarations to find the import associated with `routes`.
+ * It then resolves and normalizes the file path of the `routes` definition and returns it.
+ *
+ * @param tree - The virtual file system tree used by Angular schematics.
+ * @param mainFilePath - The path to the main entry file of the Angular application (e.g., `main.ts`).
+ * @returns The normalized workspace-relative path to the file where `routes` is defined, or `null` if not found.
+ * @throws If the `routes` import path is found but the file does not exist in the tree.
+ */
 export function findAppRoutesPath(tree: Tree, mainFilePath: string): Path | null {
   const appConfigPath = getAppConfigPath(tree, mainFilePath);
   if (!appConfigPath || !tree.exists(appConfigPath)) return null;
@@ -60,6 +84,20 @@ export function findAppRoutesPath(tree: Tree, mainFilePath: string): Path | null
   return null;
 }
 
+/**
+ * Checks whether a specific provider is registered in the `providers` array of the
+ * standalone application configuration (typically within `app.config.ts`) in an Angular project.
+ *
+ * This function reads and parses the application configuration file, looks for the
+ * `providers` property in the configuration object, and checks whether it includes
+ * the specified provider name.
+ *
+ * @param host - The virtual file system tree used by Angular schematics.
+ * @param projectName - The name of the Angular project.
+ * @param providerName - The name of the provider to search for (as a string match).
+ * @returns A promise that resolves to `true` if the provider is found, otherwise `false`.
+ * @throws SchematicsException if the app config file cannot be read.
+ */
 export const hasProviderInStandaloneAppConfig = async (
   host: Tree,
   projectName: string,
@@ -95,6 +133,20 @@ export const hasProviderInStandaloneAppConfig = async (
   return providersArray.elements.some(el => el.getText().includes(providerName));
 };
 
+/**
+ * Cleans up empty or invalid expressions (e.g., extra or trailing commas) from the
+ * `providers` array within a standalone Angular application configuration object.
+ *
+ * This function parses the source file's AST to locate variable declarations that
+ * define an object literal. It then searches for a `providers` property and removes
+ * any empty elements from its array literal, replacing it with a cleaned version.
+ *
+ * Typically used in Angular schematics to ensure the `providers` array in `app.config.ts`
+ * is free of empty slots after modifications.
+ *
+ * @param source - The TypeScript source file containing the app configuration.
+ * @param recorder - The recorder used to apply changes to the source file.
+ */
 export function cleanEmptyExprFromProviders(source: ts.SourceFile, recorder: UpdateRecorder): void {
   const varStatements = findNodes(source, ts.isVariableStatement);
   const printer = ts.createPrinter();
