@@ -57,6 +57,12 @@
     "LastCachedTime": "Välimuistin aika",
     "Project": "Projekti",
     "AdvancedFilters": "Edistyneet suodattimet",
-    "RemoveCacheAndReIndexConfirmation": "Dokumentti \"{0}\" poistetaan välimuistista ja indeksoidaan uudelleen. Vahvistatko?"
+    "RemoveCacheAndReIndexConfirmation": "Dokumentti \"{0}\" poistetaan välimuistista ja indeksoidaan uudelleen. Vahvistatko?",
+    "GeneratePdf": "Generoi PDF",
+    "Generating": "Generoiminen...",
+    "Language": "Kieli",
+    "ForceToGenerateNewPdf": "Vahvista uusi PDF",
+    "PdfGeneratedSuccessfully": "PDF generoidaan onnistuneesti",
+    "GenerateAndDownloadPdf": "Generoi ja lataa PDF"
   }
 }

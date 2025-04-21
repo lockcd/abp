@@ -57,6 +57,12 @@
     "LastCachedTime": "Tími geymt í skyndiminni",
     "Project": "Verkefni",
     "AdvancedFilters": "Ítarlegar síur",
-    "RemoveCacheAndReIndexConfirmation": "Skjalið \"{0}\" verður fjarlægt úr skyndiminni og endurtryggt. Staðfestir þú?"
+    "RemoveCacheAndReIndexConfirmation": "Skjalið \"{0}\" verður fjarlægt úr skyndiminni og endurtryggt. Staðfestir þú?",
+    "GeneratePdf": "Generate PDF",
+    "Generating": "Generating...",
+    "Language": "Language",
+    "ForceToGenerateNewPdf": "Force to generate new PDF",
+    "PdfGeneratedSuccessfully": "PDF generated successfully",
+    "GenerateAndDownloadPdf": "Generate and download PDF"
   }
 }

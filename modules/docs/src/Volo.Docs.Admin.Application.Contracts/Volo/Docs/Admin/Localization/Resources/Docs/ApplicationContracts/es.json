@@ -57,6 +57,12 @@
     "LastCachedTime": "Última actualización de caché",
     "Project": "Proyecto",
     "AdvancedFilters": "Filtros avanzados",
-    "RemoveCacheAndReIndexConfirmation": "El documento \"{0}\" será eliminado de la caché y reindexado. ¿Lo confirma?"
+    "RemoveCacheAndReIndexConfirmation": "El documento \"{0}\" será eliminado de la caché y reindexado. ¿Lo confirma?",
+    "GeneratePdf": "Generar PDF",
+    "Generating": "Generando...",
+    "Language": "Idioma",
+    "ForceToGenerateNewPdf": "Forzar a generar un nuevo PDF",
+    "PdfGeneratedSuccessfully": "PDF generado correctamente",
+    "GenerateAndDownloadPdf": "Generar y descargar PDF"
   }
 }

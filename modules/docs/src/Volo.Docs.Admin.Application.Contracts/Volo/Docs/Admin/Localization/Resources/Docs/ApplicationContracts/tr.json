@@ -57,6 +57,12 @@
     "LastCachedTime": "Önbellek süresi",
     "Project": "Proje",
     "AdvancedFilters": "Gelişmiş Filtre",
-    "RemoveCacheAndReIndexConfirmation": "\"{0}\" belgesi önbellekten kaldırılacak ve yeniden indekslenecektir. Onaylıyor musunuz?"
+    "RemoveCacheAndReIndexConfirmation": "\"{0}\" belgesi önbellekten kaldırılacak ve yeniden indekslenecektir. Onaylıyor musunuz?",
+    "GeneratePdf": "PDF oluştur",
+    "Generating": "Oluşturuluyor...",
+    "Language": "Dil",
+    "ForceToGenerateNewPdf": "Yeni bir PDF oluştur",
+    "PdfGeneratedSuccessfully": "PDF başarıyla oluşturuldu",
+    "GenerateAndDownloadPdf": "PDF oluştur ve indir"
   }
 }

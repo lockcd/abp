@@ -25,7 +25,7 @@ public class DocsCommonApplicationContractsModule : AbpModule
         {
             options.Resources
                 .Get<DocsResource>()
-                .AddVirtualJson("Volo/Docs/Admin/Localization/Resources/Docs/ApplicationContracts");
+                .AddVirtualJson("Volo/Docs/Common/Localization/Resources/Docs/ApplicationContracts");
         });
     }
 }

@@ -57,6 +57,12 @@
     "LastCachedTime": "Cache-tid",
     "Project": "Projekt",
     "AdvancedFilters": "Avancerade filter",
-    "RemoveCacheAndReIndexConfirmation": "Dokumentet \"{0}\" kommer att tas bort från cacheminnet och indexeras på nytt. Kan du bekräfta detta?"
+    "RemoveCacheAndReIndexConfirmation": "Dokumentet \"{0}\" kommer att tas bort från cacheminnet och indexeras på nytt. Kan du bekräfta detta?",
+    "GeneratePdf": "Generera PDF",
+    "Generating": "Genererar...",
+    "Language": "Språk",
+    "ForceToGenerateNewPdf": "Force to generate new PDF",
+    "PdfGeneratedSuccessfully": "PDF generated successfully",
+    "GenerateAndDownloadPdf": "Generate and download PDF"
   }
 }
