@@ -1,10 +1,11 @@
-import { SchematicsException, Tree } from '@angular-devkit/schematics';
+import { SchematicsException, Tree, UpdateRecorder } from '@angular-devkit/schematics';
 import { getMainFilePath } from './angular/standalone/util';
 import * as ts from 'typescript';
 import { getAppModulePath, getDecoratorMetadata, getMetadataField } from './angular';
 import { createSourceFile } from '../commands/change-theme/index';
 import { normalize, Path } from '@angular-devkit/core';
 import * as path from 'path';
+import { removeEmptyElementsFromArrayLiteral } from './ast';
 
 export const hasImportInNgModule = async (
   host: Tree,
@@ -97,4 +98,27 @@ export async function findAppRoutesModulePath(
   }
 
   return null;
+}
+
+export function cleanEmptyExprFromModule(source: ts.SourceFile, recorder: UpdateRecorder): void {
+  const ngModuleNode = getDecoratorMetadata(source, 'NgModule', '@angular/core')[0];
+  if (!ngModuleNode) return;
+
+  const printer = ts.createPrinter();
+  const metadataKeys = ['imports', 'providers'];
+  for (const key of metadataKeys) {
+    const metadataField = getMetadataField(ngModuleNode as ts.ObjectLiteralExpression, key);
+    if (!metadataField.length) continue;
+
+    const assignment = metadataField[0] as ts.PropertyAssignment;
+    const arrayLiteral = assignment.initializer as ts.ArrayLiteralExpression;
+
+    const cleanedArray = removeEmptyElementsFromArrayLiteral(arrayLiteral);
+
+    recorder.remove(arrayLiteral.getStart(), arrayLiteral.getWidth());
+    recorder.insertLeft(
+      arrayLiteral.getStart(),
+      printer.printNode(ts.EmitHint.Expression, cleanedArray, source),
+    );
+  }
 }

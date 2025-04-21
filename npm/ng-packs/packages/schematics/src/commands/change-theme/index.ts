@@ -13,7 +13,8 @@ import {
   updateWorkspace,
   WorkspaceDefinition,
   getAppConfigPath,
-  removeEmptyElementsFromArrayLiteral,
+  cleanEmptyExprFromModule,
+  cleanEmptyExprFromProviders,
 } from '../../utils';
 import { ThemeOptionsEnum } from './theme-options.enum';
 import { findNodes, getDecoratorMetadata, getMetadataField } from '../../utils/angular/ast-utils';
@@ -81,7 +82,7 @@ function updateAppModule(selectedProject: string, targetThemeName: ThemeOptionsE
       insertImports(selectedProject, targetThemeName),
       insertProviders(selectedProject, targetThemeName),
       formatFile(appModulePath),
-      cleanNgModuleCommasRule(appModulePath, isStandalone),
+      cleanEmptyExpressions(appModulePath, isStandalone),
     ]);
   };
 }
@@ -364,7 +365,7 @@ export const formatFile = (filePath: string): Rule => {
   };
 };
 
-export function cleanNgModuleCommasRule(modulePath: string, isStandalone: boolean): Rule {
+export function cleanEmptyExpressions(modulePath: string, isStandalone: boolean): Rule {
   return (host: Tree) => {
     const buffer = host.read(modulePath);
     if (!buffer) throw new SchematicsException(`Cannot read ${modulePath}`);
@@ -376,57 +377,11 @@ export function cleanNgModuleCommasRule(modulePath: string, isStandalone: boolea
       true,
     );
     const recorder = host.beginUpdate(modulePath);
-    const printer = ts.createPrinter();
 
     if (isStandalone) {
-      const varStatements = findNodes(source, ts.isVariableStatement);
-
-      for (const stmt of varStatements) {
-        const declList = stmt.declarationList;
-        for (const decl of declList.declarations) {
-          if (!decl.initializer || !ts.isObjectLiteralExpression(decl.initializer)) continue;
-
-          const obj = decl.initializer;
-
-          const providersProp = obj.properties.find(
-            prop =>
-              ts.isPropertyAssignment(prop) &&
-              ts.isIdentifier(prop.name) &&
-              prop.name.text === 'providers',
-          ) as ts.PropertyAssignment;
-
-          if (!providersProp || !ts.isArrayLiteralExpression(providersProp.initializer)) continue;
-
-          const arrayLiteral = providersProp.initializer;
-          const cleanedArray = removeEmptyElementsFromArrayLiteral(arrayLiteral);
-
-          recorder.remove(arrayLiteral.getStart(), arrayLiteral.getWidth());
-          recorder.insertLeft(
-            arrayLiteral.getStart(),
-            printer.printNode(ts.EmitHint.Expression, cleanedArray, source),
-          );
-        }
-      }
+      cleanEmptyExprFromProviders(source, recorder);
     } else {
-      const ngModuleNode = getDecoratorMetadata(source, 'NgModule', '@angular/core')[0];
-      if (!ngModuleNode) return host;
-
-      const metadataKeys = ['imports', 'providers'];
-      for (const key of metadataKeys) {
-        const metadataField = getMetadataField(ngModuleNode as ts.ObjectLiteralExpression, key);
-        if (!metadataField.length) continue;
-
-        const assignment = metadataField[0] as ts.PropertyAssignment;
-        const arrayLiteral = assignment.initializer as ts.ArrayLiteralExpression;
-
-        const cleanedArray = removeEmptyElementsFromArrayLiteral(arrayLiteral);
-
-        recorder.remove(arrayLiteral.getStart(), arrayLiteral.getWidth());
-        recorder.insertLeft(
-          arrayLiteral.getStart(),
-          printer.printNode(ts.EmitHint.Expression, cleanedArray, source),
-        );
-      }
+      cleanEmptyExprFromModule(source, recorder);
     }
     host.commitUpdate(recorder);
     return host;

@@ -1,9 +1,11 @@
-import { SchematicsException, Tree } from '@angular-devkit/schematics';
+import { SchematicsException, Tree, UpdateRecorder } from '@angular-devkit/schematics';
 import { findBootstrapApplicationCall, getMainFilePath } from './angular/standalone/util';
 import { findAppConfig } from './angular/standalone/app_config';
 import * as ts from 'typescript';
 import { normalize, Path } from '@angular-devkit/core';
 import * as path from 'path';
+import { findNodes } from './angular';
+import { removeEmptyElementsFromArrayLiteral } from './ast';
 
 export const getAppConfigPath = (host: Tree, mainFilePath: string): string => {
   const bootstrapCall = findBootstrapApplicationCall(host, mainFilePath);
@@ -92,3 +94,35 @@ export const hasProviderInStandaloneAppConfig = async (
   const providersArray = callExpressions[0].initializer as ts.ArrayLiteralExpression;
   return providersArray.elements.some(el => el.getText().includes(providerName));
 };
+
+export function cleanEmptyExprFromProviders(source: ts.SourceFile, recorder: UpdateRecorder): void {
+  const varStatements = findNodes(source, ts.isVariableStatement);
+  const printer = ts.createPrinter();
+
+  for (const stmt of varStatements) {
+    const declList = stmt.declarationList;
+    for (const decl of declList.declarations) {
+      if (!decl.initializer || !ts.isObjectLiteralExpression(decl.initializer)) continue;
+
+      const obj = decl.initializer;
+
+      const providersProp = obj.properties.find(
+        prop =>
+          ts.isPropertyAssignment(prop) &&
+          ts.isIdentifier(prop.name) &&
+          prop.name.text === 'providers',
+      ) as ts.PropertyAssignment;
+
+      if (!providersProp || !ts.isArrayLiteralExpression(providersProp.initializer)) continue;
+
+      const arrayLiteral = providersProp.initializer;
+      const cleanedArray = removeEmptyElementsFromArrayLiteral(arrayLiteral);
+
+      recorder.remove(arrayLiteral.getStart(), arrayLiteral.getWidth());
+      recorder.insertLeft(
+        arrayLiteral.getStart(),
+        printer.printNode(ts.EmitHint.Expression, cleanedArray, source),
+      );
+    }
+  }
+}
