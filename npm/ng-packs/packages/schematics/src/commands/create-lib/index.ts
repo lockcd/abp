@@ -322,7 +322,8 @@ export function addRoutingToAppRoutingModule(
         return;
       }
       const appRoutingModuleContent = appRoutingModule.toString();
-      if (appRoutingModuleContent.includes(moduleName)) {
+      const routeExpr = options.templateType === 'standalone' ? `${macroName}_ROUTES` : moduleName;
+      if (appRoutingModuleContent.includes(routeExpr)) {
         return;
       }
 
