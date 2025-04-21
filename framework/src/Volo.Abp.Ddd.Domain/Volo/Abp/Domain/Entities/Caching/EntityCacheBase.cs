@@ -69,11 +69,6 @@ public abstract class EntityCacheBase<TEntity, TEntityCacheItem, TKey> :
 
     public async Task HandleEventAsync(EntityChangedEventData<TEntity> eventData)
     {
-        if (eventData is EntityCreatedEventData<TEntity>)
-        {
-            return;
-        }
-
         /* Why we are using double remove:
          * First Cache.RemoveAsync drops the cache item in a unit of work.
          * Some other application / thread may read the value from database and put it to the cache again
