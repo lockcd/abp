@@ -37,7 +37,7 @@ import { ProjectDefinition, WorkspaceDefinition } from '../../utils/angular/work
 import { addLibToWorkspaceFile } from '../../utils/angular-schematic/generate-lib';
 import * as cases from '../../utils/text';
 import { Exception } from '../../enums/exception';
-import { GenerateLibSchema } from './models/generate-lib-schema';
+import { GenerateLibSchema, GenerateLibTemplateType } from './models/generate-lib-schema';
 import { getMainFilePath } from '../../utils/angular/standalone/util';
 
 export default function (schema: GenerateLibSchema) {
@@ -74,13 +74,13 @@ function createLibrary(options: GenerateLibSchema): Rule {
     const target = await resolveProject(tree, options.packageName, null);
     if (!target || options.override) {
       if (options.isSecondaryEntrypoint) {
-        if (options.templateType === 'standalone') {
+        if (options.templateType === GenerateLibTemplateType.Standalone) {
           return createLibSecondaryEntryWithStandaloneTemplate(tree, options);
         } else {
           return createLibSecondaryEntry(tree, options);
         }
       }
-      if (options.templateType === 'module') {
+      if (options.templateType === GenerateLibTemplateType.Module) {
         return createLibFromModuleTemplate(tree, options);
       } else {
         return createLibFromModuleStandaloneTemplate(tree, options);
@@ -238,16 +238,16 @@ export function importConfigModuleToDefaultProjectAppModule(
       : await hasImportInNgModule(
           tree,
           projectName,
-          options.templateType === 'standalone'
+          options.templateType === GenerateLibTemplateType.Standalone
             ? `provide${pascal(packageName)}Config`
             : `${pascal(packageName)}ConfigModule`,
-          options.templateType === 'standalone' ? 'providers' : 'imports',
+          options.templateType === GenerateLibTemplateType.Standalone ? 'providers' : 'imports',
         );
     if (providerAlreadyExists) {
       return;
     }
 
-    if (options.templateType === 'standalone') {
+    if (options.templateType === GenerateLibTemplateType.Standalone) {
       rules.push(
         addRootProvider(projectName, code => {
           const configFn = code.external(
@@ -299,7 +299,7 @@ export function addRoutingToAppRoutingModule(
       const content = buffer.toString();
       const source = ts.createSourceFile(appRoutesPath, content, ts.ScriptTarget.Latest, true);
       const routeExpr =
-        options.templateType === 'standalone'
+        options.templateType === GenerateLibTemplateType.Standalone
           ? `() => import('${routePath}').then(m => m.${macroName}_ROUTES)`
           : `() => import('${routePath}').then(m => m.${moduleName}.forLazy())`;
       const routeToAdd = `{ path: '${routePath}', loadChildren: ${routeExpr} }`;
@@ -322,7 +322,10 @@ export function addRoutingToAppRoutingModule(
         return;
       }
       const appRoutingModuleContent = appRoutingModule.toString();
-      const routeExpr = options.templateType === 'standalone' ? `${macroName}_ROUTES` : moduleName;
+      const routeExpr =
+        options.templateType === GenerateLibTemplateType.Standalone
+          ? `${macroName}_ROUTES`
+          : moduleName;
       if (appRoutingModuleContent.includes(routeExpr)) {
         return;
       }
@@ -334,7 +337,7 @@ export function addRoutingToAppRoutingModule(
         true,
       );
       const importStatement =
-        options.templateType === 'standalone'
+        options.templateType === GenerateLibTemplateType.Standalone
           ? `() => import('${routePath}').then(m => m.${macroName}_ROUTES)`
           : `() => import('${routePath}').then(m => m.${moduleName}.forLazy())`;
       const routeDefinition = `{ path: '${routePath}', loadChildren: ${importStatement} }`;

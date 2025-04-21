@@ -1,3 +1,8 @@
+export enum GenerateLibTemplateType {
+  Standalone = 'standalone',
+  Module = 'module',
+}
+
 export interface GenerateLibSchema {
   /**
    * Angular package name will create
@@ -11,7 +16,7 @@ export interface GenerateLibSchema {
   /**
    * İs the package has standalone template
    */
-  templateType: 'standalone' | 'module';
+  templateType: GenerateLibTemplateType;
 
   override: boolean;
 
