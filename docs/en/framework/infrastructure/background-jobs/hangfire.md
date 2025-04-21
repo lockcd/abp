@@ -84,6 +84,24 @@ After you have installed these NuGet packages, you need to configure your projec
  }
 ````
 
+### AbpHangfireOptions
+
+You can configure the [BackgroundJobServerOptions](https://api.hangfire.io/html/T_Hangfire_BackgroundJobServerOptions.htm) of `AbpHangfireOptions` to customize the server.
+
+````csharp
+Configure<AbpHangfireOptions>(options =>
+{
+    // If no ServerOptions is set, ABP will use the default BackgroundJobServerOptions instance.
+    options.ServerOptions = new BackgroundJobServerOptions
+    {
+        Queues = ["default", "alpha"],
+        //... other properties
+    };
+});
+````
+
+> You don't need to call `AddHangfireServer` method, ABP will use AbpHangfireOptions's `ServerOptions` to create a server.
+
 ### Specifying Queue
 
 You can use the [`QueueAttribute`](https://docs.hangfire.io/en/latest/background-processing/configuring-queues.html) to specify the queue:
