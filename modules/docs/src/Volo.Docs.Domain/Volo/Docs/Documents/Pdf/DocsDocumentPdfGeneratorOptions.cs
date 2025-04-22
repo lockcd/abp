@@ -37,7 +37,7 @@ public class DocsDocumentPdfGeneratorOptions
     
     /// <summary>
     /// The function to calculate the PDF file name.
-    /// Default is "{project.ShortName}_{version}_{languageCode}.pdf".
+    /// Default is "{project.ShortName}-{version}-{languageCode}.pdf".
     /// </summary>
     public Func<Project, string, string, string> CalculatePdfFileName { get; set; }
     
@@ -94,6 +94,6 @@ public class DocsDocumentPdfGeneratorOptions
             background: #f8fafc;
         }";
         
-        CalculatePdfFileName = (project, version, languageCode) => $"{project.ShortName}_{version}_{languageCode}.pdf";
+        CalculatePdfFileName = (project, version, languageCode) => $"{project.ShortName}-{version}-{languageCode}.pdf";
     }
 }
