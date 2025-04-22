@@ -23,8 +23,10 @@ public class DocsDocumentPdfGeneratorController : DocsControllerBase, IDocumentP
     
     [HttpGet]
     [Route("pdf")]
-    public Task<IRemoteStreamContent> GeneratePdfAsync(DocumentPdfGeneratorInput input)
+    public async Task<IRemoteStreamContent> GeneratePdfAsync(DocumentPdfGeneratorInput input)
     {
-        return DocumentPdfGeneratorAppService.GeneratePdfAsync(input);
+        var streamContent = await DocumentPdfGeneratorAppService.GeneratePdfAsync(input);
+        Response.Headers.ContentDisposition = $"inline; filename=\"{streamContent.FileName}\"";
+        return streamContent;
     }
 }

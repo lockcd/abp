@@ -178,7 +178,7 @@ namespace VoloDocs.Web
             Configure<DocsDocumentPdfGeneratorOptions>(options =>
             {
                 options.BaseUrl = configuration["App:selfUrl"];
-                options.CoverPagePath = "Index.md";
+                options.IndexPagePath = "Index.md";
             });
             
             Configure<AbpBlobStoringOptions>(options =>

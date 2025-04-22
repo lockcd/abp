@@ -12,14 +12,34 @@ public class DocsDocumentPdfGeneratorOptions
     /// The HTML layout for the PDF document.
     /// </summary>
     public string HtmlLayout { get; set; }
-    public string HtmlStyles { get; set; }
+
+    /// <summary>
+    /// The HTML style for the PDF document.
+    /// </summary>
+    public string HtmlStyle { get; set; }
+    
+    /// <summary>
+    /// The base URL for the PDF document.
+    /// Used for resolving relative links and images.
+    /// </summary>
     public string BaseUrl { get; set; }
-    public string CoverPagePath { get; set; }
-    public TimeSpan PdfFileCacheExpiration { get; set; } = TimeSpan.FromDays(1);
-    public Func<Project, string, string, string> CalculatePdfFileName { get; set; } = (project, version, languageCode) =>
-    {
-        return $"{project.ShortName}_{version}_{languageCode}.pdf";
-    };
+    
+    /// <summary>
+    /// The path to the index page of the documentation.
+    /// </summary>
+    public string IndexPagePath { get; set; }
+    
+    /// <summary>
+    /// PDF file cache expiration time.
+    /// Default value is 24 hours.
+    /// </summary>
+    public TimeSpan PdfFileCacheExpiration { get; set; } = TimeSpan.FromHours(24);
+    
+    /// <summary>
+    /// The function to calculate the PDF file name.
+    /// Default is "{project.ShortName}_{version}_{languageCode}.pdf".
+    /// </summary>
+    public Func<Project, string, string, string> CalculatePdfFileName { get; set; }
     
     public DocsDocumentPdfGeneratorOptions()
     {
@@ -36,7 +56,7 @@ public class DocsDocumentPdfGeneratorOptions
             </body>
         </html>";
 
-        HtmlStyles = @"
+        HtmlStyle = @"
         body { margin: 20px; line-height: 1.6; font-family: Arial, sans-serif;}
         a { text-decoration: none; }
         .page {
@@ -73,5 +93,7 @@ public class DocsDocumentPdfGeneratorOptions
             padding: 10px 20px;
             background: #f8fafc;
         }";
+        
+        CalculatePdfFileName = (project, version, languageCode) => $"{project.ShortName}_{version}_{languageCode}.pdf";
     }
 }

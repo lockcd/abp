@@ -31,15 +31,13 @@ public class ITextPdfRenderer : IPdfRenderer ,ITransientDependency
         
         var htmlBuilder = new StringBuilder();
         htmlBuilder.Append(Options.Value.HtmlLayout);
-        htmlBuilder.Replace(DocsDocumentPdfGeneratorOptions.StylePlaceholder, Options.Value.HtmlStyles);
+        htmlBuilder.Replace(DocsDocumentPdfGeneratorOptions.StylePlaceholder, Options.Value.HtmlStyle);
         htmlBuilder.Replace(DocsDocumentPdfGeneratorOptions.ContentPlaceholder, htmlContent);
         
         var converter = new ConverterProperties();
         var tagWorkerFactory = new HtmlIdTagWorkerFactory(pdfDocument);
         converter.SetTagWorkerFactory(tagWorkerFactory);
         
-        
-        await File.WriteAllTextAsync("/Users/liangshiweis/codes/test.html", htmlBuilder.ToString());
         HtmlConverter.ConvertToDocument(htmlBuilder.ToString(), pdfDocument, converter);
         
         tagWorkerFactory.AddNamedDestinations();

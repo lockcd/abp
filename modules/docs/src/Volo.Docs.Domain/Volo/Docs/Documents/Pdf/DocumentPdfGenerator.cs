@@ -115,7 +115,7 @@ public class DocumentPdfGenerator : IDocumentPdfGenerator, ITransientDependency
         string languageCode,
         PdfDocumentNode parentPdfDocumentNode = null)
     {
-        var parameterCombinationsDocuments = new List<PdfDocumentNode>();
+        var groupedCombinationsDocuments = new Dictionary<string, List<PdfDocumentNode>>();
         foreach (var navigation in navigations)
         {
             if (navigation.IgnoreOnDownload)
@@ -127,7 +127,7 @@ public class DocumentPdfGenerator : IDocumentPdfGenerator, ITransientDependency
                 var pdfDocumentNode = new PdfDocumentNode
                 { 
                     Title = navigation.Text,
-                    IgnoreOnOutline = navigation.Path == Options.Value.CoverPagePath
+                    IgnoreOnOutline = navigation.Path == Options.Value.IndexPagePath
                 };
          
                 if (!navigation.Path.IsNullOrWhiteSpace() && !navigation.HasChildItems)
@@ -145,14 +145,20 @@ public class DocumentPdfGenerator : IDocumentPdfGenerator, ITransientDependency
                     
                     if(parameters.Count <= 1)
                     {
-                        AddParameterCombinationsDocuments(parentPdfDocumentNode, parameterCombinationsDocuments);
+                        AddParameterCombinationsDocuments(parentPdfDocumentNode, groupedCombinationsDocuments);
                     }
                     else
                     {
                         for (var i = 1; i < parameterCombinations.Count; i++)
                         {
                             var parameterCombination = parameterCombinations[i];
-                            parameterCombinationsDocuments.Add(new PdfDocumentNode
+                            var key = parameterCombination.Select(x => $"{x.Key}_{x.Value}").JoinAsString("-");
+                            if (!groupedCombinationsDocuments.ContainsKey(key))
+                            {
+                                groupedCombinationsDocuments[key] = [];
+                            }
+                            
+                            groupedCombinationsDocuments[key].Add(new PdfDocumentNode
                             {
                                 Document = document,
                                 Title = GetDocumentTitle(navigation.Text, document.Content, parameterCombination),
@@ -179,7 +185,7 @@ public class DocumentPdfGenerator : IDocumentPdfGenerator, ITransientDependency
 
                 if (navigation == navigations.Last())
                 {
-                    AddParameterCombinationsDocuments(parentPdfDocumentNode, parameterCombinationsDocuments);
+                    AddParameterCombinationsDocuments(parentPdfDocumentNode, groupedCombinationsDocuments);
                 }
             }
             catch (Exception e)
@@ -189,15 +195,18 @@ public class DocumentPdfGenerator : IDocumentPdfGenerator, ITransientDependency
         }
     }
     
-    private void AddParameterCombinationsDocuments(PdfDocumentNode parentPdfDocumentNode, List<PdfDocumentNode> parameterCombinationsDocuments)
+    private void AddParameterCombinationsDocuments(PdfDocumentNode parentPdfDocumentNode, Dictionary<string,List<PdfDocumentNode>> groupedCombinationsDocuments)
     {
-        if (parentPdfDocumentNode == null)
-        {
-            AllPdfDocumentNodes.AddRange(parameterCombinationsDocuments);
-        }
-        else
-        {
-            parentPdfDocumentNode.Children.AddRange(parameterCombinationsDocuments);
+        foreach (var combinations in groupedCombinationsDocuments)
+        { 
+            if (parentPdfDocumentNode == null)
+            {
+                AllPdfDocumentNodes.AddRange(combinations.Value);
+            }
+            else
+            {
+                parentPdfDocumentNode.Children.AddRange(combinations.Value);
+            }
         }
     }
     
@@ -218,11 +227,11 @@ public class DocumentPdfGenerator : IDocumentPdfGenerator, ITransientDependency
             throw new UserFriendlyException($"Cannot validate navigation file '{project.NavigationDocumentName}' for the project {project.Name}.");
         }
 
-        if (!Options.Value.CoverPagePath.IsNullOrWhiteSpace())
+        if (!Options.Value.IndexPagePath.IsNullOrWhiteSpace())
         {
             navigation.Items.Insert(0, new NavigationNode
             {
-                Path = Options.Value.CoverPagePath
+                Path = Options.Value.IndexPagePath
             });
         }
         
@@ -376,7 +385,7 @@ public class DocumentPdfGenerator : IDocumentPdfGenerator, ITransientDependency
 
     private string NormalizeMarkdownContent(string content)
     {
-        var pattern = @"````json\s*//$begin:math:display$doc-nav$end:math:display$[\s\S]*?````";
+        var pattern = @"`{3,4}json\s*//\[doc-nav\][\s\S]*?`{3,4}";
         return Regex.Replace(content, pattern, string.Empty, RegexOptions.IgnoreCase);
     }
 
