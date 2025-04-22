@@ -21,7 +21,7 @@ static internal class PathHelper
     static internal string GetMauiBlazorAssemblyFilePath(string directory, string projectFileName)
     {
         return Directory.GetFiles(directory, "*.dll", SearchOption.AllDirectories).FirstOrDefault(f =>
-            !f.Contains("android", StringComparison.OrdinalIgnoreCase) &&
+            !f.Contains("android") &&
             f.EndsWith(projectFileName + ".dll", StringComparison.OrdinalIgnoreCase));
     }
 
