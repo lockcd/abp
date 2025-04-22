@@ -24,6 +24,7 @@ import { DEFAULT_DYNAMIC_LAYOUTS } from '../constants';
 import { LocalizationService, LocalStorageListenerService, AbpTitleStrategy } from '../services';
 import { DefaultQueueManager, getInitialData, localeInitializer } from '../utils';
 import { CookieLanguageProvider, IncludeLocalizationResourcesProvider, LocaleProvider } from './';
+import { TimezoneInterceptor } from '../interceptors';
 
 export enum CoreFeatureKind {
   Options,
@@ -127,6 +128,11 @@ export function provideAbpCore(...features: CoreFeature<CoreFeatureKind>[]) {
     {
       provide: TitleStrategy,
       useExisting: AbpTitleStrategy,
+    },
+    {
+      provide: 'HTTP_INTERCEPTORS',
+      useClass: TimezoneInterceptor,
+      multi: true,
     },
   ];
 
