@@ -52,11 +52,11 @@ All encryption operations are included in `IStringEncryptionService`. You can in
 
      public string Encrypt(string value)
      {
-         // To enrcypt a value
+         // To encrypt a value
          return StringEncryptionService.Encrypt(value);
      }
 
-     public string Decrpyt(string value)
+     public string Decrypt(string value)
      {
          // To decrypt a value
          return StringEncryptionService.Decrypt(value);

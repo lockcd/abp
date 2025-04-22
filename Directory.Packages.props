@@ -18,10 +18,10 @@
     <PackageVersion Include="BunnyCDN.Net.Storage" Version="1.0.4" />
     <PackageVersion Include="Azure.Messaging.ServiceBus" Version="7.18.1" />
     <PackageVersion Include="Azure.Storage.Blobs" Version="12.22.1" />
-    <PackageVersion Include="Blazorise" Version="1.7.3" />
-    <PackageVersion Include="Blazorise.Components" Version="1.7.3" />
-    <PackageVersion Include="Blazorise.DataGrid" Version="1.7.3" />
-    <PackageVersion Include="Blazorise.Snackbar" Version="1.7.3" />
+    <PackageVersion Include="Blazorise" Version="1.7.5" />
+    <PackageVersion Include="Blazorise.Components" Version="1.7.5" />
+    <PackageVersion Include="Blazorise.DataGrid" Version="1.7.5" />
+    <PackageVersion Include="Blazorise.Snackbar" Version="1.7.5" />
     <PackageVersion Include="Castle.Core" Version="5.1.1" />
     <PackageVersion Include="Castle.Core.AsyncInterceptor" Version="2.1.0" />
     <PackageVersion Include="CommonMark.NET" Version="0.15.1" />
@@ -119,7 +119,7 @@
     <PackageVersion Include="Microsoft.IdentityModel.Tokens" Version="8.6.0" />
     <PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.6.0" />
     <PackageVersion Include="Minio" Version="6.0.3" />
-    <PackageVersion Include="MongoDB.Driver" Version="3.1.0" />
+    <PackageVersion Include="MongoDB.Driver" Version="3.3.0" />
     <PackageVersion Include="NEST" Version="7.17.5" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="Nito.AsyncEx.Context" Version="5.1.2" />
