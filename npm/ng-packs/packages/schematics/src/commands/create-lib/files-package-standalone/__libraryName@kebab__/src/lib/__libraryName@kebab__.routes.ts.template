@@ -4,6 +4,6 @@ export const <%= macro(libraryName) %>_ROUTES: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./<%= kebab(libraryName) %>.component').then(m => m.<%= pascal(libraryName) %>HomeComponent),
+      import('./<%= kebab(libraryName) %>.component').then(m => m.<%= pascal(libraryName) %>Component),
   },
 ];
