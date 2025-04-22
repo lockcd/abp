@@ -21,7 +21,7 @@ public class ITextPdfRenderer : IPdfRenderer ,ITransientDependency
         Options = options;
     }
     
-    public virtual Task<MemoryStream> GeneratePdfAsync(string htmlContent, List<PdfDocumentNode> pdfDocumentNodes)
+    public virtual async Task<MemoryStream> GeneratePdfAsync(string htmlContent, List<PdfDocumentNode> pdfDocumentNodes)
     {
         var pdfStream = new MemoryStream();
         var pdfWrite = new PdfWriter(pdfStream);
@@ -38,6 +38,8 @@ public class ITextPdfRenderer : IPdfRenderer ,ITransientDependency
         var tagWorkerFactory = new HtmlIdTagWorkerFactory(pdfDocument);
         converter.SetTagWorkerFactory(tagWorkerFactory);
         
+        
+        await File.WriteAllTextAsync("/Users/liangshiweis/codes/test.html", htmlBuilder.ToString());
         HtmlConverter.ConvertToDocument(htmlBuilder.ToString(), pdfDocument, converter);
         
         tagWorkerFactory.AddNamedDestinations();
@@ -46,7 +48,7 @@ public class ITextPdfRenderer : IPdfRenderer ,ITransientDependency
                 
         textDocument.Close();
         pdfStream.Position = 0;
-        return Task.FromResult(pdfStream);
+        return pdfStream;
     }
 
     private void BuildPdfOutlines(PdfOutline parentOutline, List<PdfDocumentNode> pdfDocumentNodes)

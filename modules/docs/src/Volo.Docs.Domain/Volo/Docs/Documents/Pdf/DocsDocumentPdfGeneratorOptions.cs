@@ -64,7 +64,6 @@ public class DocsDocumentPdfGeneratorOptions
         pre {
             position: relative;
             padding: 16px;
-            padding-top: calc(16px * 2.5);
             border-radius: 8px;
             border: 1px solid #e2e8f0;
         }

@@ -185,7 +185,7 @@ namespace Volo.Docs.Admin.Projects
 
         public virtual async Task DeletePdfFileAsync(DeletePdfFileInput input)
         {
-            await _documentPdfCache.RemoveAsync(DocsDocumentPdfCacheItem.CalculateCacheKey(input.Id, input.Version, input.LanguageCode));
+            await _documentPdfCache.RemoveAsync(DocsDocumentPdfCacheItem.CalculateCacheKey(input.ProjectId, input.Version, input.LanguageCode));
         }
     }
 }

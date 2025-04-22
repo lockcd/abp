@@ -24,6 +24,7 @@ $(function () {
         $("#GeneratePdfBtn").click(function () {
             var $btn = $(this);
             $btn.buttonBusy(true);
+            $("#GenerateAndDownloadPdfBtn").buttonBusy(true);
             var input = {
                 projectId: $("#ProjectId").val(),
                 version: $("#Version").val(),
@@ -36,6 +37,7 @@ $(function () {
                     if (jqXHR.status === 200) {
                         abp.message.success("PDF generated successfully.");
                         $btn.buttonBusy(false);
+                        $("#GenerateAndDownloadPdfBtn").buttonBusy(false);
                     } else {
                         abp.ajax.handleErrorStatusCode(jqXHR.status);
                     }

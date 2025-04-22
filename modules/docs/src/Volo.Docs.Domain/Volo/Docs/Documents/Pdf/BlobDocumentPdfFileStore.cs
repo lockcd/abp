@@ -28,7 +28,7 @@ public class BlobDocumentPdfFileStore : IDocumentPdfFileStore, ITransientDepende
     
     public virtual async Task SetAsync(Project project, string version, string languageCode, Stream stream)
     {
-        await BlobContainer.SaveAsync(Options.Value.CalculatePdfFileName(project, version, languageCode), stream);
+        await BlobContainer.SaveAsync(Options.Value.CalculatePdfFileName(project, version, languageCode), stream, true);
       
         await Cache.SetAsync(DocsDocumentPdfCacheItem.CalculateCacheKey(project.Id, version, languageCode), new DocsDocumentPdfCacheItem(),
             new DistributedCacheEntryOptions
