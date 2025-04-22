@@ -67,6 +67,9 @@
     "EntityHistory": "实体历史",
     "DaysAgoTitle": "{0} {1}.",
     "DaysAgoWithUserTitle": "{0} {1} by {2}。",
+    "MinutesAgo": "{0}分钟前",
+    "HoursAgo": "{0}小时前",
+    "DaysAgo": "{0}天前",
     "Created": "创建",
     "Updated": "已更新",
     "Deleted": "已删除",
@@ -78,6 +81,7 @@
     "EndDate": "结束日期",
     "Feature:AuditLoggingGroup": "审计日志",
     "Feature:AuditLoggingEnable": "启用审计记录页面",
-    "Feature:AuditLoggingEnableDescription": "在应用程序中启用审计日志页面。"
+    "Feature:AuditLoggingEnableDescription": "在应用程序中启用审计日志页面。",
+    "TenantId": "租户 ID"
   }
 }

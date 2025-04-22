@@ -311,7 +311,7 @@ public class AbpApplicationConfigurationAppService : ApplicationService, IAbpApp
 
     protected virtual async Task<TimingDto> GetTimingConfigAsync()
     {
-        var windowsTimeZoneId = await _settingProvider.GetOrNullAsync(TimingSettingNames.TimeZone);
+        var timeZone = await _settingProvider.GetOrNullAsync(TimingSettingNames.TimeZone);
 
         return new TimingDto
         {
@@ -319,13 +319,11 @@ public class AbpApplicationConfigurationAppService : ApplicationService, IAbpApp
             {
                 Windows = new WindowsTimeZone
                 {
-                    TimeZoneId = windowsTimeZoneId
+                    TimeZoneId = timeZone.IsNullOrWhiteSpace() ? null : _timezoneProvider.IanaToWindows(timeZone)
                 },
                 Iana = new IanaTimeZone
                 {
-                    TimeZoneName = windowsTimeZoneId.IsNullOrWhiteSpace()
-                        ? null
-                        : _timezoneProvider.WindowsToIana(windowsTimeZoneId!)
+                    TimeZoneName = timeZone
                 }
             }
         };

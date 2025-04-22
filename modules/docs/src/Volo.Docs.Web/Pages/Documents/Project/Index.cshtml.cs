@@ -131,6 +131,12 @@ namespace Volo.Docs.Pages.Documents.Project
                 return Redirect(decodedUrl);
             }
 
+            var redirectUrl = _uiOptions.GetRedirectUrlIfNeeded(displayUrl);
+            if (redirectUrl != null)
+            {
+                return RedirectPermanent(redirectUrl);
+            }
+
             return await SetPageAsync();
         }
 
@@ -461,7 +467,6 @@ namespace Volo.Docs.Pages.Documents.Project
                         Version = Version
                     }
                 );
-                
             }
             catch (DocumentNotFoundException) //TODO: What if called on a remote service which may return 404
             {

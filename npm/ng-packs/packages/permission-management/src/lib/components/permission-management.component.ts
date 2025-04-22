@@ -34,30 +34,38 @@ type PermissionWithGroupName = PermissionGrantInfoDto & {
 };
 
 @Component({
+  standalone: false,
   selector: 'abp-permission-management',
   templateUrl: './permission-management.component.html',
   exportAs: 'abpPermissionManagement',
   styles: [
     `
-      .overflow-scroll {
-        max-height: 70vh;
-        overflow-y: scroll;
-      }
-
       .scroll-in-modal {
         overflow: auto;
-        max-height: calc(100vh - 15rem);
+        /*
+        To maintain a 28px top margin and 28px bottom margin when the modal reaches full height, the scrollable area needs to be 100vh - 23.1rem
+         */
+        max-height: calc(100vh - 23.1rem);
+      }
+
+      .lpx-scroll-pills-container ul {
+        display: block;
+        overflow-y: auto;
+      }
+
+      /* Target mobile screens */
+      @media (max-width: 768px) {
+        .scroll-in-modal {
+          max-height: calc(100vh - 15rem);
+        }
+        .lpx-scroll-pills-container ul {
+          max-height: 500px;
+        }
       }
 
       fieldset legend {
         float: none;
         width: auto;
-      }
-
-      .lpx-scroll-pills-container ul {
-        display: block;
-        max-height: 500px;
-        overflow-y: auto;
       }
 
       .lpx-scroll-pills-container .tab-content {
@@ -163,6 +171,7 @@ export class PermissionManagementComponent
     let groups = this.permissionGroupSignal();
 
     if (!search) {
+      this.setSelectedGroup(groups[0]);
       return groups;
     }
 
@@ -175,9 +184,7 @@ export class PermissionManagementComponent
 
     if (groups.length) {
       this.setSelectedGroup(groups[0]);
-      this.disabledSelectAllInAllTabs = false;
     } else {
-      this.disabledSelectAllInAllTabs = true;
       this.selectedGroupPermissions = [];
     }
 
@@ -322,6 +329,9 @@ export class PermissionManagementComponent
     );
     const selectedPermissions = selectablePermissions.filter(per => per.isGranted);
     const element = document.querySelector('#select-all-in-this-tabs') as any;
+    if (!element) {
+      return;
+    }
 
     if (selectedPermissions.length === selectablePermissions.length) {
       element.indeterminate = false;
@@ -371,30 +381,14 @@ export class PermissionManagementComponent
 
   onClickSelectAll() {
     if (this.filter()) {
-      this.permissionGroups().forEach(group => {
-        group.permissions.forEach(permission => {
-          if (
-            permission.isGranted &&
-            this.isGrantedByOtherProviderName(permission.grantedProviders)
-          )
-            return;
-
-          const index = this.permissions.findIndex(per => per.name === permission.name);
-
-          this.permissions = [
-            ...this.permissions.slice(0, index),
-            { ...this.permissions[index], isGranted: !this.selectAllTab },
-            ...this.permissions.slice(index + 1),
-          ];
-        });
-      });
-    } else {
-      this.permissions = this.permissions.map(permission => ({
-        ...permission,
-        isGranted:
-          this.isGrantedByOtherProviderName(permission.grantedProviders) || !this.selectAllTab,
-      }));
+      this.filter.set('');
     }
+
+    this.permissions = this.permissions.map(permission => ({
+      ...permission,
+      isGranted:
+        this.isGrantedByOtherProviderName(permission.grantedProviders) || !this.selectAllTab,
+    }));
 
     if (!this.disableSelectAllTab) {
       this.selectThisTab = !this.selectAllTab;

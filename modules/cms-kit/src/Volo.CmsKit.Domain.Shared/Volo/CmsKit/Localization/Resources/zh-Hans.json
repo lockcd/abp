@@ -90,6 +90,8 @@
     "Permission:CmsKit": "CmsKit 管理员",
     "Permission:Comments": "评论管理",
     "Permission:Comments.Delete": "删除",
+    "Permission:Comments.Update": "更新",
+    "Permission:Comments.SettingManagement": "设置管理",
     "Permission:Contents": "内容管理",
     "Permission:Contents.Create": "创建内容",
     "Permission:Contents.Delete": "删除内容",
@@ -231,6 +233,7 @@
     "ChooseAnActionForBlog": "选择博客的操作",
     "AssignBlogPostsToOtherBlog": "将博客文章分配给其他博客",
     "SelectAnBlogToAssign": "选择要分配的博客",
-    "DeleteAllBlogPostsOfThisBlog": "删除此博客的所有博客文章"
+    "DeleteAllBlogPostsOfThisBlog": "删除此博客的所有博客文章",
+    "RequiredPermissionName": "所需权限名称"
   }
 }

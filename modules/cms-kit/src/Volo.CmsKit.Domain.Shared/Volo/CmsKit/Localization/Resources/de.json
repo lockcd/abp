@@ -90,6 +90,8 @@
     "Permission:CmsKit": "CmsKit-Administrator",
     "Permission:Comments": "Kommentarverwaltung",
     "Permission:Comments.Delete": "Löschen",
+    "Permission:Comments.Update": "Aktualisieren",
+    "Permission:Comments.SettingManagement": "Einstellungsverwaltung",
     "Permission:Contents": "Content-Management",
     "Permission:Contents.Create": "Inhalte erstellen",
     "Permission:Contents.Delete": "Inhalt löschen",
@@ -231,6 +233,7 @@
     "ChooseAnActionForBlog": "Wählen Sie eine Aktion für den Blog",
     "AssignBlogPostsToOtherBlog": "Blogbeiträge einem anderen Blog zuweisen",
     "SelectAnBlogToAssign": "Wählen Sie einen Blog aus, um Blogbeiträge zuzuweisen",
-    "DeleteAllBlogPostsOfThisBlog": "Alle Blogbeiträge dieses Blogs löschen"
+    "DeleteAllBlogPostsOfThisBlog": "Alle Blogbeiträge dieses Blogs löschen",
+    "RequiredPermissionName": "Erforderlicher Berechtigungsname"
   }
 }

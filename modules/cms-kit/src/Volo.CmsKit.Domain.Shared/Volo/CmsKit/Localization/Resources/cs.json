@@ -89,7 +89,9 @@
     "Permission:BlogPostManagement.Publish": "Publikovat",
     "Permission:CmsKit": "CmsKit",
     "Permission:Comments": "Správa komentářů",
-    "Permission:Comments.Delete": "Vymazat",
+    "Permission:Comments.Delete": "Smazat",
+    "Permission:Comments.Update": "Aktualizovat",
+    "Permission:Comments.SettingManagement": "Správa nastavení",
     "Permission:Contents": "Správa obsahu",
     "Permission:Contents.Create": "Vytvořit obsah",
     "Permission:Contents.Delete": "Smazat obsah",
@@ -231,6 +233,7 @@
     "ChooseAnActionForBlog": "Vyberte akci pro blog",
     "AssignBlogPostsToOtherBlog": "Přiřaďte blogové příspěvky k jinému blogu",
     "SelectAnBlogToAssign": "Vyberte blog, ke kterému chcete přiřadit blogové příspěvky",
-    "DeleteAllBlogPostsOfThisBlog": "Smazat všechny blogové příspěvky tohoto blogu"
+    "DeleteAllBlogPostsOfThisBlog": "Smazat všechny blogové příspěvky tohoto blogu",
+    "RequiredPermissionName": "Je vyžadováno oprávnění"
   }
 }

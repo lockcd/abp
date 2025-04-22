@@ -7,4 +7,11 @@ public class AbpEntityChangeOptions
     /// Publish the EntityUpdatedEvent when any navigation property changes.
     /// </summary>
     public bool PublishEntityUpdatedEventWhenNavigationChanges { get; set; } = true;
+
+    public IEntitySelectorList IgnoredNavigationEntitySelectors { get; set; }
+
+    public AbpEntityChangeOptions()
+    {
+        IgnoredNavigationEntitySelectors = new EntitySelectorList();
+    }
 }

@@ -89,7 +89,9 @@
     "Permission:BlogPostManagement.Publish": "Közzététel",
     "Permission:CmsKit": "CmsKit",
     "Permission:Comments": "Megjegyzéskezelés",
-    "Permission:Comments.Delete": "Töröl",
+    "Permission:Comments.Delete": "Törlés",
+    "Permission:Comments.Update": "Frissítés",
+    "Permission:Comments.SettingManagement": "Beállítások kezelése",
     "Permission:Contents": "Tartalomkezelés",
     "Permission:Contents.Create": "Tartalom létrehozása",
     "Permission:Contents.Delete": "Tartalom törlése",
@@ -231,6 +233,7 @@
     "ChooseAnActionForBlog": "Válasszon egy műveletet a bloghoz",
     "AssignBlogPostsToOtherBlog": "Blogbejegyzések hozzárendelése egy másik bloghoz",
     "SelectAnBlogToAssign": "Válasszon egy blogot a hozzárendeléshez",
-    "DeleteAllBlogPostsOfThisBlog": "Ez a művelet törli az összes blogbejegyzést ebből a blogból. Biztos vagy benne?"
+    "DeleteAllBlogPostsOfThisBlog": "Ez a művelet törli az összes blogbejegyzést ebből a blogból. Biztos vagy benne?",
+    "RequiredPermissionName": "Szükséges engedély neve"
   }
 }

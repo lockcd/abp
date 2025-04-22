@@ -44,7 +44,7 @@ Here, is the list of all available commands before explaining their details:
 * **`add-package-ref`**: Adds package to given project.
 * **`install-module`**: Adds a [multi-package application module](../modules/index.md) to a given module.
 * **`install-local-module`**: Installs a local module to given module.
-* **`list-modules`**: Lists names of open-source application modules.
+* **`list-modules`**: Lists names of application modules.
 * **`list-templates`**: Lists the names of available templates to create a solution.
 * **`get-source`**: Downloads the source code of a module.
 * **`add-source-code`**: Downloads the source code and replaces package references with project references.
@@ -112,7 +112,7 @@ abp cli clear-cache
 
 ### new
 
-Generates a new solution based on the ABP [startup templates](../solution-templates).
+Generates a new solution based on the ABP [startup templates](../solution-templates). See [new solution create sample commands](new-command-samples.md)
 
 Usage:
 
@@ -342,6 +342,7 @@ Note that this command can upgrade your solution from a previous version, and al
 * `--solution-name` or `-sn`: Specify the solution name. Search `*.sln` files in the directory by default.
 * `--check-all`: Check the new version of each package separately. Default is `false`.
 * `--version` or `-v`: Specifies the version to use for update. If not specified, latest version is used.
+* * `--leptonx-version` or `-lv`: Specifies the LeptonX version to use for update. If not specified, latest version or the version that is compatible with `--version` argument  is used.
 
 ### clean
 
@@ -883,17 +884,13 @@ abp translate -c zh-Hans --online --deepl-auth-key <auth-key>
 
 ### login
 
-Some features of the CLI requires to be logged in to ABP Platform. To login with your username write:
+Some features of the CLI requires to be logged in to ABP Platform. The login command supports the following usage options:
 
 ```bash
-abp login <username>                                  # Allows you to enter your password hidden
-abp login <username> -p <password>                    # Specify the password as a parameter (password is visible)
-abp login <username> --organization <organization>    # If you have multiple organizations, you need set your active organization
-abp login <username> -p <password> -o <organization>  # You can enter both your password and organization in the same command
-abp login <username> --device                         # Use device login flow
+abp login                                             # Opens a default browser to log in to ABP Platform via abp.io
+abp login --device                                    # Use device login flow
+abp login username -p ****** --password               # Use user password login
 ```
-
-> When using the -p parameter, be careful as your password will be visible. It's useful for CI/CD automation pipelines.
 
 A new login with an already active session overwrites the previous session.
 
@@ -922,6 +919,8 @@ Usage:
 ````bash
 abp bundle [options]
 ````
+
+> This command is no longer needed if you are using Global Assets feature. See [Managing Global Scripts & Styles](../framework/ui/blazor/global-scripts-styles.md) for more information.
 
 #### Options
 

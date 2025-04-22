@@ -67,6 +67,9 @@
     "EntityHistory": "Zgodovina entitete",
     "DaysAgoTitle": "{0} {1}.",
     "DaysAgoWithUserTitle": "{0} {1} avtorja {2}.",
+    "MinutesAgo": "pred {0} minutami",
+    "HoursAgo": "pred {0} urami",
+    "DaysAgo": "pred {0} dnevi",
     "Created": "Ustvarjeno",
     "Updated": "Posodobljeno",
     "Deleted": "Izbrisano",
@@ -78,6 +81,7 @@
     "EndDate": "Končni datum",
     "Feature:AuditLoggingGroup": "Revizijsko beleženje",
     "Feature:AuditLoggingEnable": "Omogočena stran za beleženje revizije",
-    "Feature:AuditLoggingEnableDescription": "Omogočite stran za beleženje revizije v aplikaciji."
+    "Feature:AuditLoggingEnableDescription": "Omogočite stran za beleženje revizije v aplikaciji.",
+    "TenantId": "ID najemnika"
   }
 }

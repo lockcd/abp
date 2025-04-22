@@ -229,12 +229,6 @@ Configure<<Volo.Abp.AspNetCore.Components.Web.LeptonTheme.LeptonThemeOptions>(op
   }
 ```
 
-Run the following ABP CLI command to bundle the `custom.css`
-
-```bash
-abp bundle
-```
-
 {{end}}
 
 

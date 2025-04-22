@@ -115,20 +115,6 @@ abp install-libs
 
 > We suggest you install [Yarn v1.22+ (not v2)](https://classic.yarnpkg.com/en/docs/install) to prevent possible package inconsistencies, if you haven't installed it yet.
 
-{{if UI=="Blazor" || UI=="BlazorServer"}}
-
-#### Bundling and Minification
-
-Run the following command in the directory of your blazor application:
-
-```bash
-abp bundle
-```
-
-> For more details about managing style and script references in Blazor or MAUI Blazor apps, see [Managing Global Scripts & Styles](../../../framework/ui/blazor/global-scripts-styles.md).
-
-{{end}}
-
 ### Run the Application
 
 {{if UI=="MVC" || UI=="BlazorServer"}}

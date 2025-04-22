@@ -81,6 +81,40 @@ Configure<LeptonXThemeOptions>(options =>
 >
 > If your layout is **TopMenu**, then you have to add them under the **wwwroot/Themes/LeptonX/Global/top-menu/css/** folder.
 
+### Toolbars
+
+LeptonX includes separeted toolbars for desktop & mobile. You can manage toolbars independently. Toolbar names can be accessible in the **LeptonXToolbars** class.
+
+- `LeptonXToolbars.Main`
+- `LeptonXToolbars.MainMobile`
+
+```csharp
+public async Task ConfigureToolbarAsync(IToolbarConfigurationContext context)
+{
+    if (context.Toolbar.Name == LeptonXToolbars.Main)
+    {
+        context.Toolbar.Items.Add(new ToolbarItem(typeof(MyDesktopComponent)));
+    }
+
+    if (context.Toolbar.Name == LeptonXToolbars.MainMobile)
+    {
+        context.Toolbar.Items.Add(new ToolbarItem(typeof(MyMobileComponent)));
+    }
+
+    return Task.CompletedTask;
+}
+```
+
+> _You can visit the [Toolbars Documentation](../../framework/ui/mvc-razor-pages/toolbars.md) for better understanding._
+
+
+You can add extra logic by using javascript API when style is changed with the following event.
+```js
+leptonx.CSSLoadEvent.on(event =>{
+    console.log("Style is changed from " + event.detail.previousTheme + " to "+ event.detail.theme);
+});
+```
+
 --- 
 
 ### LeptonXThemeMvcOptions
@@ -127,6 +161,22 @@ Layout options of the MVC Razor Pages UI can be manageable by using **LeptonXThe
 > - **_Footer.cshtml**
 > - **_Sidebar.cshtml**
 > - **_Toolbar.cshtml**
+
+#### Customizing the Footer Section
+
+Add the **_Footer.cshtml** file under the **Themes/LeptonX/Layouts/Application** folder to customize the footer:
+
+```html
+<div class="text-center py-2 lpx-footer">
+    <span class="copyright-text">
+       @DateTime.Now.Year © AbpSolution1<br />
+    </span>
+</div>
+````
+
+![Customizing Footer](images/leptonx-mvc-customizing-footer.png)
+
+> You can customize the **_Sidebar.cshtml** and **_Toolbar.cshtml** files as well.
 
 ### Account Layout
 

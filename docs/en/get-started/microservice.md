@@ -4,6 +4,21 @@
 
 In this quick start guide, you will learn how to create and run a microservice solution using [ABP Studio](../studio/index.md).
 
+## Setup your development environment
+
+First things first! Let's setup your development environment before creating the first project. The following tools should be installed on your development machine:
+
+* [Visual Studio 2022](https://visualstudio.microsoft.com/vs/) or another IDE that supports .NET development
+* [.NET 9.0+](https://dotnet.microsoft.com/en-us/download/dotnet)
+* [Node v22.11+](https://nodejs.org/)
+* [Yarn v1.22+ (not v2+)](https://classic.yarnpkg.com/en/docs/install) or npm v10+ (already installed with Node)
+* [Docker Desktop (with Kubernetes enabled)](https://www.docker.com/products/docker-desktop/)
+* [Helm](https://helm.sh/docs/intro/install/)
+* [NGINX Ingress Controller](https://kubernetes.github.io/ingress-nginx/deploy/)
+* [mkcert](https://github.com/FiloSottile/mkcert#installation)
+
+> Check the [Pre-requirements document](pre-requirements.md) for more detailed information about these tools.
+
 ## Creating a New Solution
 
 > 🛈 This document uses [ABP Studio](../studio/index.md) to create new ABP solutions. **ABP Studio** is in the beta version now. If you have any issues, you can use the [ABP CLI](../cli/index.md) to create new solutions. You can also use the [getting started page](https://abp.io/get-started) to easily build ABP CLI commands for new project creations.
@@ -34,7 +49,11 @@ On that screen, you can decide on your database provider by selecting one of the
 
 ![abp-studio-new-solution-dialog-database-configurations](images/abp-studio-new-solution-dialog-database-configurations-microservice.png)
 
-Here, select the DBMS right for you, then click the *Next* button to navigate to the *UI Framework* selection:
+Here, select the DBMS right for you, then click the *Next* button to navigate to the *Multi-Tenancy* selection:
+
+![abp-studio-new-solution-dialog-multi-tenancy](images/abp-studio-new-solution-dialog-multi-tenancy.png)
+
+On that screen, you can enable multi-tenancy for your solution. After selecting this option, click the Next button to proceed to the *UI Framework* selection screen.
 
 ![abp-studio-new-solution-dialog-ui-framework](images/abp-studio-new-solution-dialog-ui-framework-microservice.png)
 
@@ -51,6 +70,10 @@ Pick the one best for you, or select the *None* if you don't want a mobile appli
 ![abp-studio-new-solution-dialog-public-web-site](images/abp-studio-new-solution-dialog-public-web-site.png)
 
 You can select a public website to be created in your solution. The public website is a simple landing page that can be used to introduce your product, provide documentation, and so on.
+
+![abp-studio-new-solution-dialog-dynamic-localization](images/abp-studio-new-solution-dialog-dynamic-localization.png)
+
+On that screen, you can enable dynamic localization. After selecting this option, click the Next button to proceed to the *Optional Modules* selection screen.
 
 ![abp-studio-new-microservice-solution-dialog-optional-modules](images/abp-studio-new-microservice-solution-dialog-optional-modules.png)
 
@@ -72,6 +95,12 @@ Click the Next button to see *Additional Options* selection:
 ![abp-studio-new-solution-dialog-additional-options](images/abp-studio-new-solution-dialog-additional-options-microservice.png)
 
 If you unchecked the *Kubernetes Configuration* option, the solution will not include the Kubernetes configuration files which include the Helm charts and other Kubernetes related files. You can also specify *Social Logins*; if you uncheck this option, the solution will not be configured for social login. Lastly, you can specify the *Include Tests* option to include the test projects in the solution.
+
+Click the Next button to see *Additional Services* screen:
+
+![abp-studio-new-solution-dialog-additional-services](images/abp-studio-new-solution-dialog-additional-services.png)
+
+On that screen, allows you to include extra microservices in your ABP solution during the creation process. This feature lets you extend your solution with business-specific services right from the start.
 
 Now, we are ready to allow ABP Studio to create our solution. Just click the *Create* button and let the ABP Studio do the rest for you. After clicking the *Create* button, the dialog is closed and your solution is loaded into ABP Studio:
 
@@ -127,13 +156,11 @@ In the *Solution Runner* section (on the left side) you can see all the runnable
 
 As shown in the figure above, the executable applications are grouped into folders like `apps`, `gateways`, `infrastructure`, and `services`. You can start/stop them all, a group (folder) of them, or one by one.
 
-Before running the applications, it is good to be sure that all applications are built. To do that, right-click the root item in the *Solution Runner* and select *Build* -> *Build All* action.
+Before running the applications, you can run the all application by right-clicking the root item in the *Solution Runner* and select *Build* -> *Build All* action. However, you don't need to do that, because ABP Studio builds the applications before running them by default.
 
-![abp-studio-microservice-solution-runner-build-all](images/abp-studio-microservice-solution-runner-build-all.png)
+> If you want to change this behavior, and don't want ABP Studio to build before running the applications, you can click the *Manage start actions* button in the *Solution Runner*, which you can see from the root item or per folder.
 
-> *Solution Runner* doesn't build an application before running it. That provides a great performance gain because most of the time you will work on one or a few services and you don't need to build all of the other applications in every run. However, if you want to build before running, you can right-click an item in the *Solution Runner* tree and select *Run* -> *Build & Start* command.
-
-It will take some time to build all. Once all is done, you can start the system. You can click the *Play* button on the root item in Solution Runner to start all the applications.
+You can click the *Play* button on the root item in *Solution Runner* to start all the applications.
 
 > **About the Docker Containers**
 >

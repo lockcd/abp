@@ -89,7 +89,9 @@
     "Permission:BlogPostManagement.Publish": "Publier",
     "Permission:CmsKit": "CmsKit",
     "Permission:Comments": "Gestion des commentaires",
-    "Permission:Comments.Delete": "Effacer",
+    "Permission:Comments.Delete": "Supprimer",
+    "Permission:Comments.Update": "Mettre à jour",
+    "Permission:Comments.SettingManagement": "Gestion des paramètres",
     "Permission:Contents": "Gestion de contenu",
     "Permission:Contents.Create": "Créer du contenu",
     "Permission:Contents.Delete": "Supprimer le contenu",
@@ -231,6 +233,7 @@
     "ChooseAnActionForBlog": "Choisissez une action pour le blog",
     "AssignBlogPostsToOtherBlog": "Attribuer des articles de blog à un autre blog",
     "SelectAnBlogToAssign": "Sélectionnez un blog à attribuer",
-    "DeleteAllBlogPostsOfThisBlog": "Supprimer tous les articles de blog de ce blog"
+    "DeleteAllBlogPostsOfThisBlog": "Supprimer tous les articles de blog de ce blog",
+    "RequiredPermissionName": "Nom de permission requis"
   }
 }

@@ -89,7 +89,9 @@
     "Permission:BlogPostManagement.Publish": "Công bố",
     "Permission:CmsKit": "CmsKit",
     "Permission:Comments": "Quản lý bình luận",
-    "Permission:Comments.Delete": "Xóa bỏ",
+    "Permission:Comments.Delete": "Xóa",
+    "Permission:Comments.Update": "Cập nhật",
+    "Permission:Comments.SettingManagement": "Quản lý cài đặt",
     "Permission:Contents": "Quản lý nội dung",
     "Permission:Contents.Create": "Tạo nội dung",
     "Permission:Contents.Delete": "Xóa nội dung",
@@ -231,6 +233,7 @@
     "ChooseAnActionForBlog": "Chọn một hành động cho blog",
     "AssignBlogPostsToOtherBlog": "Gán bài đăng trên blog cho blog khác",
     "SelectAnBlogToAssign": "Chọn một blog để gán",
-    "DeleteAllBlogPostsOfThisBlog": "Xóa tất cả bài đăng trên blog của blog này"
+    "DeleteAllBlogPostsOfThisBlog": "Xóa tất cả bài đăng trên blog của blog này",
+    "RequiredPermissionName": "Tên quyền cần thiết"
   }
 }

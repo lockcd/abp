@@ -2,6 +2,67 @@
 
 This document contains **brief release notes** for each ABP Studio release. Release notes only include **major features** and **visible enhancements**. Therefore, they don't include all the development done in the related version. 
 
+## 0.9.25 (2025-03-12)
+
+* Added ready/health check for solution runner.
+
+## 0.9.24 (2025-03-11)
+
+* Added automatic installation of necessary dependencies.
+* Added user feedback collection after the first week of application usage.
+* Added ability to add business services while creating a new microservice solution.
+* Fixed database migration issue during module installation.
+* Fixed angular ESLint dependency issue.
+* Upgraded templates to version `9.1.0`.
+
+## 0.9.23 (2025-02-04)
+
+* Fixed **Open with Terminal** option not working on macOS.
+* Fixed dynamic port assignment for Abp Suite if the default port is unavailable.
+* Added suite templates package to module templates.
+* Added warning message in CLI if the connection string is broken.
+
+## 0.9.22 (2025-01-22)
+
+* Allowed to display multiple installation notes.
+* Showed **Inner Exceptions** in the Solution Runner side-panel
+* Hidden logs when no selected application is present.
+* Added full docker compose to template.
+* Zipped microservice module template for better structuring the solution.
+* Upgraded templates to version `9.0.4`.
+
+## 0.9.21 (2025-01-09)
+
+* Showed a db test connection message while testing the database connection.
+* Fixed books sample's application service.
+
+## 0.9.20 (2025-01-08)
+
+* Upgraded templates to version `9.0.3`.
+* Fixed Invariant Culture problem in source code downloading.
+* Added missing linux support to OldCliInstaller
+* Increased database test connection timeout up to 10seconds.
+
+## 0.9.19 (2025-01-02)
+
+* Disabled auto-scroll when scrolled up in the logging section.
+* Added localhost development certificate check during solution load.
+* Added testing connection string in project creation.
+* Made enhancements for exception handling.
+
+## 0.9.18 (2024-12-24)
+
+* Fixed Blazor WebApp Kubernetes problems.
+* Added Visual Studio & Rider options to solution root.
+* Fixed problems in blazor-server nolayers template.
+
+## 0.9.17 (2024-12-17)
+
+* Added social login option to the "No Layers" Blazor WebAssembly template.
+* Fixed AutoMapper missing configuration exception problem during module import.
+* Fixed Blazor WebAssembly build issue for the MAUI template.
+* Fixed a problem that prevented ABP Studio from opening on macOS.
+
 ## 0.9.16 (2024-12-11)
 
 > This version does not work for macOS, we are currently working on that manner.
