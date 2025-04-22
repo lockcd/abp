@@ -1,6 +1,7 @@
 import { makeEnvironmentProviders, Provider, inject, provideAppInitializer } from '@angular/core';
 import { TitleStrategy } from '@angular/router';
 import {
+  HTTP_INTERCEPTORS,
   provideHttpClient,
   withInterceptorsFromDi,
   withXsrfConfiguration,
@@ -130,7 +131,7 @@ export function provideAbpCore(...features: CoreFeature<CoreFeatureKind>[]) {
       useExisting: AbpTitleStrategy,
     },
     {
-      provide: 'HTTP_INTERCEPTORS',
+      provide: HTTP_INTERCEPTORS,
       useClass: TimezoneInterceptor,
       multi: true,
     },
