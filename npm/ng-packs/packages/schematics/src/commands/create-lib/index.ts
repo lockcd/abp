@@ -303,7 +303,7 @@ export function addRoutingToAppRoutingModule(
           ? `() => import('${routePath}').then(m => m.${macroName}_ROUTES)`
           : `() => import('${routePath}').then(m => m.${moduleName}.forLazy())`;
       const routeToAdd = `{ path: '${routePath}', loadChildren: ${routeExpr} }`;
-      const change = addRouteToRoutesArray(source, 'routes', routeToAdd);
+      const change = addRouteToRoutesArray(source, 'APP_ROUTES', routeToAdd);
 
       if (change instanceof InsertChange) {
         const recorder = tree.beginUpdate(appRoutesPath);
@@ -396,12 +396,13 @@ export function addRouteToRoutesArray(
     return null;
   }
 
+  const hasTrailingComma = arrayLiteral.elements.hasTrailingComma ?? false;
   const insertPos =
-    arrayLiteral.elements.hasTrailingComma || arrayLiteral.elements.length === 0
+    hasTrailingComma || arrayLiteral.elements.length === 0
       ? arrayLiteral.getEnd() - 1
       : arrayLiteral.elements[arrayLiteral.elements.length - 1].getEnd();
 
-  const prefix = arrayLiteral.elements.length > 0 ? ',\n  ' : '  ';
+  const prefix = arrayLiteral.elements.length > 0 && !hasTrailingComma ? ',\n  ' : '  ';
   const toAdd = `${prefix}${routeToAdd}`;
 
   return new InsertChange(source.fileName, insertPos, toAdd);
