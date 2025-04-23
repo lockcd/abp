@@ -8,6 +8,8 @@ public class AbpEntityChangeOptions
     /// </summary>
     public bool PublishEntityUpdatedEventWhenNavigationChanges { get; set; } = true;
 
+    public IEntitySelectorList IgnoredNavigationEntitySelectors { get; set; }
+
     /// <summary>
     /// Default: true.
     /// Update the aggregate root when any navigation property changes.
@@ -15,10 +17,11 @@ public class AbpEntityChangeOptions
     /// </summary>
     public bool UpdateAggregateRootWhenNavigationChanges { get; set; } = true;
 
-    public IEntitySelectorList IgnoredNavigationEntitySelectors { get; set; }
+    public IEntitySelectorList IgnoredUpdateAggregateRootSelectors { get; set; }
 
     public AbpEntityChangeOptions()
     {
         IgnoredNavigationEntitySelectors = new EntitySelectorList();
+        IgnoredUpdateAggregateRootSelectors = new EntitySelectorList();
     }
 }

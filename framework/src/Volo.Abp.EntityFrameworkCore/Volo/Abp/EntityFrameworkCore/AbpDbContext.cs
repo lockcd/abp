@@ -274,7 +274,9 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
                     continue;
                 }
 
-                if (EntityChangeOptions.Value.UpdateAggregateRootWhenNavigationChanges && entityEntry.State == EntityState.Unchanged)
+                if (EntityChangeOptions.Value.UpdateAggregateRootWhenNavigationChanges &&
+                    EntityChangeOptions.Value.IgnoredUpdateAggregateRootSelectors.All(selector => !selector.Predicate(entityEntry.Entity.GetType())) &&
+                    entityEntry.State == EntityState.Unchanged)
                 {
                     ApplyAbpConceptsForModifiedEntity(entityEntry, true);
                 }
@@ -446,10 +448,12 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
                          EntityChangeOptions.Value.IgnoredNavigationEntitySelectors.All(selector => !selector.Predicate(entry.Entity.GetType())) &&
                          AbpEfCoreNavigationHelper.IsNavigationEntryModified(entry))
                 {
-                    if (EntityChangeOptions.Value.UpdateAggregateRootWhenNavigationChanges)
+                    if (EntityChangeOptions.Value.UpdateAggregateRootWhenNavigationChanges &&
+                        EntityChangeOptions.Value.IgnoredUpdateAggregateRootSelectors.All(selector => !selector.Predicate(entry.Entity.GetType())))
                     {
                         ApplyAbpConceptsForModifiedEntity(entry, true);
                     }
+
                     if (entry.Entity is ISoftDelete && entry.Entity.As<ISoftDelete>().IsDeleted)
                     {
                         EntityChangeEventHelper.PublishEntityDeletedEvent(entry.Entity);
@@ -486,7 +490,8 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
         {
             foreach (var entry in AbpEfCoreNavigationHelper.GetChangedEntityEntries()
                          .Where(x => x.State == EntityState.Unchanged)
-                         .Where(x=> EntityChangeOptions.Value.IgnoredNavigationEntitySelectors.All(selector => !selector.Predicate(x.Entity.GetType()))))
+                         .Where(x => EntityChangeOptions.Value.IgnoredNavigationEntitySelectors.All(selector => !selector.Predicate(x.Entity.GetType())))
+                         .Where(x => EntityChangeOptions.Value.IgnoredUpdateAggregateRootSelectors.All(selector => !selector.Predicate(x.Entity.GetType()))))
             {
                 UpdateConcurrencyStamp(entry);
             }
