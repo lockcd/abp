@@ -274,7 +274,7 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
                     continue;
                 }
 
-                if (entityEntry.State == EntityState.Unchanged)
+                if (EntityChangeOptions.Value.UpdateAggregateRootWhenNavigationChanges && entityEntry.State == EntityState.Unchanged)
                 {
                     ApplyAbpConceptsForModifiedEntity(entityEntry, true);
                 }
@@ -478,7 +478,8 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
             }
         }
 
-        if (EntityChangeOptions.Value.PublishEntityUpdatedEventWhenNavigationChanges)
+        if (EntityChangeOptions.Value.PublishEntityUpdatedEventWhenNavigationChanges &&
+            EntityChangeOptions.Value.UpdateAggregateRootWhenNavigationChanges)
         {
             foreach (var entry in AbpEfCoreNavigationHelper.GetChangedEntityEntries()
                          .Where(x => x.State == EntityState.Unchanged)
