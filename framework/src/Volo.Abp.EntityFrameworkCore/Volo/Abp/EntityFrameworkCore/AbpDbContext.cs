@@ -446,7 +446,10 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
                          EntityChangeOptions.Value.IgnoredNavigationEntitySelectors.All(selector => !selector.Predicate(entry.Entity.GetType())) &&
                          AbpEfCoreNavigationHelper.IsNavigationEntryModified(entry))
                 {
-                    ApplyAbpConceptsForModifiedEntity(entry, true);
+                    if (EntityChangeOptions.Value.UpdateAggregateRootWhenNavigationChanges)
+                    {
+                        ApplyAbpConceptsForModifiedEntity(entry, true);
+                    }
                     if (entry.Entity is ISoftDelete && entry.Entity.As<ISoftDelete>().IsDeleted)
                     {
                         EntityChangeEventHelper.PublishEntityDeletedEvent(entry.Entity);
