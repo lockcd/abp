@@ -148,7 +148,7 @@ Layout options of the MVC Razor Pages UI can be manageable by using **LeptonXThe
     ```csharp
     Configure<LeptonXThemeMvcOptions>(options =>
     {
-        options.AccountLayoutBackgroundStyle = "background-image: url('/images/login-background-image.svg')";
+        options.AccountLayoutBackgroundStyle = "background-image: url('/images/login-background-image.svg') !important;";
     });
     ```
 
