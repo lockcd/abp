@@ -1,4 +1,4 @@
-# Using AI, Microsoft AI Extensions Library and OpenAI to Summarize User Comments
+# Using Microsoft AI Extensions Library and OpenAI to Summarize User Comments
 
 Either you are building an e-commerce application or a simple blog, **user comments** (about your products or blog posts) **can grow rapidly**, making it harder for users to get the gist of discussions at a glance. AI is a pretty good tool to solve the problem. By using AI, you can **summarize all the user comments** and show a single paragraph to your users, so they can easily understand the overall thought of users about the product or the blog post.
 
@@ -8,7 +8,7 @@ In this tutorial, we’ll walk through a real-life implementation of using AI to
 
 Here, an example screenshot from the application with the comment summary feature:
 
-![comment-example](D:\Github\abp\docs\en\Community-Articles\2025-04-25-AI-Comment-Summarization\comment-example.png)
+![comment-example](comment-example.png)
 
 ## Cloning the Repository
 
@@ -112,3 +112,151 @@ That class is pretty simple and already decorated with comments:
 
 At this point, all the AI-related work has already been done. The rest of this article explains how to integrate that summarization feature with the [CMS Kit Demo application](https://cms-kit-demo.abpdemo.com/).
 
+## Adding a CommentsSummary Property to the GalleryImage Entity
+
+The `GalleryImage` entity is used to represent an image on [the image gallery](https://cms-kit-demo.abpdemo.com/image-gallery). I add a `CommentsSummary` property to that entity:
+
+````csharp
+public class GalleryImage : CreationAuditedAggregateRoot<Guid>
+{
+    public string Description { get; set; }
+
+    public Guid CoverImageMediaId { get; set; }
+    
+    public string CommentsSummary { get; set; } // The new property is here
+
+    //...
+}
+````
+
+Since the CMS Kit Demo application uses Entity Framework Core, I need to add a new database schema migration and update the database:
+
+````bash
+dotnet ef migrations add Added_Summary_To_GalleryImage
+dotnet ef database update
+````
+
+## Updating the Summary
+
+Great, we have a `GalleryImage.CommentsSummary` property now. But, how will it be updated when a users adds or removes a comment for an image? To implement that;
+
+* We will listen all the change events for user comments (when a user adds, removes or updates a comment).
+* Whenever a comment is changed, we will find the related gallery image, retrieve all the user comments for this image, use the `AiCommentSummarizer` class to summarize all the comments.
+* Finally, we wil set the `GalleryImage.CommentsSummary` property with the generated summary text.
+
+Here, the implementation:
+
+````csharp
+using CmsKitDemo.Entities;
+using CmsKitDemo.Utils;
+using Microsoft.EntityFrameworkCore;
+using Volo.Abp.DependencyInjection;
+using Volo.Abp.Domain.Entities.Events;
+using Volo.Abp.Domain.Repositories;
+using Volo.Abp.EventBus;
+using Volo.CmsKit.Comments;
+
+namespace CmsKitDemo.EventHandlers;
+
+public class GalleryImageCommentListener : 
+             ILocalEventHandler<EntityChangedEventData<Comment>>,
+             ITransientDependency
+{
+    private readonly IRepository<GalleryImage, Guid> _galleryImageRepository;
+    private readonly IRepository<Comment, Guid> _commentRepository;
+    private readonly AiCommentSummarizer _aiCommentSummarizer;
+
+    public GalleryImageCommentListener(
+        IRepository<GalleryImage, Guid> galleryImageRepository,
+        IRepository<Comment, Guid> commentRepository,
+        AiCommentSummarizer aiCommentSummarizer)
+    {
+        _galleryImageRepository = galleryImageRepository;
+        _commentRepository = commentRepository;
+        _aiCommentSummarizer = aiCommentSummarizer;
+    }
+    
+    public async Task HandleEventAsync(EntityChangedEventData<Comment> eventData)
+    {
+        var comment = eventData.Entity;
+        
+        //Here, we only interest in comments related to image gallery items
+        if (comment.EntityType != CmsKitDemoConsts.ImageGalleryEntityType)
+        {
+            return;
+        }
+
+        if (!Guid.TryParse(comment.EntityId, out var galleryImageId))
+        {
+            return;
+        }
+        
+        // Get the related image from database
+        var galleryImage = await _galleryImageRepository.FindAsync(galleryImageId);
+        if (galleryImage == null)
+        {
+            return;
+        }
+        
+        // Get all the comments related to the image
+        var queryable = await _commentRepository.GetQueryableAsync();
+        var allCommentTexts = await queryable
+            .Where(c => c.EntityType == CmsKitDemoConsts.ImageGalleryEntityType &&
+                        c.EntityId == comment.EntityId)
+            .Select(c => c.Text)
+            .ToArrayAsync();
+
+        // Update the summary of comments related to the image
+        if (allCommentTexts.Length <= 0)
+        {
+            galleryImage.CommentsSummary = "";
+        }
+        else
+        {
+            galleryImage.CommentsSummary =
+                await _aiCommentSummarizer.SummarizeAsync(allCommentTexts);
+        }
+
+        // Update the image in database
+        await _galleryImageRepository.UpdateAsync(galleryImage);
+    }
+}
+````
+
+Let's explain that class:
+
+* `GalleryImageCommentListener` implements the `ILocalEventHandler<EntityChangedEventData<Comment>>` interface. In this way, it can handle an event whenever a `Comment` [entity](https://abp.io/docs/latest/framework/architecture/domain-driven-design/entities) is changed (created, updated or deleted). We are using ABP's [local event bus](https://abp.io/docs/latest/framework/infrastructure/event-bus/local) and its [pre-defined events](https://abp.io/docs/latest/framework/infrastructure/event-bus/local#pre-built-events).
+* `HandleEventAsync` is called by the ABP Framework whenever a new `Comment` is created, or an existing `Comment` is deleted or updated. 
+* ABP's `Comment` entity is reusable and it can be associated with any kind of objects (blog posts, images, etc). So, first we are checking if this comment is related to an image gallery item.
+* Then we are getting the related `GalleryImage` entity from the database.
+* And getting all comments (including the new one) from the database for this image.
+* Finally, using the `AiCommentSummarizer` class to generate the summary and set the `CommentsSummary` property.
+
+## Show the Summary Card on the UI
+
+Everything is ready on the backend. Now, we can show the summary text on the user interface. To do, that, I added `CommentsSummary` property also to the `GalleryImageDto` class and used it on the `/Pages/Gallery/Detail.cshtml` view:
+
+````csharp
+@if (!Model.Image.CommentsSummary.IsNullOrEmpty())
+{
+    <div class="card mt-3">
+        <div class="card-body">
+            <h6 class="card-title">Summary of the User Comments</h6>
+            <p class="mb-auto">@Model.Image.CommentsSummary</p>
+        </div>
+    </div>
+}
+````
+
+That section renders the following card on the user interface:
+
+![summary-card](summary-card.png)
+
+## Conclusion
+
+In this article, I demonstrated how to use [Microsoft AI Extensions Library](https://learn.microsoft.com/en-us/dotnet/ai/ai-extensions) to work with OpenAI for summarization of multiple user comments. I reused the [ABP's CMS Kit Demo application](https://github.com/abpframework/cms-kit-demo) to show it in a more real world example.
+
+## Source Code
+
+* [Source code of the CMS Kit Demo application](https://github.com/abpframework/cms-kit-demo)
+* [All the changes made for this article (as a pull request)](https://github.com/abpframework/cms-kit-demo/pull/18)
