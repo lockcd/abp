@@ -11,10 +11,8 @@
     "just-clone": "^6.0.0",
     "just-compare": "^2.0.0",
     "ts-toolbelt": "^9.0.0",
-    "tslib": "^2.0.0"
-  },
-  "peerDependencies": {
-    "luxon": "^3.5.0"
+    "tslib": "^2.0.0",
+    "luxon": "^3.6.1"
   },
   "publishConfig": {
     "access": "public"
