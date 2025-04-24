@@ -155,7 +155,7 @@ property =>
 
 `DataTypeAttribute` is used to specify the type of the property. It is used to determine how to render the property on the user interface:
 
-````csharp
+```csharp
 property =>
 {
     property.Attributes.Add(new DataTypeAttribute(DataType.Date));
