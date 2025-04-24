@@ -16,9 +16,7 @@ If you want to follow the development, you can clone the [CMS Kit Demo repositor
 
 I suggest to you to play a little with [the application](https://cms-kit-demo.abpdemo.com/) (create a new user for yourself, add some comments to the images in the gallery), so you understand how it works.
 
-Preparing the Solution for AI
-
-Let's start from the most important point of this article: Comment summarization.
+## Preparing the Solution for AI
 
 I will use [Microsoft AI Extensions Library](https://learn.microsoft.com/en-us/dotnet/ai/ai-extensions) to use the AI features. It is an abstraction library that can work with multiple AI models and tools. I will use an OpenAI model in the demo.
 
@@ -42,7 +40,7 @@ For this example, you need to have an [OpenAI API Key](https://platform.openai.c
 
 ## Implementing the AI Summarization
 
-I will create a class named `AiCommentSummarizer` to implement the summarization work. Here, the full content of that class:
+Let's start from the most important point of this article: Comment summarization. I will create a class named `AiCommentSummarizer` to implement the summarization work. Here, the full content of that class:
 
 ````csharp
 using System.Text;
