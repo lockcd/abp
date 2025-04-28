@@ -270,6 +270,7 @@ importMap.set(ThemeOptionsEnum.Basic, [
   {
     path: '@abp/ng.theme.basic',
     importName: 'ThemeBasicModule',
+    expression: 'ThemeBasicModule.forRoot()',
     provider: 'provideThemeBasicConfig',
   },
 ]);
@@ -310,5 +311,9 @@ importMap.set(ThemeOptionsEnum.LeptonX, [
     path: '@volosoft/abp.ng.theme.lepton-x/layouts',
     importName: 'SideMenuLayoutModule',
     expression: 'SideMenuLayoutModule.forRoot()',
+  },
+  {
+    path: '@volosoft/abp.ng.theme.lepton-x',
+    importName: 'HttpErrorComponent',
   },
 ]);

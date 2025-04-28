@@ -81,6 +81,7 @@ function updateAppModule(selectedProject: string, targetThemeName: ThemeOptionsE
         : removeProviderFromNgModuleMetadata(appModulePath, targetThemeName),
       insertImports(selectedProject, targetThemeName),
       insertProviders(selectedProject, targetThemeName),
+      adjustProvideAbpThemeShared(appModulePath, targetThemeName),
       formatFile(appModulePath),
       cleanEmptyExpressions(appModulePath, isStandalone),
     ]);
@@ -254,19 +255,21 @@ export function removeProviderFromNgModuleMetadata(
 export function insertImports(projectName: string, selectedTheme: ThemeOptionsEnum): Rule {
   return addRootImport(projectName, code => {
     const selected = importMap.get(selectedTheme);
-    if (!selected || selected.length === 0) return code.code``;
+    if (!selected?.length) return code.code``;
 
     const expressions: string[] = [];
 
     for (const { importName, path, expression } of selected) {
-      const imported = code.external(importName, path);
-      expressions.push(expression ?? imported); // default fallback
+      if (importName && path) {
+        code.external(importName, path);
+      }
+      if (expression) {
+        expressions.push(expression.trim());
+      }
     }
-
     return code.code`${expressions.join(',\n')}`;
   });
 }
-
 export function insertProviders(projectName: string, selectedTheme: ThemeOptionsEnum): Rule {
   return addRootProvider(projectName, code => {
     const selected = importMap.get(selectedTheme);
@@ -386,4 +389,69 @@ export function cleanEmptyExpressions(modulePath: string, isStandalone: boolean)
     host.commitUpdate(recorder);
     return host;
   };
+}
+
+export function adjustProvideAbpThemeShared(
+  appModulePath: string,
+  selectedTheme: ThemeOptionsEnum,
+): Rule {
+  return (host: Tree) => {
+    const source = createSourceFile(host, appModulePath);
+    const recorder = host.beginUpdate(appModulePath);
+    const sourceText = source.getText();
+
+    const callExpressions = findProvideAbpThemeSharedCalls(source);
+
+    for (const expr of callExpressions) {
+      const exprStart = expr.getStart();
+      const exprEnd = expr.getEnd();
+      const originalText = sourceText.substring(exprStart, exprEnd);
+
+      let newText = '';
+
+      if (selectedTheme === ThemeOptionsEnum.LeptonX) {
+        if (!originalText.includes('withHttpErrorConfig')) {
+          newText = originalText.replace(
+            '(',
+            `(
+  withHttpErrorConfig({
+    errorScreen: {
+      component: HttpErrorComponent,
+      forWhichErrors: [401, 403, 404, 500],
+      hideCloseIcon: true
+    }
+  }),`,
+          );
+        }
+      } else {
+        newText = originalText.replace(/withHttpErrorConfig\([^)]*\),?/, '');
+      }
+
+      if (newText && newText !== originalText) {
+        recorder.remove(exprStart, exprEnd - exprStart);
+        recorder.insertLeft(exprStart, newText);
+      }
+    }
+
+    host.commitUpdate(recorder);
+    return host;
+  };
+}
+
+function findProvideAbpThemeSharedCalls(source: ts.SourceFile): ts.CallExpression[] {
+  const result: ts.CallExpression[] = [];
+
+  const visit = (node: ts.Node) => {
+    if (ts.isCallExpression(node)) {
+      const expressionText = node.expression.getText();
+      if (expressionText.includes('provideAbpThemeShared')) {
+        result.push(node);
+      }
+    }
+    ts.forEachChild(node, visit);
+  };
+
+  visit(source);
+
+  return result;
 }
