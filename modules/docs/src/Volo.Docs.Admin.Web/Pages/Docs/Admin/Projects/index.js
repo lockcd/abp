@@ -125,7 +125,7 @@ $(function () {
                             {
                                 text: l('ManagePdfFiles'),
                                 visible: abp.auth.isGranted(
-                                    'Docs.Admin.Documents'
+                                    'Docs.Admin.Projects.ManagePdfFiles'
                                 ),
                                 action: function (data) {
                                     _managePdfFilesModal.open({
