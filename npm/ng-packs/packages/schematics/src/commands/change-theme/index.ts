@@ -184,26 +184,71 @@ export function removeImportsFromStandaloneProviders(
     for (const expr of callExpressions) {
       const exprText = expr.getText();
 
-      const match = impMap.find(({ importName, provider }) => {
-        const moduleSymbol = importName?.split('.')[0];
-        return (
-          (moduleSymbol && exprText.includes(moduleSymbol)) ||
-          (provider && exprText.includes(provider))
-        );
-      });
+      if (expr.expression.getText() === 'importProvidersFrom') {
+        const arrayArg = expr.arguments[0];
 
-      if (match) {
-        const start = expr.getFullStart();
-        const end = expr.getEnd();
-        const nextChar = sourceText.slice(end, end + 1);
-        const prevChar = sourceText.slice(start - 1, start);
+        if (ts.isArrayLiteralExpression(arrayArg)) {
+          const elements = arrayArg.elements;
 
-        if (nextChar === ',') {
-          recorder.remove(start, end - start + 1);
-        } else if (prevChar === ',') {
-          recorder.remove(start - 1, end - start + 1);
-        } else {
-          recorder.remove(start, end - start);
+          const elementsToRemove = elements.filter(el =>
+            impMap.some(({ importName }) => el.getText().includes(importName)),
+          );
+
+          if (elementsToRemove.length) {
+            for (const removeEl of elementsToRemove) {
+              const start = removeEl.getFullStart();
+              const end = removeEl.getEnd();
+
+              const nextChar = sourceText.slice(end, end + 1);
+              const prevChar = sourceText.slice(start - 1, start);
+
+              if (nextChar === ',') {
+                recorder.remove(start, end - start + 1);
+              } else if (prevChar === ',') {
+                recorder.remove(start - 1, end - start + 1);
+              } else {
+                recorder.remove(start, end - start);
+              }
+            }
+          }
+          const remaining = arrayArg.elements.filter(el => !elementsToRemove.includes(el));
+          if (remaining.length === 0) {
+            const start = expr.getFullStart();
+            const end = expr.getEnd();
+            const nextChar = sourceText.slice(end, end + 1);
+            const prevChar = sourceText.slice(start - 1, start);
+
+            if (nextChar === ',') {
+              recorder.remove(start, end - start + 1);
+            } else if (prevChar === ',') {
+              recorder.remove(start - 1, end - start + 1);
+            } else {
+              recorder.remove(start, end - start);
+            }
+          }
+        }
+      } else {
+        const match = impMap.find(({ importName, provider }) => {
+          const moduleSymbol = importName?.split('.')[0];
+          return (
+            (moduleSymbol && exprText.includes(moduleSymbol)) ||
+            (provider && exprText.includes(provider))
+          );
+        });
+
+        if (match) {
+          const start = expr.getFullStart();
+          const end = expr.getEnd();
+          const nextChar = sourceText.slice(end, end + 1);
+          const prevChar = sourceText.slice(start - 1, start);
+
+          if (nextChar === ',') {
+            recorder.remove(start, end - start + 1);
+          } else if (prevChar === ',') {
+            recorder.remove(start - 1, end - start + 1);
+          } else {
+            recorder.remove(start, end - start);
+          }
         }
       }
     }
@@ -222,31 +267,67 @@ export function removeProviderFromNgModuleMetadata(
     const source = createSourceFile(host, appModulePath);
     const impMap = getImportPaths(selectedTheme, true);
 
-    const node = getDecoratorMetadata(source, 'NgModule', '@angular/core')[0] || {};
+    const node = getDecoratorMetadata(source, 'NgModule', '@angular/core')[0];
     if (!node) {
       throw new SchematicsException('The app module does not found');
     }
 
-    const matchingProperties = getMetadataField(node as ts.ObjectLiteralExpression, 'providers');
-    const assignment = matchingProperties[0] as ts.PropertyAssignment;
-    const assignmentInit = assignment.initializer as ts.ArrayLiteralExpression;
+    const providersProperty = getMetadataField(
+      node as ts.ObjectLiteralExpression,
+      'providers',
+    )[0] as ts.PropertyAssignment;
+    const providersArray = providersProperty.initializer as ts.ArrayLiteralExpression;
 
-    const elements = assignmentInit.elements;
-    if (!elements || elements.length < 1) {
-      throw new SchematicsException(`Elements could not found: ${elements}`);
+    if (!providersArray.elements.length) return host;
+
+    for (const element of providersArray.elements) {
+      if (ts.isCallExpression(element) && element.expression.getText() === 'importProvidersFrom') {
+        const arrayArg = element.arguments[0];
+
+        if (ts.isArrayLiteralExpression(arrayArg)) {
+          const elementsToRemove = arrayArg.elements.filter(el =>
+            impMap.some(s => el.getText().includes(s.importName)),
+          );
+
+          if (elementsToRemove.length) {
+            for (const removeEl of elementsToRemove) {
+              const start = removeEl.getFullStart();
+              const end = removeEl.getEnd();
+
+              const nextChar = source.text.slice(end, end + 1);
+              const prevChar = source.text.slice(start - 1, start);
+
+              if (nextChar === ',') {
+                recorder.remove(start, end - start + 1); // sağındaki virgülle birlikte sil
+              } else if (prevChar === ',') {
+                recorder.remove(start - 1, end - start + 1); // solundaki virgülle birlikte sil
+              } else {
+                recorder.remove(start, end - start); // virgül yoksa sadece kendisini sil
+              }
+            }
+          }
+
+          // Eğer array boşaldıysa, importProvidersFrom çağrısını da kaldır
+          const remainingElements = arrayArg.elements.filter(el => !elementsToRemove.includes(el));
+
+          if (remainingElements.length === 0) {
+            const callStart = element.getFullStart();
+            const callEnd = element.getEnd();
+            const callNextChar = source.text.slice(callEnd, callEnd + 1);
+            const callPrevChar = source.text.slice(callStart - 1, callStart);
+
+            if (callNextChar === ',') {
+              recorder.remove(callStart, callEnd - callStart + 1);
+            } else if (callPrevChar === ',') {
+              recorder.remove(callStart - 1, callEnd - callStart + 1);
+            } else {
+              recorder.remove(callStart, callEnd - callStart);
+            }
+          }
+        }
+      }
     }
 
-    const filteredElements = elements.filter(f =>
-      impMap.filter(f => !!f.provider).some(s => f.getText().match(s.provider!)),
-    );
-
-    if (!filteredElements || filteredElements.length < 1) {
-      return;
-    }
-
-    filteredElements.map(willRemoveModule => {
-      recorder.remove(willRemoveModule.getStart(), willRemoveModule.getWidth());
-    });
     host.commitUpdate(recorder);
     return host;
   };
@@ -407,11 +488,14 @@ export function adjustProvideAbpThemeShared(
       const exprEnd = expr.getEnd();
       const originalText = sourceText.substring(exprStart, exprEnd);
 
-      let newText = '';
+      let newText = originalText;
+
+      const hasHttpErrorConfig = originalText.includes('withHttpErrorConfig');
+      const hasValidationBluePrint = originalText.includes('withValidationBluePrint');
 
       if (selectedTheme === ThemeOptionsEnum.LeptonX) {
-        if (!originalText.includes('withHttpErrorConfig')) {
-          newText = originalText.replace(
+        if (!hasHttpErrorConfig) {
+          newText = newText.replace(
             '(',
             `(
   withHttpErrorConfig({
@@ -424,7 +508,19 @@ export function adjustProvideAbpThemeShared(
           );
         }
       } else {
-        newText = originalText.replace(/withHttpErrorConfig\([^)]*\),?/, '');
+        if (hasHttpErrorConfig) {
+          newText = newText.replace(/withHttpErrorConfig\([^)]*\),?/, '');
+        }
+      }
+
+      if (!hasValidationBluePrint) {
+        newText = newText.replace(
+          '(',
+          `(
+  withValidationBluePrint({
+    wrongPassword: 'Please choose 1q2w3E*'
+  }),`,
+        );
       }
 
       if (newText && newText !== originalText) {

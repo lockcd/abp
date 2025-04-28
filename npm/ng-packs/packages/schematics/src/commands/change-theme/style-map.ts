@@ -285,13 +285,14 @@ importMap.set(ThemeOptionsEnum.Basic, [
   {
     path: '@abp/ng.theme.shared',
     importName: 'provideAbpThemeShared',
+    provider: 'provideAbpThemeShared',
   },
 ]);
 
 importMap.set(ThemeOptionsEnum.Lepton, [
   {
     path: '@volo/abp.ng.theme.lepton',
-    importName: 'ThemeLeptonModule',
+    importName: 'provideThemeLepton',
     provider: 'provideThemeLepton',
   },
   {
@@ -310,6 +311,7 @@ importMap.set(ThemeOptionsEnum.Lepton, [
   {
     path: '@abp/ng.theme.shared',
     importName: 'provideAbpThemeShared',
+    provider: 'provideAbpThemeShared',
   },
 ]);
 
@@ -345,6 +347,7 @@ importMap.set(ThemeOptionsEnum.LeptonXLite, [
   {
     path: '@abp/ng.theme.shared',
     importName: 'provideAbpThemeShared',
+    provider: 'provideAbpThemeShared',
   },
 ]);
 
@@ -379,5 +382,6 @@ importMap.set(ThemeOptionsEnum.LeptonX, [
   {
     path: '@abp/ng.theme.shared',
     importName: 'provideAbpThemeShared',
+    provider: 'provideAbpThemeShared',
   },
 ]);
