@@ -63,6 +63,9 @@
     "Language": "Idioma",
     "ForceToGenerateNewPdf": "Forzar a generar un nuevo PDF",
     "PdfGeneratedSuccessfully": "PDF generado correctamente",
-    "GenerateAndDownloadPdf": "Generar y descargar PDF"
+    "GenerateAndDownloadPdf": "Generar y descargar PDF",
+    "PdfFileDeletionWarningMessage": "¿Está seguro de querer eliminar el archivo PDF \"{0}\"?",
+    "ManagePdfFiles": "Administrar archivos PDF",
+    "Permission:ManagePdfFiles": "Administrar archivos PDF"
   }
 }

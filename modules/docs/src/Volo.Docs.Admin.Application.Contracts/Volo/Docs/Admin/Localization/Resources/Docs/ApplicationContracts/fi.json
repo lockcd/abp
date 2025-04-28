@@ -63,6 +63,9 @@
     "Language": "Kieli",
     "ForceToGenerateNewPdf": "Vahvista uusi PDF",
     "PdfGeneratedSuccessfully": "PDF generoidaan onnistuneesti",
-    "GenerateAndDownloadPdf": "Generoi ja lataa PDF"
+    "GenerateAndDownloadPdf": "Generoi ja lataa PDF",
+    "PdfFileDeletionWarningMessage": "Oletko varma, että haluat poistaa PDF-tiedoston \"{0}\"?",
+    "ManagePdfFiles": "Hallitse PDF-tiedostoja",
+    "Permission:ManagePdfFiles": "Hallitse PDF-tiedostoja"
   }
 }

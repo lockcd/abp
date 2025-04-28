@@ -1,10 +1,9 @@
 using System.IO;
 using System.Threading.Tasks;
-using Volo.Docs.Projects;
 
-namespace Volo.Docs.Documents.Pdf;
+namespace Volo.Docs.Projects.Pdf;
 
-public interface IDocumentPdfFileStore
+public interface IProjectPdfFileStore
 {
     Task SetAsync(Project project, string version, string languageCode, Stream stream);
     

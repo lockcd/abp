@@ -1,30 +1,29 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp.Application.Services;
-using Volo.Abp.BlobStoring;
 using Volo.Abp.Content;
-using Volo.Docs.Documents.Pdf;
 using Volo.Docs.Projects;
+using Volo.Docs.Projects.Pdf;
 
 namespace Volo.Docs.Common.Documents;
 
-[Authorize(DocsCommonPermissions.Documents.PdfGeneration)]
+[Authorize(DocsCommonPermissions.Projects.PdfGeneration)]
 public class DocumentPdfGeneratorAppService : ApplicationService, IDocumentPdfGeneratorAppService
 {
-    protected IDocumentPdfGenerator DocumentPdfGenerator { get; }
+    protected IProjectPdfGenerator ProjectPdfGenerator { get; }
     protected IProjectRepository ProjectRepository { get; }
     
     public DocumentPdfGeneratorAppService(
-        IDocumentPdfGenerator documentPdfGenerator,
+        IProjectPdfGenerator projectPdfGenerator,
         IProjectRepository projectRepository)
     {
-        DocumentPdfGenerator = documentPdfGenerator;
+        ProjectPdfGenerator = projectPdfGenerator;
         ProjectRepository = projectRepository;
     }
 
     public virtual async Task<IRemoteStreamContent> GeneratePdfAsync(DocumentPdfGeneratorInput input)
     {
-        var project = await ProjectRepository.GetAsync(input.ProjectId);
-        return await DocumentPdfGenerator.GenerateAsync(project, input.Version, input.LanguageCode);
+        var project = await ProjectRepository.GetAsync(input.ProjectId, includeDetails: true);
+        return await ProjectPdfGenerator.GenerateAsync(project, input.Version, input.LanguageCode);
     }
 }

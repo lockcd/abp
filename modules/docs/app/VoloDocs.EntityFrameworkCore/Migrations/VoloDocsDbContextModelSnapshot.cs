@@ -1193,6 +1193,33 @@ namespace Migrations
                     b.ToTable("DocsProjects", (string)null);
                 });
 
+            modelBuilder.Entity("Volo.Docs.Projects.ProjectPdfFile", b =>
+                {
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<string>("LanguageCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("LastModificationTime");
+
+                    b.Property<string>("Version")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ProjectId", "FileName");
+
+                    b.ToTable("DocsProjectPdfFiles", (string)null);
+                });
+
             modelBuilder.Entity("Volo.Abp.BlobStoring.Database.DatabaseBlob", b =>
                 {
                     b.HasOne("Volo.Abp.BlobStoring.Database.DatabaseBlobContainer", null)
@@ -1299,6 +1326,15 @@ namespace Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Volo.Docs.Projects.ProjectPdfFile", b =>
+                {
+                    b.HasOne("Volo.Docs.Projects.Project", null)
+                        .WithMany("PdfFiles")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Volo.Abp.Identity.IdentityRole", b =>
                 {
                     b.Navigation("Claims");
@@ -1325,6 +1361,11 @@ namespace Migrations
             modelBuilder.Entity("Volo.Docs.Documents.Document", b =>
                 {
                     b.Navigation("Contributors");
+                });
+
+            modelBuilder.Entity("Volo.Docs.Projects.Project", b =>
+                {
+                    b.Navigation("PdfFiles");
                 });
 #pragma warning restore 612, 618
         }

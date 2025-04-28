@@ -1,18 +1,17 @@
 using System.Collections.Generic;
 using iText.Html2pdf.Attach;
 using iText.Html2pdf.Attach.Impl;
-using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Navigation;
 using iText.StyledXmlParser.Node;
 
-namespace Volo.Docs.Documents.Pdf.IText;
+namespace Volo.Docs.Projects.Pdf.IText;
 
 public class HtmlIdTagWorkerFactory : DefaultTagWorkerFactory
 {
-    private readonly PdfDocument _pdfDocument;
+    private readonly iText.Kernel.Pdf.PdfDocument _pdfDocument;
     private readonly Dictionary<string, int> _pageDestinations = new();
 
-    public HtmlIdTagWorkerFactory(PdfDocument pdfDocument)
+    public HtmlIdTagWorkerFactory(iText.Kernel.Pdf.PdfDocument pdfDocument)
     {
         _pdfDocument = pdfDocument;
     }

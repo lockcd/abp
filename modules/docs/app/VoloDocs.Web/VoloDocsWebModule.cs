@@ -39,7 +39,7 @@ using Volo.Abp.Validation.Localization;
 using Volo.Docs.Documents.FullSearch.Elastic;
 using Volo.Abp.Caching.StackExchangeRedis;
 using Volo.Docs.Common.Documents;
-using Volo.Docs.Documents.Pdf;
+using Volo.Docs.Projects.Pdf;
 
 namespace VoloDocs.Web
 {
@@ -175,7 +175,7 @@ namespace VoloDocs.Web
                 options.GoogleSearchEngineId = "77c7266532da1427f";
             });
             
-            Configure<DocsDocumentPdfGeneratorOptions>(options =>
+            Configure<DocsProjectPdfGeneratorOptions>(options =>
             {
                 options.BaseUrl = configuration["App:selfUrl"];
                 options.IndexPagePath = "Index.md";

@@ -10,7 +10,7 @@ using Volo.Docs.Utils;
 
 namespace Volo.Docs.Markdown
 {
-    public class MarkdownDocumentToHtmlConverter : IDocumentToHtmlConverter, ITransientDependency
+    public class MarkdownDocumentToHtmlConverter : IDocumentToHtmlConverter<DocumentToHtmlConverterContext>, ITransientDependency
     {
         public const string Type = "md";
 
@@ -30,20 +30,19 @@ namespace Volo.Docs.Markdown
         private const string MarkdownLinkRegExp = @"\[(.*?)\]\(((.*?)(\?(.*?))*?)\)";
         private const string AnchorLinkRegExp = @"<a[^>]+href=\""(.*?)\""[^>]*>(.*)?</a>";
 
-        public virtual string Convert(ProjectDto project, DocumentWithDetailsDto document, string version,
-            string languageCode, string projectShortName = null)
+        public virtual string Convert(DocumentToHtmlConverterContext context)
         {
-            if (document.Content.IsNullOrEmpty())
+            if (context.Document.Content.IsNullOrEmpty())
             {
-                return document.Content;
+                return context.Document.Content;
             }
 
             var content = NormalizeLinks(
-                document.Content,
-                _uiOptions.SingleProjectMode.Enable ? projectShortName : projectShortName ?? project.ShortName,
-                version,
-                document.LocalDirectory,
-                !_uiOptions.MultiLanguageMode ? languageCode : languageCode ?? document.LanguageCode
+                context.Document.Content,
+                _uiOptions.SingleProjectMode.Enable ? context.ProjectShortName : context.ProjectShortName ?? context.Project.ShortName,
+                context.Version,
+                context.Document.LocalDirectory,
+                !_uiOptions.MultiLanguageMode ? context.LanguageCode : context.LanguageCode ?? context.Document.LanguageCode
             );
 
             var html = _markdownConverter.ConvertToHtml(content);

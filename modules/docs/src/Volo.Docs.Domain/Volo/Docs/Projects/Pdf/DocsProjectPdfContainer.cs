@@ -1,9 +1,9 @@
 using Volo.Abp.BlobStoring;
 
-namespace Volo.Docs.Documents.Pdf;
+namespace Volo.Docs.Projects.Pdf;
 
 [BlobContainerName("docs-document-pdf")]
-public class DocsDocumentPdfContainer
+public class DocsProjectPdfContainer
 {
     
 }

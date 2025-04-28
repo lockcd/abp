@@ -1,10 +1,9 @@
 using System.Threading.Tasks;
 using Volo.Abp.Content;
-using Volo.Docs.Projects;
 
-namespace Volo.Docs.Documents.Pdf;
+namespace Volo.Docs.Projects.Pdf;
 
-public interface IDocumentPdfGenerator
+public interface IProjectPdfGenerator
 {
     Task<IRemoteStreamContent> GenerateAsync(Project project, string version, string languageCode);
 }

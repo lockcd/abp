@@ -1,7 +1,8 @@
 var abp = abp || {};
 $(function () {
     abp.modals.projectGeneratePdf = function () {
-        
+
+        var l = abp.localization.getResource('Docs');
         var projectAppService = volo.docs.projects.docsProject;
         var pdfGeneratorAppService = volo.docs.documents.docsDocumentPdfGenerator;
         var projectAdminAppService = volo.docs.admin.projectsAdmin;
@@ -21,7 +22,7 @@ $(function () {
             });
         })
         
-        $("#GeneratePdfBtn").click(function () {
+        $("#GenerateBtn").click(function () {
             var $btn = $(this);
             $btn.buttonBusy(true);
             $("#GenerateAndDownloadPdfBtn").buttonBusy(true);
@@ -30,19 +31,28 @@ $(function () {
                 version: $("#Version").val(),
                 languageCode: $("#Language").val(),
             }
-            tryDeletePdfFile(input);
-            pdfGeneratorAppService.generatePdf(input, {
-                abpHandleError : false,
-                error: function (jqXHR) {
-                    if (jqXHR.status === 200) {
-                        abp.message.success("PDF generated successfully.");
-                        $btn.buttonBusy(false);
-                        $("#GenerateAndDownloadPdfBtn").buttonBusy(false);
-                    } else {
-                        abp.ajax.handleErrorStatusCode(jqXHR.status);
+            
+            function generatePdf(input) {
+                pdfGeneratorAppService.generatePdf(input, {
+                    abpHandleError : false,
+                    error: function (jqXHR) {
+                        if (jqXHR.status === 200) {
+                            abp.message.success(l('PdfFileDeletedSuccessfully'));
+                            $btn.buttonBusy(false);
+                            $("#GenerateAndDownloadPdfBtn").buttonBusy(false);
+                        } else {
+                            abp.ajax.handleErrorStatusCode(jqXHR.status);
+                        }
                     }
-                }
-            });
+                });
+            }
+            if(shouldForceToGenerate(input)){
+                projectAdminAppService.deletePdfFile(input).done(() =>{
+                    generatePdf(input);
+                });
+            }else{
+                generatePdf(input);
+            }
         })
         
         $("#GenerateAndDownloadPdfBtn").click(function () {
@@ -51,15 +61,17 @@ $(function () {
                 version: $("#Version").val(),
                 languageCode: $("#Language").val(),
             }
-            tryDeletePdfFile(input);
-            window.open(abp.appPath + 'api/docs/documents/pdf' + abp.utils.buildQueryString([{ name: 'projectId', value: input.projectId }, { name: 'version', value: input.version }, { name: 'languageCode', value: input.languageCode }]), '_blank');
+            if(shouldForceToGenerate(input)){
+                projectAdminAppService.deletePdfFile(input).done(() =>{
+                    window.open(abp.appPath + 'api/docs/documents/pdf' + abp.utils.buildQueryString([{ name: 'projectId', value: input.projectId }, { name: 'version', value: input.version }, { name: 'languageCode', value: input.languageCode }]), '_blank');
+                });
+            }else{
+                window.open(abp.appPath + 'api/docs/documents/pdf' + abp.utils.buildQueryString([{ name: 'projectId', value: input.projectId }, { name: 'version', value: input.version }, { name: 'languageCode', value: input.languageCode }]), '_blank');
+            }
         })
         
-        function tryDeletePdfFile(input) {
-            var forceToGenerate = $("#ForceToGenerate").is(":checked");
-            if(forceToGenerate) {
-                projectAdminAppService.deletePdfFile(input);
-            }
+        function shouldForceToGenerate(input) {
+            return $("#ForceToGenerate").is(":checked");
         }
         
         return {

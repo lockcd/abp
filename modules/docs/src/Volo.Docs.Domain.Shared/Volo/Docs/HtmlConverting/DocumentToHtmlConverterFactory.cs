@@ -19,7 +19,7 @@ namespace Volo.Docs.HtmlConverting
             Options = options.Value;
         }
 
-        public virtual IDocumentToHtmlConverter Create(string format)
+        public virtual IDocumentToHtmlConverter<TContext> Create<TContext>(string format)
         {
             var serviceType = Options.Converters.GetOrDefault(format);
             if (serviceType == null)
@@ -27,7 +27,7 @@ namespace Volo.Docs.HtmlConverting
                 throw new ApplicationException($"Unknown document format: {format}");
             }
 
-            return (IDocumentToHtmlConverter)ServiceProvider.GetRequiredService(serviceType);
+            return (IDocumentToHtmlConverter<TContext>)ServiceProvider.GetRequiredService(serviceType);
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Volo.Docs.Common
     {
         public const string GroupName = "Docs.Common";
 
-        public static class Documents
+        public static class Projects
         {
             public const string PdfGeneration = GroupName + ".PdfGeneration";
         }

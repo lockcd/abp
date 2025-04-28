@@ -5,7 +5,7 @@ namespace Volo.Docs.Documents;
 
 public class DocumentParams
 {
-    [JsonPropertyName("Parameters")]
+    [JsonPropertyName("parameters")]
     public List<DocumentParameter> Parameters { get; set; } = new();
     
     
@@ -18,6 +18,6 @@ public class DocumentParams
         public string DisplayName { get; set; }
     
         [JsonPropertyName("values")]
-        public List<Dictionary<string, string>> Values { get; set; } 
+        public Dictionary<string, string> Values { get; set; } 
     }
 }

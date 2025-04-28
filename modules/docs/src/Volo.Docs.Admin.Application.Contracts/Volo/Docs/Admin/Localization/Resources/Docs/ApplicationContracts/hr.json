@@ -63,6 +63,9 @@
         "Language": "Jezik",
         "ForceToGenerateNewPdf": "Prisili generiranje novog PDF-a",
         "PdfGeneratedSuccessfully": "PDF generiran uspješno",
-        "GenerateAndDownloadPdf": "Generiraj i preuzmi PDF"
+        "GenerateAndDownloadPdf": "Generiraj i preuzmi PDF",
+        "PdfFileDeletionWarningMessage": "Jeste li sigurni da želite izbrisati PDF datoteku \"{0}\"?",
+        "ManagePdfFiles": "Upravljanje PDF datotekama",
+        "Permission:ManagePdfFiles": "Upravljanje PDF datotekama"
     }
 }

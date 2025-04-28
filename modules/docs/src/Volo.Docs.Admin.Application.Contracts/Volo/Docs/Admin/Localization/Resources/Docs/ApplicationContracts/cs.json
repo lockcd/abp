@@ -63,6 +63,9 @@
     "Language": "Jazyk",
     "ForceToGenerateNewPdf": "Vynutit generování nového PDF",
     "PdfGeneratedSuccessfully": "PDF generován úspěšně",
-    "GenerateAndDownloadPdf": "Generovat a stáhnout PDF"
+    "GenerateAndDownloadPdf": "Generovat a stáhnout PDF",
+    "PdfFileDeletionWarningMessage": "Opravdu chcete odstranit soubor PDF \"{0}\"?",
+    "ManagePdfFiles": "Správa PDF souborů",
+    "Permission:ManagePdfFiles": "Správa PDF souborů"
   }
 }

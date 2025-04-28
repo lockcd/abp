@@ -63,6 +63,9 @@
     "Language": "اللغة",
     "ForceToGenerateNewPdf": "قوة لتوليد PDF جديد",
     "PdfGeneratedSuccessfully": "تم توليد PDF بنجاح",
-    "GenerateAndDownloadPdf": "توليد وتحميل PDF"
+    "GenerateAndDownloadPdf": "توليد وتحميل PDF",
+    "PdfFileDeletionWarningMessage": "هل أنت متأكد أنك تريد حذف ملف PDF \"{0}\"?",
+    "ManagePdfFiles": "إدارة ملفات PDF",
+    "Permission:ManagePdfFiles": "إدارة ملفات PDF"
   }
 }

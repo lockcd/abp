@@ -17,8 +17,11 @@ using Volo.Docs.Documents.FullSearch.Elastic;
 using Volo.Docs.FileSystem.Documents;
 using Volo.Docs.GitHub;
 using Volo.Docs.GitHub.Documents;
+using Volo.Docs.HtmlConverting;
 using Volo.Docs.Localization;
 using Volo.Docs.Projects;
+using Volo.Docs.Projects.Pdf.Markdig;
+using Volo.Docs.Projects.Pdf.Markdown;
 
 namespace Volo.Docs
 {
@@ -78,6 +81,11 @@ namespace Volo.Docs
             context.Services.AddHttpClient(GithubRepositoryManager.HttpClientName, client =>
             {
                 client.Timeout = TimeSpan.FromMilliseconds(15000);
+            });
+            
+            Configure<DocumentToHtmlConverterOptions>(options =>
+            {
+                options.Converters[DocsDomainConsts.PdfDocumentToHtmlConverterPrefix + MarkdigPdfDocumentToHtmlConverter.Type] = typeof(MarkdigPdfDocumentToHtmlConverter);
             });
         }
 

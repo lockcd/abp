@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
-using Volo.Abp.Caching;
 using Volo.Abp.Data;
 using Volo.Abp.Guids;
-using Volo.Docs.Common.Documents;
 using Volo.Docs.Documents;
 using Volo.Docs.Documents.FullSearch.Elastic;
-using Volo.Docs.Documents.Pdf;
 using Volo.Docs.Localization;
 using Volo.Docs.Projects;
+using Volo.Docs.Projects.Pdf;
 
 namespace Volo.Docs.Admin.Projects
 {
@@ -24,14 +23,14 @@ namespace Volo.Docs.Admin.Projects
         private readonly IDocumentRepository _documentRepository;
         private readonly IDocumentFullSearch _elasticSearchService;
         private readonly IGuidGenerator _guidGenerator;
-        private readonly IDistributedCache<DocsDocumentPdfCacheItem> _documentPdfCache;
+        private readonly IOptions<DocsProjectPdfGeneratorOptions> _pdfGeneratorOptions;
 
         public ProjectAdminAppService(
             IProjectRepository projectRepository,
             IDocumentRepository documentRepository,
             IDocumentFullSearch elasticSearchService,
-            IGuidGenerator guidGenerator, 
-            IDistributedCache<DocsDocumentPdfCacheItem> documentPdfCache)
+            IGuidGenerator guidGenerator,
+            IOptions<DocsProjectPdfGeneratorOptions> pdfGeneratorOptions)
         {
             ObjectMapperContext = typeof(DocsAdminApplicationModule);
             LocalizationResource = typeof(DocsResource);
@@ -40,7 +39,7 @@ namespace Volo.Docs.Admin.Projects
             _documentRepository = documentRepository;
             _elasticSearchService = elasticSearchService;
             _guidGenerator = guidGenerator;
-            _documentPdfCache = documentPdfCache;
+            _pdfGeneratorOptions = pdfGeneratorOptions;
         }
 
         public virtual async Task<PagedResultDto<ProjectDto>> GetListAsync(PagedAndSortedResultRequestDto input)
@@ -183,9 +182,26 @@ namespace Volo.Docs.Admin.Projects
             return ObjectMapper.Map<List<ProjectWithoutDetails>, List<ProjectWithoutDetailsDto>>(projects);
         }
 
+        [Authorize(DocsAdminPermissions.Projects.ManagePdfFiles)]
+        public virtual async Task<PagedResultDto<ProjectPdfFileDto>> GetPdfFilesAsync(GetPdfFilesInput input)
+        {
+            var project = await _projectRepository.GetAsync(input.ProjectId, includeDetails: true);
+
+            var pdfFiles = project.PdfFiles.Skip(input.SkipCount).Take(input.MaxResultCount).ToList();
+
+            return new PagedResultDto<ProjectPdfFileDto>(
+                project.PdfFiles.Count,
+                ObjectMapper.Map<List<ProjectPdfFile>, List<ProjectPdfFileDto>>(pdfFiles)
+            );
+        }
+
+        [Authorize(DocsAdminPermissions.Projects.ManagePdfFiles)]
         public virtual async Task DeletePdfFileAsync(DeletePdfFileInput input)
         {
-            await _documentPdfCache.RemoveAsync(DocsDocumentPdfCacheItem.CalculateCacheKey(input.ProjectId, input.Version, input.LanguageCode));
+            var project = await _projectRepository.GetAsync(input.ProjectId, includeDetails: true);
+            project.RemovePdfFile(_pdfGeneratorOptions.Value.CalculatePdfFileName(project, input.Version, input.LanguageCode));
+            
+            await _projectRepository.UpdateAsync(project);
         }
     }
 }

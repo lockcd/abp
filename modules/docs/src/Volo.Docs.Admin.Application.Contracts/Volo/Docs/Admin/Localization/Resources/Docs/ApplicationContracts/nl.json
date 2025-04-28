@@ -63,6 +63,9 @@
     "Language": "Taal",
     "ForceToGenerateNewPdf": "Forceer nieuwe PDF te genereren",
     "PdfGeneratedSuccessfully": "PDF succesvol gegenereerd",
-    "GenerateAndDownloadPdf": "PDF genereren en downloaden"
+    "GenerateAndDownloadPdf": "PDF genereren en downloaden",
+    "PdfFileDeletionWarningMessage": "Weet u zeker dat u het PDF-bestand \"{0}\" wilt verwijderen?",
+    "ManagePdfFiles": "PDF-bestanden beheren",
+    "Permission:ManagePdfFiles": "PDF-bestanden beheren"
   }
 }

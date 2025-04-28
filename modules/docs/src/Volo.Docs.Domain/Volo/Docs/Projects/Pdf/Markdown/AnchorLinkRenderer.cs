@@ -1,22 +1,19 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Markdig.Renderers;
 using Markdig.Renderers.Html.Inlines;
-using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using Volo.Docs.Utils;
 
-namespace Volo.Docs.Documents.Pdf.Markdig;
+namespace Volo.Docs.Projects.Pdf.Markdig;
 
 public class AnchorLinkRenderer : LinkInlineRenderer
 {
-    private readonly PdfDocumentNode _documentNode;
+    private readonly PdfDocument _document;
     
-    public AnchorLinkRenderer(PdfDocumentNode documentNode)
+    public AnchorLinkRenderer(PdfDocument document)
     {
-        _documentNode = documentNode;
+        _document = document;
     }
     
     protected override void Write(HtmlRenderer renderer, LinkInline link)
@@ -27,7 +24,7 @@ public class AnchorLinkRenderer : LinkInlineRenderer
             return;
         }
 
-        var anchor = ResolveRelativeMarkdownPath(_documentNode.Document.Name, link.Url)
+        var anchor = ResolveRelativeMarkdownPath(_document.Document.Name, link.Url)
             .Replace(".md",string.Empty).Replace("/","-").Replace(" ", "-").ToLower();
         
         renderer.Write("<a href=\"#").Write(anchor).Write("\">");

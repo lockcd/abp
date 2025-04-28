@@ -63,6 +63,9 @@
     "Language": "Язык",
     "ForceToGenerateNewPdf": "Принудительное создание нового PDF",
     "PdfGeneratedSuccessfully": "PDF успешно сгенерирован",
-    "GenerateAndDownloadPdf": "Сгенерировать и скачать PDF"
+    "GenerateAndDownloadPdf": "Сгенерировать и скачать PDF",
+    "PdfFileDeletionWarningMessage": "Вы уверены, что хотите удалить файл PDF \"{0}\"?",
+    "ManagePdfFiles": "Управление файлами PDF",
+    "Permission:ManagePdfFiles": "Управление файлами PDF"
   }
 }

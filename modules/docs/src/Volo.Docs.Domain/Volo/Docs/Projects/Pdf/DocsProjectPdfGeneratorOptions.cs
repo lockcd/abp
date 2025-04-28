@@ -1,9 +1,8 @@
 using System;
-using Volo.Docs.Projects;
 
-namespace Volo.Docs.Documents.Pdf;
+namespace Volo.Docs.Projects.Pdf;
 
-public class DocsDocumentPdfGeneratorOptions
+public class DocsProjectPdfGeneratorOptions
 {
     public const string StylePlaceholder = "{{style-placeholder}}";
     public const string ContentPlaceholder = "{{content-placeholder}}";
@@ -41,7 +40,7 @@ public class DocsDocumentPdfGeneratorOptions
     /// </summary>
     public Func<Project, string, string, string> CalculatePdfFileName { get; set; }
     
-    public DocsDocumentPdfGeneratorOptions()
+    public DocsProjectPdfGeneratorOptions()
     {
         HtmlLayout = $@"
         <!DOCTYPE html>

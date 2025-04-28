@@ -64,6 +64,9 @@
     "Language": "Nyelv",
     "ForceToGenerateNewPdf": "Új PDF generálása",
     "PdfGeneratedSuccessfully": "PDF generálás sikeres",
-    "GenerateAndDownloadPdf": "Generálás és letöltés PDF-ben"
+    "GenerateAndDownloadPdf": "Generálás és letöltés PDF-ben",
+    "PdfFileDeletionWarningMessage": "Biztosan törölni szeretné a \"{0}\" PDF fájlt?",
+    "ManagePdfFiles": "PDF fájlok kezelése",
+    "Permission:ManagePdfFiles": "PDF fájlok kezelése"
   }
 }

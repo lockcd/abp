@@ -62,6 +62,9 @@
     "Language": "Γλώσσα",
     "ForceToGenerateNewPdf": "Βάλτε το νέο PDF",
     "PdfGeneratedSuccessfully": "Το PDF αναπροσαρμοστεί εκ νέου",
-    "GenerateAndDownloadPdf": "Δημιουργία και λήψη PDF"
+    "GenerateAndDownloadPdf": "Δημιουργία και λήψη PDF",
+    "PdfFileDeletionWarningMessage": "Είστε βέβαιοι ότι θέλετε να διαγράψετε το PDF αρχείο \"{0}\";",
+    "ManagePdfFiles": "Διαχείρηση PDF αρχείων",
+    "Permission:ManagePdfFiles": "Διαχείρηση PDF αρχείων"
   }
 }

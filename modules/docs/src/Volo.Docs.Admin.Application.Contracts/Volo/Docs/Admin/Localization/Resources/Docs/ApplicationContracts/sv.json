@@ -63,6 +63,9 @@
     "Language": "Språk",
     "ForceToGenerateNewPdf": "Force to generate new PDF",
     "PdfGeneratedSuccessfully": "PDF generated successfully",
-    "GenerateAndDownloadPdf": "Generate and download PDF"
+    "GenerateAndDownloadPdf": "Generate and download PDF",
+    "PdfFileDeletionWarningMessage": "Are you sure you want to delete the PDF file \"{0}\"?",
+    "ManagePdfFiles": "Manage PDF files",
+    "Permission:ManagePdfFiles": "Manage PDF files"
   }
 }

@@ -2,15 +2,15 @@ using Markdig;
 using Markdig.Renderers;
 using Markdig.Renderers.Html.Inlines;
 
-namespace Volo.Docs.Documents.Pdf.Markdig;
+namespace Volo.Docs.Projects.Pdf.Markdig;
 
 public class AnchorLinkResolverExtension : IMarkdownExtension
 {
-    private readonly PdfDocumentNode _documentNode;
+    private readonly PdfDocument _document;
     
-    public AnchorLinkResolverExtension(PdfDocumentNode documentNode)
+    public AnchorLinkResolverExtension(PdfDocument document)
     {
-        _documentNode = documentNode;
+        _document = document;
     }
     
     public void Setup(MarkdownPipelineBuilder pipeline)
@@ -21,7 +21,7 @@ public class AnchorLinkResolverExtension : IMarkdownExtension
     {
         if (renderer is HtmlRenderer htmlRenderer)
         {
-            htmlRenderer.ObjectRenderers.Replace<LinkInlineRenderer>(new AnchorLinkRenderer(_documentNode));
+            htmlRenderer.ObjectRenderers.Replace<LinkInlineRenderer>(new AnchorLinkRenderer(_document));
         }
     }
 }

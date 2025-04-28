@@ -7,14 +7,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Volo.Abp.Application.Dtos;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.Data;
@@ -155,7 +152,7 @@ namespace Volo.Docs.Pages.Documents.Project
             ShowProjectsCombobox = _uiOptions.ShowProjectsCombobox && !_uiOptions.SingleProjectMode.Enable;
             ShowProjectsComboboxLabel = ShowProjectsCombobox && _uiOptions.ShowProjectsComboboxLabel;
             FullSearchEnabled = await _documentAppService.FullSearchEnabledAsync();
-            HasDownloadPdfPermission = await _permissionChecker.IsGrantedAsync(DocsCommonPermissions.Documents.PdfGeneration);
+            HasDownloadPdfPermission = await _permissionChecker.IsGrantedAsync(DocsCommonPermissions.Projects.PdfGeneration);
             try
             {
                 await SetProjectAsync();
@@ -586,8 +583,8 @@ namespace Volo.Docs.Pages.Documents.Project
                 DocumentNavigationsDto = new DocumentNavigationsDto();
             }
 
-            var converter = _documentToHtmlConverterFactory.Create(Document.Format ?? Project.Format);
-            var content = converter.Convert(Project, Document, GetSpecificVersionOrLatest(), LanguageCode, ProjectName);
+            var converter = _documentToHtmlConverterFactory.Create<DocumentToHtmlConverterContext>(Document.Format ?? Project.Format);
+            var content = converter.Convert(new DocumentToHtmlConverterContext(Project, Document, GetSpecificVersionOrLatest(), LanguageCode, ProjectName));
 
             content = HtmlNormalizer.ReplaceImageSources(
                 content,
@@ -782,8 +779,6 @@ namespace Volo.Docs.Pages.Documents.Project
             }
 
             var availableParameters = await _webDocumentSectionRenderer.GetAvailableParametersAsync(Document.Content);
-            var parameterCombinations = new List<Dictionary<string, string>>();
-            GenerateCombinations(0, availableParameters.Keys.ToList(),availableParameters,new Dictionary<string, string>(), parameterCombinations);
 
             DocumentPreferences = new DocumentParametersDto
             {
@@ -828,27 +823,6 @@ namespace Volo.Docs.Pages.Documents.Project
             }
 
             AlternativeOptionLinkQueries = CollectAlternativeOptionLinksRecursively();
-        }
-        
-        void GenerateCombinations(
-            int keyIndex, 
-            List<string> parameterKeys , 
-            Dictionary<string,List<string>> parameters,
-            Dictionary<string, string> currentCombination, 
-            List<Dictionary<string, string>> parameterCombinations )
-        {
-            if (keyIndex == parameterKeys.Count)
-            {
-                parameterCombinations.Add(new Dictionary<string, string>(currentCombination));
-                return;
-            }
-
-            var currentKey = parameterKeys[keyIndex];
-            foreach (var value in parameters[currentKey])
-            {
-                currentCombination[currentKey] = value;
-                GenerateCombinations(keyIndex + 1,parameterKeys, parameters, currentCombination,parameterCombinations);
-            }
         }
 
         private List<string> CollectAlternativeOptionLinksRecursively(int index = 0)

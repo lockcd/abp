@@ -63,6 +63,9 @@
     "Language": "भाषा",
     "ForceToGenerateNewPdf": "नया PDF उत्पन्न करें",
     "PdfGeneratedSuccessfully": "PDF सफलतापूर्वक उत्पन्न हो गया",
-    "GenerateAndDownloadPdf": "PDF उत्पन्न और डाउनलोड करें"
+    "GenerateAndDownloadPdf": "PDF उत्पन्न और डाउनलोड करें",
+    "PdfFileDeletionWarningMessage": "क्या आप वाकई \"{0}\" के PDF फ़ाइल को हटाना चाहते हैं?",
+    "ManagePdfFiles": "PDF फ़ाइलें प्रबंधित करें",
+    "Permission:ManagePdfFiles": "PDF फ़ाइलें प्रबंधित करें"
   }
 }

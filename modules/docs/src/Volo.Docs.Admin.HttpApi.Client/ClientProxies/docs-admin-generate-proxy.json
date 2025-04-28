@@ -723,6 +723,23 @@
                   }
                 },
                 {
+                  "name": "GetPdfFilesAsync",
+                  "parametersOnMethod": [
+                    {
+                      "name": "input",
+                      "typeAsString": "Volo.Docs.Admin.Projects.GetPdfFilesInput, Volo.Docs.Admin.Application.Contracts",
+                      "type": "Volo.Docs.Admin.Projects.GetPdfFilesInput",
+                      "typeSimple": "Volo.Docs.Admin.Projects.GetPdfFilesInput",
+                      "isOptional": false,
+                      "defaultValue": null
+                    }
+                  ],
+                  "returnValue": {
+                    "type": "Volo.Abp.Application.Dtos.PagedResultDto<Volo.Docs.Admin.Projects.ProjectPdfFileDto>",
+                    "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<Volo.Docs.Admin.Projects.ProjectPdfFileDto>"
+                  }
+                },
+                {
                   "name": "DeletePdfFileAsync",
                   "parametersOnMethod": [
                     {
@@ -998,6 +1015,79 @@
               "returnValue": {
                 "type": "System.Collections.Generic.List<Volo.Docs.Admin.Projects.ProjectWithoutDetailsDto>",
                 "typeSimple": "[Volo.Docs.Admin.Projects.ProjectWithoutDetailsDto]"
+              },
+              "allowAnonymous": null,
+              "implementFrom": "Volo.Docs.Admin.Projects.IProjectAdminAppService"
+            },
+            "GetPdfFilesAsyncByInput": {
+              "uniqueName": "GetPdfFilesAsyncByInput",
+              "name": "GetPdfFilesAsync",
+              "httpMethod": "GET",
+              "url": "api/docs/admin/projects/PdfFiles",
+              "supportedVersions": [],
+              "parametersOnMethod": [
+                {
+                  "name": "input",
+                  "typeAsString": "Volo.Docs.Admin.Projects.GetPdfFilesInput, Volo.Docs.Admin.Application.Contracts",
+                  "type": "Volo.Docs.Admin.Projects.GetPdfFilesInput",
+                  "typeSimple": "Volo.Docs.Admin.Projects.GetPdfFilesInput",
+                  "isOptional": false,
+                  "defaultValue": null
+                }
+              ],
+              "parameters": [
+                {
+                  "nameOnMethod": "input",
+                  "name": "ProjectId",
+                  "jsonName": null,
+                  "type": "System.Guid",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "Sorting",
+                  "jsonName": null,
+                  "type": "System.String",
+                  "typeSimple": "string",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "SkipCount",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                },
+                {
+                  "nameOnMethod": "input",
+                  "name": "MaxResultCount",
+                  "jsonName": null,
+                  "type": "System.Int32",
+                  "typeSimple": "number",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "constraintTypes": null,
+                  "bindingSourceId": "ModelBinding",
+                  "descriptorName": "input"
+                }
+              ],
+              "returnValue": {
+                "type": "Volo.Abp.Application.Dtos.PagedResultDto<Volo.Docs.Admin.Projects.ProjectPdfFileDto>",
+                "typeSimple": "Volo.Abp.Application.Dtos.PagedResultDto<Volo.Docs.Admin.Projects.ProjectPdfFileDto>"
               },
               "allowAnonymous": null,
               "implementFrom": "Volo.Docs.Admin.Projects.IProjectAdminAppService"
