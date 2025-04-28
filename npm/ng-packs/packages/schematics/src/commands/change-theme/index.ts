@@ -190,10 +190,8 @@ export function removeImportsFromStandaloneProviders(
         let modules: readonly ts.Expression[] = [];
 
         if (args.length === 1 && ts.isArrayLiteralExpression(args[0])) {
-          // importProvidersFrom([Module1, Module2]) tarzı
           modules = (args[0] as ts.ArrayLiteralExpression).elements;
         } else {
-          // importProvidersFrom(Module1, Module2) tarzı
           modules = args;
         }
 
@@ -219,7 +217,6 @@ export function removeImportsFromStandaloneProviders(
           }
         }
 
-        // Eğer tüm modüller silinirse, importProvidersFrom() fonksiyonunu da kaldır
         const remaining = modules.filter(el => !elementsToRemove.includes(el));
         if (remaining.length === 0) {
           const start = expr.getFullStart();
@@ -236,7 +233,6 @@ export function removeImportsFromStandaloneProviders(
           }
         }
       } else {
-        // Diğer bağımsız provider fonksiyonları için
         const match = impMap.find(({ importName, provider }) => {
           const moduleSymbol = importName?.split('.')[0];
           return (
@@ -306,11 +302,11 @@ export function removeProviderFromNgModuleMetadata(
         const prevChar = source.text.slice(start - 1, start);
 
         if (nextChar === ',') {
-          recorder.remove(start, end - start + 1); // sağ virgül ile
+          recorder.remove(start, end - start + 1);
         } else if (prevChar === ',') {
-          recorder.remove(start - 1, end - start + 1); // sol virgül ile
+          recorder.remove(start - 1, end - start + 1);
         } else {
-          recorder.remove(start, end - start); // direkt
+          recorder.remove(start, end - start);
         }
       }
     }

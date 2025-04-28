@@ -261,7 +261,7 @@ styleMap.set(ThemeOptionsEnum.LeptonXLite, [
     bundleName: 'bootstrap-icons',
   },
 ]);
-// the code written by Github co-pilot. thank go-pilot. You are the best sidekick.
+
 export const allStyles = Array.from(styleMap.values()).reduce((acc, val) => [...acc, ...val], []);
 
 export const importMap = new Map<ThemeOptionsEnum, ImportDefinition[]>();
