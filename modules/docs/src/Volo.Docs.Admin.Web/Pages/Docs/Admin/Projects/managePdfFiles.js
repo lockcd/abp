@@ -34,7 +34,7 @@ $(function () {
                                     {
                                         text: l('Delete'),
                                         confirmMessage: function (data) {
-                                            return l('PdfFileDeletionWarningMessage', { fileName: data.record.fileName });
+                                            return l('PdfFileDeletionWarningMessage', data.record.fileName);
                                         },
                                         action: function (data) {
                                             projectAdminAppService.deletePdfFile({
