@@ -293,7 +293,9 @@ export function removeProviderFromNgModuleMetadata(
       const elementText = element.getText();
 
       const match = impMap.find(({ provider }) => {
-        return provider && elementText.includes(provider);
+        if (!provider) return false;
+        const providerName = provider.replace(/\(\s*\)$/, '').trim();
+        return provider && elementText.includes(providerName);
       });
 
       if (match) {
