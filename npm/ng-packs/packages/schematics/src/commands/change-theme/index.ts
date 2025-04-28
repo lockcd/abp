@@ -185,36 +185,27 @@ export function removeImportsFromStandaloneProviders(
       const exprText = expr.getText();
 
       if (expr.expression.getText() === 'importProvidersFrom') {
-        const arrayArg = expr.arguments[0];
+        const args = expr.arguments;
 
-        if (ts.isArrayLiteralExpression(arrayArg)) {
-          const elements = arrayArg.elements;
+        let modules: readonly ts.Expression[] = [];
 
-          const elementsToRemove = elements.filter(el =>
-            impMap.some(({ importName }) => el.getText().includes(importName)),
-          );
+        if (args.length === 1 && ts.isArrayLiteralExpression(args[0])) {
+          // importProvidersFrom([Module1, Module2]) tarzı
+          modules = (args[0] as ts.ArrayLiteralExpression).elements;
+        } else {
+          // importProvidersFrom(Module1, Module2) tarzı
+          modules = args;
+        }
 
-          if (elementsToRemove.length) {
-            for (const removeEl of elementsToRemove) {
-              const start = removeEl.getFullStart();
-              const end = removeEl.getEnd();
+        const elementsToRemove = modules.filter(el =>
+          impMap.some(({ importName }) => el.getText().includes(importName)),
+        );
 
-              const nextChar = sourceText.slice(end, end + 1);
-              const prevChar = sourceText.slice(start - 1, start);
+        if (elementsToRemove.length) {
+          for (const removeEl of elementsToRemove) {
+            const start = removeEl.getFullStart();
+            const end = removeEl.getEnd();
 
-              if (nextChar === ',') {
-                recorder.remove(start, end - start + 1);
-              } else if (prevChar === ',') {
-                recorder.remove(start - 1, end - start + 1);
-              } else {
-                recorder.remove(start, end - start);
-              }
-            }
-          }
-          const remaining = arrayArg.elements.filter(el => !elementsToRemove.includes(el));
-          if (remaining.length === 0) {
-            const start = expr.getFullStart();
-            const end = expr.getEnd();
             const nextChar = sourceText.slice(end, end + 1);
             const prevChar = sourceText.slice(start - 1, start);
 
@@ -227,7 +218,25 @@ export function removeImportsFromStandaloneProviders(
             }
           }
         }
+
+        // Eğer tüm modüller silinirse, importProvidersFrom() fonksiyonunu da kaldır
+        const remaining = modules.filter(el => !elementsToRemove.includes(el));
+        if (remaining.length === 0) {
+          const start = expr.getFullStart();
+          const end = expr.getEnd();
+          const nextChar = sourceText.slice(end, end + 1);
+          const prevChar = sourceText.slice(start - 1, start);
+
+          if (nextChar === ',') {
+            recorder.remove(start, end - start + 1);
+          } else if (prevChar === ',') {
+            recorder.remove(start - 1, end - start + 1);
+          } else {
+            recorder.remove(start, end - start);
+          }
+        }
       } else {
+        // Diğer bağımsız provider fonksiyonları için
         const match = impMap.find(({ importName, provider }) => {
           const moduleSymbol = importName?.split('.')[0];
           return (
@@ -276,54 +285,30 @@ export function removeProviderFromNgModuleMetadata(
       node as ts.ObjectLiteralExpression,
       'providers',
     )[0] as ts.PropertyAssignment;
-    const providersArray = providersProperty.initializer as ts.ArrayLiteralExpression;
 
+    const providersArray = providersProperty.initializer as ts.ArrayLiteralExpression;
     if (!providersArray.elements.length) return host;
 
     for (const element of providersArray.elements) {
-      if (ts.isCallExpression(element) && element.expression.getText() === 'importProvidersFrom') {
-        const arrayArg = element.arguments[0];
+      const elementText = element.getText();
 
-        if (ts.isArrayLiteralExpression(arrayArg)) {
-          const elementsToRemove = arrayArg.elements.filter(el =>
-            impMap.some(s => el.getText().includes(s.importName)),
-          );
+      const match = impMap.find(({ provider }) => {
+        return provider && elementText.includes(provider);
+      });
 
-          if (elementsToRemove.length) {
-            for (const removeEl of elementsToRemove) {
-              const start = removeEl.getFullStart();
-              const end = removeEl.getEnd();
+      if (match) {
+        const start = element.getFullStart();
+        const end = element.getEnd();
 
-              const nextChar = source.text.slice(end, end + 1);
-              const prevChar = source.text.slice(start - 1, start);
+        const nextChar = source.text.slice(end, end + 1);
+        const prevChar = source.text.slice(start - 1, start);
 
-              if (nextChar === ',') {
-                recorder.remove(start, end - start + 1); // sağındaki virgülle birlikte sil
-              } else if (prevChar === ',') {
-                recorder.remove(start - 1, end - start + 1); // solundaki virgülle birlikte sil
-              } else {
-                recorder.remove(start, end - start); // virgül yoksa sadece kendisini sil
-              }
-            }
-          }
-
-          // Eğer array boşaldıysa, importProvidersFrom çağrısını da kaldır
-          const remainingElements = arrayArg.elements.filter(el => !elementsToRemove.includes(el));
-
-          if (remainingElements.length === 0) {
-            const callStart = element.getFullStart();
-            const callEnd = element.getEnd();
-            const callNextChar = source.text.slice(callEnd, callEnd + 1);
-            const callPrevChar = source.text.slice(callStart - 1, callStart);
-
-            if (callNextChar === ',') {
-              recorder.remove(callStart, callEnd - callStart + 1);
-            } else if (callPrevChar === ',') {
-              recorder.remove(callStart - 1, callEnd - callStart + 1);
-            } else {
-              recorder.remove(callStart, callEnd - callStart);
-            }
-          }
+        if (nextChar === ',') {
+          recorder.remove(start, end - start + 1); // sağ virgül ile
+        } else if (prevChar === ',') {
+          recorder.remove(start - 1, end - start + 1); // sol virgül ile
+        } else {
+          recorder.remove(start, end - start); // direkt
         }
       }
     }
@@ -348,7 +333,7 @@ export function insertImports(projectName: string, selectedTheme: ThemeOptionsEn
         expressions.push(expression.trim());
       }
     }
-    return code.code`${expressions.join(',\n')}`;
+    return code.code`${expressions}`;
   });
 }
 export function insertProviders(projectName: string, selectedTheme: ThemeOptionsEnum): Rule {
@@ -358,9 +343,9 @@ export function insertProviders(projectName: string, selectedTheme: ThemeOptions
 
     const providers = selected
       .filter(s => !!s.provider)
-      .map(({ provider, path }) => {
-        const symbol = code.external(provider!, path);
-        return `${symbol}()`;
+      .map(({ provider, path, importName }) => {
+        code.external(importName, path);
+        return `${provider}`;
       });
 
     return code.code`${providers}`;

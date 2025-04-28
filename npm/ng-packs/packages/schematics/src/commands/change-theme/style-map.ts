@@ -271,7 +271,11 @@ importMap.set(ThemeOptionsEnum.Basic, [
     path: '@abp/ng.theme.basic',
     importName: 'ThemeBasicModule',
     expression: 'ThemeBasicModule',
-    provider: 'provideThemeBasicConfig',
+  },
+  {
+    path: '@abp/ng.theme.basic',
+    importName: 'provideThemeBasicConfig',
+    provider: 'provideThemeBasicConfig()',
   },
   {
     path: '@abp/ng.theme.shared',
@@ -285,7 +289,7 @@ importMap.set(ThemeOptionsEnum.Basic, [
   {
     path: '@abp/ng.theme.shared',
     importName: 'provideAbpThemeShared',
-    provider: 'provideAbpThemeShared',
+    provider: 'provideAbpThemeShared()',
   },
 ]);
 
@@ -293,7 +297,7 @@ importMap.set(ThemeOptionsEnum.Lepton, [
   {
     path: '@volo/abp.ng.theme.lepton',
     importName: 'provideThemeLepton',
-    provider: 'provideThemeLepton',
+    provider: 'provideThemeLepton()',
   },
   {
     path: '@abp/ng.theme.shared',
@@ -311,7 +315,7 @@ importMap.set(ThemeOptionsEnum.Lepton, [
   {
     path: '@abp/ng.theme.shared',
     importName: 'provideAbpThemeShared',
-    provider: 'provideAbpThemeShared',
+    provider: 'provideAbpThemeShared()',
   },
 ]);
 
@@ -347,7 +351,7 @@ importMap.set(ThemeOptionsEnum.LeptonXLite, [
   {
     path: '@abp/ng.theme.shared',
     importName: 'provideAbpThemeShared',
-    provider: 'provideAbpThemeShared',
+    provider: 'provideAbpThemeShared()',
   },
 ]);
 
@@ -382,6 +386,6 @@ importMap.set(ThemeOptionsEnum.LeptonX, [
   {
     path: '@abp/ng.theme.shared',
     importName: 'provideAbpThemeShared',
-    provider: 'provideAbpThemeShared',
+    provider: 'provideAbpThemeShared()',
   },
 ]);
