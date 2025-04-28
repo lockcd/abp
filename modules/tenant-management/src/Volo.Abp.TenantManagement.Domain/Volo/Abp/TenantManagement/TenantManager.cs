@@ -9,16 +9,16 @@ namespace Volo.Abp.TenantManagement;
 
 public class TenantManager : DomainService, ITenantManager
 {
-    protected ITenantRepository TenantRepository { get; }
+    public ITenantNameValidator TenantNameValidator { get; }
     protected ITenantNormalizer TenantNormalizer { get; }
     protected ILocalEventBus LocalEventBus { get; }
 
     public TenantManager(
-        ITenantRepository tenantRepository,
+        ITenantNameValidator tenantNameValidator,
         ITenantNormalizer tenantNormalizer,
         ILocalEventBus localEventBus)
     {
-        TenantRepository = tenantRepository;
+        TenantNameValidator = tenantNameValidator;
         TenantNormalizer = tenantNormalizer;
         LocalEventBus = localEventBus;
     }
@@ -28,7 +28,7 @@ public class TenantManager : DomainService, ITenantManager
         Check.NotNull(name, nameof(name));
 
         var normalizedName = TenantNormalizer.NormalizeName(name);
-        await ValidateNameAsync(normalizedName);
+        await TenantNameValidator.ValidateAsync(normalizedName);
         return new Tenant(GuidGenerator.Create(), name, normalizedName);
     }
 
@@ -39,18 +39,9 @@ public class TenantManager : DomainService, ITenantManager
 
         var normalizedName = TenantNormalizer.NormalizeName(name);
 
-        await ValidateNameAsync(normalizedName, tenant.Id);
+        await TenantNameValidator.ValidateAsync(normalizedName, tenant.Id);
         await LocalEventBus.PublishAsync(new TenantChangedEvent(tenant.Id, tenant.NormalizedName));
         tenant.SetName(name);
         tenant.SetNormalizedName(normalizedName);
-    }
-
-    protected virtual async Task ValidateNameAsync(string normalizeName, Guid? expectedId = null)
-    {
-        var tenant = await TenantRepository.FindByNameAsync(normalizeName);
-        if (tenant != null && tenant.Id != expectedId)
-        {
-            throw new BusinessException("Volo.Abp.TenantManagement:DuplicateTenantName").WithData("Name", normalizeName);
-        }
     }
 }
