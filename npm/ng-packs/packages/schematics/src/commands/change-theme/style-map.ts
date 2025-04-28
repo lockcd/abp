@@ -270,8 +270,21 @@ importMap.set(ThemeOptionsEnum.Basic, [
   {
     path: '@abp/ng.theme.basic',
     importName: 'ThemeBasicModule',
-    expression: 'ThemeBasicModule.forRoot()',
+    expression: 'ThemeBasicModule',
     provider: 'provideThemeBasicConfig',
+  },
+  {
+    path: '@abp/ng.theme.shared',
+    importName: 'ThemeSharedModule',
+    expression: 'ThemeSharedModule',
+  },
+  {
+    path: '@abp/ng.theme.shared',
+    importName: 'withValidationBluePrint',
+  },
+  {
+    path: '@abp/ng.theme.shared',
+    importName: 'provideAbpThemeShared',
   },
 ]);
 
@@ -280,6 +293,23 @@ importMap.set(ThemeOptionsEnum.Lepton, [
     path: '@volo/abp.ng.theme.lepton',
     importName: 'ThemeLeptonModule',
     provider: 'provideThemeLepton',
+  },
+  {
+    path: '@abp/ng.theme.shared',
+    importName: 'ThemeSharedModule',
+    expression: 'ThemeSharedModule',
+  },
+  {
+    path: '@abp/ng.theme.shared',
+    importName: 'withHttpErrorConfig',
+  },
+  {
+    path: '@abp/ng.theme.shared',
+    importName: 'withValidationBluePrint',
+  },
+  {
+    path: '@abp/ng.theme.shared',
+    importName: 'provideAbpThemeShared',
   },
 ]);
 
@@ -299,6 +329,23 @@ importMap.set(ThemeOptionsEnum.LeptonXLite, [
     importName: 'AccountLayoutModule',
     expression: 'AccountLayoutModule.forRoot()',
   },
+  {
+    path: '@abp/ng.theme.shared',
+    importName: 'ThemeSharedModule',
+    expression: 'ThemeSharedModule',
+  },
+  {
+    path: '@abp/ng.theme.shared',
+    importName: 'withHttpErrorConfig',
+  },
+  {
+    path: '@abp/ng.theme.shared',
+    importName: 'withValidationBluePrint',
+  },
+  {
+    path: '@abp/ng.theme.shared',
+    importName: 'provideAbpThemeShared',
+  },
 ]);
 
 importMap.set(ThemeOptionsEnum.LeptonX, [
@@ -313,7 +360,24 @@ importMap.set(ThemeOptionsEnum.LeptonX, [
     expression: 'SideMenuLayoutModule.forRoot()',
   },
   {
+    path: '@abp/ng.theme.shared',
+    importName: 'ThemeSharedModule',
+    expression: 'ThemeSharedModule',
+  },
+  {
     path: '@volosoft/abp.ng.theme.lepton-x',
     importName: 'HttpErrorComponent',
+  },
+  {
+    path: '@abp/ng.theme.shared',
+    importName: 'withHttpErrorConfig',
+  },
+  {
+    path: '@abp/ng.theme.shared',
+    importName: 'withValidationBluePrint',
+  },
+  {
+    path: '@abp/ng.theme.shared',
+    importName: 'provideAbpThemeShared',
   },
 ]);
