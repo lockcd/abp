@@ -32,7 +32,6 @@ import { ShortDatePipe } from './pipes/short-date.pipe';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { provideAbpCoreChild, provideAbpCore, withOptions } from './providers';
 import { UtcToLocalPipe } from './pipes';
-import { TimezoneInterceptor } from './interceptors';
 
 const standaloneDirectives = [
   AutofocusDirective,
