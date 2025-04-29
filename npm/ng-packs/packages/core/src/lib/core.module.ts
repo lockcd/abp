@@ -90,15 +90,7 @@ const standaloneDirectives = [
     ShortTimePipe,
     ShortDatePipe,
   ],
-  providers: [
-    LocalizationPipe,
-    provideHttpClient(withInterceptorsFromDi()),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: TimezoneInterceptor,
-      multi: true,
-    },
-  ],
+  providers: [LocalizationPipe, provideHttpClient(withInterceptorsFromDi())],
 })
 export class BaseCoreModule {}
 
