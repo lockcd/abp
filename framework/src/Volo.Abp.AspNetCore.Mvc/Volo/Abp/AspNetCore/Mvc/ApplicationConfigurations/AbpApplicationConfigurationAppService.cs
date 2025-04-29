@@ -332,6 +332,8 @@ public class AbpApplicationConfigurationAppService : ApplicationService, IAbpApp
             }
             catch (Exception ex)
             {
+                timeZoneId = null;
+                timeZoneName = null;
                 Logger.LogWarning(ex, $"Exception occurred while getting timezone({timeZone}) information");
             }
         }
