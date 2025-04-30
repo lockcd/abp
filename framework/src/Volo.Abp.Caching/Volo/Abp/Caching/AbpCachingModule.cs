@@ -28,7 +28,9 @@ public class AbpCachingModule : AbpModule
         context.Services.AddSingleton(typeof(IDistributedCache<>), typeof(DistributedCache<>));
         context.Services.AddSingleton(typeof(IDistributedCache<,>), typeof(DistributedCache<,>));
 
+#pragma warning disable EXTEXP0018
         context.Services.AddHybridCache().AddSerializerFactory<AbpHybridCacheJsonSerializerFactory>();
+#pragma warning restore EXTEXP0018
         context.Services.AddSingleton(typeof(IHybridCache<>), typeof(AbpHybridCache<>));
         context.Services.AddSingleton(typeof(IHybridCache<,>), typeof(AbpHybridCache<,>));
 
