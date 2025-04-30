@@ -11,9 +11,9 @@ import { getRedirectUrl } from '../../utils/auth-utils';
 const { maxLength, required, email } = Validators;
 
 @Component({
-  standalone: false,
   selector: 'abp-register',
   templateUrl: './register.component.html',
+  imports: [CoreModule, ThemeSharedModule, CommonModule, ReactiveFormsModule],
 })
 export class RegisterComponent implements OnInit {
   form!: UntypedFormGroup;

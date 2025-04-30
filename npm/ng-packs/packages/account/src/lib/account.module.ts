@@ -7,7 +7,6 @@ import { AccountRoutingModule } from './account-routing.module';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
 import { ManageProfileComponent } from './components/manage-profile/manage-profile.component';
 import { PersonalSettingsComponent } from './components/personal-settings/personal-settings.component';
-import { RegisterComponent } from './components/register/register.component';
 import { AccountConfigOptions } from './models/config-options';
 import { ACCOUNT_CONFIG_OPTIONS } from './tokens/config-options.token';
 import { accountConfigOptionsFactory } from './utils/factory-utils';
@@ -22,7 +21,6 @@ import { PersonalSettingsHalfRowComponent } from './components/personal-settings
 import { ExtensibleModule } from '@abp/ng.components/extensible';
 
 const declarations = [
-  RegisterComponent,
   ChangePasswordComponent,
   ManageProfileComponent,
   PersonalSettingsComponent,
