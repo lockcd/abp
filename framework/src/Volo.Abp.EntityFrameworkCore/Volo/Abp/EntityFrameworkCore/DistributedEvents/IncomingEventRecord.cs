@@ -8,6 +8,7 @@ namespace Volo.Abp.EntityFrameworkCore.DistributedEvents;
 
 public class IncomingEventRecord :
     BasicAggregateRoot<Guid>,
+    IIncomingEventInfo,
     IHasExtraProperties,
     IHasCreationTime
 {
@@ -44,6 +45,10 @@ public class IncomingEventRecord :
 
         ExtraProperties = new ExtraPropertyDictionary();
         this.SetDefaultsForExtraProperties();
+        foreach (var property in eventInfo.ExtraProperties)
+        {
+            this.SetProperty(property.Key, property.Value);
+        }
     }
 
     public IncomingEventInfo ToIncomingEventInfo()

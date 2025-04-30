@@ -9,7 +9,6 @@ using Volo.Abp;
 using Volo.Abp.Autofac;
 using Volo.Abp.Castle.DynamicProxy;
 using Volo.Abp.DependencyInjection;
-using Volo.Abp.DynamicProxy;
 using Volo.Abp.Modularity;
 
 namespace Autofac.Builder;
@@ -39,7 +38,7 @@ public static class AbpRegistrationBuilderExtensions
         }
 
         registrationBuilder = registrationBuilder.EnablePropertyInjection(moduleContainer, implementationType);
-        registrationBuilder = registrationBuilder.InvokeRegistrationActions(registrationActionList, serviceType, implementationType);
+        registrationBuilder = registrationBuilder.InvokeRegistrationActions(registrationActionList, serviceType, implementationType, serviceDescriptor.ServiceKey);
 
         return registrationBuilder;
     }
@@ -50,14 +49,18 @@ public static class AbpRegistrationBuilderExtensions
         ServiceDescriptor serviceDescriptor)
         where TActivatorData : ReflectionActivatorData
     {
-        registrationBuilder.OnActivated(context =>
+        var actions = activatedActionList.GetActions(serviceDescriptor);
+        if (actions.Any())
         {
-            var serviceActivatedContext = new OnServiceActivatedContext(context.Instance!);
-            foreach (var action in activatedActionList.GetActions(serviceDescriptor))
+            registrationBuilder.OnActivated(context =>
             {
-                action.Invoke(serviceActivatedContext);
-            }
-        });
+                var serviceActivatedContext = new OnServiceActivatedContext(context.Instance!);
+                foreach (var action in actions)
+                {
+                    action.Invoke(serviceActivatedContext);
+                }
+            });
+        }
 
         return registrationBuilder;
     }
@@ -66,10 +69,11 @@ public static class AbpRegistrationBuilderExtensions
         this IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> registrationBuilder,
         ServiceRegistrationActionList registrationActionList,
         Type serviceType,
-        Type implementationType)
+        Type implementationType,
+        object? serviceKey = null)
         where TActivatorData : ReflectionActivatorData
     {
-        var serviceRegistredArgs = new OnServiceRegistredContext(serviceType, implementationType);
+        var serviceRegistredArgs = new OnServiceRegistredContext(serviceType, implementationType, serviceKey);
 
         foreach (var registrationAction in registrationActionList)
         {

@@ -67,6 +67,9 @@
     "EntityHistory": "Historia jednostki",
     "DaysAgoTitle": "{0} {1}.",
     "DaysAgoWithUserTitle": "{0} {1} autorstwa {2}.",
+    "MinutesAgo": "{0} minut temu",
+    "HoursAgo": "{0} godzin temu",
+    "DaysAgo": "{0} dni temu",
     "Created": "Utworzony",
     "Updated": "Zaktualizowano",
     "Deleted": "Usunięto",
@@ -78,6 +81,7 @@
     "EndDate": "Data końcowa",
     "Feature:AuditLoggingGroup": "Rejestrowanie audytu",
     "Feature:AuditLoggingEnable": "Włączono stronę rejestrowania audytu",
-    "Feature:AuditLoggingEnableDescription": "Włącz stronę rejestrowania audytu w aplikacji."
+    "Feature:AuditLoggingEnableDescription": "Włącz stronę rejestrowania audytu w aplikacji.",
+    "TenantId": "Identyfikator najemcy"
   }
 }

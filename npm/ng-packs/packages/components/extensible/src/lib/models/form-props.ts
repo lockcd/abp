@@ -2,7 +2,6 @@ import { ABP } from '@abp/ng.core';
 import { Injector, Type } from '@angular/core';
 import { AsyncValidatorFn, ValidatorFn } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { O } from 'ts-toolbelt';
 import {
   Prop,
   PropCallback,
@@ -15,6 +14,7 @@ import {
   Props,
   PropsFactory,
 } from './props';
+import { FilteredWithOptions, PartialWithOptions } from '../utils/model.utils';
 
 export class FormPropList<R = any> extends PropList<R, FormProp<R>> {}
 
@@ -121,15 +121,17 @@ export class FormProp<R = any> extends Prop<R> {
 export class FormPropData<R = any> extends PropData<R> {
   getInjected: PropData<R>['getInjected'];
 
-  constructor(injector: Injector, public readonly record: R) {
+  constructor(
+    injector: Injector,
+    public readonly record: R,
+  ) {
     super();
 
     this.getInjected = injector.get.bind(injector);
   }
 }
 
-export type FormPropOptions<R = any> = O.Optional<
-  O.Writable<FormProp<R>>,
+type OptionalKeys =
   | 'permission'
   | 'visible'
   | 'displayName'
@@ -144,8 +146,9 @@ export type FormPropOptions<R = any> = O.Optional<
   | 'id'
   | 'displayTextResolver'
   | 'formText'
-  | 'tooltip'
->;
+  | 'tooltip';
+export type FormPropOptions<R = any> = PartialWithOptions<FormProp<R>, OptionalKeys> &
+  FilteredWithOptions<FormProp<R>, OptionalKeys>;
 
 export type CreateFormPropDefaults<R = any> = Record<string, FormProp<R>[]>;
 export type CreateFormPropContributorCallback<R = any> = PropContributorCallback<FormPropList<R>>;

@@ -3,12 +3,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NuGet.Versioning;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Cli.Args;
 using Volo.Abp.Cli.Commands;
@@ -16,7 +14,6 @@ using Volo.Abp.Cli.Memory;
 using Volo.Abp.Cli.Version;
 using Volo.Abp.Cli.Utils;
 using Volo.Abp.DependencyInjection;
-using Volo.Abp.IO;
 
 namespace Volo.Abp.Cli;
 
@@ -83,6 +80,7 @@ public class CliService : ITransientDependency
         catch (CliUsageException usageException)
         {
             Logger.LogWarning(usageException.Message);
+            Environment.ExitCode = 1;
         }
         catch (Exception ex)
         {

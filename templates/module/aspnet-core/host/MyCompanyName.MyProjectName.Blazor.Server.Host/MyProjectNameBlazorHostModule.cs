@@ -19,7 +19,7 @@ using OpenIddict.Validation.AspNetCore;
 using Volo.Abp;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Web;
-using Volo.Abp.AspNetCore.Components.Server;
+using Volo.Abp.AspNetCore.Components.Web;
 using Volo.Abp.AspNetCore.Components.Server.BasicTheme;
 using Volo.Abp.AspNetCore.Components.Server.BasicTheme.Bundling;
 using Volo.Abp.AspNetCore.Components.Web.Theming.Routing;
@@ -134,6 +134,11 @@ public class MyProjectNameBlazorHostModule : AbpModule
             options.UseSqlServer();
         });
 
+        Configure<AbpMultiTenancyOptions>(options =>
+        {
+            options.IsEnabled = MultiTenancyConsts.IsEnabled;
+        });
+
         Configure<AbpBundlingOptions>(options =>
         {
                 // MVC UI
@@ -152,7 +157,7 @@ public class MyProjectNameBlazorHostModule : AbpModule
                 {
                     bundle.AddFiles("/blazor-global-styles.css");
                         //You can remove the following line if you don't use Blazor CSS isolation for components
-                        bundle.AddFiles("/MyCompanyName.MyProjectName.Blazor.Server.Host.styles.css");
+                        bundle.AddFiles(new BundleFile("/MyCompanyName.MyProjectName.Blazor.Server.Host.styles.css", true));
                 }
             );
         });
@@ -249,7 +254,7 @@ public class MyProjectNameBlazorHostModule : AbpModule
 
         app.UseHttpsRedirection();
         app.UseCorrelationId();
-        app.UseStaticFiles();
+        app.MapAbpStaticAssets();
         app.UseRouting();
         app.UseAuthentication();
         app.UseAbpOpenIddictValidation();

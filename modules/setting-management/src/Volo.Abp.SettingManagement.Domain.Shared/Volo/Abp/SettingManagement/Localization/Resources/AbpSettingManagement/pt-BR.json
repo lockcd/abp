@@ -14,12 +14,14 @@
     "Body": "Corpo",
     "TestEmailSubject": "E-mail teste {0}",
     "TestEmailBody": "Corpo de e-mail de teste aqui",
-    "SuccessfullySent": "Enviado com sucesso",
+    "SentSuccessfully": "Enviado com sucesso",
+    "MailSendingFailed": "Falha no envio de e-mail, verifique sua configuração de e-mail e tente novamente.",
     "Send": "Enviar",
     "Menu:Emailing": "Enviando por e-mail",
     "Menu:TimeZone": "Fuso Horário",
     "DisplayName:Timezone": "Fuso horário",
-    "TimezoneHelpText": "Essa configuração é usada para todo o aplicativo ou com base em locatário.",
+    "TimezoneHelpText": "Essa configuração é usada para todo o aplicativo ou com base em locatário. O fuso horário padrão tentará usar o fuso horário do navegador ou do servidor.",
+    "DefaultTimeZone": "Fuso horário padrão",
     "SmtpHost": "Hospedeiro",
     "SmtpPort": "Porta",
     "SmtpUserName": "Nome do usuário",
@@ -33,6 +35,7 @@
     "Feature:SettingManagementEnable": "Habilitar gerenciamento de configuração",
     "Feature:SettingManagementEnableDescription": "Habilite o sistema de gerenciamento de configuração no aplicativo.",
     "Feature:AllowChangingEmailSettings": "Permitir alterar as configurações de e-mail.",
-    "Feature:AllowChangingEmailSettingsDescription": "Permitir alterar as configurações de e-mail."
+    "Feature:AllowChangingEmailSettingsDescription": "Permitir alterar as configurações de e-mail.",
+    "SmtpPasswordPlaceholder": "Digite um valor para atualizar a senha"
   }
 }

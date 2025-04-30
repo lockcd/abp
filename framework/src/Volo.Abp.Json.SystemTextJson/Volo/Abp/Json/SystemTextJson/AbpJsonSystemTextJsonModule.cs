@@ -29,12 +29,13 @@ public class AbpJsonSystemTextJsonModule : AbpModule
 
                 options.JsonSerializerOptions.TypeInfoResolver = new AbpDefaultJsonTypeInfoResolver(rootServiceProvider
                     .GetRequiredService<IOptions<AbpSystemTextJsonSerializerModifiersOptions>>());
-            });
 
-        context.Services.AddOptions<AbpSystemTextJsonSerializerModifiersOptions>()
-            .Configure<IServiceProvider>((options, rootServiceProvider) =>
-            {
-                options.Modifiers.Add(new AbpDateTimeConverterModifier().CreateModifyAction(rootServiceProvider));
+                var dateTimeConverter = rootServiceProvider.GetRequiredService<AbpDateTimeConverter>().SkipDateTimeNormalization();
+                var nullableDateTimeConverter = rootServiceProvider.GetRequiredService<AbpNullableDateTimeConverter>().SkipDateTimeNormalization();
+
+                options.JsonSerializerOptions.TypeInfoResolver.As<AbpDefaultJsonTypeInfoResolver>().Modifiers.Add(
+                    new AbpDateTimeConverterModifier(dateTimeConverter, nullableDateTimeConverter)
+                        .CreateModifyAction());
             });
     }
 }

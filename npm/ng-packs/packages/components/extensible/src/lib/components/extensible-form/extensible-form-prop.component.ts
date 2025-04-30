@@ -15,10 +15,11 @@ import {
   inject,
   Injector,
   Input,
-  OnChanges, Optional,
+  OnChanges,
+  Optional,
   SimpleChanges,
   SkipSelf,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
 import {
   ControlContainer,
@@ -46,16 +47,16 @@ import { eExtensibleComponents } from '../../enums/components';
 import { ExtensibleDateTimePickerComponent } from '../date-time-picker/extensible-date-time-picker.component';
 import { NgxValidateCoreModule } from '@ngx-validate/core';
 import { ExtensibleFormPropService } from '../../services/extensible-form-prop.service';
-import { CreateInjectorPipe } from '../../pipes/create-injector.pipe';
 import { CommonModule } from '@angular/common';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
+import { ExtensibleFormMultiselectComponent } from '../multi-select/extensible-form-multiselect.component';
 
 @Component({
   selector: 'abp-extensible-form-prop',
   templateUrl: './extensible-form-prop.component.html',
-  standalone: true,
   imports: [
     ExtensibleDateTimePickerComponent,
+    ExtensibleFormMultiselectComponent,
     NgbDatepickerModule,
     NgbTimepickerModule,
     ReactiveFormsModule,
@@ -63,7 +64,6 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
     NgxValidateCoreModule,
     NgbTooltip,
     NgbTypeaheadModule,
-    CreateInjectorPipe,
     ShowPasswordDirective,
     PermissionDirective,
     LocalizationModule,
@@ -124,10 +124,10 @@ export class ExtensibleFormPropComponent implements OnChanges, AfterViewInit {
   search = (text$: Observable<string>) =>
     text$
       ? text$.pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        switchMap(text => this.prop?.options?.(this.data, text) || of([])),
-      )
+          debounceTime(300),
+          distinctUntilChanged(),
+          switchMap(text => this.prop?.options?.(this.data, text) || of([])),
+        )
       : of([]);
 
   typeaheadFormatter = (option: ABP.Option<any>) => option.key;

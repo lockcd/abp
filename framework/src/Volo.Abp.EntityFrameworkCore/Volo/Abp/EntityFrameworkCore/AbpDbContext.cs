@@ -11,11 +11,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
 using Volo.Abp.Auditing;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
@@ -24,6 +25,7 @@ using Volo.Abp.Domain.Entities.Events;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.EntityFrameworkCore.ChangeTrackers;
 using Volo.Abp.EntityFrameworkCore.EntityHistory;
+using Volo.Abp.EntityFrameworkCore.GlobalFilters;
 using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.EntityFrameworkCore.ValueConverters;
 using Volo.Abp.EventBus.Distributed;
@@ -34,10 +36,11 @@ using Volo.Abp.ObjectExtending;
 using Volo.Abp.Reflection;
 using Volo.Abp.Timing;
 using Volo.Abp.Uow;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Volo.Abp.EntityFrameworkCore;
 
-public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext, ITransientDependency
+public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext, IAbpEfCoreDbFunctionContext, ITransientDependency
     where TDbContext : DbContext
 {
     public IAbpLazyServiceProvider LazyServiceProvider { get; set; } = default!;
@@ -78,6 +81,8 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
 
     public IOptions<AbpDbContextOptions> Options => LazyServiceProvider.LazyGetRequiredService<IOptions<AbpDbContextOptions>>();
 
+    public IOptions<AbpEfCoreGlobalFilterOptions> GlobalFilterOptions => LazyServiceProvider.LazyGetRequiredService<IOptions<AbpEfCoreGlobalFilterOptions>>();
+
     private static readonly MethodInfo ConfigureBasePropertiesMethodInfo
         = typeof(AbpDbContext<TDbContext>)
             .GetMethod(
@@ -99,9 +104,18 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
                 BindingFlags.Instance | BindingFlags.NonPublic
             )!;
 
+    protected readonly DbContextOptions DbContextOptions;
+
     protected AbpDbContext(DbContextOptions<TDbContext> options)
         : base(options)
     {
+        DbContextOptions = options;
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.ConfigureWarnings(c => c.Ignore(RelationalEventId.PendingModelChangesWarning));
+        base.OnConfiguring(optionsBuilder);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -188,24 +202,11 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
         }
     }
 
-    public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    public async override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
         try
         {
-            if (EntityChangeOptions.Value.PublishEntityUpdatedEventWhenNavigationChanges)
-            {
-                foreach (var entityEntry in AbpEfCoreNavigationHelper.GetChangedEntityEntries())
-                {
-                    if (entityEntry.Entity is ISoftDelete && entityEntry.Entity.As<ISoftDelete>().IsDeleted)
-                    {
-                        EntityChangeEventHelper.PublishEntityDeletedEvent(entityEntry.Entity);
-                    }
-                    else
-                    {
-                        EntityChangeEventHelper.PublishEntityUpdatedEvent(entityEntry.Entity);
-                    }
-                }
-            }
+            await PublishEventsForChangedEntityOnSaveChangeAsync();
 
             var auditLog = AuditingManager?.Current?.Log;
             List<EntityChangeInfo>? entityChangeList = null;
@@ -227,7 +228,10 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
             {
                 EntityHistoryHelper.UpdateChangeList(entityChangeList);
                 auditLog!.EntityChanges.AddRange(entityChangeList);
-                Logger.LogDebug($"Added {entityChangeList.Count} entity changes to the current audit log");
+                if (entityChangeList.Count > 0)
+                {
+                    Logger.LogDebug($"Added {entityChangeList.Count} entity changes to the current audit log");
+                }
             }
 
             return result;
@@ -253,11 +257,62 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
         finally
         {
             ChangeTracker.AutoDetectChangesEnabled = true;
-            AbpEfCoreNavigationHelper.Clear();
+            AbpEfCoreNavigationHelper.RemoveChangedEntityEntries();
         }
     }
 
-    private void PublishEntityEvents(EntityEventReport changeReport)
+    protected virtual Task PublishEventsForChangedEntityOnSaveChangeAsync()
+    {
+        foreach (var entityEntry in AbpEfCoreNavigationHelper.GetChangedEntityEntries())
+        {
+            if (EntityChangeOptions.Value.PublishEntityUpdatedEventWhenNavigationChanges)
+            {
+                var ignoredEntity = EntityChangeOptions.Value.IgnoredNavigationEntitySelectors.Any(selector => selector.Predicate(entityEntry.Entity.GetType()));
+                var onlyForeignKeyModifiedEntity = entityEntry.State == EntityState.Modified && entityEntry.Properties.Where(x => x.IsModified).All(x => x.Metadata.IsForeignKey());
+                if ((entityEntry.State == EntityState.Unchanged && ignoredEntity) || onlyForeignKeyModifiedEntity && ignoredEntity)
+                {
+                    continue;
+                }
+
+                if (EntityChangeOptions.Value.UpdateAggregateRootWhenNavigationChanges &&
+                    EntityChangeOptions.Value.IgnoredUpdateAggregateRootSelectors.All(selector => !selector.Predicate(entityEntry.Entity.GetType())) &&
+                    entityEntry.State == EntityState.Unchanged)
+                {
+                    ApplyAbpConceptsForModifiedEntity(entityEntry, true);
+                }
+
+                if (entityEntry.Entity is ISoftDelete && entityEntry.Entity.As<ISoftDelete>().IsDeleted)
+                {
+                    EntityChangeEventHelper.PublishEntityDeletedEvent(entityEntry.Entity);
+                }
+                else
+                {
+                    EntityChangeEventHelper.PublishEntityUpdatedEvent(entityEntry.Entity);
+                }
+            }
+            else if (entityEntry.Properties.Any(x => x.IsModified && (x.Metadata.ValueGenerated == ValueGenerated.Never || x.Metadata.ValueGenerated == ValueGenerated.OnAdd)))
+            {
+                if (entityEntry.Properties.Where(x => x.IsModified).All(x => x.Metadata.IsForeignKey()))
+                {
+                    // Skip `PublishEntityDeletedEvent/PublishEntityUpdatedEvent` if only foreign keys have changed.
+                    break;
+                }
+
+                if (entityEntry.Entity is ISoftDelete && entityEntry.Entity.As<ISoftDelete>().IsDeleted)
+                {
+                    EntityChangeEventHelper.PublishEntityDeletedEvent(entityEntry.Entity);
+                }
+                else
+                {
+                    EntityChangeEventHelper.PublishEntityUpdatedEvent(entityEntry.Entity);
+                }
+            }
+        }
+
+        return Task.CompletedTask;
+    }
+
+    protected virtual void PublishEntityEvents(EntityEventReport changeReport)
     {
         foreach (var localEvent in changeReport.DomainEvents)
         {
@@ -371,7 +426,6 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
                 break;
 
             case EntityState.Modified:
-                ApplyAbpConceptsForModifiedEntity(entry);
                 if (entry.Properties.Any(x => x.IsModified && (x.Metadata.ValueGenerated == ValueGenerated.Never || x.Metadata.ValueGenerated == ValueGenerated.OnAdd)))
                 {
                     if (entry.Properties.Where(x => x.IsModified).All(x => x.Metadata.IsForeignKey()))
@@ -380,6 +434,7 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
                         break;
                     }
 
+                    ApplyAbpConceptsForModifiedEntity(entry);
                     if (entry.Entity is ISoftDelete && entry.Entity.As<ISoftDelete>().IsDeleted)
                     {
                         EntityChangeEventHelper.PublishEntityDeletedEvent(entry.Entity);
@@ -389,8 +444,16 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
                         EntityChangeEventHelper.PublishEntityUpdatedEvent(entry.Entity);
                     }
                 }
-                else if (EntityChangeOptions.Value.PublishEntityUpdatedEventWhenNavigationChanges && AbpEfCoreNavigationHelper.IsEntityEntryModified(entry))
+                else if (EntityChangeOptions.Value.PublishEntityUpdatedEventWhenNavigationChanges &&
+                         EntityChangeOptions.Value.IgnoredNavigationEntitySelectors.All(selector => !selector.Predicate(entry.Entity.GetType())) &&
+                         AbpEfCoreNavigationHelper.IsNavigationEntryModified(entry))
                 {
+                    if (EntityChangeOptions.Value.UpdateAggregateRootWhenNavigationChanges &&
+                        EntityChangeOptions.Value.IgnoredUpdateAggregateRootSelectors.All(selector => !selector.Predicate(entry.Entity.GetType())))
+                    {
+                        ApplyAbpConceptsForModifiedEntity(entry, true);
+                    }
+
                     if (entry.Entity is ISoftDelete && entry.Entity.As<ISoftDelete>().IsDeleted)
                     {
                         EntityChangeEventHelper.PublishEntityDeletedEvent(entry.Entity);
@@ -411,11 +474,24 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
 
     protected virtual void HandlePropertiesBeforeSave()
     {
-        foreach (var entry in ChangeTracker.Entries().ToList())
+        var entries = ChangeTracker.Entries().ToList();
+        foreach (var entry in entries)
         {
             HandleExtraPropertiesOnSave(entry);
 
             if (entry.State.IsIn(EntityState.Modified, EntityState.Deleted))
+            {
+                UpdateConcurrencyStamp(entry);
+            }
+        }
+
+        if (EntityChangeOptions.Value.PublishEntityUpdatedEventWhenNavigationChanges &&
+            EntityChangeOptions.Value.UpdateAggregateRootWhenNavigationChanges)
+        {
+            foreach (var entry in AbpEfCoreNavigationHelper.GetChangedEntityEntries()
+                         .Where(x => x.State == EntityState.Unchanged)
+                         .Where(x => EntityChangeOptions.Value.IgnoredNavigationEntitySelectors.All(selector => !selector.Predicate(x.Entity.GetType())))
+                         .Where(x => EntityChangeOptions.Value.IgnoredUpdateAggregateRootSelectors.All(selector => !selector.Predicate(x.Entity.GetType()))))
             {
                 UpdateConcurrencyStamp(entry);
             }
@@ -548,9 +624,10 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
         SetCreationAuditProperties(entry);
     }
 
-    protected virtual void ApplyAbpConceptsForModifiedEntity(EntityEntry entry)
+    protected virtual void ApplyAbpConceptsForModifiedEntity(EntityEntry entry, bool forceApply = false)
     {
-        if (entry.State == EntityState.Modified && entry.Properties.Any(x => x.IsModified && (x.Metadata.ValueGenerated == ValueGenerated.Never || x.Metadata.ValueGenerated == ValueGenerated.OnAdd)))
+        if (forceApply ||
+            entry.Properties.Any(x => x.IsModified && (x.Metadata.ValueGenerated == ValueGenerated.Never || x.Metadata.ValueGenerated == ValueGenerated.OnAdd)))
         {
             IncrementEntityVersionProperty(entry);
             SetModificationAuditProperties(entry);
@@ -574,7 +651,19 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
             return;
         }
 
+        ExtraPropertyDictionary? originalExtraProperties = null;
+        if (entry.Entity is IHasExtraProperties)
+        {
+            originalExtraProperties = entry.OriginalValues.GetValue<ExtraPropertyDictionary>(nameof(IHasExtraProperties.ExtraProperties));
+        }
+
         entry.Reload();
+
+        if (entry.Entity is IHasExtraProperties)
+        {
+            ObjectHelper.TrySetProperty(entry.Entity.As<IHasExtraProperties>(), x => x.ExtraProperties, () => originalExtraProperties);
+        }
+
         ObjectHelper.TrySetProperty(entry.Entity.As<ISoftDelete>(), x => x.IsDeleted, () => true);
         SetDeletionAuditProperties(entry);
     }
@@ -696,7 +785,7 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
     {
         if (mutableEntityType.BaseType == null && ShouldFilterEntity<TEntity>(mutableEntityType))
         {
-            var filterExpression = CreateFilterExpression<TEntity>();
+            var filterExpression = CreateFilterExpression<TEntity>(modelBuilder);
             if (filterExpression != null)
             {
                 modelBuilder.Entity<TEntity>().HasAbpQueryFilter(filterExpression);
@@ -723,7 +812,7 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
                                            property.PropertyInfo.CanWrite &&
                                            ReflectionHelper.GetSingleAttributeOfMemberOrDeclaringTypeOrDefault<DisableDateTimeNormalizationAttribute>(property.PropertyInfo) == null))
             {
-				modelBuilder
+                modelBuilder
                     .Entity<TEntity>()
                     .Property(property.Name)
                     .HasConversion(property.ClrType == typeof(DateTime)
@@ -765,22 +854,44 @@ public abstract class AbpDbContext<TDbContext> : DbContext, IAbpEfCoreDbContext,
         return false;
     }
 
-    protected virtual Expression<Func<TEntity, bool>>? CreateFilterExpression<TEntity>()
+    protected virtual Expression<Func<TEntity, bool>>? CreateFilterExpression<TEntity>(ModelBuilder modelBuilder)
         where TEntity : class
     {
         Expression<Func<TEntity, bool>>? expression = null;
 
         if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
         {
-            expression = e => !IsSoftDeleteFilterEnabled || !EF.Property<bool>(e, "IsDeleted");
+            var softDeleteColumnName = modelBuilder.Entity<TEntity>().Metadata.FindProperty(nameof(ISoftDelete.IsDeleted))?.GetColumnName() ?? "IsDeleted";
+            expression = e => !IsSoftDeleteFilterEnabled || !EF.Property<bool>(e, softDeleteColumnName);
+            if (UseDbFunction())
+            {
+                expression = e => AbpEfCoreDataFilterDbFunctionMethods.SoftDeleteFilter(((ISoftDelete)e).IsDeleted, true);
+                modelBuilder.ConfigureSoftDeleteDbFunction(AbpEfCoreDataFilterDbFunctionMethods.SoftDeleteFilterMethodInfo, this.GetService<AbpEfCoreCurrentDbContext>());
+            }
         }
 
         if (typeof(IMultiTenant).IsAssignableFrom(typeof(TEntity)))
         {
-            Expression<Func<TEntity, bool>> multiTenantFilter = e => !IsMultiTenantFilterEnabled || EF.Property<Guid>(e, "TenantId") == CurrentTenantId;
+            var multiTenantColumnName = modelBuilder.Entity<TEntity>().Metadata.FindProperty(nameof(IMultiTenant.TenantId))?.GetColumnName() ?? "TenantId";
+            Expression<Func<TEntity, bool>> multiTenantFilter = e => !IsMultiTenantFilterEnabled || EF.Property<Guid>(e, multiTenantColumnName) == CurrentTenantId;
+            if (UseDbFunction())
+            {
+                multiTenantFilter = e => AbpEfCoreDataFilterDbFunctionMethods.MultiTenantFilter(((IMultiTenant)e).TenantId, CurrentTenantId, true);
+                modelBuilder.ConfigureMultiTenantDbFunction(AbpEfCoreDataFilterDbFunctionMethods.MultiTenantFilterMethodInfo, this.GetService<AbpEfCoreCurrentDbContext>());
+            }
             expression = expression == null ? multiTenantFilter : QueryFilterExpressionHelper.CombineExpressions(expression, multiTenantFilter);
         }
 
         return expression;
+    }
+
+    protected virtual bool UseDbFunction()
+    {
+        return LazyServiceProvider != null && GlobalFilterOptions.Value.UseDbFunction && DbContextOptions.FindExtension<AbpDbContextOptionsExtension>() != null;
+    }
+
+    public virtual string GetCompiledQueryCacheKey()
+    {
+        return $"{CurrentTenantId?.ToString() ?? "Null"}:{IsSoftDeleteFilterEnabled}:{IsMultiTenantFilterEnabled}";
     }
 }

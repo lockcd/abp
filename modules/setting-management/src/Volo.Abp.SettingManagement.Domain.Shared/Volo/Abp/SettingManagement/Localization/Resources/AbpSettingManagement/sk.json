@@ -14,12 +14,14 @@
     "Body": "Telo",
     "TestEmailSubject": "Testovací e-mail {0}",
     "TestEmailBody": "Tu otestujte telo e-mailu",
-    "SuccessfullySent": "Úspešne odoslané",
+    "SentSuccessfully": "Úspešne odoslané",
+    "MailSendingFailed": "Odoslanie emailu zlyhalo. Skontrolujte konfiguráciu emailu a skúste to znova.",
     "Send": "Odoslať",
     "Menu:Emailing": "Posielanie emailov",
     "Menu:TimeZone": "Časové Pásmo",
     "DisplayName:Timezone": "Časové pásmo",
-    "TimezoneHelpText": "Toto nastavenie sa používa pre celú aplikáciu alebo pre nájomníkov.",
+    "TimezoneHelpText": "Toto nastavenie sa používa pre celú aplikáciu alebo pre nájomníkov. Predvolené časové pásmo sa pokúsi použiť časové pásmo prehliadača alebo servera.",
+    "DefaultTimeZone": "Predvolené časové pásmo",
     "SmtpHost": "Host",
     "SmtpPort": "Port",
     "SmtpUserName": "Meno používateľa",
@@ -33,6 +35,7 @@
     "Feature:SettingManagementEnable": "Povoliť správu nastavení",
     "Feature:SettingManagementEnableDescription": "Povoliť systém správy nastavení v aplikácii.",
     "Feature:AllowChangingEmailSettings": "Povoliť zmenu nastavení e-mailu.",
-    "Feature:AllowChangingEmailSettingsDescription": "Povoliť zmenu nastavení e-mailu."
+    "Feature:AllowChangingEmailSettingsDescription": "Povoliť zmenu nastavení e-mailu.",
+    "SmtpPasswordPlaceholder": "Zadajte hodnotu pre aktualizáciu hesla"
   }
 }

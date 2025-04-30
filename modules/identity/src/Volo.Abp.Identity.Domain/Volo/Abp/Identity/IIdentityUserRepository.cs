@@ -44,6 +44,12 @@ public interface IIdentityUserRepository : IBasicRepository<IdentityUser, Guid>
         CancellationToken cancellationToken = default
     );
 
+    Task RemoveClaimFromAllUsersAsync(
+        string claimType,
+        bool autoSave = false,
+        CancellationToken cancellationToken = default
+    );
+
     Task<List<IdentityUser>> GetListByNormalizedRoleNameAsync(
         string normalizedRoleName,
         bool includeDetails = false,
@@ -63,6 +69,7 @@ public interface IIdentityUserRepository : IBasicRepository<IdentityUser, Guid>
         bool includeDetails = false,
         Guid? roleId = null,
         Guid? organizationUnitId = null,
+        Guid? id = null,
         string userName = null,
         string phoneNumber = null,
         string emailAddress = null,
@@ -108,6 +115,7 @@ public interface IIdentityUserRepository : IBasicRepository<IdentityUser, Guid>
         string filter = null,
         Guid? roleId = null,
         Guid? organizationUnitId = null,
+        Guid? id = null,
         string userName = null,
         string phoneNumber = null,
         string emailAddress = null,

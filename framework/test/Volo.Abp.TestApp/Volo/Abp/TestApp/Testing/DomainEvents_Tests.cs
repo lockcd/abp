@@ -21,6 +21,7 @@ public abstract class DomainEvents_Tests<TStartupModule> : TestAppTestBase<TStar
     protected readonly IRepository<AppEntityWithNavigations, Guid> AppEntityWithNavigationsRepository;
     protected readonly ILocalEventBus LocalEventBus;
     protected readonly IDistributedEventBus DistributedEventBus;
+    protected readonly IUnitOfWorkManager UnitOfWorkManager;
 
     protected DomainEvents_Tests()
     {
@@ -28,6 +29,7 @@ public abstract class DomainEvents_Tests<TStartupModule> : TestAppTestBase<TStar
         AppEntityWithNavigationsRepository = GetRequiredService<IRepository<AppEntityWithNavigations, Guid>>();
         LocalEventBus = GetRequiredService<ILocalEventBus>();
         DistributedEventBus = GetRequiredService<IDistributedEventBus>();
+        UnitOfWorkManager = GetRequiredService<IUnitOfWorkManager>();
     }
 
     [Fact]
@@ -176,6 +178,52 @@ public abstract class DomainEvents_Tests<TStartupModule> : TestAppTestBase<TStar
         isDistributedEventTriggered.ShouldBeTrue();
     }
 
+    [Fact]
+    public async Task Should_Trigger_Event_That_Publish_In_Event_Handler()
+    {
+        //Arrange
+        var event1Triggered = false;
+        var event2Triggered = false;
+        var event3Triggered = false;
+        var event4Triggered = false;
+
+        LocalEventBus.Subscribe<MyCustomEventData>(async data =>
+        {
+            event1Triggered = true;
+            await DistributedEventBus.PublishAsync(new MyCustomEventData3 { Value = "42" });
+        });
+
+        DistributedEventBus.Subscribe<MyCustomEventData2>(async data =>
+        {
+            event2Triggered = true;
+            await LocalEventBus.PublishAsync(new MyCustomEventData4 { Value = "42" });
+        });
+
+        LocalEventBus.Subscribe<MyCustomEventData3>(async data =>
+        {
+            event3Triggered = true;
+        });
+
+        DistributedEventBus.Subscribe<MyCustomEventData4>(async data =>
+        {
+            event4Triggered = true;
+        });
+
+        //Act
+        using (var uow = UnitOfWorkManager.Begin(requiresNew: true))
+        {
+            await LocalEventBus.PublishAsync(new MyCustomEventData { Value = "42" });
+            await DistributedEventBus.PublishAsync(new MyCustomEventData2 { Value = "42" });
+            await uow.CompleteAsync();
+        }
+
+        //Assert
+        event1Triggered.ShouldBeTrue();
+        event2Triggered.ShouldBeTrue();
+        event3Triggered.ShouldBeTrue();
+        event4Triggered.ShouldBeTrue();
+    }
+
     private class MyCustomEventData
     {
         public string Value { get; set; }
@@ -185,28 +233,30 @@ public abstract class DomainEvents_Tests<TStartupModule> : TestAppTestBase<TStar
     {
         public string Value { get; set; }
     }
+
+    private class MyCustomEventData3
+    {
+        public string Value { get; set; }
+    }
+
+    private class MyCustomEventData4
+    {
+        public string Value { get; set; }
+    }
 }
 
 public abstract class AbpEntityChangeOptions_DomainEvents_Tests<TStartupModule> : TestAppTestBase<TStartupModule>
     where TStartupModule : IAbpModule
 {
     protected readonly IRepository<AppEntityWithNavigations, Guid> AppEntityWithNavigationsRepository;
+    protected readonly IRepository<AppEntityWithNavigationsForeign, Guid> AppEntityWithNavigationForeignRepository;
     protected readonly ILocalEventBus LocalEventBus;
 
     protected AbpEntityChangeOptions_DomainEvents_Tests()
     {
         AppEntityWithNavigationsRepository = GetRequiredService<IRepository<AppEntityWithNavigations, Guid>>();
+        AppEntityWithNavigationForeignRepository = GetRequiredService<IRepository<AppEntityWithNavigationsForeign, Guid>>();
         LocalEventBus = GetRequiredService<ILocalEventBus>();
-    }
-
-    protected override void AfterAddApplication(IServiceCollection services)
-    {
-        services.Configure<AbpEntityChangeOptions>(options =>
-        {
-            options.PublishEntityUpdatedEventWhenNavigationChanges = false;
-        });
-
-        base.AfterAddApplication(services);
     }
 
     [Fact]
@@ -287,5 +337,104 @@ public abstract class AbpEntityChangeOptions_DomainEvents_Tests<TStartupModule> 
             await AppEntityWithNavigationsRepository.UpdateAsync(entity);
         });
         entityUpdatedEventTriggered.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task Should_Trigger_EntityUpdatedEvent_For_Aggregate_Root_When_Property_And_Navigation_Changes_Tests()
+    {
+        var entityId = Guid.NewGuid();
+        await AppEntityWithNavigationsRepository.InsertAsync(new AppEntityWithNavigations(entityId, "TestEntity"));
+
+        var entityWithNavigationForeignId = Guid.NewGuid();
+        var entityWithNavigationForeignId2 = Guid.NewGuid();
+        await AppEntityWithNavigationForeignRepository.InsertAsync(new AppEntityWithNavigationsForeign(entityWithNavigationForeignId, "TestEntityWithNavigationForeign"));
+        await AppEntityWithNavigationForeignRepository.InsertAsync(new AppEntityWithNavigationsForeign(entityWithNavigationForeignId2, "TestEntityWithNavigationForeign2"));
+
+        var entityUpdatedEventTriggered = false;
+
+        LocalEventBus.Subscribe<EntityUpdatedEventData<AppEntityWithNavigations>>(data =>
+        {
+            entityUpdatedEventTriggered = !entityUpdatedEventTriggered;
+            return Task.CompletedTask;
+        });
+
+        // Test with simple property with foreign key
+        await WithUnitOfWorkAsync(async () =>
+        {
+            var entity = await AppEntityWithNavigationsRepository.GetAsync(entityId);
+            entity.Name = Guid.NewGuid().ToString();
+            entity.AppEntityWithNavigationForeignId = entityWithNavigationForeignId;
+            await AppEntityWithNavigationsRepository.UpdateAsync(entity);
+        });
+        entityUpdatedEventTriggered.ShouldBeTrue();
+
+        // Test only foreign key changed
+        entityUpdatedEventTriggered = false;
+        await WithUnitOfWorkAsync(async () =>
+        {
+            var entity = await AppEntityWithNavigationsRepository.GetAsync(entityId);
+            entity.AppEntityWithNavigationForeignId = entityWithNavigationForeignId2;
+            await AppEntityWithNavigationsRepository.UpdateAsync(entity);
+        });
+        entityUpdatedEventTriggered.ShouldBeFalse();
+
+        // Test with simple property with value object
+        await WithUnitOfWorkAsync(async () =>
+        {
+            var entity = await AppEntityWithNavigationsRepository.GetAsync(entityId);
+            entity.Name = Guid.NewGuid().ToString();
+            entity.AppEntityWithValueObjectAddress = new AppEntityWithValueObjectAddress("Turkey");
+            await AppEntityWithNavigationsRepository.UpdateAsync(entity);
+        });
+        entityUpdatedEventTriggered.ShouldBeTrue();
+
+        // Test with simple property with one to one
+        entityUpdatedEventTriggered = false;
+        await WithUnitOfWorkAsync(async () =>
+        {
+            var entity = await AppEntityWithNavigationsRepository.GetAsync(entityId);
+            entity.Name = Guid.NewGuid().ToString();
+            entity.OneToOne = new AppEntityWithNavigationChildOneToOne
+            {
+                ChildName = "ChildName"
+            };
+            await AppEntityWithNavigationsRepository.UpdateAsync(entity);
+        });
+        entityUpdatedEventTriggered.ShouldBeTrue();
+
+        // Test with simple property with one to many
+        entityUpdatedEventTriggered = false;
+        await WithUnitOfWorkAsync(async () =>
+        {
+            var entity = await AppEntityWithNavigationsRepository.GetAsync(entityId);
+            entity.Name = Guid.NewGuid().ToString();
+            entity.OneToMany = new List<AppEntityWithNavigationChildOneToMany>()
+            {
+                new AppEntityWithNavigationChildOneToMany
+                {
+                    AppEntityWithNavigationId = entity.Id,
+                    ChildName = "ChildName1"
+                }
+            };
+            await AppEntityWithNavigationsRepository.UpdateAsync(entity);
+        });
+        entityUpdatedEventTriggered.ShouldBeTrue();
+
+        // Test with simple property with many to many
+        entityUpdatedEventTriggered = false;
+        await WithUnitOfWorkAsync(async () =>
+        {
+            var entity = await AppEntityWithNavigationsRepository.GetAsync(entityId);
+            entity.Name = Guid.NewGuid().ToString();
+            entity.ManyToMany = new List<AppEntityWithNavigationChildManyToMany>()
+            {
+                new AppEntityWithNavigationChildManyToMany
+                {
+                    ChildName = "ChildName1"
+                }
+            };
+            await AppEntityWithNavigationsRepository.UpdateAsync(entity);
+        });
+        entityUpdatedEventTriggered.ShouldBeTrue();
     }
 }

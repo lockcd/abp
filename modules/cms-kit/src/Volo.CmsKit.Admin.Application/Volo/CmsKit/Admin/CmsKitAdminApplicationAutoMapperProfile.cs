@@ -34,10 +34,11 @@ public class CmsKitAdminApplicationAutoMapperProfile : Profile
         CreateMap<BlogPost, BlogPostListDto>()
             .Ignore(d => d.BlogName)
             .MapExtraProperties();
+        
         CreateMap<CreateBlogPostDto, BlogPost>(MemberList.Source).MapExtraProperties();
         CreateMap<UpdateBlogPostDto, BlogPost>(MemberList.Source).MapExtraProperties();
 
-        CreateMap<Blog, BlogDto>().MapExtraProperties();
+        CreateMap<Blog, BlogDto>().Ignore(b => b.BlogPostCount).MapExtraProperties();
 
         CreateMap<TagEntityTypeDefiniton, TagDefinitionDto>(MemberList.Destination);
 

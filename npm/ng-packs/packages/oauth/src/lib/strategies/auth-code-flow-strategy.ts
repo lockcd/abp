@@ -1,6 +1,6 @@
 import { noop } from '@abp/ng.core';
 import { Params } from '@angular/router';
-import { from, of } from 'rxjs';
+import { filter, from, of, take, tap } from 'rxjs';
 import { AuthFlowStrategy } from './auth-flow-strategy';
 import { isTokenExpired } from '../utils';
 
@@ -9,6 +9,7 @@ export class AuthCodeFlowStrategy extends AuthFlowStrategy {
 
   async init() {
     this.checkRememberMeOption();
+    this.listenToTokenReceived();
 
     return super
       .init()
@@ -34,6 +35,46 @@ export class AuthCodeFlowStrategy extends AuthFlowStrategy {
     }
   }
 
+  private getCultureParams(queryParams?: Params) {
+    const lang = this.sessionState.getLanguage();
+    const culture = { culture: lang, 'ui-culture': lang };
+    return { ...(lang && culture), ...queryParams };
+  }
+
+  protected setUICulture() {
+    const urlParams = new URLSearchParams(window.location.search);
+    this.configState.uiCultureFromAuthCodeFlow = urlParams.get('ui-culture');
+  }
+
+  protected replaceURLParams() {
+    const location = this.windowService.window.location;
+    const history = this.windowService.window.history;
+
+    const href =
+      location.origin +
+      location.pathname +
+      location.search
+        .replace(/iss=[^&$]*/, '')
+        .replace(/culture=[^&$]*/, '')
+        .replace(/ui-culture=[^&$]*/, '') +
+      location.hash;
+
+    history.replaceState(null, '', href);
+  }
+
+  protected listenToTokenReceived() {
+    this.oAuthService.events
+      .pipe(
+        filter(event => event.type === 'token_received'),
+        tap(() => {
+          this.setUICulture();
+          this.replaceURLParams();
+        }),
+        take(1),
+      )
+      .subscribe();
+  }
+
   navigateToLogin(queryParams?: Params) {
     let additionalState = '';
     if (queryParams?.returnUrl) {
@@ -51,17 +92,15 @@ export class AuthCodeFlowStrategy extends AuthFlowStrategy {
 
   logout(queryParams?: Params) {
     this.rememberMeService.remove();
+    if (queryParams?.noRedirectToLogoutUrl) {
+      this.router.navigate(['/']);
+      return from(this.oAuthService.revokeTokenAndLogout(true));
+    }
     return from(this.oAuthService.revokeTokenAndLogout(this.getCultureParams(queryParams)));
   }
 
   login(queryParams?: Params) {
     this.oAuthService.initCodeFlow('', this.getCultureParams(queryParams));
     return of(null);
-  }
-
-  private getCultureParams(queryParams?: Params) {
-    const lang = this.sessionState.getLanguage();
-    const culture = { culture: lang, 'ui-culture': lang };
-    return { ...(lang && culture), ...queryParams };
   }
 }

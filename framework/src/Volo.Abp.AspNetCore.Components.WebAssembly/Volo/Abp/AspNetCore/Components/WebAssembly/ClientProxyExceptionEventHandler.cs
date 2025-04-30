@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
-using Volo.Abp.AspNetCore.Components.Server;
 using Volo.Abp.AspNetCore.Components.Web;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EventBus;
@@ -24,29 +23,16 @@ public class ClientProxyExceptionEventHandler : ILocalEventHandler<ClientProxyEx
 
     public virtual async Task HandleEventAsync(ClientProxyExceptionEventData eventData)
     {
-        if (eventData.StatusCode == 401)
+        using (var scope = ServiceProvider.CreateScope())
         {
-            using (var scope = ServiceProvider.CreateScope())
+            if (eventData.StatusCode == 401)
             {
                 var options = scope.ServiceProvider.GetRequiredService<IOptions<AbpAspNetCoreComponentsWebOptions>>();
-                
                 if (!options.Value.IsBlazorWebApp)
                 {
-                    var navigationManager = scope.ServiceProvider.GetRequiredService<NavigationManager>();
-                    var accessTokenProvider = scope.ServiceProvider.GetRequiredService<IAccessTokenProvider>();
                     var authenticationOptions = scope.ServiceProvider.GetRequiredService<IOptions<AbpAuthenticationOptions>>();
-                    var result = await accessTokenProvider.RequestAccessToken();
-                    if (result.Status != AccessTokenResultStatus.Success)
-                    {
-                        navigationManager.NavigateToLogout(authenticationOptions.Value.LogoutUrl);
-                        return;
-                    }
-
-                    result.TryGetToken(out var token);
-                    if (token != null && DateTimeOffset.Now >= token.Expires.AddMinutes(-5))
-                    {
-                        navigationManager.NavigateToLogout(authenticationOptions.Value.LogoutUrl);
-                    }
+                    var navigationManager = scope.ServiceProvider.GetRequiredService<NavigationManager>();
+                    navigationManager.NavigateToLogout(authenticationOptions.Value.LogoutUrl, "/");
                 }
                 else
                 {

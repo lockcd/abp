@@ -14,12 +14,14 @@
     "Body": "Corps",
     "TestEmailSubject": "E-mail test {0}",
     "TestEmailBody": "Testez le corps du message ici",
-    "SuccessfullySent": "Envoyé avec succès",
+    "SentSuccessfully": "Envoyé avec succès",
+    "MailSendingFailed": "L'envoi de courrier a échoué, veuillez vérifier votre configuration de courrier électronique et réessayer.",
     "Send": "Envoyer",
     "Menu:Emailing": "Envoi par e-mail",
     "Menu:TimeZone": "Fuseau Horaire",
     "DisplayName:Timezone": "Fuseau horaire",
-    "TimezoneHelpText": "Ce paramètre est utilisé à l’échelle de l’application ou basé sur le client.",
+    "TimezoneHelpText": "Ce paramètre est utilisé à l'échelle de l'application ou basé sur le client. Le fuseau horaire par défaut tentera d'utiliser le fuseau horaire du navigateur ou du serveur.",
+    "DefaultTimeZone": "Fuseau horaire par défaut",
     "SmtpHost": "Hôte",
     "SmtpPort": "Port",
     "SmtpUserName": "Nom d'utilisateur",
@@ -33,6 +35,7 @@
     "Feature:SettingManagementEnable": "Activer la gestion des paramètres",
     "Feature:SettingManagementEnableDescription": "Activer le système de gestion des paramètres dans l'application.",
     "Feature:AllowChangingEmailSettings": "Autoriser la modification des paramètres de messagerie.",
-    "Feature:AllowChangingEmailSettingsDescription": "Autoriser la modification des paramètres de messagerie."
+    "Feature:AllowChangingEmailSettingsDescription": "Autoriser la modification des paramètres de messagerie.",
+    "SmtpPasswordPlaceholder": "Entrez une valeur pour mettre à jour le mot de passe"
   }
 }

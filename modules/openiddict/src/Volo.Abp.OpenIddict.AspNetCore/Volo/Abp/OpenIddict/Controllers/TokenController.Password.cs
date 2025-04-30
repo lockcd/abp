@@ -115,19 +115,32 @@ public partial class TokenController
                     }
                     else if (result.IsNotAllowed)
                     {
-                        Logger.LogInformation("Authentication failed for username: {username}, reason: not allowed", request.Username);
-
-                        if (user.ShouldChangePasswordOnNextLogin)
+                        if (!await UserManager.CheckPasswordAsync(user, request.Password))
                         {
-                            return await HandleShouldChangePasswordOnNextLoginAsync(request, user, request.Password);
+                            Logger.LogInformation("Authentication failed for username: {username}, reason: invalid credentials", request.Username);
+                            errorDescription = "Invalid username or password!";
                         }
-
-                        if (await UserManager.ShouldPeriodicallyChangePasswordAsync(user))
+                        else
                         {
-                            return await HandlePeriodicallyChangePasswordAsync(request, user, request.Password);
-                        }
+                            Logger.LogInformation("Authentication failed for username: {username}, reason: not allowed", request.Username);
 
-                        errorDescription = "You are not allowed to login! Your account is inactive or needs to confirm your email/phone number.";
+                            if (user.ShouldChangePasswordOnNextLogin)
+                            {
+                                return await HandleShouldChangePasswordOnNextLoginAsync(request, user, request.Password);
+                            }
+
+                            if (await UserManager.ShouldPeriodicallyChangePasswordAsync(user))
+                            {
+                                return await HandlePeriodicallyChangePasswordAsync(request, user, request.Password);
+                            }
+
+                            if (user.IsActive)
+                            {
+                                return await HandleConfirmUserAsync(request, user);
+                            }
+
+                            errorDescription = "You are not allowed to login! Your account is inactive.";
+                        }
                     }
                     else
                     {
@@ -206,6 +219,8 @@ public partial class TokenController
                 return await SetSuccessResultAsync(request, user);
             }
 
+            await UserManager.AccessFailedAsync(user);
+
             Logger.LogInformation("Authentication failed for username: {username}, reason: InvalidAuthenticatorCode", request.Username);
 
             var properties = new AuthenticationProperties(new Dictionary<string, string>
@@ -233,7 +248,7 @@ public partial class TokenController
                 items: new Dictionary<string, string>
                 {
                     [OpenIddictServerAspNetCoreConstants.Properties.Error] = OpenIddictConstants.Errors.InvalidGrant,
-                    [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = nameof(SignInResult.RequiresTwoFactor)
+                    [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = AbpErrorDescriptionConsts.RequiresTwoFactor
                 },
                 parameters: new Dictionary<string, object>
                 {
@@ -333,6 +348,26 @@ public partial class TokenController
 
             return Forbid(properties, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
         }
+    }
+
+    protected virtual Task<IActionResult> HandleConfirmUserAsync(OpenIddictRequest request, IdentityUser user)
+    {
+        Logger.LogInformation($"{request.Username} needs to confirm email/phone number");
+
+        var properties = new AuthenticationProperties(
+            items: new Dictionary<string, string>
+            {
+                [OpenIddictServerAspNetCoreConstants.Properties.Error] = OpenIddictConstants.Errors.InvalidGrant,
+                [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = AbpErrorDescriptionConsts.RequiresConfirmUser
+            },
+            parameters: new Dictionary<string, object>
+            {
+                ["userId"] = user.Id.ToString("N"),
+                ["email"] = user.Email,
+                ["phoneNumber"] = user.PhoneNumber ?? ""
+            });
+
+        return Task.FromResult<IActionResult>(Forbid(properties, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme));
     }
 
     protected virtual async Task<IActionResult> SetSuccessResultAsync(OpenIddictRequest request, IdentityUser user)

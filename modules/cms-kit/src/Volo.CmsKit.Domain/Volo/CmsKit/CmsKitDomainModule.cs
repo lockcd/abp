@@ -5,12 +5,14 @@ using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using Volo.Abp.ObjectExtending;
 using Volo.Abp.ObjectExtending.Modularity;
+using Volo.Abp.SettingManagement;
 using Volo.Abp.Threading;
 using Volo.Abp.Users;
 using Volo.CmsKit.Blogs;
 using Volo.CmsKit.Comments;
 using Volo.CmsKit.GlobalFeatures;
 using Volo.CmsKit.Localization;
+using Volo.CmsKit.MarkedItems;
 using Volo.CmsKit.MediaDescriptors;
 using Volo.CmsKit.Menus;
 using Volo.CmsKit.Pages;
@@ -25,7 +27,8 @@ namespace Volo.CmsKit;
     typeof(CmsKitDomainSharedModule),
     typeof(AbpUsersDomainModule),
     typeof(AbpDddDomainModule),
-    typeof(AbpBlobStoringModule)
+    typeof(AbpBlobStoringModule),
+    typeof(AbpSettingManagementDomainModule)
 )]
 public class CmsKitDomainModule : AbpModule
 {
@@ -88,6 +91,24 @@ public class CmsKitDomainModule : AbpModule
         if (GlobalFeatureManager.Instance.IsEnabled<TagsFeature>())
         {
             // TODO: Configure TagEntityTypes here...
+        }
+
+        if (GlobalFeatureManager.Instance.IsEnabled<MarkedItemsFeature>())
+        {
+            Configure<CmsKitMarkedItemOptions>(options =>
+            {
+                if (GlobalFeatureManager.Instance.IsEnabled<BlogsFeature>())
+                {
+                    options.EntityTypes.Add(
+                        new MarkedItemEntityTypeDefinition(
+                            BlogPostConsts.EntityType,
+                            StandardMarkedItems.Favorite
+                            )
+                        );
+                }
+
+                // TODO: Add more entities that can be marked.
+            });
         }
     }
     

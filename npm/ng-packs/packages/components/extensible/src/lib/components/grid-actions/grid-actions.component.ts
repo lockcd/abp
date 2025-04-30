@@ -15,7 +15,6 @@ import { NgClass, NgTemplateOutlet } from '@angular/common';
 
 @Component({
   exportAs: 'abpGridActions',
-  standalone: true,
   imports: [
     NgbDropdownModule,
     EllipsisDirective,
@@ -23,7 +22,7 @@ import { NgClass, NgTemplateOutlet } from '@angular/common';
     NgClass,
     LocalizationModule,
     NgTemplateOutlet,
-    NgbTooltipModule
+    NgbTooltipModule,
   ],
   selector: 'abp-grid-actions',
   templateUrl: './grid-actions.component.html',

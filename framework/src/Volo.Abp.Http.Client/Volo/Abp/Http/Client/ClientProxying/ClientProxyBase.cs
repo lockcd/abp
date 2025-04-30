@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
@@ -19,6 +20,7 @@ using Volo.Abp.Json;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.Reflection;
 using Volo.Abp.Threading;
+using Volo.Abp.Timing;
 using Volo.Abp.Tracing;
 
 namespace Volo.Abp.Http.Client.ClientProxying;
@@ -32,6 +34,7 @@ public class ClientProxyBase<TService> : ITransientDependency
     protected ICorrelationIdProvider CorrelationIdProvider => LazyServiceProvider.LazyGetRequiredService<ICorrelationIdProvider>();
     protected ICurrentTenant CurrentTenant => LazyServiceProvider.LazyGetRequiredService<ICurrentTenant>();
     protected IOptions<AbpCorrelationIdOptions> AbpCorrelationIdOptions => LazyServiceProvider.LazyGetRequiredService<IOptions<AbpCorrelationIdOptions>>();
+    protected ICurrentTimezoneProvider CurrentTimezoneProvider => LazyServiceProvider.LazyGetRequiredService<ICurrentTimezoneProvider>();
     protected IProxyHttpClientFactory HttpClientFactory => LazyServiceProvider.LazyGetRequiredService<IProxyHttpClientFactory>();
     protected IRemoteServiceConfigurationProvider RemoteServiceConfigurationProvider => LazyServiceProvider.LazyGetRequiredService<IRemoteServiceConfigurationProvider>();
     protected IOptions<AbpHttpClientOptions> ClientOptions => LazyServiceProvider.LazyGetRequiredService<IOptions<AbpHttpClientOptions>>();
@@ -145,6 +148,11 @@ public class ClientProxyBase<TService> : ITransientDependency
         HttpResponseMessage response;
         try
         {
+            foreach (var preSendAction in ClientOptions.Value.ProxyHttpClientPreSendActions.Where(x => x.Key  == clientConfig.RemoteServiceName).SelectMany(x => x.Value))
+            {
+                preSendAction(clientConfig, requestContext, client);
+            }
+
             response = await client.SendAsync(
                 requestMessage,
                 HttpCompletionOption.ResponseHeadersRead /*this will buffer only the headers, the content will be used as a stream*/,
@@ -218,10 +226,21 @@ public class ClientProxyBase<TService> : ITransientDependency
 
     protected virtual async Task ThrowExceptionForResponseAsync(HttpResponseMessage response)
     {
+        var wwwAuthenticate = response.Headers.WwwAuthenticate.ToString() ?? string.Empty;
+        var errorMatch = Regex.Match(wwwAuthenticate, "error=\"([^\"]+)\"");
+        var errorDescriptionMatch = Regex.Match(wwwAuthenticate, "error_description=\"([^\"]+)\"");
+        var errorUriMatch = Regex.Match(wwwAuthenticate, "error_uri=\"([^\"]+)\"");
+        var error = errorMatch.Success ? errorMatch.Groups.Count == 2 ? errorMatch.Groups[1].Value : null : null;
+        var errorDescription = errorDescriptionMatch.Success ? errorDescriptionMatch.Groups.Count == 2 ? errorDescriptionMatch.Groups[1].Value : null : null;
+        var errorUri = errorUriMatch.Success ? errorUriMatch.Groups.Count == 2 ? errorUriMatch.Groups[1].Value : null : null;
+
         await LocalEventBus.PublishAsync(new ClientProxyExceptionEventData()
         {
             StatusCode = (int?)response.StatusCode,
-            ReasonPhrase = response.ReasonPhrase
+            ReasonPhrase = response.ReasonPhrase,
+            Error = error,
+            ErrorDescription = errorDescription,
+            ErrorUri = errorUri,
         });
 
         if (response.Headers.Contains(AbpHttpConsts.AbpErrorFormat))
@@ -239,7 +258,8 @@ public class ClientProxyBase<TService> : ITransientDependency
                     new RemoteServiceErrorInfo
                     {
                         Message = response.ReasonPhrase,
-                        Code = response.StatusCode.ToString()
+                        Code = response.StatusCode.ToString(),
+                        Details = errorDescription
                     },
                     ex
                 )
@@ -259,7 +279,8 @@ public class ClientProxyBase<TService> : ITransientDependency
                 new RemoteServiceErrorInfo
                 {
                     Message = response.ReasonPhrase,
-                    Code = response.StatusCode.ToString()
+                    Code = response.StatusCode.ToString(),
+                    Details = errorDescription
                 }
             )
             {
@@ -295,7 +316,11 @@ public class ClientProxyBase<TService> : ITransientDependency
         }
 
         //CorrelationId
-        requestMessage.Headers.Add(AbpCorrelationIdOptions.Value.HttpHeaderName, CorrelationIdProvider.Get());
+        var correlationId = CorrelationIdProvider.Get();
+        if (correlationId != null)
+        {
+            requestMessage.Headers.Add(AbpCorrelationIdOptions.Value.HttpHeaderName, correlationId);
+        }
 
         //TenantId
         if (CurrentTenant.Id.HasValue)
@@ -314,6 +339,12 @@ public class ClientProxyBase<TService> : ITransientDependency
 
         //X-Requested-With
         requestMessage.Headers.Add("X-Requested-With", "XMLHttpRequest");
+
+        //Timezone
+        if (!CurrentTimezoneProvider.TimeZone.IsNullOrWhiteSpace())
+        {
+            requestMessage.Headers.Add(TimeZoneConsts.DefaultTimeZoneKey, CurrentTimezoneProvider.TimeZone);
+        }
     }
 
     protected virtual StringSegment RemoveQuotes(StringSegment input)

@@ -1,15 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Xml;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json.Linq;
-using Volo.Abp.Cli.Args;
-using Volo.Abp.Cli.Commands;
 using Volo.Abp.Cli.Commands.Services;
 using Volo.Abp.Cli.Http;
 using Volo.Abp.Cli.LIbs;
@@ -80,7 +75,7 @@ public class ProjectNpmPackageAdder : ITransientDependency
             using (DirectoryHelper.ChangeCurrentDirectory(directory))
             {
                 Logger.LogInformation("yarn add " + npmPackage.Name + versionPostfix);
-                CmdHelper.RunCmd("yarn add " + npmPackage.Name + versionPostfix);
+                CmdHelper.RunCmd("npx yarn add " + npmPackage.Name + versionPostfix);
             }
         }
         else
@@ -135,7 +130,7 @@ public class ProjectNpmPackageAdder : ITransientDependency
         using (DirectoryHelper.ChangeCurrentDirectory(directory))
         {
             Logger.LogInformation("yarn add " + npmPackage.Name + versionPostfix);
-            CmdHelper.RunCmd("yarn add " + npmPackage.Name + versionPostfix);
+            CmdHelper.RunCmd("npx yarn add " + npmPackage.Name + versionPostfix);
 
             if (skipInstallingLibs)
             {
@@ -163,7 +158,7 @@ public class ProjectNpmPackageAdder : ITransientDependency
         using (DirectoryHelper.ChangeCurrentDirectory(directory))
         {
             Logger.LogInformation("yarn remove " + npmPackage.Name);
-            CmdHelper.RunCmd("yarn remove " + npmPackage.Name);
+            CmdHelper.RunCmd("npx yarn remove " + npmPackage.Name);
 
             if (skipInstallingLibs)
             {

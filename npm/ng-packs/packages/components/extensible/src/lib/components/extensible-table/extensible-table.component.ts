@@ -1,5 +1,7 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   inject,
@@ -14,8 +16,7 @@ import {
 } from '@angular/core';
 import { AsyncPipe, formatDate, NgComponentOutlet, NgTemplateOutlet } from '@angular/common';
 
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, filter, map } from 'rxjs';
 
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
@@ -54,7 +55,6 @@ const DEFAULT_ACTIONS_COLUMN_WIDTH = 150;
 @Component({
   exportAs: 'abpExtensibleTable',
   selector: 'abp-extensible-table',
-  standalone: true,
   imports: [
     AbpVisibleDirective,
     NgxDatatableModule,
@@ -71,7 +71,15 @@ const DEFAULT_ACTIONS_COLUMN_WIDTH = 150;
   templateUrl: './extensible-table.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExtensibleTableComponent<R = any> implements OnChanges {
+export class ExtensibleTableComponent<R = any> implements OnChanges, AfterViewInit {
+  readonly #injector = inject(Injector);
+  readonly getInjected = this.#injector.get.bind(this.#injector);
+  protected readonly cdr = inject(ChangeDetectorRef);
+  protected readonly locale = inject(LOCALE_ID);
+  protected readonly config = inject(ConfigStateService);
+  protected readonly entityPropTypeClasses = inject(ENTITY_PROP_TYPE_CLASSES);
+  protected readonly permissionService = inject(PermissionService);
+
   protected _actionsText!: string;
   @Input()
   set actionsText(value: string) {
@@ -104,12 +112,6 @@ export class ExtensibleTableComponent<R = any> implements OnChanges {
 
   readonly trackByFn: TrackByFunction<EntityProp<R>> = (_, item) => item.name;
 
-  locale = inject(LOCALE_ID);
-  private config = inject(ConfigStateService);
-  entityPropTypeClasses = inject(ENTITY_PROP_TYPE_CLASSES);
-  #injector = inject(Injector);
-  getInjected = this.#injector.get.bind(this.#injector);
-
   constructor() {
     const extensions = this.#injector.get(ExtensionsService);
     const name = this.#injector.get(EXTENSIONS_IDENTIFIER);
@@ -117,9 +119,8 @@ export class ExtensibleTableComponent<R = any> implements OnChanges {
     this.actionList = extensions['entityActions'].get(name)
       .actions as unknown as EntityActionList<R>;
 
-    const permissionService = this.#injector.get(PermissionService);
     this.hasAtLeastOnePermittedAction =
-      permissionService.filterItemsByPolicy(
+      this.permissionService.filterItemsByPolicy(
         this.actionList.toArray().map(action => ({ requiredPolicy: action.permission })),
       ).length > 0;
     this.setColumnWidths(DEFAULT_ACTIONS_COLUMN_WIDTH);
@@ -203,6 +204,35 @@ export class ExtensibleTableComponent<R = any> implements OnChanges {
       });
 
       return record;
+    });
+  }
+
+  isVisibleActions(rowData: any): boolean {
+    const actions = this.actionList.toArray();
+    const visibleActions = actions.filter(action => {
+      const { visible, permission } = action;
+
+      let isVisible = true;
+      let hasPermission = true;
+
+      if (visible) {
+        isVisible = visible({ record: rowData, getInjected: this.getInjected });
+      }
+
+      if (permission) {
+        hasPermission = this.permissionService.getGrantedPolicy(permission);
+      }
+
+      return isVisible && hasPermission;
+    });
+
+    return visibleActions.length > 0;
+  }
+
+  ngAfterViewInit(): void {
+    this.list?.requestStatus$?.pipe(filter(status => status === 'loading')).subscribe(() => {
+      this.data = [];
+      this.cdr.markForCheck();
     });
   }
 }

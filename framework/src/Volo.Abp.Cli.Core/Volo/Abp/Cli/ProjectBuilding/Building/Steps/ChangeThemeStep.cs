@@ -38,6 +38,8 @@ public class ChangeThemeStep : ProjectBuildPipelineStep
         var defaultThemeName = context.BuildArgs.TemplateName is AppTemplate.TemplateName or AppNoLayersTemplate.TemplateName
             ? LeptonXLite : LeptonX;
 
+        new RemoveFilesStep($"/Themes/{defaultThemeName}").Execute(context);
+
         ChangeThemeToBasicForMvcProjects(context, defaultThemeName);
         ChangeThemeToBasicForBlazorProjects(context, defaultThemeName);
         ChangeThemeToBasicForBlazorServerProjects(context, defaultThemeName);
@@ -288,6 +290,13 @@ public class ChangeThemeStep : ProjectBuildPipelineStep
                 context,
                 moduleFile.Name,
                 "Volo.Abp.LeptonX.Shared;"
+            );
+
+            AddNamespaces(
+                context,
+                moduleFile.Name,
+                "using Volo.Abp.AspNetCore.Mvc.UI.Theme.Lepton;",
+                "using Volo.Abp.AspNetCore.Mvc.UI.Theme.Lepton.Bundling;"
             );
         }
     }
@@ -613,6 +622,11 @@ public class ChangeThemeStep : ProjectBuildPipelineStep
             return;
         }
 
+        if (!file.Content.Contains("ThemeModule"))
+        {
+            return;
+        }
+
         file.NormalizeLineEndings();
 
         var lines = file.GetLines().ToList();
@@ -621,17 +635,22 @@ public class ChangeThemeStep : ProjectBuildPipelineStep
         {
             lines.AddFirst(@namespace);
         }
-        
+
         file.SetLines(lines);
     }
 
     private static void ChangeThemeToBasicForMvcProjects(ProjectBuildContext context, string defaultThemeName)
     {
-        var projectNames = new[]
+        var projectNames = new List<string>
         {
-            ".Web", ".HttpApi.Host", ".AuthServer", ".Web.Public", ".Web.Public.Host",
+            ".Web", ".AuthServer", ".Web.Public", ".Web.Public.Host",
             "" //for app-nolayers-mvc
         };
+
+        if(!context.Symbols.Contains("tiered"))
+        {
+            projectNames.Add(".HttpApi.Host");
+        }
 
         foreach (var projectName in projectNames)
         {
@@ -702,7 +721,7 @@ public class ChangeThemeStep : ProjectBuildPipelineStep
                 context,
                 $"_Host.cshtml",
                 $"{defaultThemeName}Theme.Components",
-                Basic
+                "BasicTheme.Themes.Basic"
             );
 
             ReplaceAllKeywords(

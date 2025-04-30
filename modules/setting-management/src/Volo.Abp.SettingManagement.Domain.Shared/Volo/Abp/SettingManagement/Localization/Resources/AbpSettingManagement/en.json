@@ -14,12 +14,14 @@
     "Body": "Body",
     "TestEmailSubject": "Test email {0}",
     "TestEmailBody": "Test email body message here",
-    "SuccessfullySent": "Successfully sent",
+    "SentSuccessfully": "Sent successfully",
+    "MailSendingFailed": "Mail sending failed, please check your email configuration and try again.",
     "Send": "Send",
     "Menu:Emailing": "Emailing",
     "Menu:TimeZone": "Time Zone",
     "DisplayName:Timezone": "Time zone",
-    "TimezoneHelpText": "This setting is used for application-wide or tenant-based.",
+    "TimezoneHelpText": "This setting is used for application-wide or tenant-based. The default timezone will try to use the browser's or the server's timezone.",
+    "DefaultTimeZone": "Default time zone",
     "SmtpHost": "Host",
     "SmtpPort": "Port",
     "SmtpUserName": "User name",
@@ -33,6 +35,7 @@
     "Feature:SettingManagementEnable": "Enable setting management",
     "Feature:SettingManagementEnableDescription": "Enable setting management system in the application.",
     "Feature:AllowChangingEmailSettings": "Allow changing email settings.",
-    "Feature:AllowChangingEmailSettingsDescription": "Allow changing email settings."
+    "Feature:AllowChangingEmailSettingsDescription": "Allow changing email settings.",
+    "SmtpPasswordPlaceholder": "Enter a value to update password"
   }
 }

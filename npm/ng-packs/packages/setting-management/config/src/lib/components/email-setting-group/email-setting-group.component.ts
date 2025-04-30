@@ -12,6 +12,7 @@ import { ConfigStateService, LocalizationService } from '@abp/ng.core';
 const { required, email } = Validators;
 
 @Component({
+  standalone: false,
   selector: 'abp-email-setting-group',
   templateUrl: 'email-setting-group.component.html',
   animations: [collapse],
@@ -100,7 +101,7 @@ export class EmailSettingGroupComponent implements OnInit {
     }
 
     this.emailSettingsService.sendTestEmail(this.emailTestForm.value).subscribe(res => {
-      this.toasterService.success('AbpSettingManagement::SuccessfullySent');
+      this.toasterService.success('AbpSettingManagement::SentSuccessfully');
       this.isEmailTestModalOpen = false;
     });
   }

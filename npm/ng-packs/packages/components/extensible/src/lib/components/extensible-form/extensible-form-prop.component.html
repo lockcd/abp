@@ -21,11 +21,9 @@
           class="form-control"
         />
       }
-
       @case ('hidden') {
-        <input [formControlName]="prop.name" type="hidden" />
+        <input [formControlName]="prop.name" type="hidden"/>
       }
-
       @case ('checkbox') {
         <div class="form-check" validationTarget>
           <input
@@ -42,7 +40,6 @@
           ></ng-template>
         </div>
       }
-
       @case ('select') {
         <ng-template [ngTemplateOutlet]="label"></ng-template>
         <select
@@ -54,30 +51,23 @@
         >
           @for (option of options$ | async; track option.value) {
             <option [ngValue]="option.value">
-              {{ option.key }}
+              @if (prop.isExtra) {
+                {{ '::' + option.key | abpLocalization }}
+              } @else {
+                {{ option.key }}
+              }
             </option>
           }
         </select>
       }
-
       @case ('multiselect') {
         <ng-template [ngTemplateOutlet]="label"></ng-template>
-        <select
-          #field
-          [id]="prop.id"
+        <abp-extensible-form-multi-select
+          [prop]="prop"
+          [options]="options$ | async"
           [formControlName]="prop.name"
-          [abpDisabled]="disabled"
-          multiple="multiple"
-          class="form-select form-control"
-        >
-          @for (option of options$ | async; track option.value) {
-            <option [ngValue]="option.value">
-              {{ option.key }}
-            </option>
-          }
-        </select>
+          [abpDisabled]="disabled"/>
       }
-
       @case ('typeahead') {
         <ng-template [ngTemplateOutlet]="label"></ng-template>
         <div #typeahead class="position-relative" validationStyle validationTarget>
@@ -97,10 +87,9 @@
             [class.is-invalid]="typeahead.classList.contains('is-invalid')"
             class="form-control"
           />
-          <input [formControlName]="prop.name" type="hidden" />
+          <input [formControlName]="prop.name" type="hidden"/>
         </div>
       }
-
       @case ('date') {
         <ng-template [ngTemplateOutlet]="label"></ng-template>
         <input
@@ -118,12 +107,10 @@
         <ng-template [ngTemplateOutlet]="label"></ng-template>
         <ngb-timepicker [formControlName]="prop.name"></ngb-timepicker>
       }
-
       @case ('dateTime') {
         <ng-template [ngTemplateOutlet]="label"></ng-template>
-        <abp-extensible-date-time-picker [prop]="prop" [meridian]="meridian$ | async" />
+        <abp-extensible-date-time-picker [prop]="prop" [meridian]="meridian$ | async"/>
       }
-
       @case ('textarea') {
         <ng-template [ngTemplateOutlet]="label"></ng-template>
         <textarea
@@ -135,7 +122,6 @@
           class="form-control"
         ></textarea>
       }
-
       @case ('passwordinputgroup') {
         <ng-template [ngTemplateOutlet]="label"></ng-template>
         <div class="input-group form-group" validationTarget>
@@ -151,7 +137,7 @@
               aria-hidden="true"
               [ngClass]="{
                 'fa-eye-slash': !showPassword,
-                'fa-eye': showPassword
+                'fa-eye': showPassword,
               }"
             ></i>
           </button>
@@ -170,7 +156,11 @@
     @if (prop.displayTextResolver) {
       {{ prop.displayTextResolver(data) | abpLocalization }}
     } @else {
-      {{ prop.displayName | abpLocalization }}
+      @if (prop.isExtra) {
+        {{ '::' + prop.displayName | abpLocalization }}
+      } @else {
+        {{ prop.displayName | abpLocalization }}
+      }
     }
     {{ asterisk }}
     @if (prop.tooltip) {

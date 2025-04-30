@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.DynamicProxy;
 using Volo.Abp.Hangfire;
@@ -30,33 +31,31 @@ public class HangfireBackgroundWorkerManager : BackgroundWorkerManager, ISinglet
 
     public async override Task AddAsync(IBackgroundWorker worker, CancellationToken cancellationToken = default)
     {
+        var abpHangfireOptions = ServiceProvider.GetRequiredService<IOptions<AbpHangfireOptions>>().Value;
+        var defaultQueuePrefix = abpHangfireOptions.DefaultQueuePrefix;
+        var defaultQueue = abpHangfireOptions.DefaultQueue;
+
         switch (worker)
         {
             case IHangfireBackgroundWorker hangfireBackgroundWorker:
             {
                 var unProxyWorker = ProxyHelper.UnProxy(hangfireBackgroundWorker);
-                if (hangfireBackgroundWorker.RecurringJobId.IsNullOrWhiteSpace())
-                {
-                    RecurringJob.AddOrUpdate(
-                        () => ((IHangfireBackgroundWorker)unProxyWorker).DoWorkAsync(cancellationToken),
-                        hangfireBackgroundWorker.CronExpression, hangfireBackgroundWorker.TimeZone,
-                        hangfireBackgroundWorker.Queue);
-                }
-                else
-                {
-                    RecurringJob.AddOrUpdate(hangfireBackgroundWorker.RecurringJobId,
-                        () => ((IHangfireBackgroundWorker)unProxyWorker).DoWorkAsync(cancellationToken),
-                        hangfireBackgroundWorker.CronExpression, hangfireBackgroundWorker.TimeZone,
-                        hangfireBackgroundWorker.Queue);
-                }
+
+                RecurringJob.AddOrUpdate(
+                    hangfireBackgroundWorker.RecurringJobId,
+                    hangfireBackgroundWorker.Queue.IsNullOrWhiteSpace() ? defaultQueue : defaultQueuePrefix + hangfireBackgroundWorker.Queue,
+                    () => ((IHangfireBackgroundWorker)unProxyWorker).DoWorkAsync(cancellationToken),
+                    hangfireBackgroundWorker.CronExpression,
+                    new RecurringJobOptions
+                    {
+                        TimeZone = hangfireBackgroundWorker.TimeZone
+                    });
 
                 break;
             }
             case AsyncPeriodicBackgroundWorkerBase or PeriodicBackgroundWorkerBase:
             {
-                var timer = worker.GetType()
-                    .GetProperty("Timer", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(worker);
-
+                var timer = worker.GetType().GetProperty("Timer", BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(worker);
                 var period = worker is AsyncPeriodicBackgroundWorkerBase ? ((AbpAsyncTimer?)timer)?.Period : ((AbpTimer?)timer)?.Period;
 
                 if (period == null)
@@ -67,7 +66,28 @@ public class HangfireBackgroundWorkerManager : BackgroundWorkerManager, ISinglet
                 var adapterType = typeof(HangfirePeriodicBackgroundWorkerAdapter<>).MakeGenericType(ProxyHelper.GetUnProxiedType(worker));
                 var workerAdapter = (Activator.CreateInstance(adapterType) as IHangfireBackgroundWorker)!;
 
-                RecurringJob.AddOrUpdate(() => workerAdapter.DoWorkAsync(cancellationToken), GetCron(period.Value), workerAdapter.TimeZone, workerAdapter.Queue);
+                if (workerAdapter.RecurringJobId.IsNullOrWhiteSpace())
+                {
+                    RecurringJob.AddOrUpdate(
+                        () => workerAdapter.DoWorkAsync(cancellationToken),
+                        GetCron(period.Value),
+                        workerAdapter.TimeZone ,
+                        workerAdapter.Queue.IsNullOrWhiteSpace() ? defaultQueue : defaultQueuePrefix + workerAdapter.Queue);
+                }
+                else
+                {
+
+                    RecurringJob.AddOrUpdate(
+                        workerAdapter.RecurringJobId,
+                        workerAdapter.Queue.IsNullOrWhiteSpace() ? defaultQueue : defaultQueuePrefix + workerAdapter.Queue,
+                        () => workerAdapter.DoWorkAsync(cancellationToken),
+                        GetCron(period.Value),
+                        new RecurringJobOptions
+                        {
+                            TimeZone = workerAdapter.TimeZone
+                        });
+                }
+
 
                 break;
             }
@@ -93,6 +113,10 @@ public class HangfireBackgroundWorkerManager : BackgroundWorkerManager, ISinglet
         else if (time.TotalHours <= 23)
         {
             cron = $"0 */{time.TotalHours} * * *";
+        }
+        else if(time.TotalDays <= 31)
+        {
+            cron = $"0 0 0 1/{time.TotalDays} * *";
         }
         else
         {

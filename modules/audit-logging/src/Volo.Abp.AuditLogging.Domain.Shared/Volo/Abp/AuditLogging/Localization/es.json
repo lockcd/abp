@@ -67,6 +67,9 @@
     "EntityHistory": "Historial de entidad",
     "DaysAgoTitle": "{0} {1}.",
     "DaysAgoWithUserTitle": "{0} {1} por {2}.",
+    "MinutesAgo": "Hace {0} minutos",
+    "HoursAgo": "Hace {0} horas",
+    "DaysAgo": "Hace {0} días",
     "Created": "Creado",
     "Updated": "Actualizado",
     "Deleted": "Eliminado",
@@ -78,6 +81,7 @@
     "EndDate": "Fecha final",
     "Feature:AuditLoggingGroup": "Registros de auditoría",
     "Feature:AuditLoggingEnable": "Habilitar la página de registro de auditoría",
-    "Feature:AuditLoggingEnableDescription": "Habilite la página de registro de auditoría en la aplicación."
+    "Feature:AuditLoggingEnableDescription": "Habilite la página de registro de auditoría en la aplicación.",
+    "TenantId": "ID de inquilino"
   }
 }

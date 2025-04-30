@@ -21,7 +21,12 @@ export class RememberMeService {
   }
 
   getFromToken(accessToken: string) {
-    const parsedToken = JSON.parse(atob(accessToken.split('.')[1]));
-    return Boolean(parsedToken[this.#rememberMe]);
+    const tokenBody = accessToken.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    try {
+      const parsedToken = JSON.parse(atob(tokenBody));
+      return Boolean(parsedToken[this.#rememberMe]);
+    } catch {
+      return false;
+    }
   }
 }
