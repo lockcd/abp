@@ -4,31 +4,18 @@ import { ModuleWithProviders, NgModule, NgModuleFactory } from '@angular/core';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxValidateCoreModule } from '@ngx-validate/core';
 import { AccountRoutingModule } from './account-routing.module';
-import { ChangePasswordComponent } from './components/change-password/change-password.component';
-import { ManageProfileComponent } from './components/manage-profile/manage-profile.component';
-import { PersonalSettingsComponent } from './components/personal-settings/personal-settings.component';
 import { AccountConfigOptions } from './models/config-options';
 import { ACCOUNT_CONFIG_OPTIONS } from './tokens/config-options.token';
 import { accountConfigOptionsFactory } from './utils/factory-utils';
 import { AuthenticationFlowGuard } from './guards/authentication-flow.guard';
-import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { RE_LOGIN_CONFIRMATION_TOKEN } from './tokens';
 
 import { ACCOUNT_EDIT_FORM_PROP_CONTRIBUTORS } from './tokens/extensions.token';
 import { AccountExtensionsGuard } from './guards/extensions.guard';
-import { PersonalSettingsHalfRowComponent } from './components/personal-settings/personal-settings-half-row.component';
 import { ExtensibleModule } from '@abp/ng.components/extensible';
 
-const declarations = [
-  ChangePasswordComponent,
-  ManageProfileComponent,
-  PersonalSettingsComponent,
-  ResetPasswordComponent,
-  PersonalSettingsHalfRowComponent,
-];
-
 @NgModule({
-  declarations: [...declarations],
+  declarations: [],
   imports: [
     CoreModule,
     AccountRoutingModule,
@@ -37,7 +24,7 @@ const declarations = [
     NgxValidateCoreModule,
     ExtensibleModule,
   ],
-  exports: [...declarations],
+  exports: [],
 })
 export class AccountModule {
   static forChild(options = {} as AccountConfigOptions): ModuleWithProviders<AccountModule> {

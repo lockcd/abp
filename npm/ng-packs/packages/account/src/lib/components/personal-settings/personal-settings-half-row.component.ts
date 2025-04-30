@@ -4,10 +4,12 @@ import {
   FormProp,
   EXTENSIBLE_FORM_VIEW_PROVIDER,
 } from '@abp/ng.components/extensible';
-import { UntypedFormGroup } from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormGroup } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { CoreModule } from '@abp/ng.core';
+import { ThemeSharedModule } from '@abp/ng.theme.shared';
 
 @Component({
-  standalone: false,
   selector: 'abp-personal-settings-half-row',
   template: ` <div class="w-50 d-inline">
     <label [attr.for]="name" class="form-label">{{ displayName | abpLocalization }} </label>
@@ -21,6 +23,7 @@ import { UntypedFormGroup } from '@angular/forms';
   </div>`,
   styles: [],
   viewProviders: [EXTENSIBLE_FORM_VIEW_PROVIDER],
+  imports: [CommonModule, ReactiveFormsModule, CoreModule, ThemeSharedModule],
 })
 export class PersonalSettingsHalfRowComponent {
   public displayName: string;
