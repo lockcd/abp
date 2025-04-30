@@ -1,18 +1,24 @@
-import { AuthService, ConfigStateService } from '@abp/ng.core';
-import { ToasterService } from '@abp/ng.theme.shared';
+import { AuthService, ConfigStateService, CoreModule } from '@abp/ng.core';
+import { ThemeSharedModule, ToasterService } from '@abp/ng.theme.shared';
 import { Component, Injector, OnInit, inject } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { throwError } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { eAccountComponents } from '../../enums/components';
 import { getRedirectUrl } from '../../utils/auth-utils';
+import { CommonModule } from '@angular/common';
 
 const { maxLength, required } = Validators;
 
 @Component({
-  standalone: false,
   selector: 'abp-login',
   templateUrl: './login.component.html',
+  imports: [CommonModule, ReactiveFormsModule, CoreModule, ThemeSharedModule],
 })
 export class LoginComponent implements OnInit {
   protected injector = inject(Injector);
