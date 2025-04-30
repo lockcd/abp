@@ -2,7 +2,8 @@ import {
   authGuard,
   ReplaceableComponents,
   ReplaceableRouteContainerComponent,
-  RouterOutletComponent,
+  ReplaceableRouteContainerStandaloneComponent,
+  RouterOutletStandaloneComponent,
 } from '@abp/ng.core';
 
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
@@ -13,20 +14,21 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
 import { eAccountComponents } from './enums/components';
 import { authenticationFlowGuard } from './guards';
 import { accountExtensionsResolver } from './resolvers';
+import { Routes } from '@angular/router';
 import { provideAccount } from './account';
 
 const canActivate = [authenticationFlowGuard];
 
-export const accountRoutes = [
+export const accountRoutes: Routes = [
   {
     path: '',
-    component: RouterOutletComponent,
+    component: RouterOutletStandaloneComponent,
     providers: [...provideAccount()],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'login' },
       {
         path: 'login',
-        component: ReplaceableRouteContainerComponent,
+        component: ReplaceableRouteContainerStandaloneComponent,
         canActivate,
         data: {
           replaceableComponent: {
@@ -38,7 +40,7 @@ export const accountRoutes = [
       },
       {
         path: 'register',
-        component: ReplaceableRouteContainerComponent,
+        component: ReplaceableRouteContainerStandaloneComponent,
         canActivate,
         data: {
           replaceableComponent: {
@@ -50,7 +52,7 @@ export const accountRoutes = [
       },
       {
         path: 'forgot-password',
-        component: ReplaceableRouteContainerComponent,
+        component: ReplaceableRouteContainerStandaloneComponent,
         canActivate,
 
         data: {
@@ -63,7 +65,7 @@ export const accountRoutes = [
       },
       {
         path: 'reset-password',
-        component: ReplaceableRouteContainerComponent,
+        component: ReplaceableRouteContainerStandaloneComponent,
         canActivate: [],
         data: {
           tenantBoxVisible: false,
@@ -76,7 +78,7 @@ export const accountRoutes = [
       },
       {
         path: 'manage',
-        component: ReplaceableRouteContainerComponent,
+        component: ReplaceableRouteContainerStandaloneComponent,
         canActivate: [authGuard],
         resolve: [accountExtensionsResolver],
         data: {
