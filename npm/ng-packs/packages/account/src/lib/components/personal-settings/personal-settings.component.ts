@@ -13,6 +13,7 @@ import { ManageProfileStateService } from '../../services/manage-profile.state.s
 import { AuthService, ConfigStateService, CoreModule } from '@abp/ng.core';
 import { RE_LOGIN_CONFIRMATION_TOKEN } from '../../tokens';
 import {
+  ExtensibleModule,
   EXTENSIONS_IDENTIFIER,
   FormPropData,
   generateFormFromProps,
@@ -30,7 +31,7 @@ import { CommonModule } from '@angular/common';
       useValue: eAccountComponents.PersonalSettings,
     },
   ],
-  imports: [CommonModule, ReactiveFormsModule, CoreModule, ThemeSharedModule],
+  imports: [CommonModule, ReactiveFormsModule, CoreModule, ThemeSharedModule, ExtensibleModule],
 })
 export class PersonalSettingsComponent
   implements

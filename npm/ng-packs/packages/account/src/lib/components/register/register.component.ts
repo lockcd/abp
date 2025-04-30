@@ -1,19 +1,25 @@
 import { AccountService, RegisterDto } from '@abp/ng.account.core/proxy';
-import { AuthService, ConfigStateService } from '@abp/ng.core';
-import { getPasswordValidators, ToasterService } from '@abp/ng.theme.shared';
+import { AuthService, ConfigStateService, CoreModule } from '@abp/ng.core';
+import { getPasswordValidators, ThemeSharedModule, ToasterService } from '@abp/ng.theme.shared';
 import { Component, Injector, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { throwError } from 'rxjs';
 import { catchError, finalize, switchMap } from 'rxjs/operators';
 import { eAccountComponents } from '../../enums/components';
 import { getRedirectUrl } from '../../utils/auth-utils';
+import { CommonModule } from '@angular/common';
 
 const { maxLength, required, email } = Validators;
 
 @Component({
   selector: 'abp-register',
   templateUrl: './register.component.html',
-  imports: [CoreModule, ThemeSharedModule, CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, CoreModule, ThemeSharedModule],
 })
 export class RegisterComponent implements OnInit {
   form!: UntypedFormGroup;

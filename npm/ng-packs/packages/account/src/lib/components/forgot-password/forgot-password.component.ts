@@ -1,12 +1,20 @@
 import { AccountService } from '@abp/ng.account.core/proxy';
 import { Component } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { finalize } from 'rxjs/operators';
+import { CoreModule } from '@abp/ng.core';
+import { ThemeSharedModule } from '@abp/ng.theme.shared';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'abp-forgot-password',
   templateUrl: 'forgot-password.component.html',
-  imports: [CoreModule, ThemeSharedModule, CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, CoreModule, ThemeSharedModule],
 })
 export class ForgotPasswordComponent {
   form: UntypedFormGroup;
