@@ -4,9 +4,9 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 import { finalize } from 'rxjs/operators';
 
 @Component({
-  standalone: false,
   selector: 'abp-forgot-password',
   templateUrl: 'forgot-password.component.html',
+  imports: [CoreModule, ThemeSharedModule, CommonModule, ReactiveFormsModule],
 })
 export class ForgotPasswordComponent {
   form: UntypedFormGroup;
