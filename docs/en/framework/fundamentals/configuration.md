@@ -22,7 +22,7 @@ public class MyAppModule : AbpModule
 }
 ````
 
-`context.Configuration` is a shortcut property for the `context.Services.GetConfiguration()` method. You can use any of them (`IServiceCollection.GetConfiguration` is an extension method that can be used whenever you have an `IServiceCollection` object).
+`context.Configuration` is a shortcut property for the `context.Services.GetConfiguration()` method. In general, prefer using `context.Configuration` for simplicity and readability when working within module classes. Use `context.Services.GetConfiguration()` in other contexts where you have an `IServiceCollection` object but do not have access to the `context.Configuration` property. (`IServiceCollection.GetConfiguration` is an extension method that can be used whenever you have an `IServiceCollection` object).
 
 ### In Your Services
 
