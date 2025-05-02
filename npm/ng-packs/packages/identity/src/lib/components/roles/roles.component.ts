@@ -5,7 +5,10 @@ import {
   PagedResultDto,
 } from '@abp/ng.core';
 import { IdentityRoleDto, IdentityRoleService } from '@abp/ng.identity/proxy';
-import { ePermissionManagementComponents } from '@abp/ng.permission-management';
+import {
+  ePermissionManagementComponents,
+  PermissionManagementModule,
+} from '@abp/ng.permission-management';
 import {
   Confirmation,
   ConfirmationService,
@@ -35,7 +38,14 @@ import { PageModule } from '@abp/ng.components/page';
       useValue: eIdentityComponents.Roles,
     },
   ],
-  imports: [CommonModule, CoreModule, ThemeSharedModule, ExtensibleModule, PageModule],
+  imports: [
+    CommonModule,
+    CoreModule,
+    ThemeSharedModule,
+    ExtensibleModule,
+    PageModule,
+    PermissionManagementModule,
+  ],
 })
 export class RolesComponent implements OnInit {
   protected readonly list = inject(ListService<PagedAndSortedResultRequestDto>);
