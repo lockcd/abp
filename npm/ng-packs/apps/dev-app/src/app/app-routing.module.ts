@@ -17,8 +17,7 @@ const routes: Routes = [
   },
   {
     path: 'tenant-management',
-    loadChildren: () =>
-      import('@abp/ng.tenant-management').then(m => m.TenantManagementModule.forLazy()),
+    loadChildren: () => import('@abp/ng.tenant-management').then(m => m.tenantManagementRoutes),
   },
   {
     path: 'setting-management',

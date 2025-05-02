@@ -1,8 +1,19 @@
-import { ListService, PagedResultDto } from '@abp/ng.core';
-import { eFeatureManagementComponents } from '@abp/ng.feature-management';
-import { GetTenantsInput, TenantDto, TenantService } from '@abp/ng.tenant-management/proxy';
-import { Confirmation, ConfirmationService, ToasterService } from '@abp/ng.theme.shared';
+import { CoreModule, ListService, PagedResultDto } from '@abp/ng.core';
 import {
+  eFeatureManagementComponents,
+  FeatureManagementComponent,
+  FeatureManagementModule,
+  provideFeatureManagementConfig,
+} from '@abp/ng.feature-management';
+import { GetTenantsInput, TenantDto, TenantService } from '@abp/ng.tenant-management/proxy';
+import {
+  Confirmation,
+  ConfirmationService,
+  ThemeSharedModule,
+  ToasterService,
+} from '@abp/ng.theme.shared';
+import {
+  ExtensibleModule,
   EXTENSIONS_IDENTIFIER,
   FormPropData,
   generateFormFromProps,
@@ -11,9 +22,10 @@ import { Component, inject, Injector, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { eTenantManagementComponents } from '../../enums/components';
+import { CommonModule } from '@angular/common';
+import { PageModule } from '@abp/ng.components/page';
 
 @Component({
-  standalone: false,
   selector: 'abp-tenants',
   templateUrl: './tenants.component.html',
   providers: [
@@ -22,6 +34,14 @@ import { eTenantManagementComponents } from '../../enums/components';
       provide: EXTENSIONS_IDENTIFIER,
       useValue: eTenantManagementComponents.Tenants,
     },
+  ],
+  imports: [
+    CommonModule,
+    CoreModule,
+    ThemeSharedModule,
+    PageModule,
+    ExtensibleModule,
+    FeatureManagementComponent,
   ],
 })
 export class TenantsComponent implements OnInit {
