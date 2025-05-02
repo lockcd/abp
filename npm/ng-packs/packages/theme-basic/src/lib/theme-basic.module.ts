@@ -16,6 +16,7 @@ import { PageAlertContainerComponent } from './components/page-alert-container/p
 import { RoutesComponent } from './components/routes/routes.component';
 import { ValidationErrorComponent } from './components/validation-error/validation-error.component';
 import { provideThemeBasicConfig } from './providers';
+import { LazyTranslatePipe } from './pipes';
 
 export const LAYOUTS = [ApplicationLayoutComponent, AccountLayoutComponent, EmptyLayoutComponent];
 
@@ -48,6 +49,7 @@ export const LAYOUTS = [ApplicationLayoutComponent, AccountLayoutComponent, Empt
     NgbCollapseModule,
     NgbDropdownModule,
     NgxValidateCoreModule,
+    LazyTranslatePipe,
   ],
 })
 export class BaseThemeBasicModule {}

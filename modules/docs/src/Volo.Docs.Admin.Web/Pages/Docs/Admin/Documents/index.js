@@ -2,7 +2,11 @@ $(function () {
     var l = abp.localization.getResource('Docs');
     var service = window.volo.docs.admin.documentsAdmin;
 
-	moment.localeData().preparse = (s)=>s;
+    var getFormattedDate = function ($datePicker) {
+        return $datePicker.data('date');
+    };
+
+    moment.localeData().preparse = (s)=>s;
     moment.localeData().postformat = (s)=>s;
 
     var singleDatePicker = $('#DocumentsContainer .singledatepicker');
@@ -26,7 +30,7 @@ $(function () {
 
 
     var comboboxItems = [];
-    
+
     service.getFilterItems()
         .then(function (result) {
             comboboxItems = result;
@@ -41,13 +45,13 @@ $(function () {
     $projectId.on('change', function () {
         fillOptions();
     });
-    
+
     var comboboxs = {
         version: $('#Version'),
         languageCode: $('#LanguageCode'),
         format: $('#Format')
     };
-    
+
     for (var key in comboboxs) {
         comboboxs[key].on('change', function () {
             fillOptions();
@@ -62,7 +66,7 @@ $(function () {
             comboboxs[key].empty();
         }
     }
-    
+
     function getSelectedItem() {
         var item = {};
         for (var key in comboboxs) {
@@ -70,13 +74,13 @@ $(function () {
         }
         return item;
     }
-    
+
     function SetComboboxsValues(item) {
         for (var key in comboboxs) {
             comboboxs[key].val(item[key]);
         }
     }
-    
+
     function addComboboxsEmptyItem() {
         for (var key in comboboxs) {
             comboboxs[key].append($('<option/>').val('').text(''));
@@ -84,17 +88,17 @@ $(function () {
     }
 
     function fillOptions() {
-        
+
         selectedItem = getSelectedItem();
-        
+
         var selectedProjectId = $projectId.val();
 
         emptyComboboxs();
-        
+
         addComboboxsEmptyItem();
 
         var selectedProjectItems = comboboxItems.filter((item) => !selectedProjectId || item.projectId === selectedProjectId);
-        
+
         for (var key in selectedItem) {
             var item = selectedProjectItems.find((item) => item[key] === selectedItem[key]);
             if (item) {
@@ -103,14 +107,14 @@ $(function () {
                 selectedItem[key] = '';
             }
         }
-        
+
 
         selectedProjectItems.forEach(function (item) {
             for (var key in comboboxs) {
                 appendComboboxItem(comboboxs[key], item, key);
             }
         });
-        
+
         SetComboboxsValues(selectedItem);
     }
     function appendComboboxItem($combobox, item , key) {
@@ -128,21 +132,20 @@ $(function () {
 
     var getFilter = function () {
         $('#DocumentsContainer').handleDatepicker('.singledatepicker');
-
         return {
             projectId: $('#ProjectId').val(),
             name: $('#Name').val(),
             version: $('#Version').val(),
             languageCode: $('#LanguageCode').val(),
             format: $('#Format').val(),
-            creationTimeMin: $('#DocumentsContainer').find('input[name="CreationTimeMin"'),
-            creationTimeMax: $('#DocumentsContainer').find('input[name="CreationTimeMax"'),
-            lastUpdatedTimeMin: $('#DocumentsContainer').find('input[name="LastUpdatedTimeMin"'),
-            lastUpdatedTimeMax: $('#DocumentsContainer').find('input[name="LastUpdatedTimeMax"'),
-            lastSignificantUpdateTimeMin: $('#DocumentsContainer').find('input[name="LastSignificantUpdateTimeMin"'),
-            lastSignificantUpdateTimeMax: $('#DocumentsContainer').find('input[name="LastSignificantUpdateTimeMax"'),
-            lastCachedTimeMin: $('#DocumentsContainer').find('input[name="LastCachedTimeMin"'),
-            lastCachedTimeMax: $('#DocumentsContainer').find('input[name="LastCachedTimeMax"'),
+            creationTimeMin: getFormattedDate($('#DocumentsContainer').find('input[name="CreationTimeMin"]')),
+            creationTimeMax: getFormattedDate($('#DocumentsContainer').find('input[name="CreationTimeMax"]')),
+            lastUpdatedTimeMin: getFormattedDate($('#DocumentsContainer').find('input[name="LastUpdatedTimeMin"]')),
+            lastUpdatedTimeMax: getFormattedDate($('#DocumentsContainer').find('input[name="LastUpdatedTimeMax"]')),
+            lastSignificantUpdateTimeMin: getFormattedDate($('#DocumentsContainer').find('input[name="LastSignificantUpdateTimeMin"]')),
+            lastSignificantUpdateTimeMax: getFormattedDate($('#DocumentsContainer').find('input[name="LastSignificantUpdateTimeMax"]')),
+            lastCachedTimeMin: getFormattedDate($('#DocumentsContainer').find('input[name="LastCachedTimeMin"]')),
+            lastCachedTimeMax: getFormattedDate($('#DocumentsContainer').find('input[name="LastCachedTimeMax"]')),
         };
     };
 
