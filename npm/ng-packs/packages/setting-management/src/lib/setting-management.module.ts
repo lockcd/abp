@@ -1,14 +1,11 @@
-import { PageModule } from '@abp/ng.components/page';
-import { CoreModule, LazyModuleFactory } from '@abp/ng.core';
-import { ThemeSharedModule } from '@abp/ng.theme.shared';
+import { LazyModuleFactory } from '@abp/ng.core';
 import { ModuleWithProviders, NgModule, NgModuleFactory } from '@angular/core';
-import { SettingManagementComponent } from './components/setting-management.component';
 import { SettingManagementRoutingModule } from './setting-management-routing.module';
 
 @NgModule({
-  declarations: [SettingManagementComponent],
-  exports: [SettingManagementComponent],
-  imports: [SettingManagementRoutingModule, CoreModule, ThemeSharedModule, PageModule],
+  declarations: [],
+  exports: [],
+  imports: [SettingManagementRoutingModule],
 })
 export class SettingManagementModule {
   static forChild(): ModuleWithProviders<SettingManagementModule> {
