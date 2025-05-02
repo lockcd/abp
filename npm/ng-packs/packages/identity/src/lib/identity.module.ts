@@ -9,11 +9,13 @@ import {
   IDENTITY_ENTITY_PROP_CONTRIBUTORS,
   IDENTITY_TOOLBAR_ACTION_CONTRIBUTORS,
 } from './tokens/extensions.token';
+import { IdentityRoutingModule } from './identity-routing.module';
+import { RolesComponent, UsersComponent } from './components';
 
 @NgModule({
   declarations: [],
   exports: [],
-  imports: [],
+  imports: [IdentityRoutingModule, RolesComponent, UsersComponent],
 })
 export class IdentityModule {
   static forChild(options: IdentityConfigOptions = {}): ModuleWithProviders<IdentityModule> {

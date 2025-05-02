@@ -6,3 +6,4 @@ export * from './lib/models';
 export * from './lib/tokens';
 export * from './lib/resolvers';
 export * from './lib/identity.routes';
+export * from './lib/identity';

@@ -6,8 +6,9 @@ import {
   IDENTITY_TOOLBAR_ACTION_CONTRIBUTORS,
 } from './tokens';
 import { IdentityConfigOptions } from './models';
+import { Provider } from '@angular/core';
 
-export function provideIdentity(options: IdentityConfigOptions = {}) {
+export function provideIdentity(options: IdentityConfigOptions = {}): Provider[] {
   return [
     {
       provide: IDENTITY_ENTITY_ACTION_CONTRIBUTORS,

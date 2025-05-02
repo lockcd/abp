@@ -3,15 +3,13 @@ import {
   authGuard,
   permissionGuard,
   ReplaceableComponents,
-  ReplaceableRouteContainerComponent,
   ReplaceableRouteContainerStandaloneComponent,
-  RouterOutletComponent,
   RouterOutletStandaloneComponent,
 } from '@abp/ng.core';
 import { RolesComponent, UsersComponent } from './components';
 import { identityExtensionsResolver } from './resolvers';
-import { provideIdentity } from './identity';
 import { eIdentityComponents } from './enums';
+import { provideIdentity } from './identity';
 
 export const identityRoutes: Routes = [
   {
@@ -19,7 +17,7 @@ export const identityRoutes: Routes = [
     component: RouterOutletStandaloneComponent,
     canActivate: [authGuard, permissionGuard],
     resolve: [identityExtensionsResolver],
-    providers: [...provideIdentity()],
+    providers: provideIdentity({}),
     children: [
       { path: '', redirectTo: 'roles', pathMatch: 'full' },
       {
