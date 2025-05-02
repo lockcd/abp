@@ -1,4 +1,3 @@
-import { TenantManagementExtensionsGuard } from './guards/extensions.guard';
 import { TenantManagementConfigOptions } from './models/config-options';
 import {
   TENANT_MANAGEMENT_CREATE_FORM_PROP_CONTRIBUTORS,
@@ -30,6 +29,5 @@ export function provideTenantManagement(options: TenantManagementConfigOptions =
       provide: TENANT_MANAGEMENT_EDIT_FORM_PROP_CONTRIBUTORS,
       useValue: options.editFormPropContributors,
     },
-    TenantManagementExtensionsGuard,
   ];
 }

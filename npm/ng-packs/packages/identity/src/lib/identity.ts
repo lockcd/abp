@@ -5,7 +5,6 @@ import {
   IDENTITY_ENTITY_PROP_CONTRIBUTORS,
   IDENTITY_TOOLBAR_ACTION_CONTRIBUTORS,
 } from './tokens';
-import { IdentityExtensionsGuard } from './guards';
 import { IdentityConfigOptions } from './models';
 
 export function provideIdentity(options: IdentityConfigOptions = {}) {
@@ -30,6 +29,5 @@ export function provideIdentity(options: IdentityConfigOptions = {}) {
       provide: IDENTITY_EDIT_FORM_PROP_CONTRIBUTORS,
       useValue: options.editFormPropContributors,
     },
-    IdentityExtensionsGuard,
   ];
 }

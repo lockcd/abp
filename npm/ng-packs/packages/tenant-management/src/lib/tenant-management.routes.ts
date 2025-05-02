@@ -4,9 +4,7 @@ import {
   authGuard,
   permissionGuard,
   ReplaceableComponents,
-  ReplaceableRouteContainerComponent,
   ReplaceableRouteContainerStandaloneComponent,
-  RouterOutletComponent,
   RouterOutletStandaloneComponent,
 } from '@abp/ng.core';
 
