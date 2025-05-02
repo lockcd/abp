@@ -61,4 +61,14 @@ public class BlobProjectPdfFileStore : IProjectPdfFileStore, ITransientDependenc
         
         return await BlobContainer.GetOrNullAsync(Options.Value.CalculatePdfFileName(project, version, languageCode));
     }
+
+    public virtual async Task DeleteAsync(Project project, string version, string languageCode)
+    {
+        var fileName = Options.Value.CalculatePdfFileName(project, version, languageCode);
+        
+        await BlobContainer.DeleteAsync(fileName);
+        project.RemovePdfFile(fileName);
+        await ProjectRepository.UpdateAsync(project);
+        
+    }
 }

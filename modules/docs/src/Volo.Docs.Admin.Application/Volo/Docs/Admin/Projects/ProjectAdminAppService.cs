@@ -23,14 +23,14 @@ namespace Volo.Docs.Admin.Projects
         private readonly IDocumentRepository _documentRepository;
         private readonly IDocumentFullSearch _elasticSearchService;
         private readonly IGuidGenerator _guidGenerator;
-        private readonly IOptions<DocsProjectPdfGeneratorOptions> _pdfGeneratorOptions;
+        private readonly IProjectPdfFileStore _projectPdfFileStore;
 
         public ProjectAdminAppService(
             IProjectRepository projectRepository,
             IDocumentRepository documentRepository,
             IDocumentFullSearch elasticSearchService,
             IGuidGenerator guidGenerator,
-            IOptions<DocsProjectPdfGeneratorOptions> pdfGeneratorOptions)
+            IProjectPdfFileStore projectPdfFileStore)
         {
             ObjectMapperContext = typeof(DocsAdminApplicationModule);
             LocalizationResource = typeof(DocsResource);
@@ -39,7 +39,7 @@ namespace Volo.Docs.Admin.Projects
             _documentRepository = documentRepository;
             _elasticSearchService = elasticSearchService;
             _guidGenerator = guidGenerator;
-            _pdfGeneratorOptions = pdfGeneratorOptions;
+            _projectPdfFileStore = projectPdfFileStore;
         }
 
         public virtual async Task<PagedResultDto<ProjectDto>> GetListAsync(PagedAndSortedResultRequestDto input)
@@ -199,9 +199,7 @@ namespace Volo.Docs.Admin.Projects
         public virtual async Task DeletePdfFileAsync(DeletePdfFileInput input)
         {
             var project = await _projectRepository.GetAsync(input.ProjectId, includeDetails: true);
-            project.RemovePdfFile(_pdfGeneratorOptions.Value.CalculatePdfFileName(project, input.Version, input.LanguageCode));
-            
-            await _projectRepository.UpdateAsync(project);
+            await _projectPdfFileStore.DeleteAsync(project, input.Version, input.LanguageCode);
         }
     }
 }
