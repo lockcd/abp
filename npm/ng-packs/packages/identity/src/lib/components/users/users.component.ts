@@ -1,18 +1,23 @@
-import { ListService, PagedResultDto } from '@abp/ng.core';
+import { CoreModule, ListService, PagedResultDto } from '@abp/ng.core';
 import {
   GetIdentityUsersInput,
   IdentityRoleDto,
   IdentityUserDto,
   IdentityUserService,
 } from '@abp/ng.identity/proxy';
-import { ePermissionManagementComponents } from '@abp/ng.permission-management';
+import {
+  ePermissionManagementComponents,
+  PermissionManagementModule,
+} from '@abp/ng.permission-management';
 import {
   Confirmation,
   ConfirmationService,
   eFormComponets,
+  ThemeSharedModule,
   ToasterService,
 } from '@abp/ng.theme.shared';
 import {
+  ExtensibleModule,
   EXTENSIONS_IDENTIFIER,
   FormPropData,
   generateFormFromProps,
@@ -34,9 +39,12 @@ import {
 } from '@angular/forms';
 import { finalize, switchMap, tap } from 'rxjs/operators';
 import { eIdentityComponents } from '../../enums/components';
+import { CommonModule } from '@angular/common';
+import { PageModule } from '@abp/ng.components/page';
+import { NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgxValidateCoreModule } from '@ngx-validate/core';
 
 @Component({
-  standalone: false,
   selector: 'abp-users',
   templateUrl: './users.component.html',
   providers: [
@@ -45,6 +53,17 @@ import { eIdentityComponents } from '../../enums/components';
       provide: EXTENSIONS_IDENTIFIER,
       useValue: eIdentityComponents.Users,
     },
+  ],
+  imports: [
+    CommonModule,
+    PageModule,
+    CoreModule,
+    ThemeSharedModule,
+    ExtensibleModule,
+    PermissionManagementModule,
+    NgbNavModule,
+    NgbDropdownModule,
+    NgxValidateCoreModule,
   ],
 })
 export class UsersComponent implements OnInit {

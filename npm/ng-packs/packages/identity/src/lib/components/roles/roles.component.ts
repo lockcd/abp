@@ -1,8 +1,19 @@
-import { ListService, PagedAndSortedResultRequestDto, PagedResultDto } from '@abp/ng.core';
+import {
+  CoreModule,
+  ListService,
+  PagedAndSortedResultRequestDto,
+  PagedResultDto,
+} from '@abp/ng.core';
 import { IdentityRoleDto, IdentityRoleService } from '@abp/ng.identity/proxy';
 import { ePermissionManagementComponents } from '@abp/ng.permission-management';
-import { Confirmation, ConfirmationService, ToasterService } from '@abp/ng.theme.shared';
 import {
+  Confirmation,
+  ConfirmationService,
+  ThemeSharedModule,
+  ToasterService,
+} from '@abp/ng.theme.shared';
+import {
+  ExtensibleModule,
   EXTENSIONS_IDENTIFIER,
   FormPropData,
   generateFormFromProps,
@@ -11,9 +22,10 @@ import { Component, inject, Injector, OnInit } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { eIdentityComponents } from '../../enums/components';
+import { CommonModule } from '@angular/common';
+import { PageModule } from '@abp/ng.components/page';
 
 @Component({
-  standalone: false,
   selector: 'abp-roles',
   templateUrl: './roles.component.html',
   providers: [
@@ -23,6 +35,7 @@ import { eIdentityComponents } from '../../enums/components';
       useValue: eIdentityComponents.Roles,
     },
   ],
+  imports: [CommonModule, CoreModule, ThemeSharedModule, ExtensibleModule, PageModule],
 })
 export class RolesComponent implements OnInit {
   protected readonly list = inject(ListService<PagedAndSortedResultRequestDto>);
