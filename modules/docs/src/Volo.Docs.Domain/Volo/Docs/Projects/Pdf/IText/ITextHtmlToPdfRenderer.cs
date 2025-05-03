@@ -20,11 +20,12 @@ public class ITextHtmlToPdfRenderer : IHtmlToPdfRenderer ,ITransientDependency
         Options = options;
     }
     
-    public virtual Task<MemoryStream> RenderAsync(string html, List<PdfDocument> documents)
+    public virtual Task<MemoryStream> RenderAsync(string title, string html, List<PdfDocument> documents)
     {
         var pdfStream = new MemoryStream();
         var pdfWrite = new PdfWriter(pdfStream);
         var pdfDocument = new iText.Kernel.Pdf.PdfDocument(pdfWrite);
+        pdfDocument.GetDocumentInfo().SetTitle(title);
         var textDocument = new ITextDocument(pdfDocument);
         pdfWrite.SetCloseStream(false);
         

@@ -179,6 +179,7 @@ namespace VoloDocs.Web
             {
                 options.BaseUrl = configuration["App:selfUrl"];
                 options.IndexPagePath = "Index.md";
+                options.CalculatePdfFileTitle = project => project.ShortName == "abp" ? "ABP Documentation" : null;
             });
             
             Configure<AbpBlobStoringOptions>(options =>

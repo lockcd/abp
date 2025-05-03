@@ -1,4 +1,5 @@
 using System;
+using Scriban.Syntax;
 
 namespace Volo.Docs.Projects.Pdf;
 
@@ -39,6 +40,11 @@ public class DocsProjectPdfGeneratorOptions
     /// Default is "{project.ShortName}-{version}-{languageCode}.pdf".
     /// </summary>
     public Func<Project, string, string, string> CalculatePdfFileName { get; set; }
+    
+    /// <summary>
+    /// The function to calculate the PDF file title.
+    /// </summary>
+    public Func<Project, string> CalculatePdfFileTitle { get; set; }
     
     public DocsProjectPdfGeneratorOptions()
     {

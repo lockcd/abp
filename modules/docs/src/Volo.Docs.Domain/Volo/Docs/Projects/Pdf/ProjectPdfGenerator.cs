@@ -69,7 +69,8 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
         await SetAllPdfDocumentsAsync(navigation.Items, project, version, languageCode);
         
         var html = await BuildHtmlAsync();
-        var pdfStream = await HtmlToPdfRenderer.RenderAsync(html, AllPdfDocuments);
+        var title = Options.Value.CalculatePdfFileTitle?.Invoke(project) ?? project.Name;
+        var pdfStream = await HtmlToPdfRenderer.RenderAsync(title, html, AllPdfDocuments);
         
         await ProjectPdfFileStore.SetAsync(project, version, languageCode, pdfStream);
     
