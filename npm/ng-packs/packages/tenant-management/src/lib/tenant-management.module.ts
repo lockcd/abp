@@ -9,11 +9,13 @@ import {
   TENANT_MANAGEMENT_ENTITY_PROP_CONTRIBUTORS,
   TENANT_MANAGEMENT_TOOLBAR_ACTION_CONTRIBUTORS,
 } from './tokens/extensions.token';
+import { TenantsComponent } from './components';
+import { TenantManagementRoutingModule } from './tenant-management-routing.module';
 
 @NgModule({
   declarations: [],
   exports: [],
-  imports: [],
+  imports: [TenantManagementRoutingModule, TenantsComponent],
 })
 export class TenantManagementModule {
   static forChild(

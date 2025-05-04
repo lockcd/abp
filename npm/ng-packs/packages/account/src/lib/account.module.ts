@@ -1,9 +1,5 @@
-import { CoreModule, LazyModuleFactory } from '@abp/ng.core';
-import { ThemeSharedModule } from '@abp/ng.theme.shared';
+import { LazyModuleFactory } from '@abp/ng.core';
 import { ModuleWithProviders, NgModule, NgModuleFactory } from '@angular/core';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
-import { NgxValidateCoreModule } from '@ngx-validate/core';
-import { AccountRoutingModule } from './account-routing.module';
 import { AccountConfigOptions } from './models/config-options';
 import { ACCOUNT_CONFIG_OPTIONS } from './tokens/config-options.token';
 import { accountConfigOptionsFactory } from './utils/factory-utils';
@@ -12,17 +8,22 @@ import { RE_LOGIN_CONFIRMATION_TOKEN } from './tokens';
 
 import { ACCOUNT_EDIT_FORM_PROP_CONTRIBUTORS } from './tokens/extensions.token';
 import { AccountExtensionsGuard } from './guards/extensions.guard';
-import { ExtensibleModule } from '@abp/ng.components/extensible';
+import {
+  ForgotPasswordComponent,
+  LoginComponent,
+  ManageProfileComponent,
+  RegisterComponent,
+  ResetPasswordComponent,
+} from './components';
 
 @NgModule({
   declarations: [],
   imports: [
-    CoreModule,
-    AccountRoutingModule,
-    ThemeSharedModule,
-    NgbDropdownModule,
-    NgxValidateCoreModule,
-    ExtensibleModule,
+    LoginComponent,
+    RegisterComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent,
+    ManageProfileComponent,
   ],
   exports: [],
 })
