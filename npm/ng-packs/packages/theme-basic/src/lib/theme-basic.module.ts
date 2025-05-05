@@ -24,6 +24,8 @@ export const THEME_BASIC_COMPONENTS = [
   CurrentUserComponent,
   LanguagesComponent,
   PageAlertContainerComponent,
+  AuthWrapperComponent,
+  TenantBoxComponent,
 ];
 
 @NgModule({

@@ -6,6 +6,7 @@ import { LogoComponent } from '../logo/logo.component';
 import { RoutesComponent } from '../routes/routes.component';
 import { NavItemsComponent } from '../nav-items/nav-items.component';
 import { AuthWrapperComponent } from './auth-wrapper/auth-wrapper.component';
+import { PageAlertContainerComponent } from '../page-alert-container/page-alert-container.component';
 
 @Component({
   selector: 'abp-layout-account',
@@ -18,6 +19,7 @@ import { AuthWrapperComponent } from './auth-wrapper/auth-wrapper.component';
     RoutesComponent,
     NavItemsComponent,
     AuthWrapperComponent,
+    PageAlertContainerComponent,
   ],
 })
 export class AccountLayoutComponent implements AfterViewInit {
