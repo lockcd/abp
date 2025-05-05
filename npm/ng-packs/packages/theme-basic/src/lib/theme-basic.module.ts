@@ -1,6 +1,4 @@
-import { ThemeSharedModule } from '@abp/ng.theme.shared';
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { NgxValidateCoreModule } from '@ngx-validate/core';
 import { AccountLayoutComponent } from './components/account-layout/account-layout.component';
 import { AuthWrapperComponent } from './components/account-layout/auth-wrapper/auth-wrapper.component';
 import { TenantBoxComponent } from './components/account-layout/tenant-box/tenant-box.component';
@@ -31,8 +29,6 @@ export const LAYOUTS = [ApplicationLayoutComponent, AccountLayoutComponent, Empt
   ],
   imports: [
     ...LAYOUTS,
-    ThemeSharedModule,
-    NgxValidateCoreModule,
     ValidationErrorComponent,
     LogoComponent,
     NavItemsComponent,
