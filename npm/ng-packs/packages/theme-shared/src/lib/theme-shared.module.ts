@@ -1,4 +1,3 @@
-import { CoreModule } from '@abp/ng.core';
 import { DatePipe } from '@angular/common';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
