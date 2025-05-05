@@ -3,6 +3,6 @@ import { LocalizationPipe } from './pipes/localization.pipe';
 
 @NgModule({
   exports: [LocalizationPipe],
-  declarations: [LocalizationPipe],
+  imports: [LocalizationPipe],
 })
 export class LocalizationModule {}
