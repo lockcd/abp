@@ -31,7 +31,7 @@ import { ShortDatePipe } from './pipes/short-date.pipe';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { provideAbpCoreChild, provideAbpCore, withOptions } from './providers';
 
-const standaloneDirectives = [
+const CORE_DIRECTIVES = [
   AutofocusDirective,
   InputEventDebounceDirective,
   ForDirective,
@@ -40,6 +40,23 @@ const standaloneDirectives = [
   PermissionDirective,
   ReplaceableTemplateDirective,
   StopPropagationDirective,
+];
+
+const CORE_PIPES = [
+  LocalizationPipe,
+  SortPipe,
+  SafeHtmlPipe,
+  ShortDateTimePipe,
+  ShortTimePipe,
+  ShortDatePipe,
+  ToInjectorPipe,
+];
+
+const CORE_COMPONENTS = [
+  DynamicLayoutComponent,
+  ReplaceableRouteContainerComponent,
+  RouterOutletComponent,
+  AbstractNgModelComponent,
 ];
 /**
  * BaseCoreModule is the module that holds
@@ -54,17 +71,9 @@ const standaloneDirectives = [
     ReactiveFormsModule,
     RouterModule,
     LocalizationModule,
-    AbstractNgModelComponent,
-    DynamicLayoutComponent,
-    ReplaceableRouteContainerComponent,
-    RouterOutletComponent,
-    SortPipe,
-    SafeHtmlPipe,
-    ToInjectorPipe,
-    ShortDateTimePipe,
-    ShortTimePipe,
-    ShortDatePipe,
-    ...standaloneDirectives,
+    ...CORE_DIRECTIVES,
+    ...CORE_PIPES,
+    ...CORE_COMPONENTS,
   ],
   imports: [
     CommonModule,
@@ -72,17 +81,9 @@ const standaloneDirectives = [
     ReactiveFormsModule,
     RouterModule,
     LocalizationModule,
-    ...standaloneDirectives,
-    DynamicLayoutComponent,
-    ReplaceableRouteContainerComponent,
-    ShortDateTimePipe,
-    ShortTimePipe,
-    ShortDatePipe,
-    SafeHtmlPipe,
-    SortPipe,
-    ToInjectorPipe,
-    RouterOutletComponent,
-    AbstractNgModelComponent,
+    ...CORE_DIRECTIVES,
+    ...CORE_PIPES,
+    ...CORE_COMPONENTS,
   ],
   declarations: [],
   providers: [LocalizationPipe, provideHttpClient(withInterceptorsFromDi())],
