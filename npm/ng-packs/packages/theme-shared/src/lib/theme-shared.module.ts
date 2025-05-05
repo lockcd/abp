@@ -1,6 +1,5 @@
 import { DatePipe } from '@angular/common';
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxValidateCoreModule } from '@ngx-validate/core';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { BreadcrumbItemsComponent } from './components/breadcrumb-items/breadcrumb-items.component';
@@ -14,7 +13,6 @@ import { ModalCloseDirective } from './components/modal/modal-close.directive';
 import { ModalComponent } from './components/modal/modal.component';
 import { ToastContainerComponent } from './components/toast-container/toast-container.component';
 import { ToastComponent } from './components/toast/toast.component';
-import { EllipsisDirective } from './directives/ellipsis.directive';
 import { LoadingDirective } from './directives/loading.directive';
 import { NgxDatatableDefaultDirective } from './directives/ngx-datatable-default.directive';
 import { NgxDatatableListDirective } from './directives/ngx-datatable-list.directive';
@@ -33,7 +31,7 @@ import { AbpVisibleDirective, DisabledDirective } from './directives';
 import { FormInputComponent } from './components/form-input/form-input.component';
 import { FormCheckboxComponent } from './components/checkbox/checkbox.component';
 
-export const THEME_SHARED_COMPONENTS = [
+export const THEME_SHARED_EXPORTS = [
   BreadcrumbComponent,
   BreadcrumbItemsComponent,
   ButtonComponent,
@@ -48,36 +46,20 @@ export const THEME_SHARED_COMPONENTS = [
   FormInputComponent,
   FormCheckboxComponent,
   HttpErrorWrapperComponent,
+  NgxDatatableModule,
+  NgxValidateCoreModule,
+  CardModule,
+  DisabledDirective,
+  AbpVisibleDirective,
+  NgxDatatableListDirective,
+  NgxDatatableDefaultDirective,
+  PasswordComponent,
 ];
 
 @NgModule({
-  imports: [
-    CoreModule,
-    NgxDatatableModule,
-    NgxValidateCoreModule,
-    NgbPaginationModule,
-    EllipsisDirective,
-    CardModule,
-    PasswordComponent,
-    NgxDatatableDefaultDirective,
-    NgxDatatableListDirective,
-    DisabledDirective,
-    AbpVisibleDirective,
-    ...THEME_SHARED_COMPONENTS,
-  ],
+  imports: [...THEME_SHARED_EXPORTS],
   declarations: [],
-  exports: [
-    NgxDatatableModule,
-    NgxValidateCoreModule,
-    CardModule,
-    DisabledDirective,
-    AbpVisibleDirective,
-    NgxDatatableListDirective,
-    NgxDatatableDefaultDirective,
-    PasswordComponent,
-    ...THEME_SHARED_COMPONENTS,
-  ],
-  providers: [DatePipe],
+  exports: [...THEME_SHARED_EXPORTS],
 })
 export class BaseThemeSharedModule {}
 
