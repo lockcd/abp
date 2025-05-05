@@ -15,30 +15,21 @@ import { provideThemeBasicConfig } from './providers';
 
 export const LAYOUTS = [ApplicationLayoutComponent, AccountLayoutComponent, EmptyLayoutComponent];
 
+export const THEME_BASIC_COMPONENTS = [
+  ...LAYOUTS,
+  ValidationErrorComponent,
+  LogoComponent,
+  NavItemsComponent,
+  RoutesComponent,
+  CurrentUserComponent,
+  LanguagesComponent,
+  PageAlertContainerComponent,
+];
+
 @NgModule({
   declarations: [],
-  exports: [
-    ...LAYOUTS,
-    ValidationErrorComponent,
-    LogoComponent,
-    NavItemsComponent,
-    RoutesComponent,
-    CurrentUserComponent,
-    LanguagesComponent,
-    PageAlertContainerComponent,
-  ],
-  imports: [
-    ...LAYOUTS,
-    ValidationErrorComponent,
-    LogoComponent,
-    NavItemsComponent,
-    CurrentUserComponent,
-    LanguagesComponent,
-    PageAlertContainerComponent,
-    TenantBoxComponent,
-    AuthWrapperComponent,
-    RoutesComponent,
-  ],
+  exports: [...THEME_BASIC_COMPONENTS],
+  imports: [...THEME_BASIC_COMPONENTS],
 })
 export class BaseThemeBasicModule {}
 
