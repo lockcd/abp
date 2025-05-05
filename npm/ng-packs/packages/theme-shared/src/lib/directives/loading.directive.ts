@@ -17,7 +17,6 @@ import { take } from 'rxjs/operators';
 import { LoadingComponent } from '../components/loading/loading.component';
 
 @Directive({
-  standalone: false,
   selector: '[abpLoading]',
 })
 export class LoadingDirective implements OnInit, OnDestroy {

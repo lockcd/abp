@@ -10,13 +10,15 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { Router } from '@angular/router';
 import { map, startWith } from 'rxjs/operators';
 import { eThemeSharedRouteNames } from '../../enums/route-names';
+import { CommonModule } from '@angular/common';
+import { BreadcrumbItemsComponent } from '../breadcrumb-items/breadcrumb-items.component';
 
 @Component({
-  standalone: false,
   selector: 'abp-breadcrumb',
   templateUrl: './breadcrumb.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [SubscriptionService],
+  imports: [CommonModule, BreadcrumbItemsComponent],
 })
 export class BreadcrumbComponent implements OnInit {
   segments: Partial<ABP.Route>[] = [];

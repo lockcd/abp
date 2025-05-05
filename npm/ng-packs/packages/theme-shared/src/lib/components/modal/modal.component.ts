@@ -22,15 +22,16 @@ import { ConfirmationService } from '../../services/confirmation.service';
 import { SUPPRESS_UNSAVED_CHANGES_WARNING } from '../../tokens/suppress-unsaved-changes-warning.token';
 import { ButtonComponent } from '../button/button.component';
 import { DismissableModal, ModalDismissMode, ModalRefService } from './modal-ref.service';
+import { CommonModule } from '@angular/common';
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
 
 @Component({
-  standalone: false,
   selector: 'abp-modal',
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.scss'],
   providers: [SubscriptionService],
+  imports: [CommonModule],
 })
 export class ModalComponent implements OnInit, OnDestroy, DismissableModal {
   protected readonly confirmationService = inject(ConfirmationService);

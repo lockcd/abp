@@ -10,9 +10,9 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  standalone: false,
   selector: 'abp-button',
   template: `
     <button
@@ -29,6 +29,7 @@ import {
       <i [ngClass]="icon" class="me-1" aria-hidden="true"></i><ng-content></ng-content>
     </button>
   `,
+  imports: [CommonModule],
 })
 export class ButtonComponent implements OnInit {
   @Input()

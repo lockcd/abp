@@ -34,7 +34,7 @@ import { AbpVisibleDirective, DisabledDirective } from './directives';
 import { FormInputComponent } from './components/form-input/form-input.component';
 import { FormCheckboxComponent } from './components/checkbox/checkbox.component';
 
-const declarationsWithExports = [
+export const THEME_SHARED_COMPONENTS = [
   BreadcrumbComponent,
   BreadcrumbItemsComponent,
   ButtonComponent,
@@ -48,6 +48,7 @@ const declarationsWithExports = [
   ModalCloseDirective,
   FormInputComponent,
   FormCheckboxComponent,
+  HttpErrorWrapperComponent,
 ];
 
 @NgModule({
@@ -63,8 +64,9 @@ const declarationsWithExports = [
     NgxDatatableListDirective,
     DisabledDirective,
     AbpVisibleDirective,
+    ...THEME_SHARED_COMPONENTS,
   ],
-  declarations: [...declarationsWithExports, HttpErrorWrapperComponent],
+  declarations: [],
   exports: [
     NgxDatatableModule,
     NgxValidateCoreModule,
@@ -74,7 +76,7 @@ const declarationsWithExports = [
     NgxDatatableListDirective,
     NgxDatatableDefaultDirective,
     PasswordComponent,
-    ...declarationsWithExports,
+    ...THEME_SHARED_COMPONENTS,
   ],
   providers: [DatePipe],
 })

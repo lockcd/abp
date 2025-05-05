@@ -1,7 +1,7 @@
 import { Component, ViewEncapsulation } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  standalone: false,
   selector: 'abp-loading',
   template: `
     <div class="abp-loading">
@@ -33,5 +33,6 @@ import { Component, ViewEncapsulation } from '@angular/core';
       }
     `,
   ],
+  imports: [CommonModule],
 })
 export class LoadingComponent {}

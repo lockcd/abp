@@ -2,12 +2,14 @@ import { Component, Inject } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
 import { Confirmation } from '../../models/confirmation';
 import { CONFIRMATION_ICONS, ConfirmationIcons } from '../../tokens/confirmation-icons.token';
+import { CommonModule } from '@angular/common';
+import { CoreModule } from '@abp/ng.core';
 
 @Component({
-  standalone: false,
   selector: 'abp-confirmation',
   templateUrl: './confirmation.component.html',
   styleUrls: ['./confirmation.component.scss'],
+  imports: [CommonModule, CoreModule],
 })
 export class ConfirmationComponent {
   constructor(@Inject(CONFIRMATION_ICONS) private icons: ConfirmationIcons) {}

@@ -2,9 +2,9 @@ import { HttpWaitService, RouterWaitService, SubscriptionService } from '@abp/ng
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { combineLatest, Subscription, timer } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  standalone: false,
   selector: 'abp-loader-bar',
   template: `
     <div id="abp-loader-bar" [ngClass]="containerClass" [class.is-loading]="isLoading">
@@ -21,6 +21,7 @@ import { combineLatest, Subscription, timer } from 'rxjs';
   `,
   styleUrls: ['./loader-bar.component.scss'],
   providers: [SubscriptionService],
+  imports: [CommonModule],
 })
 export class LoaderBarComponent implements OnDestroy, OnInit {
   protected _isLoading!: boolean;
