@@ -7,10 +7,3 @@ import { RouterModule } from '@angular/router';
   imports: [RouterModule],
 })
 export class RouterOutletComponent {}
-
-@Component({
-  selector: 'abp-router-outlet',
-  template: ` <router-outlet></router-outlet> `,
-  imports: [RouterModule],
-})
-export class RouterOutletStandaloneComponent {}

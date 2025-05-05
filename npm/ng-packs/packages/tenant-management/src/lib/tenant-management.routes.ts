@@ -4,8 +4,8 @@ import {
   authGuard,
   permissionGuard,
   ReplaceableComponents,
-  ReplaceableRouteContainerStandaloneComponent,
-  RouterOutletStandaloneComponent,
+  ReplaceableRouteContainerComponent,
+  RouterOutletComponent,
 } from '@abp/ng.core';
 
 import { TenantsComponent } from './components/tenants/tenants.component';
@@ -16,7 +16,7 @@ import { provideTenantManagement } from './tenant-management';
 export const tenantManagementRoutes: Routes = [
   {
     path: '',
-    component: RouterOutletStandaloneComponent,
+    component: RouterOutletComponent,
     canActivate: [authGuard, permissionGuard],
     resolve: [tenantManagementExtensionsResolver],
     providers: [...provideTenantManagement()],
@@ -24,7 +24,7 @@ export const tenantManagementRoutes: Routes = [
       { path: '', redirectTo: 'tenants', pathMatch: 'full' },
       {
         path: 'tenants',
-        component: ReplaceableRouteContainerStandaloneComponent,
+        component: ReplaceableRouteContainerComponent,
         data: {
           requiredPolicy: 'AbpTenantManagement.Tenants',
           replaceableComponent: {

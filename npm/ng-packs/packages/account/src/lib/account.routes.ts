@@ -2,8 +2,7 @@ import {
   authGuard,
   ReplaceableComponents,
   ReplaceableRouteContainerComponent,
-  ReplaceableRouteContainerStandaloneComponent,
-  RouterOutletStandaloneComponent,
+  RouterOutletComponent,
 } from '@abp/ng.core';
 
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
@@ -22,13 +21,13 @@ const canActivate = [authenticationFlowGuard];
 export const accountRoutes: Routes = [
   {
     path: '',
-    component: RouterOutletStandaloneComponent,
+    component: RouterOutletComponent,
     providers: [...provideAccount()],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'login' },
       {
         path: 'login',
-        component: ReplaceableRouteContainerStandaloneComponent,
+        component: ReplaceableRouteContainerComponent,
         canActivate,
         data: {
           replaceableComponent: {
@@ -40,7 +39,7 @@ export const accountRoutes: Routes = [
       },
       {
         path: 'register',
-        component: ReplaceableRouteContainerStandaloneComponent,
+        component: ReplaceableRouteContainerComponent,
         canActivate,
         data: {
           replaceableComponent: {
@@ -52,7 +51,7 @@ export const accountRoutes: Routes = [
       },
       {
         path: 'forgot-password',
-        component: ReplaceableRouteContainerStandaloneComponent,
+        component: ReplaceableRouteContainerComponent,
         canActivate,
 
         data: {
@@ -65,7 +64,7 @@ export const accountRoutes: Routes = [
       },
       {
         path: 'reset-password',
-        component: ReplaceableRouteContainerStandaloneComponent,
+        component: ReplaceableRouteContainerComponent,
         canActivate: [],
         data: {
           tenantBoxVisible: false,
@@ -78,7 +77,7 @@ export const accountRoutes: Routes = [
       },
       {
         path: 'manage',
-        component: ReplaceableRouteContainerStandaloneComponent,
+        component: ReplaceableRouteContainerComponent,
         canActivate: [authGuard],
         resolve: [accountExtensionsResolver],
         data: {
