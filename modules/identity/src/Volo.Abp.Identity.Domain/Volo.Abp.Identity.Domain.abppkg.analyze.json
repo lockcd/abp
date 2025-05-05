@@ -5922,6 +5922,11 @@
             },
             {
               "type": "Boolean",
+              "name": "includeChildren",
+              "isOptional": true
+            },
+            {
+              "type": "Boolean",
               "name": "includeDetails",
               "isOptional": true
             },
@@ -5948,6 +5953,11 @@
               "isOptional": false
             },
             {
+              "type": "Boolean",
+              "name": "includeChildren",
+              "isOptional": true
+            },
+            {
               "type": "CancellationToken",
               "name": "cancellationToken",
               "isOptional": true
@@ -5972,6 +5982,11 @@
             {
               "type": "String",
               "name": "filter",
+              "isOptional": true
+            },
+            {
+              "type": "Boolean",
+              "name": "includeChildren",
               "isOptional": true
             },
             {
