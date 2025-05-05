@@ -1,4 +1,4 @@
-import { ABP, RoutesService, TreeNode } from '@abp/ng.core';
+import { ABP, CoreModule, RoutesService, TreeNode } from '@abp/ng.core';
 import {
   Component,
   ElementRef,
@@ -9,11 +9,15 @@ import {
   TrackByFunction,
   ViewChildren,
 } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { LazyTranslatePipe } from '../../pipes';
+import { RouterModule } from '@angular/router';
 
 @Component({
-  standalone: false,
   selector: 'abp-routes',
   templateUrl: 'routes.component.html',
+  imports: [CommonModule, RouterModule, CoreModule, NgbDropdownModule, LazyTranslatePipe],
 })
 export class RoutesComponent {
   public readonly routesService = inject(RoutesService);

@@ -1,12 +1,24 @@
 import { AfterViewInit, Component } from '@angular/core';
-import { eLayoutType, SubscriptionService } from '@abp/ng.core';
+import { CoreModule, eLayoutType, SubscriptionService } from '@abp/ng.core';
 import { LayoutService } from '../../services/layout.service';
+import { CommonModule } from '@angular/common';
+import { LogoComponent } from '../logo/logo.component';
+import { RoutesComponent } from '../routes/routes.component';
+import { NavItemsComponent } from '../nav-items/nav-items.component';
+import { AuthWrapperComponent } from './auth-wrapper/auth-wrapper.component';
 
 @Component({
-  standalone: false,
   selector: 'abp-layout-account',
   templateUrl: './account-layout.component.html',
   providers: [LayoutService, SubscriptionService],
+  imports: [
+    CommonModule,
+    CoreModule,
+    LogoComponent,
+    RoutesComponent,
+    NavItemsComponent,
+    AuthWrapperComponent,
+  ],
 })
 export class AccountLayoutComponent implements AfterViewInit {
   // required for dynamic component

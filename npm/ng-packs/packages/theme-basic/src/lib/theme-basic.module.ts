@@ -1,7 +1,5 @@
-import { CoreModule } from '@abp/ng.core';
 import { ThemeSharedModule } from '@abp/ng.theme.shared';
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { NgbCollapseModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxValidateCoreModule } from '@ngx-validate/core';
 import { AccountLayoutComponent } from './components/account-layout/account-layout.component';
 import { AuthWrapperComponent } from './components/account-layout/auth-wrapper/auth-wrapper.component';
@@ -16,18 +14,11 @@ import { PageAlertContainerComponent } from './components/page-alert-container/p
 import { RoutesComponent } from './components/routes/routes.component';
 import { ValidationErrorComponent } from './components/validation-error/validation-error.component';
 import { provideThemeBasicConfig } from './providers';
-import { LazyTranslatePipe } from './pipes';
 
 export const LAYOUTS = [ApplicationLayoutComponent, AccountLayoutComponent, EmptyLayoutComponent];
 
 @NgModule({
-  declarations: [
-    ...LAYOUTS,
-    RoutesComponent,
-    PageAlertContainerComponent,
-    TenantBoxComponent,
-    AuthWrapperComponent,
-  ],
+  declarations: [],
   exports: [
     ...LAYOUTS,
     ValidationErrorComponent,
@@ -39,17 +30,18 @@ export const LAYOUTS = [ApplicationLayoutComponent, AccountLayoutComponent, Empt
     PageAlertContainerComponent,
   ],
   imports: [
-    CoreModule,
+    ...LAYOUTS,
     ThemeSharedModule,
-    NgbCollapseModule,
-    NgbDropdownModule,
     NgxValidateCoreModule,
-    LazyTranslatePipe,
     ValidationErrorComponent,
     LogoComponent,
     NavItemsComponent,
     CurrentUserComponent,
     LanguagesComponent,
+    PageAlertContainerComponent,
+    TenantBoxComponent,
+    AuthWrapperComponent,
+    RoutesComponent,
   ],
 })
 export class BaseThemeBasicModule {}
