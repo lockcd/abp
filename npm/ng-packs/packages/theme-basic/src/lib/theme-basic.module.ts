@@ -23,12 +23,7 @@ export const LAYOUTS = [ApplicationLayoutComponent, AccountLayoutComponent, Empt
 @NgModule({
   declarations: [
     ...LAYOUTS,
-    ValidationErrorComponent,
-    LogoComponent,
-    NavItemsComponent,
     RoutesComponent,
-    CurrentUserComponent,
-    LanguagesComponent,
     PageAlertContainerComponent,
     TenantBoxComponent,
     AuthWrapperComponent,
@@ -50,6 +45,11 @@ export const LAYOUTS = [ApplicationLayoutComponent, AccountLayoutComponent, Empt
     NgbDropdownModule,
     NgxValidateCoreModule,
     LazyTranslatePipe,
+    ValidationErrorComponent,
+    LogoComponent,
+    NavItemsComponent,
+    CurrentUserComponent,
+    LanguagesComponent,
   ],
 })
 export class BaseThemeBasicModule {}
