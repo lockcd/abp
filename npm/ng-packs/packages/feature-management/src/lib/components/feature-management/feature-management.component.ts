@@ -1,4 +1,4 @@
-import { ConfigStateService, LocalizationModule, TrackByService } from '@abp/ng.core';
+import { ConfigStateService, LocalizationPipe, TrackByService } from '@abp/ng.core';
 import {
   FeatureDto,
   FeatureGroupDto,
@@ -6,10 +6,11 @@ import {
   UpdateFeatureDto,
 } from '@abp/ng.feature-management/proxy';
 import {
+  ButtonComponent,
   Confirmation,
   ConfirmationService,
   LocaleDirection,
-  ThemeSharedModule,
+  ModalComponent,
   ToasterService,
 } from '@abp/ng.theme.shared';
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
@@ -32,8 +33,9 @@ enum ValueTypes {
   exportAs: 'abpFeatureManagement',
   imports: [
     CommonModule,
-    ThemeSharedModule,
-    LocalizationModule,
+    ButtonComponent,
+    ModalComponent,
+    LocalizationPipe,
     FormsModule,
     NgbNavModule,
     FreeTextInputDirective,
