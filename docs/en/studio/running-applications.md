@@ -275,7 +275,7 @@ Then we have the `rabbitmq` on the Studio UI under containers:
 
 Name of the `yml` file is used as label in the UI, so we recommend to create the file with the name of service inside.
 
-If the `yml` file containes multiple services, they will be represented as a single container with the file name. In this case, when we start/stop it, all services inside the file will be started/stopped.
+If the `yml` file contains multiple services, they will be represented as a single container with the file name. In this case, when we start/stop it, all services inside the file will be started/stopped.
 
 > If a service is shut down externally, it will be shown as `Stopped` in the UI. In this case you can start them again. If it is constantly stopping, there may be a problem in the `yml` file.
 
