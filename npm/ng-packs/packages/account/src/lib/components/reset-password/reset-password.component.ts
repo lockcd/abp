@@ -1,5 +1,5 @@
 import { AccountService } from '@abp/ng.account.core/proxy';
-import { getPasswordValidators, ThemeSharedModule } from '@abp/ng.theme.shared';
+import { ButtonComponent, getPasswordValidators } from '@abp/ng.theme.shared';
 import { Component, Injector, OnInit } from '@angular/core';
 import {
   ReactiveFormsModule,
@@ -7,18 +7,23 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { comparePasswords, Validation } from '@ngx-validate/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { comparePasswords, NgxValidateCoreModule, Validation } from '@ngx-validate/core';
 import { finalize } from 'rxjs/operators';
-import { CommonModule } from '@angular/common';
-import { CoreModule } from '@abp/ng.core';
+import { LocalizationPipe } from '@abp/ng.core';
 
 const PASSWORD_FIELDS = ['password', 'confirmPassword'];
 
 @Component({
   selector: 'abp-reset-password',
   templateUrl: './reset-password.component.html',
-  imports: [CommonModule, ReactiveFormsModule, CoreModule, ThemeSharedModule],
+  imports: [
+    ReactiveFormsModule,
+    RouterModule,
+    NgxValidateCoreModule,
+    LocalizationPipe,
+    ButtonComponent,
+  ],
 })
 export class ResetPasswordComponent implements OnInit {
   form!: UntypedFormGroup;

@@ -1,5 +1,5 @@
 import { ProfileService } from '@abp/ng.account.core/proxy';
-import { getPasswordValidators, ThemeSharedModule, ToasterService } from '@abp/ng.theme.shared';
+import { ButtonComponent, getPasswordValidators, ToasterService } from '@abp/ng.theme.shared';
 import { Component, Injector, OnInit } from '@angular/core';
 import {
   ReactiveFormsModule,
@@ -12,8 +12,7 @@ import { comparePasswords, Validation } from '@ngx-validate/core';
 import { finalize } from 'rxjs/operators';
 import { Account } from '../../models/account';
 import { ManageProfileStateService } from '../../services/manage-profile.state.service';
-import { CoreModule } from '@abp/ng.core';
-import { CommonModule } from '@angular/common';
+import { LocalizationPipe } from '@abp/ng.core';
 
 const { required } = Validators;
 
@@ -23,7 +22,7 @@ const PASSWORD_FIELDS = ['newPassword', 'repeatNewPassword'];
   selector: 'abp-change-password-form',
   templateUrl: './change-password.component.html',
   exportAs: 'abpChangePasswordForm',
-  imports: [CommonModule, ReactiveFormsModule, CoreModule, ThemeSharedModule],
+  imports: [ReactiveFormsModule, LocalizationPipe, ButtonComponent, NgxValidateCoreModule],
 })
 export class ChangePasswordComponent
   implements OnInit, Account.ChangePasswordComponentInputs, Account.ChangePasswordComponentOutputs

@@ -1,5 +1,5 @@
-import { AuthService, ConfigStateService, CoreModule } from '@abp/ng.core';
-import { ThemeSharedModule, ToasterService } from '@abp/ng.theme.shared';
+import { AuthService, ConfigStateService, LocalizationPipe } from '@abp/ng.core';
+import { ButtonComponent, ToasterService } from '@abp/ng.theme.shared';
 import { Component, Injector, OnInit, inject } from '@angular/core';
 import {
   ReactiveFormsModule,
@@ -11,14 +11,21 @@ import { throwError } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { eAccountComponents } from '../../enums/components';
 import { getRedirectUrl } from '../../utils/auth-utils';
-import { CommonModule } from '@angular/common';
+import { NgxValidateCoreModule } from '@ngx-validate/core';
+import { RouterModule } from '@angular/router';
 
 const { maxLength, required } = Validators;
 
 @Component({
   selector: 'abp-login',
   templateUrl: './login.component.html',
-  imports: [CommonModule, ReactiveFormsModule, CoreModule, ThemeSharedModule],
+  imports: [
+    ReactiveFormsModule,
+    RouterModule,
+    LocalizationPipe,
+    ButtonComponent,
+    NgxValidateCoreModule,
+  ],
 })
 export class LoginComponent implements OnInit {
   protected injector = inject(Injector);

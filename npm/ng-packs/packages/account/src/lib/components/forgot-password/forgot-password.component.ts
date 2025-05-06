@@ -7,14 +7,21 @@ import {
   Validators,
 } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
-import { CoreModule } from '@abp/ng.core';
-import { ThemeSharedModule } from '@abp/ng.theme.shared';
-import { CommonModule } from '@angular/common';
+import { LocalizationPipe } from '@abp/ng.core';
+import { ButtonComponent } from '@abp/ng.theme.shared';
+import { RouterModule } from '@angular/router';
+import { NgxValidateCoreModule } from '@ngx-validate/core';
 
 @Component({
   selector: 'abp-forgot-password',
   templateUrl: 'forgot-password.component.html',
-  imports: [CommonModule, ReactiveFormsModule, CoreModule, ThemeSharedModule],
+  imports: [
+    ReactiveFormsModule,
+    RouterModule,
+    LocalizationPipe,
+    ButtonComponent,
+    NgxValidateCoreModule,
+  ],
 })
 export class ForgotPasswordComponent {
   form: UntypedFormGroup;

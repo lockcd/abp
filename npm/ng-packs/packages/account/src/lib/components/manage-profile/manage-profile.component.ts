@@ -1,12 +1,14 @@
 import { ProfileService } from '@abp/ng.account.core/proxy';
-import { fadeIn, ThemeSharedModule } from '@abp/ng.theme.shared';
+import { fadeIn, LoadingDirective } from '@abp/ng.theme.shared';
 import { transition, trigger, useAnimation } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { eAccountComponents } from '../../enums/components';
 import { ManageProfileStateService } from '../../services/manage-profile.state.service';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { CoreModule } from '@abp/ng.core';
+import { LocalizationPipe, ReplaceableTemplateDirective } from '@abp/ng.core';
+import { PersonalSettingsComponent } from '../personal-settings/personal-settings.component';
+import { ChangePasswordComponent } from '../change-password/change-password.component';
 
 @Component({
   selector: 'abp-manage-profile',
@@ -20,7 +22,15 @@ import { CoreModule } from '@abp/ng.core';
       }
     `,
   ],
-  imports: [CommonModule, ReactiveFormsModule, CoreModule, ThemeSharedModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    PersonalSettingsComponent,
+    ChangePasswordComponent,
+    LocalizationPipe,
+    ReplaceableTemplateDirective,
+    LoadingDirective,
+  ],
 })
 export class ManageProfileComponent implements OnInit {
   selectedTab = 0;

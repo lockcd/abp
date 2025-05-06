@@ -1,8 +1,8 @@
 import { ProfileDto, ProfileService } from '@abp/ng.account.core/proxy';
 import {
+  ButtonComponent,
   Confirmation,
   ConfirmationService,
-  ThemeSharedModule,
   ToasterService,
 } from '@abp/ng.theme.shared';
 import { Component, inject, Injector, OnInit } from '@angular/core';
@@ -10,16 +10,16 @@ import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angu
 import { finalize, filter } from 'rxjs/operators';
 import { Account } from '../../models/account';
 import { ManageProfileStateService } from '../../services/manage-profile.state.service';
-import { AuthService, ConfigStateService, CoreModule } from '@abp/ng.core';
+import { AuthService, ConfigStateService, LocalizationPipe } from '@abp/ng.core';
 import { RE_LOGIN_CONFIRMATION_TOKEN } from '../../tokens';
 import {
-  ExtensibleModule,
+  ExtensibleFormComponent,
   EXTENSIONS_IDENTIFIER,
   FormPropData,
   generateFormFromProps,
 } from '@abp/ng.components/extensible';
 import { eAccountComponents } from '../../enums';
-import { CommonModule } from '@angular/common';
+import { NgxValidateCoreModule } from '@ngx-validate/core';
 
 @Component({
   selector: 'abp-personal-settings-form',
@@ -31,7 +31,13 @@ import { CommonModule } from '@angular/common';
       useValue: eAccountComponents.PersonalSettings,
     },
   ],
-  imports: [CommonModule, ReactiveFormsModule, CoreModule, ThemeSharedModule, ExtensibleModule],
+  imports: [
+    ReactiveFormsModule,
+    ExtensibleFormComponent,
+    NgxValidateCoreModule,
+    ButtonComponent,
+    LocalizationPipe,
+  ],
 })
 export class PersonalSettingsComponent
   implements
