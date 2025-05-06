@@ -780,7 +780,7 @@ var abp = abp || {};
             var formattedDate = now.toLocaleString('en-US', { timeZone: timeZone, timeZoneName: 'longOffset' });
             var match = formattedDate.match(/GMT([+-]\d+)/);
             var targetOffsetHours = match ? parseInt(match[1], 10) : 0;
-            var dateObj = new Date(dateObj.getTime() - (targetOffsetHours * 60 * 60 * 1000));
+            dateObj = new Date(dateObj.getTime() - (targetOffsetHours * 60 * 60 * 1000));
             addZulu = true;
         }
 
