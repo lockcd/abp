@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { LocalizationPipe } from './pipes/localization.pipe';
+import { LazyLocalizationPipe } from './pipes';
 
 /**
  * @deprecated Use `LocalizationPipe` directly as a standalone pipe.
@@ -7,7 +8,7 @@ import { LocalizationPipe } from './pipes/localization.pipe';
  */
 
 @NgModule({
-  exports: [LocalizationPipe],
-  imports: [LocalizationPipe],
+  exports: [LocalizationPipe, LazyLocalizationPipe],
+  imports: [LocalizationPipe, LazyLocalizationPipe],
 })
 export class LocalizationModule {}
