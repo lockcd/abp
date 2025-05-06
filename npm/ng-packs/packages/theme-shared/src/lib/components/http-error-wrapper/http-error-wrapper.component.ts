@@ -18,14 +18,14 @@ import { CommonModule, DOCUMENT } from '@angular/common';
 import { Router } from '@angular/router';
 import { fromEvent, Subject } from 'rxjs';
 import { debounceTime, filter } from 'rxjs/operators';
-import { CoreModule, LocalizationParam } from '@abp/ng.core';
+import { LocalizationParam, LocalizationPipe } from '@abp/ng.core';
 import { ErrorScreenErrorCodes } from '../../models';
 
 @Component({
   selector: 'abp-http-error-wrapper',
   templateUrl: './http-error-wrapper.component.html',
   styleUrls: ['http-error-wrapper.component.scss'],
-  imports: [CommonModule, CoreModule],
+  imports: [CommonModule, LocalizationPipe],
 })
 export class HttpErrorWrapperComponent implements OnInit, AfterViewInit, OnDestroy {
   protected readonly destroyRef = inject(DestroyRef);

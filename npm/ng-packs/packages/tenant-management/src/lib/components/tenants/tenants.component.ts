@@ -1,29 +1,40 @@
-import { CoreModule, ListService, PagedResultDto } from '@abp/ng.core';
+import {
+  ListService,
+  LocalizationPipe,
+  PagedResultDto,
+  ReplaceableTemplateDirective,
+} from '@abp/ng.core';
 import {
   eFeatureManagementComponents,
   FeatureManagementComponent,
-  FeatureManagementModule,
-  provideFeatureManagementConfig,
 } from '@abp/ng.feature-management';
 import { GetTenantsInput, TenantDto, TenantService } from '@abp/ng.tenant-management/proxy';
 import {
+  ButtonComponent,
   Confirmation,
   ConfirmationService,
-  ThemeSharedModule,
+  ModalCloseDirective,
+  ModalComponent,
   ToasterService,
 } from '@abp/ng.theme.shared';
 import {
-  ExtensibleModule,
+  ExtensibleFormComponent,
+  ExtensibleTableComponent,
   EXTENSIONS_IDENTIFIER,
   FormPropData,
   generateFormFromProps,
 } from '@abp/ng.components/extensible';
 import { Component, inject, Injector, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+} from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { eTenantManagementComponents } from '../../enums/components';
-import { CommonModule } from '@angular/common';
-import { PageModule } from '@abp/ng.components/page';
+import { PageComponent } from '@abp/ng.components/page';
+import { NgxValidateCoreModule } from '@ngx-validate/core';
 
 @Component({
   selector: 'abp-tenants',
@@ -36,12 +47,18 @@ import { PageModule } from '@abp/ng.components/page';
     },
   ],
   imports: [
-    CommonModule,
-    CoreModule,
-    ThemeSharedModule,
-    PageModule,
-    ExtensibleModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PageComponent,
+    LocalizationPipe,
+    ExtensibleTableComponent,
+    ModalComponent,
     FeatureManagementComponent,
+    ButtonComponent,
+    ReplaceableTemplateDirective,
+    ExtensibleFormComponent,
+    ModalCloseDirective,
+    NgxValidateCoreModule,
   ],
 })
 export class TenantsComponent implements OnInit {

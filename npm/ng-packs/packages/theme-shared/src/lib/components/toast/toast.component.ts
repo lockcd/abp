@@ -1,12 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Toaster } from '../../models/toaster';
 import { CommonModule } from '@angular/common';
-import { CoreModule } from '@abp/ng.core';
+import { Toaster } from '../../models/toaster';
+import { LocalizationPipe } from '@abp/ng.core';
+
 @Component({
   selector: 'abp-toast',
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.scss'],
-  imports: [CommonModule, CoreModule],
+  imports: [CommonModule, LocalizationPipe],
 })
 export class ToastComponent implements OnInit {
   @Input()

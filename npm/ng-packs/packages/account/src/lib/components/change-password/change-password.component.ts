@@ -8,12 +8,11 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { comparePasswords, Validation } from '@ngx-validate/core';
 import { finalize } from 'rxjs/operators';
-import { Account } from '../../models/account';
-import { ManageProfileStateService } from '../../services/manage-profile.state.service';
+import { Account } from '../../models';
+import { ManageProfileStateService } from '../../services';
+import { comparePasswords, NgxValidateCoreModule, Validation } from '@ngx-validate/core';
 import { LocalizationPipe } from '@abp/ng.core';
-
 const { required } = Validators;
 
 const PASSWORD_FIELDS = ['newPassword', 'repeatNewPassword'];

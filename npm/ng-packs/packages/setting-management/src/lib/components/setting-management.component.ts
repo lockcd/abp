@@ -1,15 +1,14 @@
-import { ABP, CoreModule } from '@abp/ng.core';
+import { ABP, LocalizationPipe, PermissionDirective } from '@abp/ng.core';
 import { SettingTabsService } from '@abp/ng.setting-management/config';
 import { Component, OnDestroy, OnInit, TrackByFunction } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { ThemeSharedModule } from '@abp/ng.theme.shared';
 import { PageModule } from '@abp/ng.components/page';
 
 @Component({
   selector: 'abp-setting-management',
   templateUrl: './setting-management.component.html',
-  imports: [CommonModule, CoreModule, ThemeSharedModule, PageModule],
+  imports: [CommonModule, PageModule, LocalizationPipe, PermissionDirective],
 })
 export class SettingManagementComponent implements OnDestroy, OnInit {
   private subscription = new Subscription();

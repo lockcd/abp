@@ -1,5 +1,4 @@
 /* eslint-disable @angular-eslint/no-output-native */
-import { ABP } from '@abp/ng.core';
 import {
   Component,
   ElementRef,
@@ -11,6 +10,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ABP } from '@abp/ng.core';
 
 @Component({
   selector: 'abp-button',

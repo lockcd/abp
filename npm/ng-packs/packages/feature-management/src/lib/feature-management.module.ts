@@ -1,8 +1,7 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { FeatureManagementComponent } from './components/feature-management/feature-management.component';
-import { FreeTextInputDirective } from './directives/free-text-input.directive';
+import { FreeTextInputDirective } from './directives';
 import { provideFeatureManagementConfig } from './providers';
-import { FeatureManagementTabComponent } from './components';
+import { FeatureManagementTabComponent, FeatureManagementComponent } from './components';
 
 export const FEATURE_MANAGEMENT_EXPORTS = [
   FeatureManagementComponent,

@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { LoadingComponent } from '../components/loading/loading.component';
+import { LoadingComponent } from '../components';
 
 @Directive({
   selector: '[abpLoading]',

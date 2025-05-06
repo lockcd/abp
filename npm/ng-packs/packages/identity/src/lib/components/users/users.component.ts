@@ -1,4 +1,10 @@
-import { CoreModule, ListService, PagedResultDto } from '@abp/ng.core';
+import {
+  InitDirective,
+  ListService,
+  LocalizationPipe,
+  PagedResultDto,
+  ReplaceableTemplateDirective,
+} from '@abp/ng.core';
 import {
   GetIdentityUsersInput,
   IdentityRoleDto,
@@ -10,14 +16,18 @@ import {
   PermissionManagementModule,
 } from '@abp/ng.permission-management';
 import {
+  ButtonComponent,
   Confirmation,
   ConfirmationService,
   eFormComponets,
-  ThemeSharedModule,
+  FormCheckboxComponent,
+  ModalCloseDirective,
+  ModalComponent,
   ToasterService,
 } from '@abp/ng.theme.shared';
 import {
-  ExtensibleModule,
+  ExtensibleFormComponent,
+  ExtensibleTableComponent,
   EXTENSIONS_IDENTIFIER,
   FormPropData,
   generateFormFromProps,
@@ -33,14 +43,15 @@ import {
 } from '@angular/core';
 import {
   AbstractControl,
+  FormsModule,
+  ReactiveFormsModule,
   UntypedFormArray,
   UntypedFormBuilder,
   UntypedFormGroup,
 } from '@angular/forms';
 import { finalize, switchMap, tap } from 'rxjs/operators';
 import { eIdentityComponents } from '../../enums/components';
-import { CommonModule } from '@angular/common';
-import { PageModule } from '@abp/ng.components/page';
+import { PageComponent } from '@abp/ng.components/page';
 import { NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxValidateCoreModule } from '@ngx-validate/core';
 
@@ -55,15 +66,22 @@ import { NgxValidateCoreModule } from '@ngx-validate/core';
     },
   ],
   imports: [
-    CommonModule,
-    PageModule,
-    CoreModule,
-    ThemeSharedModule,
-    ExtensibleModule,
+    ReactiveFormsModule,
+    FormsModule,
     PermissionManagementModule,
+    PageComponent,
     NgbNavModule,
     NgbDropdownModule,
     NgxValidateCoreModule,
+    LocalizationPipe,
+    ExtensibleTableComponent,
+    ModalComponent,
+    ExtensibleFormComponent,
+    FormCheckboxComponent,
+    ButtonComponent,
+    ReplaceableTemplateDirective,
+    ModalCloseDirective,
+    InitDirective,
   ],
 })
 export class UsersComponent implements OnInit {

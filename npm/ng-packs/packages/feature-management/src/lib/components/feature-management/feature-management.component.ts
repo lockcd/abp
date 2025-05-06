@@ -1,3 +1,6 @@
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { CommonModule, NgTemplateOutlet } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ConfigStateService, LocalizationPipe, TrackByService } from '@abp/ng.core';
 import {
   FeatureDto,
@@ -13,13 +16,10 @@ import {
   ModalComponent,
   ToasterService,
 } from '@abp/ng.theme.shared';
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
-import { CommonModule, NgTemplateOutlet } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { finalize } from 'rxjs/operators';
 import { FreeTextInputDirective } from '../../directives';
-import { FeatureManagement } from '../../models/feature-management';
+import { FeatureManagement } from '../../models';
 
 enum ValueTypes {
   ToggleStringValueType = 'ToggleStringValueType',

@@ -1,16 +1,18 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { AccountLayoutComponent } from './components/account-layout/account-layout.component';
-import { AuthWrapperComponent } from './components/account-layout/auth-wrapper/auth-wrapper.component';
-import { TenantBoxComponent } from './components/account-layout/tenant-box/tenant-box.component';
-import { ApplicationLayoutComponent } from './components/application-layout/application-layout.component';
-import { EmptyLayoutComponent } from './components/empty-layout/empty-layout.component';
-import { LogoComponent } from './components/logo/logo.component';
-import { CurrentUserComponent } from './components/nav-items/current-user.component';
-import { LanguagesComponent } from './components/nav-items/languages.component';
-import { NavItemsComponent } from './components/nav-items/nav-items.component';
-import { PageAlertContainerComponent } from './components/page-alert-container/page-alert-container.component';
-import { RoutesComponent } from './components/routes/routes.component';
-import { ValidationErrorComponent } from './components/validation-error/validation-error.component';
+import {
+  AccountLayoutComponent,
+  AuthWrapperComponent,
+  TenantBoxComponent,
+  ApplicationLayoutComponent,
+  EmptyLayoutComponent,
+  LogoComponent,
+  CurrentUserComponent,
+  LanguagesComponent,
+  NavItemsComponent,
+  PageAlertContainerComponent,
+  RoutesComponent,
+  ValidationErrorComponent,
+} from './components';
 import { provideThemeBasicConfig } from './providers';
 
 export const LAYOUTS = [ApplicationLayoutComponent, AccountLayoutComponent, EmptyLayoutComponent];

@@ -1,5 +1,11 @@
-import { ConfigStateService, CoreModule, CurrentUserDto } from '@abp/ng.core';
-import { LocaleDirection, ThemeSharedModule, ToasterService } from '@abp/ng.theme.shared';
+import { ConfigStateService, CurrentUserDto, LocalizationPipe } from '@abp/ng.core';
+import {
+  ButtonComponent,
+  LocaleDirection,
+  ModalCloseDirective,
+  ModalComponent,
+  ToasterService,
+} from '@abp/ng.theme.shared';
 import {
   GetPermissionListResultDto,
   PermissionGrantInfoDto,
@@ -23,9 +29,9 @@ import {
 } from '@angular/core';
 import { concat, of } from 'rxjs';
 import { finalize, switchMap, take, tap } from 'rxjs/operators';
-import { PermissionManagement } from '../models/permission-management';
+import { PermissionManagement } from '../models';
 import { CommonModule } from '@angular/common';
-import { PageModule } from '@abp/ng.components/page';
+import { FormsModule } from '@angular/forms';
 
 type PermissionWithStyle = PermissionGrantInfoDto & {
   style: string;
@@ -86,7 +92,14 @@ type PermissionWithGroupName = PermissionGrantInfoDto & {
       }
     `,
   ],
-  imports: [CommonModule, CoreModule, ThemeSharedModule],
+  imports: [
+    FormsModule,
+    CommonModule,
+    ModalComponent,
+    LocalizationPipe,
+    ButtonComponent,
+    ModalCloseDirective,
+  ],
 })
 export class PermissionManagementComponent
   implements

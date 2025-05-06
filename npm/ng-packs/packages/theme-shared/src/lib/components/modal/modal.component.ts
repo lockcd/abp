@@ -1,4 +1,3 @@
-import { SubscriptionService, uuid } from '@abp/ng.core';
 import {
   Component,
   DestroyRef,
@@ -13,16 +12,17 @@ import {
   output,
   viewChild,
 } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { SubscriptionService, uuid } from '@abp/ng.core';
 import { NgbModal, NgbModalOptions, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { fromEvent } from 'rxjs';
 import { debounceTime, filter } from 'rxjs/operators';
-import { Confirmation } from '../../models/confirmation';
-import { ConfirmationService } from '../../services/confirmation.service';
+import { Confirmation } from '../../models';
+import { ConfirmationService } from '../../services';
 import { SUPPRESS_UNSAVED_CHANGES_WARNING } from '../../tokens/suppress-unsaved-changes-warning.token';
 import { ButtonComponent } from '../button/button.component';
 import { DismissableModal, ModalDismissMode, ModalRefService } from './modal-ref.service';
-import { CommonModule } from '@angular/common';
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';
 

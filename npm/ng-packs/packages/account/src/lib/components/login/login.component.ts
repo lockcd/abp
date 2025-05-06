@@ -1,5 +1,3 @@
-import { AuthService, ConfigStateService, LocalizationPipe } from '@abp/ng.core';
-import { ButtonComponent, ToasterService } from '@abp/ng.theme.shared';
 import { Component, Injector, OnInit, inject } from '@angular/core';
 import {
   ReactiveFormsModule,
@@ -7,12 +5,18 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { throwError } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
-import { eAccountComponents } from '../../enums/components';
-import { getRedirectUrl } from '../../utils/auth-utils';
-import { NgxValidateCoreModule } from '@ngx-validate/core';
-import { RouterModule } from '@angular/router';
+import {
+  AuthService,
+  ConfigStateService,
+  LocalizationPipe,
+  NgxValidateCoreModule,
+} from '@abp/ng.core';
+import { ButtonComponent, ToasterService } from '@abp/ng.theme.shared';
+import { eAccountComponents } from '../../enums';
+import { getRedirectUrl } from '../../utils';
 
 const { maxLength, required } = Validators;
 
