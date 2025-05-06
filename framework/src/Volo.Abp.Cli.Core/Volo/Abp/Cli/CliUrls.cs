@@ -5,9 +5,9 @@ namespace Volo.Abp.Cli;
 
 public static class CliUrls
 {
-    public static string WwwAbpIo = WwwAbpIoProduction;
-    public static string AccountAbpIo = AccountAbpIoProduction;
-    public static string NuGetRootPath = NuGetRootPathProduction;
+    public static string WwwAbpIo => WwwAbpIoProduction;
+    public static string AccountAbpIo => AccountAbpIoProduction;
+    public static string NuGetRootPath => NuGetRootPathProduction;
     public static string LatestVersionCheckFullPath = "https://raw.githubusercontent.com/abpframework/abp/dev/latest-versions.json";
 
     public static string WwwAbpIoProduction = "https://abp.io/";
