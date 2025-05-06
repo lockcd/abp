@@ -1,14 +1,16 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using Markdig;
 using Microsoft.Extensions.Options;
 using Volo.Abp.DependencyInjection;
+using Volo.Docs.Documents;
 using Volo.Docs.HtmlConverting;
-using Volo.Docs.Projects.Pdf.Markdig;
 using Volo.Docs.Utils;
 
-namespace Volo.Docs.Projects.Pdf.Markdown;
+namespace Volo.Docs.Projects.Pdf.Markdig;
 
 public class MarkdigPdfDocumentToHtmlConverter : IDocumentToHtmlConverter<PdfDocumentToHtmlConverterContext>, ITransientDependency
 {
@@ -22,7 +24,11 @@ public class MarkdigPdfDocumentToHtmlConverter : IDocumentToHtmlConverter<PdfDoc
     
     public virtual string Convert(PdfDocumentToHtmlConverterContext converterContext)
     {
-        var htmlContent = global::Markdig.Markdown.ToHtml(NormalizeContent(converterContext.Content), GetPipeline(converterContext.PdfDocument));
+        var htmlContent = Markdown.ToHtml(NormalizeContent(
+                converterContext.Content,
+                converterContext.PdfDocument,
+                converterContext.DocumentParams), 
+            GetPipeline(converterContext.PdfDocument));
         return NormalizeHtmlContent(htmlContent, converterContext.PdfDocument);
     }
     
@@ -34,9 +40,29 @@ public class MarkdigPdfDocumentToHtmlConverter : IDocumentToHtmlConverter<PdfDoc
             .Build(); 
     }
     
-    protected virtual string NormalizeContent(string content)
+    protected virtual string NormalizeContent(string content, PdfDocument pdfDocument, DocumentParams documentParams)
     {
-        return Regex.Replace(content, @"`{3,4}json\s*//\[doc-nav\][\s\S]*?`{3,4}", string.Empty, RegexOptions.IgnoreCase);
+        content = Regex.Replace(content, @"`{3,4}json\s*//\[doc-nav\][\s\S]*?`{3,4}", string.Empty, RegexOptions.IgnoreCase);
+
+        if (pdfDocument.RenderParameters.IsNullOrEmpty())
+        {
+            return content;
+        }
+        
+        var titleLine = content.Split(Environment.NewLine).FirstOrDefault(x => x.TrimStart().StartsWith("#"));
+        if (titleLine == null)
+        {
+            return content;
+        }
+        
+        var paramValues = pdfDocument.RenderParameters.Select(x =>
+        {
+            var documentParam = documentParams.Parameters.FirstOrDefault(p => p.Name == x.Key);
+            return $"{documentParam?.Values[x.Value] ?? x.Value}";
+        });
+
+        var newTitle = $"{titleLine.Trim()} ({string.Join(", ", paramValues)})";
+        return content.Replace(titleLine, newTitle);
     }
 
     protected virtual string NormalizeHtmlContent(string htmlContent, PdfDocument pdfDocument)

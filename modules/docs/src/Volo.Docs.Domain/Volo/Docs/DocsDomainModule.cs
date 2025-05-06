@@ -21,7 +21,6 @@ using Volo.Docs.HtmlConverting;
 using Volo.Docs.Localization;
 using Volo.Docs.Projects;
 using Volo.Docs.Projects.Pdf.Markdig;
-using Volo.Docs.Projects.Pdf.Markdown;
 
 namespace Volo.Docs
 {

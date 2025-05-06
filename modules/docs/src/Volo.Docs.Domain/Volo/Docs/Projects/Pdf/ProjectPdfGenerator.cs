@@ -99,7 +99,7 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
             {
                 var renderedDocument = await RenderDocumentAsync(pdfDocument);
                 var documentToHtmlConverter = GetDocumentToHtmlConverter(Project, pdfDocument);
-                var htmlContent = documentToHtmlConverter.Convert(new PdfDocumentToHtmlConverterContext(renderedDocument, pdfDocument));
+                var htmlContent = documentToHtmlConverter.Convert(new PdfDocumentToHtmlConverterContext(renderedDocument, pdfDocument, DocumentParams));
                 contentBuilder.AppendLine(htmlContent);
             }
 
