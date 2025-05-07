@@ -261,6 +261,8 @@ services:
       - "5672:5672"
 ```
 
+> Note: We suggest to use `container_name` property in your services. Otherwise, tracking the container may not be possible in some cases.
+
 To add this file to `containers`, we can use `Add Docker Container` menu:
 
 ![docker-container-example-add](images/solution-runner/docker-container-example-add.png)
