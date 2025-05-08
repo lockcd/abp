@@ -281,6 +281,8 @@ If the `yml` file contains multiple services, they will be represented as a sing
 
 > If a service is shut down externally, it will be shown as `Stopped` in the UI. In this case you can start them again. If it is constantly stopping, there may be a problem in the `yml` file.
 
+> It may take stuck in `starting` state a while to download images if they don't exist.
+
 ## Docker Compose
 
 You can manually run applications using [Docker Compose](https://docs.docker.com/compose/). This allows for easy setup and management of multi-container Docker applications. To get started, ensure you have Docker and Docker Compose installed on your machine.
