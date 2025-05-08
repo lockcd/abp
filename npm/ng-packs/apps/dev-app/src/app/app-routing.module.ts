@@ -18,7 +18,8 @@ const routes: Routes = [
   },
   {
     path: 'tenant-management',
-    loadChildren: () => import('@abp/ng.tenant-management').then(m => m.tenantManagementRoutes),
+    loadChildren: () =>
+      import('@abp/ng.tenant-management').then(m => m.createTenantManagementRoutingConfiguration()),
   },
   {
     path: 'setting-management',
