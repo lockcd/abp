@@ -23,7 +23,10 @@ const routes: Routes = [
   },
   {
     path: 'setting-management',
-    loadChildren: () => import('@abp/ng.setting-management').then(m => m.settingManagementRoutes),
+    loadChildren: () =>
+      import('@abp/ng.setting-management').then(m =>
+        m.createSettingManagementRoutingConfiguration(),
+      ),
   },
 ];
 

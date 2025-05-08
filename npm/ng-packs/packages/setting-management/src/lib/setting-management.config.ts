@@ -7,9 +7,12 @@ import {
 } from '@abp/ng.core';
 import { SettingManagementComponent } from './components/setting-management.component';
 import { eSettingManagementComponents } from './enums/components';
-import { provideSettingManagement } from './setting-management';
 
-export const settingManagementRoutes: Routes = [
+export function provideSettingManagement() {
+  return [];
+}
+
+export const createSettingManagementRoutingConfiguration = (): Routes => [
   {
     path: '',
     component: RouterOutletComponent,
