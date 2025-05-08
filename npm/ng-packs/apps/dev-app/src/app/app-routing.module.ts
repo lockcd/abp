@@ -9,11 +9,12 @@ const routes: Routes = [
   },
   {
     path: 'account',
-    loadChildren: () => import('@abp/ng.account').then(m => m.accountRoutes),
+    loadChildren: () => import('@abp/ng.account').then(m => m.createAccountRoutingConfiguration()),
   },
   {
     path: 'identity',
-    loadChildren: () => import('@abp/ng.identity').then(m => m.identityRoutes),
+    loadChildren: () =>
+      import('@abp/ng.identity').then(m => m.createIdentityRoutingConfiguration()),
   },
   {
     path: 'tenant-management',

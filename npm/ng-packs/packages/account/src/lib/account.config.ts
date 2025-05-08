@@ -1,3 +1,24 @@
+import { Routes } from '@angular/router';
+import { importProvidersFrom } from '@angular/core';
+import {
+  ForgotPasswordComponent,
+  LoginComponent,
+  RegisterComponent,
+  ResetPasswordComponent,
+  ManageProfileComponent,
+} from './components';
+import { eAccountComponents } from './enums';
+import { authenticationFlowGuard } from './guards';
+import { accountExtensionsResolver } from './resolvers';
+import {
+  RE_LOGIN_CONFIRMATION_TOKEN,
+  ACCOUNT_CONFIG_OPTIONS,
+  ACCOUNT_EDIT_FORM_PROP_CONTRIBUTORS,
+} from './tokens';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgxValidateCoreModule } from '@ngx-validate/core';
+import { AccountConfigOptions } from './models';
+import { accountConfigOptionsFactory } from './utils';
 import {
   authGuard,
   ReplaceableComponents,
@@ -5,24 +26,33 @@ import {
   RouterOutletComponent,
 } from '@abp/ng.core';
 
-import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
-import { LoginComponent } from './components/login/login.component';
-import { ManageProfileComponent } from './components/manage-profile/manage-profile.component';
-import { RegisterComponent } from './components/register/register.component';
-import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
-import { eAccountComponents } from './enums/components';
-import { authenticationFlowGuard } from './guards';
-import { accountExtensionsResolver } from './resolvers';
-import { Routes } from '@angular/router';
-import { provideAccount } from './account';
+export function provideAccount(options: AccountConfigOptions = {}) {
+  return [
+    importProvidersFrom(NgbDropdownModule, NgxValidateCoreModule),
+    { provide: ACCOUNT_CONFIG_OPTIONS, useValue: options },
+    {
+      provide: 'ACCOUNT_OPTIONS',
+      useFactory: accountConfigOptionsFactory,
+      deps: [ACCOUNT_CONFIG_OPTIONS],
+    },
+    {
+      provide: RE_LOGIN_CONFIRMATION_TOKEN,
+      useValue: options.isPersonalSettingsChangedConfirmationActive ?? true,
+    },
+    {
+      provide: ACCOUNT_EDIT_FORM_PROP_CONTRIBUTORS,
+      useValue: options.editFormPropContributors,
+    },
+  ];
+}
 
 const canActivate = [authenticationFlowGuard];
 
-export const accountRoutes: Routes = [
+export const createAccountRoutingConfiguration = (options: AccountConfigOptions = {}): Routes => [
   {
     path: '',
     component: RouterOutletComponent,
-    providers: [...provideAccount()],
+    providers: [...provideAccount(options)],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'login' },
       {
