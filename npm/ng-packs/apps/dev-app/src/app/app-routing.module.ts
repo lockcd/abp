@@ -5,7 +5,7 @@ const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    loadChildren: () => import('./home/home.module').then(m => m.HomeModule),
+    loadComponent: () => import('./home/home.component').then(m => m.HomeComponent),
   },
   {
     path: 'account',
