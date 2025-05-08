@@ -552,6 +552,11 @@ public abstract class AbpCrudPageBase<
 
     protected virtual async Task OnDeletedEntityAsync()
     {
+        if (Entities.Count == 1 && CurrentPage > 1)
+        {
+            CurrentPage -= 1;
+        }
+
         await GetEntitiesAsync();
         await InvokeAsync(StateHasChanged);
         await Notify.Success(GetDeleteMessage());
