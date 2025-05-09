@@ -17,7 +17,7 @@ export const createSettingManagementRoutingConfiguration = (): Routes => [
     path: '',
     component: RouterOutletComponent,
     canActivate: [authGuard],
-    providers: [...provideSettingManagement()],
+    providers: provideSettingManagement(),
     children: [
       {
         path: '',

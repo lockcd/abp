@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { importProvidersFrom } from '@angular/core';
 import {
   ForgotPasswordComponent,
   LoginComponent,
@@ -15,8 +14,6 @@ import {
   ACCOUNT_CONFIG_OPTIONS,
   ACCOUNT_EDIT_FORM_PROP_CONTRIBUTORS,
 } from './tokens';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
-import { NgxValidateCoreModule } from '@ngx-validate/core';
 import { AccountConfigOptions } from './models';
 import { accountConfigOptionsFactory } from './utils';
 import {
@@ -28,7 +25,6 @@ import {
 
 export function provideAccount(options: AccountConfigOptions = {}) {
   return [
-    importProvidersFrom(NgbDropdownModule, NgxValidateCoreModule),
     { provide: ACCOUNT_CONFIG_OPTIONS, useValue: options },
     {
       provide: 'ACCOUNT_OPTIONS',
@@ -52,7 +48,7 @@ export const createAccountRoutingConfiguration = (options: AccountConfigOptions 
   {
     path: '',
     component: RouterOutletComponent,
-    providers: [...provideAccount(options)],
+    providers: provideAccount(options),
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'login' },
       {

@@ -52,7 +52,7 @@ export const createTenantManagementRoutingConfiguration = (
     component: RouterOutletComponent,
     canActivate: [authGuard, permissionGuard],
     resolve: [tenantManagementExtensionsResolver],
-    providers: [...provideTenantManagement(options)],
+    providers: provideTenantManagement(options),
     children: [
       { path: '', redirectTo: 'tenants', pathMatch: 'full' },
       {
