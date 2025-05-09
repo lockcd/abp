@@ -46,6 +46,7 @@ import {
   ENTITY_PROP_TYPE_CLASSES,
   EXTENSIONS_IDENTIFIER,
   PROP_DATA_STREAM,
+  ROW_RECORD,
 } from '../../tokens/extensions.token';
 import { GridActionsComponent } from '../grid-actions/grid-actions.component';
 
@@ -187,6 +188,10 @@ export class ExtensibleTableComponent<R = any> implements OnChanges, AfterViewIn
                 provide: PROP_DATA_STREAM,
                 useValue: value,
               },
+              {
+                provide: ROW_RECORD,
+                useValue: record,
+              },
             ],
             parent: this.#injector,
           });
@@ -222,8 +227,8 @@ export class ExtensibleTableComponent<R = any> implements OnChanges, AfterViewIn
 
   ngAfterViewInit(): void {
     this.list?.requestStatus$?.pipe(filter(status => status === 'loading')).subscribe(() => {
-      this.data = [];
-      this.cdr.markForCheck();
-    });
+        this.data = [];
+        this.cdr.markForCheck();
+      });
   }
 }
