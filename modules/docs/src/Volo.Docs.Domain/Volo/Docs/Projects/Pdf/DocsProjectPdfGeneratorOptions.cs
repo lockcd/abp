@@ -62,16 +62,18 @@ public class DocsProjectPdfGeneratorOptions
         </html>";
 
         HtmlStyle = @"
-        body { margin: 20px; line-height: 1.6; font-family: Arial, sans-serif;}
-        a { text-decoration: none; }
+        body { margin: 15px; line-height: 1.5; font-family: Arial, sans-serif;}
+        a { text-decoration: none; word-break: break-all; overflow-wrap: break-word;}
+        li { word-break: break-all; overflow-wrap: break-word; }
         .page {
             page-break-after: always;
             margin-bottom: 30px;
             padding: 15px;
         }
         img {
-            max-width:100%;
-            height: auto;
+            max-width: 100%;
+            max-height: 850px;
+            object-fit: contain;
             display: block;
         }
         code, pre {
@@ -97,6 +99,16 @@ public class DocsProjectPdfGeneratorOptions
             margin: 20px 0;
             padding: 10px 20px;
             background: #f8fafc;
+        }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        table img { width: 100% !important; height: auto; display: block; }
+        th { font-weight: bold; background-color: #f5f5f5; }
+        th, td {
+          border: 1px solid #333;
+          padding: 6px 10px;
+          word-break: break-all;
+          overflow-wrap: break-word;
+          width: 100%;
         }";
         
         CalculatePdfFileName = (project, version, languageCode) => $"{project.ShortName}-{version}-{languageCode}.pdf";

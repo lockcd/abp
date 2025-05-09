@@ -184,11 +184,11 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
                 
                 if (parentPdfDocument == null)
                 {
-                    AllPdfDocuments.Add(pdfDocument);
+                    AllPdfDocuments.AddIfNotContains(pdfDocument);
                 }
                 else
                 {
-                    parentPdfDocument.Children.Add(pdfDocument);
+                    parentPdfDocument.Children.AddIfNotContains(pdfDocument);
                 }
                 
                 if (navigation.HasChildItems)
@@ -214,11 +214,11 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
         { 
             if (parentPdfDocument == null)
             {
-                AllPdfDocuments.AddRange(combinations.Value);
+                AllPdfDocuments.AddIfNotContains(combinations.Value);
             }
             else
             {
-                parentPdfDocument.Children.AddRange(combinations.Value);
+                parentPdfDocument.Children.AddIfNotContains(combinations.Value);
             }
         }
     }
