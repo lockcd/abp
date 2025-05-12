@@ -13,6 +13,7 @@ using Volo.Abp.DependencyInjection;
 using Volo.Docs.Documents;
 using Volo.Docs.Documents.Rendering;
 using Volo.Docs.HtmlConverting;
+using Volo.Docs.Utils;
 using Volo.Extensions;
 
 namespace Volo.Docs.Projects.Pdf;
@@ -119,7 +120,18 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
     
     protected virtual async Task<string> RenderDocumentAsync(PdfDocument pdfDocument)
     {
-        return await DocumentSectionRenderer.RenderAsync(pdfDocument.Document.Content, pdfDocument.RenderParameters);
+        var parameters = new DocumentRenderParameters();
+        if (pdfDocument.RenderParameters != null)
+        {
+            foreach (var renderParameter in pdfDocument.RenderParameters)
+            {
+                var documentParam = DocumentParams.Parameters.FirstOrDefault(p => p.Name == renderParameter.Key);
+                parameters.Add(renderParameter.Key, renderParameter.Value);
+                parameters.Add(renderParameter.Key + "_Value",documentParam?.Values[renderParameter.Value] ?? renderParameter.Value);
+            }
+        }
+        
+        return await DocumentSectionRenderer.RenderAsync(pdfDocument.Document.Content, parameters);
     }
     
     protected virtual async Task SetAllPdfDocumentsAsync(
@@ -130,73 +142,55 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
         PdfDocument parentPdfDocument = null)
     {
         var groupedCombinationsDocuments = new Dictionary<string, List<PdfDocument>>();
+
         foreach (var navigation in navigations)
         {
             if (navigation.IgnoreOnDownload)
             {
                 continue;
             }
+
             try
             {
                 var pdfDocument = new PdfDocument
-                { 
-                    Title = navigation.Text,
-                    IgnoreOnOutline = navigation.Path == Options.Value.IndexPagePath
-                };
-         
-                if (!navigation.Path.IsNullOrWhiteSpace() && !navigation.HasChildItems)
                 {
-                    var document = await GetDocumentAsync(project, navigation.Path, version, languageCode);
-                    var parameters = await DocumentSectionRenderer.GetAvailableParametersAsync(document.Content);
-                    var parameterCombinations = GenerateAllParameterCombinations(parameters.Keys.ToList(), parameters);
-                    var firstParameterCombination = parameterCombinations.FirstOrDefault();
-                    
-                    pdfDocument.Document = document;
-                    pdfDocument.RenderParameters = firstParameterCombination;
-                    pdfDocument.Id = GetDocumentId(document.Name, document.Format ?? project.Format, firstParameterCombination, true);
-                    pdfDocument.Title = GetDocumentTitle(navigation.Text, firstParameterCombination, DocumentParams);
-                    
-                    if(parameters.Count <= 1)
+                    Title = navigation.Text,
+                    IgnoreOnOutline = navigation.Path == Options.Value.IndexPagePath,
+                    Id = UrlHelper.IsExternalLink(navigation.Path) ? navigation.Path: null
+                };
+
+                if (!navigation.Path.IsNullOrWhiteSpace() && !UrlHelper.IsExternalLink(navigation.Path) && !navigation.HasChildItems)
+                {
+                    await HandleLeafDocumentAsync(
+                        navigation,
+                        project,
+                        version,
+                        languageCode,
+                        parentPdfDocument,
+                        groupedCombinationsDocuments,
+                        pdfDocument
+                    );
+                }
+
+                if (!navigation.IsInSeries)
+                {
+                    if (parentPdfDocument == null)
                     {
-                        AddParameterCombinationsDocuments(parentPdfDocument, groupedCombinationsDocuments);
+                        AllPdfDocuments.AddIfNotContains(pdfDocument);
                     }
                     else
                     {
-                        for (var i = 1; i < parameterCombinations.Count; i++)
-                        {
-                            var parameterCombination = parameterCombinations[i];
-                            var key = parameterCombination.Select(x => $"{x.Key}_{x.Value}").JoinAsString("-");
-                            if (!groupedCombinationsDocuments.ContainsKey(key))
-                            {
-                                groupedCombinationsDocuments[key] = [];
-                            }
-                            
-                            groupedCombinationsDocuments[key].Add(new PdfDocument
-                            {
-                                Document = document,
-                                Id = GetDocumentId(document.Name, document.Format ?? project.Format, parameterCombination, false),
-                                Title = GetDocumentTitle(navigation.Text, parameterCombination, DocumentParams),
-                                RenderParameters = parameterCombination
-                            });
-                        }
+                        parentPdfDocument.Children.AddIfNotContains(pdfDocument);
                     }
-                }
-                
-                if (parentPdfDocument == null)
-                {
-                    AllPdfDocuments.AddIfNotContains(pdfDocument);
-                }
-                else
-                {
-                    parentPdfDocument.Children.AddIfNotContains(pdfDocument);
                 }
                 
                 if (navigation.HasChildItems)
                 {
+                    AddParameterCombinationsDocuments(parentPdfDocument, groupedCombinationsDocuments);
                     await SetAllPdfDocumentsAsync(navigation.Items, project, version, languageCode, pdfDocument);
                 }
 
-                if (navigation == navigations.Last())
+                if (!navigation.IsInSeries || navigation == navigations.Last())
                 {
                     AddParameterCombinationsDocuments(parentPdfDocument, groupedCombinationsDocuments);
                 }
@@ -207,6 +201,53 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
             }
         }
     }
+    
+    private async Task HandleLeafDocumentAsync(
+        NavigationNode navigation,
+        Project project,
+        string version,
+        string languageCode,
+        PdfDocument parentPdfDocument,
+        Dictionary<string, List<PdfDocument>> groupedCombinationsDocuments,
+        PdfDocument leafDocument)
+    {
+        var document = await GetDocumentAsync(project, navigation.Path, version, languageCode);
+        var parameters = await DocumentSectionRenderer.GetAvailableParametersAsync(document.Content);
+        var parameterCombinations = GenerateAllParameterCombinations(parameters.Keys.ToList(), parameters);
+        var firstCombination = parameterCombinations.FirstOrDefault();
+
+        leafDocument.Document = document;
+        leafDocument.RenderParameters = firstCombination;
+        leafDocument.Id = GetDocumentId(document.Name, document.Format ?? project.Format, firstCombination, true);
+        leafDocument.Title = GetDocumentTitle(navigation.Text, firstCombination, DocumentParams);
+
+        if (parameterCombinations.Count <= 1)
+        {
+            AddParameterCombinationsDocuments(parentPdfDocument, groupedCombinationsDocuments);
+            return;
+        }
+
+        for (var i = 0; i < parameterCombinations.Count; i++)
+        {
+            var combination = parameterCombinations[i];
+            var key = string.Join("-", combination.Select(x => $"{x.Key}_{x.Value}"));
+
+            if (!groupedCombinationsDocuments.ContainsKey(key))
+            {
+                groupedCombinationsDocuments[key] = [];
+            }
+
+            var combinationDocument = i == 0 ? leafDocument : new PdfDocument
+            {
+                Document = document,
+                Id = GetDocumentId(document.Name, document.Format ?? project.Format, combination, false),
+                Title = GetDocumentTitle(navigation.Text, combination, DocumentParams),
+                RenderParameters = combination
+            };
+
+            groupedCombinationsDocuments[key].Add(combinationDocument);
+        }
+    } 
     
     private void AddParameterCombinationsDocuments(PdfDocument parentPdfDocument, Dictionary<string,List<PdfDocument>> groupedCombinationsDocuments)
     {
@@ -221,6 +262,8 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
                 parentPdfDocument.Children.AddIfNotContains(combinations.Value);
             }
         }
+        
+        groupedCombinationsDocuments.Clear();
     }
     
     private async Task<NavigationNode> GetNavigationAsync(

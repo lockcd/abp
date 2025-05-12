@@ -36,6 +36,7 @@ public class MarkdigPdfDocumentToHtmlConverter : IDocumentToHtmlConverter<PdfDoc
     {
         return new MarkdownPipelineBuilder()
             .UseAdvancedExtensions()
+            .UseBootstrap()
             .Use(new AnchorLinkResolverExtension(pdfDocument))
             .Build(); 
     }
@@ -43,32 +44,25 @@ public class MarkdigPdfDocumentToHtmlConverter : IDocumentToHtmlConverter<PdfDoc
     protected virtual string NormalizeContent(string content, PdfDocument pdfDocument, DocumentParams documentParams)
     {
         content = Regex.Replace(content, @"`{3,4}json\s*//\[doc-nav\][\s\S]*?`{3,4}", string.Empty, RegexOptions.IgnoreCase);
-
-        if (pdfDocument.RenderParameters.IsNullOrEmpty())
+        content = SetContentTitle(content, pdfDocument, documentParams);
+        if (Options.Value.DocumentContentNormalizer == null)
         {
             return content;
         }
         
-        var titleLine = content.Split(Environment.NewLine).FirstOrDefault(x => x.TrimStart().StartsWith("#"));
-        if (titleLine == null)
-        {
-            return content;
-        }
-        
-        var paramValues = pdfDocument.RenderParameters.Select(x =>
-        {
-            var documentParam = documentParams.Parameters.FirstOrDefault(p => p.Name == x.Key);
-            return $"{documentParam?.Values[x.Value] ?? x.Value}";
-        });
-
-        var newTitle = $"{titleLine.Trim()} ({string.Join(", ", paramValues)})";
-        return content.Replace(titleLine, newTitle);
+        return Options.Value.DocumentContentNormalizer(content);
     }
 
     protected virtual string NormalizeHtmlContent(string htmlContent, PdfDocument pdfDocument)
     {
         htmlContent = WrapHtmlWithPageDiv(htmlContent, pdfDocument);
-        return ReplaceRelativeImageUrls(htmlContent, pdfDocument);
+        htmlContent = ReplaceRelativeImageUrls(htmlContent, pdfDocument);
+        if (Options.Value.HtmlContentNormalizer == null)
+        {
+            return htmlContent;
+        }
+        
+        return Options.Value.HtmlContentNormalizer(htmlContent);
     }
     
     private string WrapHtmlWithPageDiv(string htmlContent, PdfDocument pdfDocument)
@@ -95,5 +89,28 @@ public class MarkdigPdfDocumentToHtmlConverter : IDocumentToHtmlConverter<PdfDoc
             return match.Groups[1] + " src=\"" + HttpUtility.HtmlEncode(newImageSource) + "\" " + match.Groups[3];
 
         }, RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Multiline);
+    }
+
+    private static string SetContentTitle(string content, PdfDocument pdfDocument, DocumentParams documentParams)
+    {
+        if (pdfDocument.RenderParameters.IsNullOrEmpty())
+        {
+            return content;
+        }
+        
+        var titleLine = content.Split(Environment.NewLine).FirstOrDefault(x => x.TrimStart().StartsWith("#"));
+        if (titleLine == null)
+        {
+            return content;
+        }
+        
+        var paramValues = pdfDocument.RenderParameters.Select(x =>
+        {
+            var documentParam = documentParams.Parameters.FirstOrDefault(p => p.Name == x.Key);
+            return $"{documentParam?.Values[x.Value] ?? x.Value}";
+        });
+
+        var newTitle = $"{titleLine.Trim()} ({string.Join(", ", paramValues)})";
+        return content.Replace(titleLine, newTitle);
     }
 }

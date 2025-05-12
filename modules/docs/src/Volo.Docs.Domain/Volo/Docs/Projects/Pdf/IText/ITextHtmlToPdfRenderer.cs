@@ -7,6 +7,7 @@ using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Action;
 using Microsoft.Extensions.Options;
 using Volo.Abp.DependencyInjection;
+using Volo.Docs.Utils;
 using ITextDocument = iText.Layout.Document;
 
 namespace Volo.Docs.Projects.Pdf.IText;
@@ -56,7 +57,7 @@ public class ITextHtmlToPdfRenderer : IHtmlToPdfRenderer ,ITransientDependency
             var outline = parentOutline.AddOutline(pdfDocumentNode.Title);
             if (!pdfDocumentNode.Id.IsNullOrWhiteSpace())
             {
-                outline.AddAction(PdfAction.CreateGoTo(pdfDocumentNode.Id));
+                outline.AddAction(UrlHelper.IsExternalLink(pdfDocumentNode.Id) ? PdfAction.CreateURI(pdfDocumentNode.Id) : PdfAction.CreateGoTo(pdfDocumentNode.Id));
             }
 
             if (pdfDocumentNode.HasChildren)

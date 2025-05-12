@@ -27,6 +27,9 @@ namespace Volo.Docs.Documents
         
         [JsonPropertyName("ignoreOnDownload")]
         public bool IgnoreOnDownload { get; set; }
+        
+        [JsonPropertyName("isInSeries")]
+        public bool IsInSeries { get; set; }
 
         public bool IsLeaf => !HasChildItems;
 

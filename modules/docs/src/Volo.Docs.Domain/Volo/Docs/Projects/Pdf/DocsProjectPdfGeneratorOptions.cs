@@ -46,6 +46,10 @@ public class DocsProjectPdfGeneratorOptions
     /// </summary>
     public Func<Project, string> CalculatePdfFileTitle { get; set; }
     
+    public Func<string, string> HtmlContentNormalizer { get; set; }
+    
+    public Func<string, string> DocumentContentNormalizer { get; set; }
+    
     public DocsProjectPdfGeneratorOptions()
     {
         HtmlLayout = $@"

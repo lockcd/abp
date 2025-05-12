@@ -180,6 +180,7 @@ namespace VoloDocs.Web
                 options.BaseUrl = configuration["App:selfUrl"];
                 options.IndexPagePath = "Index.md";
                 options.CalculatePdfFileTitle = project => project.ShortName == "abp" ? "ABP Documentation" : null;
+                options.DocumentContentNormalizer = content => content.Replace("<i class=\"fa fa-minus text-secondary\"></i>", "No").Replace("<i class=\"fa fa-check text-success\"></i>", "Yes");
             });
             
             Configure<AbpBlobStoringOptions>(options =>
