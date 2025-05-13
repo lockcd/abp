@@ -177,8 +177,8 @@ namespace VoloDocs.Web
             
             Configure<DocsProjectPdfGeneratorOptions>(options =>
             {
-                options.BaseUrl = configuration["App:selfUrl"];
-                options.IndexPagePath = "Index.md";
+                options.BaseUrl = configuration["App:SelfUrl"];
+                options.IndexPagePath = "index.md";
                 options.CalculatePdfFileTitle = project => project.ShortName == "abp" ? "ABP Documentation" : null;
                 options.DocumentContentNormalizer = content => content.Replace("<i class=\"fa fa-minus text-secondary\"></i>", "No").Replace("<i class=\"fa fa-check text-success\"></i>", "Yes");
             });

@@ -294,7 +294,7 @@
                 @if (Model.HasDownloadPdfPermission)
                 {
                     <div class="docs-sidebar-footer">
-                        <a href="@Url.Content($"~/api/docs/documents/pdf?ProjectId={Model.Project.Id}&Version={(Model.LatestVersionInfo == null || Model.LatestVersionInfo.IsSelected ? DocsAppConsts.Latest : Model.Version)}&LanguageCode={Model.LanguageCode}")" target="_blank" class="download-pdf-btn">
+                        <a href="@Url.Content($"~/api/docs/documents/pdf?ProjectId={Model.Project.Id}&Version={(Model.LatestVersionInfo.IsSelected ? Model.LatestVersionInfo.Version : Model.Version)}&LanguageCode={Model.LanguageCode ?? Model.DefaultLanguageCode}")" target="_blank" class="download-pdf-btn">
                             <i class="fa fa-download"></i> @L["DownloadPDF"]
                         </a>
                     </div>
