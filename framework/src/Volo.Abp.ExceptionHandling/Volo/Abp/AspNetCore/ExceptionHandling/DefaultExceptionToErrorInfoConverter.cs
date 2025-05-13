@@ -230,6 +230,8 @@ public class DefaultExceptionToErrorInfoConverter : IExceptionToErrorInfoConvert
         AddExceptionToDetails(exception, detailBuilder, sendStackTraceToClients);
 
         var errorInfo = new RemoteServiceErrorInfo(exception.Message, detailBuilder.ToString(), data: exception.Data);
+        
+        TryToLocalizeExceptionMessage(exception, errorInfo);
 
         if (exception is AbpValidationException)
         {
