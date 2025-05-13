@@ -326,19 +326,21 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
         version = string.IsNullOrWhiteSpace(version) ? project.LatestVersionBranchName : version;
         
         Document document = null;
-
         Exception firstException = null;
-        foreach (var name in GetPossibleNames(documentName, project.Format))
+        
+        var possibleNames = GetPossibleNames(documentName, project.Format);
+        document = await DocumentRepository.FindAsync(project.Id, possibleNames, languageCode, version);
+        if (document != null)
+        {
+            return document;
+        }
+        
+        foreach (var name in possibleNames)
         {
             try
             {
-                document = await DocumentRepository.FindAsync(project.Id, documentName, version, languageCode);
-                if (document != null)
-                {
-                    break;
-                }
-                
                 document = await DocumentSource.GetDocumentAsync(project, name, languageCode, version);
+                await DocumentRepository.InsertAsync(document, true);
                 break;
             }
             catch (Exception ex)
