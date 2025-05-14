@@ -18,7 +18,12 @@ import { finalize } from 'rxjs/operators';
 import { SettingManagementPolicyNames } from '../../enums/policy-names';
 import { EmailSettingsService } from '@abp/ng.setting-management/proxy';
 import { EmailSettingsDto } from '../../proxy/models';
-import { ConfigStateService, LocalizationPipe, LocalizationService } from '@abp/ng.core';
+import {
+  ConfigStateService,
+  LocalizationPipe,
+  LocalizationService,
+  PermissionDirective,
+} from '@abp/ng.core';
 import { NgxValidateCoreModule, ValidationDirective } from '@ngx-validate/core';
 import { CommonModule } from '@angular/common';
 
@@ -36,6 +41,7 @@ const { required, email } = Validators;
     ModalComponent,
     ModalCloseDirective,
     NgxValidateCoreModule,
+    PermissionDirective,
   ],
 })
 export class EmailSettingGroupComponent implements OnInit {
