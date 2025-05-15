@@ -3,7 +3,6 @@ import {
   provideHttpClient,
   withInterceptorsFromDi,
   withXsrfConfiguration,
-  HTTP_INTERCEPTORS,
 } from '@angular/common/http';
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';

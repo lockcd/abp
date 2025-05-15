@@ -24,7 +24,7 @@ import {
   LocalizationService,
   PermissionDirective,
 } from '@abp/ng.core';
-import { NgxValidateCoreModule, ValidationDirective } from '@ngx-validate/core';
+import { NgxValidateCoreModule } from '@ngx-validate/core';
 import { CommonModule } from '@angular/common';
 
 const { required, email } = Validators;
