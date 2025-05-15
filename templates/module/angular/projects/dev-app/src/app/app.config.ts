@@ -1,4 +1,4 @@
-import {ApplicationConfig, importProvidersFrom} from '@angular/core';
+import {ApplicationConfig} from '@angular/core';
 import {provideAnimations} from "@angular/platform-browser/animations";
 import {provideRouter} from "@angular/router";
 import { appRoutes } from './app.routes';
@@ -13,8 +13,8 @@ import { provideAccountConfig } from '@abp/ng.account/config';
 import { provideIdentityConfig } from '@abp/ng.identity/config';
 import { provideTenantManagementConfig } from '@abp/ng.tenant-management/config';
 import { provideFeatureManagementConfig } from '@abp/ng.feature-management';
-import {ThemeLeptonXModule} from "@abp/ng.theme.lepton-x";
-import {SideMenuLayoutModule} from "@abp/ng.theme.lepton-x/layouts";
+import {provideThemeBasicConfig} from "@abp/ng.theme.basic";
+import {provideMyProjectNameConfig} from "@my-company-name/my-project-name/config";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -24,6 +24,8 @@ export const appConfig: ApplicationConfig = {
       withOptions({
         environment,
         registerLocaleFn: registerLocale(),
+        sendNullsAsQueryParam: false,
+        skipGetAppConfiguration: false,
       })
     ),
     provideAbpOAuth(),
@@ -34,9 +36,7 @@ export const appConfig: ApplicationConfig = {
     provideTenantManagementConfig(),
     provideFeatureManagementConfig(),
     provideAnimations(),
-    importProvidersFrom([
-      ThemeLeptonXModule.forRoot(),
-      SideMenuLayoutModule.forRoot(),
-    ])
+    provideThemeBasicConfig(),
+    provideMyProjectNameConfig(),
   ],
 };
