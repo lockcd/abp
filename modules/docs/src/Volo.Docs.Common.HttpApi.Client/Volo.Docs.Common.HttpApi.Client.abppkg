@@ -1,10 +1,10 @@
 {
-  "role": "lib.http-api-client",
+  "role": "Volo.Docs.HttpApi.Client",
   "proxies": {
     "csharp": {
-      "VoloDocs.Web-docs": {
+      "VoloDocs.Web-docs-common": {
         "applicationName": "VoloDocs.Web",
-        "module": "docs",
+        "module": "docs-common",
         "url": "https://localhost:5001",
         "folder": "ClientProxies",
         "serviceType": "all",

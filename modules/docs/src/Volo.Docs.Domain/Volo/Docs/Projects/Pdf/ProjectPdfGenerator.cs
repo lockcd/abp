@@ -52,16 +52,8 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
         Logger = NullLogger<ProjectPdfGenerator>.Instance;
     }
     
-    public virtual async Task<IRemoteStreamContent> GenerateAsync(Project project, string version, string languageCode)
+    public virtual async Task GenerateAsync(Project project, string version, string languageCode)
     {
-        var fileName = Options.Value.CalculatePdfFileName(project, version, languageCode);
-        var fileStream = await ProjectPdfFileStore.GetOrNullAsync(project, version, languageCode);
-        
-        if (fileStream != null)
-        {
-            return new RemoteStreamContent(fileStream, fileName, "application/pdf");
-        }
-        
         Project = project;
         DocumentSource = DocumentStoreFactory.Create(project.DocumentStoreType);
         DocumentParams = await GetDocumentParamsAsync(project, version, languageCode);
@@ -74,8 +66,6 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
         var pdfStream = await HtmlToPdfRenderer.RenderAsync(title, html, AllPdfDocuments);
         
         await ProjectPdfFileStore.SetAsync(project, version, languageCode, pdfStream);
-    
-        return new RemoteStreamContent(pdfStream, fileName, "application/pdf");
     }
     
     protected virtual async Task<string> BuildHtmlAsync()

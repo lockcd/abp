@@ -2,6 +2,6 @@
 // ReSharper disable once CheckNamespace
 namespace Volo.Docs.Documents;
 
-public partial class DocsDocumentPdfGeneratorClientProxy
+public partial class DocsDocumentPdfClientProxy
 {
 }

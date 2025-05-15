@@ -1,5 +1,4 @@
 using System;
-using Scriban.Syntax;
 
 namespace Volo.Docs.Projects.Pdf;
 
@@ -30,12 +29,6 @@ public class DocsProjectPdfGeneratorOptions
     public string IndexPagePath { get; set; }
     
     /// <summary>
-    /// PDF file cache expiration time.
-    /// Default value is 24 hours.
-    /// </summary>
-    public TimeSpan PdfFileCacheExpiration { get; set; } = TimeSpan.FromHours(24);
-    
-    /// <summary>
     /// The function to calculate the PDF file name.
     /// Default is "{project.ShortName}-{version}-{languageCode}.pdf".
     /// </summary>
@@ -49,6 +42,12 @@ public class DocsProjectPdfGeneratorOptions
     public Func<string, string> HtmlContentNormalizer { get; set; }
     
     public Func<string, string> DocumentContentNormalizer { get; set; }
+    
+    /// <summary>
+    /// The maximum number of last versions to cache.
+    /// If null, all versions will be cached.
+    /// </summary>
+    public int? CacheLastVersionsCount { get; set; }
     
     public DocsProjectPdfGeneratorOptions()
     {

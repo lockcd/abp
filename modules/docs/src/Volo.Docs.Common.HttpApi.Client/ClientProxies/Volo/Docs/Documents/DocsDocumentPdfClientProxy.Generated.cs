@@ -15,8 +15,8 @@ using Volo.Docs.Common.Documents;
 namespace Volo.Docs.Documents;
 
 [Dependency(ReplaceServices = true)]
-[ExposeServices(typeof(IDocumentPdfGeneratorAppService), typeof(DocsDocumentPdfGeneratorClientProxy))]
-public partial class DocsDocumentPdfGeneratorClientProxy : ClientProxyBase<IDocumentPdfGeneratorAppService>, IDocumentPdfGeneratorAppService
+[ExposeServices(typeof(IDocumentPdfAppService), typeof(DocsDocumentPdfClientProxy))]
+public partial class DocsDocumentPdfClientProxy : ClientProxyBase<IDocumentPdfAppService>, IDocumentPdfAppService
 {
     public virtual async Task<IRemoteStreamContent> GeneratePdfAsync(DocumentPdfGeneratorInput input)
     {
