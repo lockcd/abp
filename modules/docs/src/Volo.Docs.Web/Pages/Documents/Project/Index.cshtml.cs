@@ -214,7 +214,7 @@ namespace Volo.Docs.Pages.Documents.Project
             await SetNavigationAsync();
             SetLanguageSelectListItems();
 
-            HasDownloadPdf = await _permissionChecker.IsGrantedAsync(DocsCommonPermissions.Projects.PdfGeneration)
+            HasDownloadPdf = await _permissionChecker.IsGrantedAsync(DocsCommonPermissions.Projects.PdfDownload)
                              && await _documentPdfAppService.ExistsAsync(new()
                              {
                                  ProjectId = Project.Id, Version = LatestVersionInfo.IsSelected ? LatestVersionInfo.Version : Version, LanguageCode = DocumentLanguageCode

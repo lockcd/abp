@@ -7,7 +7,7 @@ using Volo.Docs.Projects.Pdf;
 
 namespace Volo.Docs.Common.Documents;
 
-[Authorize(DocsCommonPermissions.Projects.PdfGeneration)]
+[Authorize(DocsCommonPermissions.Projects.PdfDownload)]
 public class DocumentPdfAppService : DocsCommonAppServiceBase, IDocumentPdfAppService
 {
     protected IProjectPdfGenerator ProjectPdfGenerator { get; }
