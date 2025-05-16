@@ -31,8 +31,6 @@
                 @foreach (var group in Model.ProfileManagementPageCreationContext.Groups)
                 {
                     <abp-tab title="@group.DisplayName">
-                        <h2>@group.DisplayName</h2>
-                        <hr class="my-4" />
                         @await Component.InvokeAsync(group.ComponentType, new
                         {
                             parameter = group.Parameter
