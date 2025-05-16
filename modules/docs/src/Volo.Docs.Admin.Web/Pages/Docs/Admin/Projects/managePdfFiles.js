@@ -50,7 +50,7 @@ $(function () {
                                     {
                                         text: l('Download'),
                                         action: function (data) {
-                                            var url = abp.appPath + 'api/docs/admin/documents/pdf?projectId=' + data.record.projectId + '&version=' + data.record.version + '&languageCode=' + data.record.languageCode;
+                                            var url = abp.appPath + 'api/docs/admin/documents/pdf/download?projectId=' + data.record.projectId + '&version=' + data.record.version + '&languageCode=' + data.record.languageCode;
                                             window.open(url, '_blank');
                                         },
                                     },
