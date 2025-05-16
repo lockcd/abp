@@ -3,20 +3,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
-using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.DistributedLocking;
 using Volo.Docs.Admin.BackgroundJobs;
 using Volo.Docs.Admin.Projects;
-using Volo.Docs.Common;
 using Volo.Docs.Common.Documents;
 using Volo.Docs.Projects;
 using Volo.Docs.Projects.Pdf;
 
 namespace Volo.Docs.Admin.Documents;
 
-[Authorize(DocsCommonPermissions.Projects.PdfGeneration)]
+[Authorize(DocsAdminPermissions.Projects.ManagePdfFiles)]
 public class DocumentPdfAdminAppService : DocumentPdfAppService, IDocumentPdfAdminAppService
 {
     protected IBackgroundJobManager BackgroundJobManager { get; }
@@ -58,7 +56,6 @@ public class DocumentPdfAdminAppService : DocumentPdfAppService, IDocumentPdfAdm
         );
     }
 
-    [Authorize(DocsAdminPermissions.Projects.ManagePdfFiles)]
     public virtual async Task DeletePdfFileAsync(DeletePdfFileInput input)
     {
         var project = await ProjectRepository.GetAsync(input.ProjectId, includeDetails: true);
