@@ -94,7 +94,7 @@ $(function () {
             });
             
             _generatePdfModal.onResult(function (){
-               abp.message.info(l('PdfGenerationStarted'), l('PdfGenerationStartedInfoMessage')); 
+               abp.message.info(l('PdfGenerationStartedInfoMessage')); 
             });
         };
 
