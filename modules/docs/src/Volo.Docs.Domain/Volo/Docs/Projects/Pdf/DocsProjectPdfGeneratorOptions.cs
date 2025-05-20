@@ -43,12 +43,6 @@ public class DocsProjectPdfGeneratorOptions
     
     public Func<string, string> DocumentContentNormalizer { get; set; }
     
-    /// <summary>
-    /// The maximum number of last versions to cache.
-    /// If null, all versions will be cached.
-    /// </summary>
-    public int? CacheLastVersionsCount { get; set; }
-    
     public DocsProjectPdfGeneratorOptions()
     {
         HtmlLayout = $@"
