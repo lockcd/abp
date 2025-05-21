@@ -13,20 +13,24 @@ public class DocumentPdfGenerateJob : AsyncBackgroundJob<DocumentPdfGenerateJobA
 {
     protected IProjectPdfGenerator ProjectPdfGenerator { get; }
     protected IProjectRepository ProjectRepository { get; }
+    
+    protected IUnitOfWorkManager UnitOfWorkManager { get; }
 
-    public DocumentPdfGenerateJob(IProjectPdfGenerator projectPdfGenerator, IProjectRepository projectRepository)
+    public DocumentPdfGenerateJob(IProjectPdfGenerator projectPdfGenerator, IProjectRepository projectRepository, IUnitOfWorkManager unitOfWorkManager)
     {
         ProjectPdfGenerator = projectPdfGenerator;
         ProjectRepository = projectRepository;
+        UnitOfWorkManager = unitOfWorkManager;
     }
 
-    [UnitOfWork]
     public async override Task ExecuteAsync(DocumentPdfGenerateJobArgs args)
     {
         try
         {
+            using var uow = UnitOfWorkManager.Begin(requiresNew: true);
             var project = await ProjectRepository.GetAsync(args.ProjectId, includeDetails: true);
             await ProjectPdfGenerator.GenerateAsync(project, args.Version, args.LanguageCode);
+            await uow.CompleteAsync();
         }
         catch (Exception e)
         {
