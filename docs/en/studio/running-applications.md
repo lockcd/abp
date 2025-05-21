@@ -283,7 +283,7 @@ If the `yml` file contains multiple services, they will be represented as a sing
 
 > It may take stuck in `starting` state a while to download images if they don't exist.
 
->  A warning icon is displayed when a service is stopped externally inside the container:
+>  A warning icon is displayed when a service is stopped externally inside the container. In this case, yo can restart the application on Studio UI:
 >
 > ![docker-container-warning](images/solution-runner/docker-container-warning.png)
 
