@@ -283,6 +283,20 @@ If the `yml` file contains multiple services, they will be represented as a sing
 
 > It may take stuck in `starting` state a while to download images if they don't exist.
 
+>  A warning icon is displayed when a service is stopped externally inside the container:
+>
+> ![docker-container-warning](images/solution-runner/docker-container-warning.png)
+
+
+
+### Properties
+
+![docker-container-properties](images/solution-runner/docker-container-properties.png)
+
+In properties dialog, you can set the name of docker compose stack name of the containers. In the example above, it is set as `BookStore-Containers`. In Docker Desktop UI the containers are stacked under that name. Exmple:
+
+![docker-container-stack](images/solution-runner/docker-container-stack.png)
+
 ## Docker Compose
 
 You can manually run applications using [Docker Compose](https://docs.docker.com/compose/). This allows for easy setup and management of multi-container Docker applications. To get started, ensure you have Docker and Docker Compose installed on your machine.
