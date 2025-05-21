@@ -51,7 +51,9 @@ export class AccountModule {
       ],
     };
   }
-
+  /**
+   * @deprecated `AccountModule.forLazy()` is deprecated. You can use `createRoutes` **function** instead.
+   */
   static forLazy(options = {} as AccountConfigOptions): NgModuleFactory<AccountModule> {
     return new LazyModuleFactory(AccountModule.forChild(options));
   }

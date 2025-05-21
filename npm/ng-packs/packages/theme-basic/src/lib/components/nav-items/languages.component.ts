@@ -1,4 +1,4 @@
-import { ConfigStateService, CoreModule, LanguageInfo, SessionStateService } from '@abp/ng.core';
+import { ConfigStateService, LanguageInfo, SessionStateService } from '@abp/ng.core';
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -39,7 +39,7 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
       </div>
     }
   `,
-  imports: [CommonModule, CoreModule, NgbDropdownModule],
+  imports: [CommonModule, NgbDropdownModule],
 })
 export class LanguagesComponent {
   get smallScreen(): boolean {
