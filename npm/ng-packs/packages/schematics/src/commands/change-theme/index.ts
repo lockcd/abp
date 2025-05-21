@@ -321,7 +321,7 @@ export function removeProviderFromNgModuleMetadata(
 export function insertImports(projectName: string, selectedTheme: ThemeOptionsEnum): Rule {
   return addRootImport(projectName, code => {
     const selectedThemeImports = importMap.get(selectedTheme);
-    const selected = selectedThemeImports?.filter(s => !!s.doNotImport);
+    const selected = selectedThemeImports?.filter(s => !s.doNotImport);
     if (!selected?.length) return code.code``;
 
     const expressions: string[] = [];
@@ -340,7 +340,7 @@ export function insertImports(projectName: string, selectedTheme: ThemeOptionsEn
 export function insertProviders(projectName: string, selectedTheme: ThemeOptionsEnum): Rule {
   return addRootProvider(projectName, code => {
     const selectedThemeImports = importMap.get(selectedTheme);
-    const selected = selectedThemeImports?.filter(s => !!s.doNotImport);
+    const selected = selectedThemeImports?.filter(s => !s.doNotImport);
     if (!selected || selected.length === 0) return code.code``;
 
     const providers = selected
