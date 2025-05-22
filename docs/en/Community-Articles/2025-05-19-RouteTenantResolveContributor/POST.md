@@ -1,7 +1,5 @@
 # Resolving Tenant from Route in ABP Framework
 
-![cover](cover.png)
-
 The ABP Framework provides multi-tenancy support with various ways to resolve tenant information, including: Cookie, Header, Domain, Route, and more.
 
 This article will demonstrate how to resolve tenant information from the route.
