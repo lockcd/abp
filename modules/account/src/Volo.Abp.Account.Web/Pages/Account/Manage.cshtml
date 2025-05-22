@@ -13,6 +13,11 @@
     <abp-script-bundle name="@typeof(ManageModel).FullName"/>
 }
 
+
+@section styles {
+    <abp-style src="/Pages/Account/Manage.css" />
+}
+
 @if (!Model.ReturnUrl.IsNullOrWhiteSpace())
 {
     <abp-row class="mb-2">
