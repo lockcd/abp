@@ -142,20 +142,20 @@ Configure<AbpDbContextOptions>(options =>
 Add actions for the `ConfigureConventions` and `OnModelCreating` methods of the `DbContext` as shown below:
 
 ````csharp
-options.DefaultConventionAction = (dbContext, builder) =>
+options.ConfigureDefaultConvention((dbContext, builder) =>
 {
     // This action is called for ConfigureConventions method of all DbContexts.
-};
+}); 
 
 options.ConfigureConventions<YourDbContext>((dbContext, builder) =>
 {
     // This action is called for ConfigureConventions method of specific DbContext.
 });
 
-options.DefaultOnModelCreatingAction = (dbContext, builder) =>
+options.ConfigureDefaultOnModelCreatingAction ( (dbContext, builder) =>
 {
     // This action is called for OnModelCreating method of all DbContexts.
-};
+});
 
 options.ConfigureOnModelCreating<YourDbContext>((dbContext, builder) =>
 {
