@@ -66,7 +66,7 @@
     "AuditLogging": "Audit Logging",
     "Caching": "Caching",
     "Multitenancy": "Multitenancy",
-    "DataFiltering": "Data filtering",
+    "DataFiltering": "Data Filtering",
     "ConventionOverConfiguration": "Convention Over Configuration",
     "ConventionOverConfigurationExplanation": "ABP implements common application conventions by default with minimal or zero configuration.",
     "ConventionOverConfigurationExplanationList1": "Auto registers known services to dependency injection.",
