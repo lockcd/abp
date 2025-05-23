@@ -15,6 +15,7 @@ import {
   RegisterComponent,
   ResetPasswordComponent,
 } from './components';
+import { AccountRoutingModule } from './account-routing.module';
 
 @NgModule({
   declarations: [],
@@ -24,6 +25,7 @@ import {
     ForgotPasswordComponent,
     ResetPasswordComponent,
     ManageProfileComponent,
+    AccountRoutingModule,
   ],
   exports: [],
 })
