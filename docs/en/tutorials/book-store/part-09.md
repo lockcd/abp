@@ -1158,14 +1158,21 @@ public partial class Authors
 
     private async Task DeleteAuthorAsync(AuthorDto author)
     {
-        var confirmMessage = L["AuthorDeletionConfirmationMessage", author.Name];
-        if (!await Message.Confirm(confirmMessage))
+        try
         {
-            return;
-        }
+            var confirmMessage = L["AuthorDeletionConfirmationMessage", author.Name];
+            if (!await Message.Confirm(confirmMessage))
+            {
+                return;
+            }
 
-        await AuthorAppService.DeleteAsync(author.Id);
-        await GetAuthorsAsync();
+            await AuthorAppService.DeleteAsync(author.Id);
+            await GetAuthorsAsync();
+        }
+        catch(Exception ex)
+        {
+            await HandleErrorAsync(ex);
+        }
     }
 
     private void CloseEditAuthorModal()
@@ -1175,21 +1182,35 @@ public partial class Authors
 
     private async Task CreateAuthorAsync()
     {
-        if (await CreateValidationsRef.ValidateAll())
+        try
         {
-            await AuthorAppService.CreateAsync(NewAuthor);
-            await GetAuthorsAsync();
-            CreateAuthorModal.Hide();
+            if (await CreateValidationsRef.ValidateAll())
+            {
+                await AuthorAppService.CreateAsync(NewAuthor);
+                await GetAuthorsAsync();
+                CreateAuthorModal.Hide();
+            }
+        }
+        catch(Exception ex)
+        {
+            await HandleErrorAsync(ex);
         }
     }
 
     private async Task UpdateAuthorAsync()
     {
-        if (await EditValidationsRef.ValidateAll())
+        try
         {
-            await AuthorAppService.UpdateAsync(EditingAuthorId, EditingAuthor);
-            await GetAuthorsAsync();
-            EditAuthorModal.Hide();
+            if (await EditValidationsRef.ValidateAll())
+            {
+                await AuthorAppService.UpdateAsync(EditingAuthorId, EditingAuthor);
+                await GetAuthorsAsync();
+                EditAuthorModal.Hide();
+            }
+        }
+        catch(Exception ex)
+        {
+            await HandleErrorAsync(ex);
         }
     }
 }
