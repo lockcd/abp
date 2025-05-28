@@ -25,6 +25,7 @@ Here is a brief list of titles explained in the next sections:
 * Docs Module: Added "Alternative Words" to Filter Items
 * Introducing the Bunny BLOB Storage Provider
 * Upgraded `MongoDB.Driver` to v3.1.0
+* Using Timezone Settings to Display Datetime
 * Identity Pro Module: Require Email Verification to Register
 * Switching users during OAuth login
 
@@ -114,6 +115,49 @@ The upgrade provides:
 
 We have prepared a [migration guide](https://abp.io/docs/9.2/release-info/migration-guides/MongoDB-Driver-2-to-3) for this upgrade. Please refer to it to learn more about the changes and how to migrate your application.
 
+### Using Timezone Settings to Display Datetime
+
+A significant enhancement in ABP v9.2 is the ability to use timezone settings to display `DateTime` values according to the user's or application's configured timezone. Introduced in `v9.2.0-rc.2`, this feature addresses the common challenge of ensuring users see accurate time information, regardless of their geographical location.
+
+Previously, `DateTime` values were often shown in the server's timezone or in UTC, which could cause confusion for users in different timezones. With this new feature, ABP applications can now respect the configured timezone and automatically convert and display datetime values accordingly.
+
+**Before setting the timezone:**
+
+Consider a scenario where you have a list of books, and the `CreationTime` property is displayed without any timezone consideration. It may appear in the server's default timezone:
+
+![before.png](before.png)
+*(Screenshot of a Books page showing the CreationTime in a default timezone.)*
+
+**Setting the timezone:**
+
+To set the timezone, start by configuring the `AbpClockOptions` in your module's `ConfigureServices` method:
+
+```csharp
+Configure<AbpClockOptions>(options =>
+{
+    options.Kind = DateTimeKind.Utc;
+});
+```
+
+> By setting the `Kind` property of `AbpClockOptions` to `DateTimeKind.Utc`, ABP will normalize all datetime values. Times stored in the database and returned to the frontend will be in UTC. Additionally, the `SupportsMultipleTimezone` property of the `IClock` service will be **true**, and you’ll be able to configure the timezone from the UI under the _Settings_ page.
+
+After setting the `Kind` property, you can run your application and configure the timezone from the UI under the _Settings_ page. For example, set the timezone to "Asia/Tokyo (+09:00)":
+
+![configure-timezone.png](configure-timezone.png)
+*(Screenshot showing the configuration setting for Abp.Timing.TimeZone, set to "Asia/Tokyo (+09:00)".)*
+
+> ABP provides the `Abp.Timing.TimeZone` setting, which allows you to configure the desired timezone at the application, tenant, or user level and this setting can be configured in the UI under the _Settings_ page, inside of the _Time Zone_ tab.
+
+**After setting the timezone:**
+
+Once the timezone is configured, ABP automatically handles the conversion and display of `DateTime` values. The `CreationTime` on the _Books_ page will now be shown in the **"Asia/Tokyo"** timezone.
+
+![after.png](after.png)
+*(Screenshot of the _Books_ page after setting the timezone, showing the `CreationTime` adjusted to the "Asia/Tokyo" timezone.)*
+
+This feature utilizes the `IClock` service, which provides methods like `ConvertToUserTime` and `ConvertToUtc` to facilitate timezone conversions. By configuring the `Abp.Timing.TimeZone` setting, developers can ensure a consistent and user-friendly experience across applications with a global user base.
+> For a more detailed guide on implementing and using this feature, refer to the article: [Developing a Multi-Timezone Application Using the ABP Framework](https://abp.io/community/articles/developing-a-multitimezone-application-using-the-abp-framework-zk7fnrdq). It offers step-by-step instructions and examples for handling multi-timezone scenarios in ABP applications.
+
 ### Identity Pro Module: Require Email Verification to Register
 
 [ABP Identity Pro module](https://abp.io/docs/9.2/modules/identity-pro) has been enhanced with a new feature that allows administrators to require email verification during the registration process. This security improvement ensures that users must verify their email addresses before their registration is considered complete. Enabling this feature is especially important for applications that want to prevent spam registrations.
@@ -142,7 +186,7 @@ There are exciting articles contributed by the ABP community as always. I will h
 * [How to Change the CurrentUser in ABP?](https://abp.io/community/articles/how-to-change-the-currentuser-in-abp-i3uu1m7g) by [Engincan Veske](https://github.com/EngincanV)
 
 
-Thanks to the ABP Community for all the content they have published. You can also [post your ABP-related (text or video) content](https://abp.io/community/posts/submit) to the ABP Community.
+Thanks to the ABP Community for all the content they have published. You can also [post your ABP-related (text or video) content](https://abp.io/community/posts/create) to the ABP Community.
 
 ## Conclusion
 

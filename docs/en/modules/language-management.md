@@ -62,7 +62,7 @@ This module adds some initial data (see [the data seed system](../framework/infr
 
 * Creates language records configured using `AbpLocalizationOptions`.
 
-If you want to change the seeded language list, see the next section.
+If you want to change the seeded language list, see the [Localization](../framework/fundamentals/localization.md#Supported-Languages) document.
 
 ## Internals
 
@@ -77,6 +77,11 @@ This module follows the [Entity Best Practices & Conventions](../framework/archi
 * `Language` (aggregate root): Represents a language in the system.
 * `LanguageText` (aggregate root): Represents a language text in the system.
 
+##### Dynamic Localization
+
+* `LocalizationResourceRecord` (aggregate root): Represents a localization resource in the system.
+* `LocalizationTextRecord` (aggregate root): Represents all texts of a localization resource in the system.
+
 #### Repositories
 
 This module follows the [Repository Best Practices & Conventions](../framework/architecture/best-practices/repositories.md) guide.
@@ -85,6 +90,8 @@ Following custom repositories are defined for this module:
 
 * `ILanguageRepository`
 * `ILanguageTextRepository`
+* `ILocalizationResourceRecordRepository`
+* `ILocalizationTextRecordRepository`
 
 #### Domain Services
 
@@ -121,6 +128,8 @@ See the [connection strings](../framework/fundamentals/connection-strings.md) do
 
 * **AbpLanguages**
 * **AbpLanguageTexts**
+* **AbpLocalizationResources**
+* **AbpLocalizationTexts**
 
 #### MongoDB
 
@@ -128,6 +137,8 @@ See the [connection strings](../framework/fundamentals/connection-strings.md) do
 
 * **AbpLanguages**
 * **AbpLanguageTexts**
+* **AbpLocalizationResources**
+* **AbpLocalizationTexts**
 
 ### Permissions
 
