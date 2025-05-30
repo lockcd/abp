@@ -131,4 +131,4 @@ This integration demonstrates how to leverage the power of AI in your ABP Framew
 
 ## Source Code
 
-- [AbpAiChat Source Code](https://github.com/abpframework/abp-samples/tree/master/AIChatt)
+- [AbpAiChat Source Code](https://github.com/abpframework/abp-samples/tree/master/AIChat)
