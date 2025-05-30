@@ -126,6 +126,9 @@ This integration demonstrates how to leverage the power of AI in your ABP Framew
 ## References
 
 - [ABP Single Layer Solution](https://abp.io/docs/latest/solution-templates/single-layer-web-application/overview)
-- [AbpAiChat Source Code](https://github.com/abpframework/abp/tree/dev/samples/AbpAiChat)
 - [.NET AI Template Documentation](https://devblogs.microsoft.com/dotnet/announcing-dotnet-ai-template-preview1/)
 - [GitHub Personal Access Tokens Guide](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
+
+## Source Code
+
+- [AbpAiChat Source Code](https://github.com/abpframework/abp-samples/tree/master/AIChatt)
