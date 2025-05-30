@@ -1,6 +1,6 @@
 # Integrating .NET AI Chat Template with ABP Framework
 
-This article demonstrates how to integrate the .NET AI Chat Template into an ABP Framework application, enabling powerful AI chat capabilities in your ABP-based solution.
+This article demonstrates how to integrate the [.NET AI Chat Template](https://devblogs.microsoft.com/dotnet/announcing-dotnet-ai-template-preview2/) into an ABP Framework application, enabling powerful AI chat capabilities in your ABP-based solution.
 
 ![cover](cover.png)
 
