@@ -69,6 +69,8 @@ private void ConfigureAi(ServiceConfigurationContext context)
 }
 ```
 
+The `ConfigureAi` method is called in the `ConfigureServices` method of `AbpAiChatModule`. It sets up the AI services, including the OpenAI client, chat client, embedding generator, and vector store.
+
 ### 2.4 Configure GitHub Token
 
 Add your GitHub Personal Access Token to `appsettings.json`:
