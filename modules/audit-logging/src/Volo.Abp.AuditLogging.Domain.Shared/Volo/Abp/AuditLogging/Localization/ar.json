@@ -109,6 +109,9 @@
     "TotalRecords": "إجمالي السجلات",
     "ExcelFileAttachedMessage": "ملف Excel مرفق بهذا البريد الإلكتروني.",
     "EntityChangeExportCompletedSubject": "تم إكمال تصدير تغييرات الكيان",
-    "AuditLogExportCompletedSubject": "تم إكمال تصدير سجل التدقيق"
+    "AuditLogExportCompletedSubject": "تم إكمال تصدير سجل التدقيق",
+    "DownloadLinkExplanation": "يمكنك تنزيل الملف باستخدام الرابط أدناه حتى {0} (UTC)",
+    "DownloadNow": "تنزيل الآن",
+    "TryAgainMessage": "الرجاء المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى الاتصال بالدعم."
   }
 }

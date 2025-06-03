@@ -109,6 +109,9 @@
     "TotalRecords": "Total de registros",
     "ExcelFileAttachedMessage": "O arquivo Excel está anexado a este email.",
     "EntityChangeExportCompletedSubject": "Exportação de mudanças de entidade concluída",
-    "AuditLogExportCompletedSubject": "Exportação de log de auditoria concluída"
+    "AuditLogExportCompletedSubject": "Exportação de log de auditoria concluída",
+    "DownloadLinkExplanation": "Você pode baixar o arquivo usando o link abaixo até {0} (UTC)",
+    "DownloadNow": "Baixar agora",
+    "TryAgainMessage": "Por favor, tente novamente. Se o problema persistir, entre em contato com o suporte."
   }
 }

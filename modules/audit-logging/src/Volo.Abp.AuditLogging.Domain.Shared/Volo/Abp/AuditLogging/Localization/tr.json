@@ -94,6 +94,9 @@
     "TotalRecords": "Toplam kayıt",
     "ExcelFileAttachedMessage": "Excel dosyası bu e-postaya eklenmiştir.",
     "EntityChangeExportCompletedSubject": "Entity değişiklik dışa aktarma tamamlandı",
-    "AuditLogExportCompletedSubject": "İşlem log dışa aktarma tamamlandı"
+    "AuditLogExportCompletedSubject": "İşlem log dışa aktarma tamamlandı",
+    "DownloadLinkExplanation": "Dosyayı aşağıdaki bağlantıyı kullanarak {0} (UTC) tarihine kadar indirebilirsiniz",
+    "DownloadNow": "Şimdi İndir",
+    "TryAgainMessage": "Lütfen tekrar deneyin. Sorun devam ederse, lütfen destek ekibiyle iletişime geçin."
   }
 }

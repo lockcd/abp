@@ -109,6 +109,9 @@
     "TotalRecords": "總記錄數",
     "ExcelFileAttachedMessage": "Excel檔案已附加到此電子郵件。",
     "EntityChangeExportCompletedSubject": "實體變更匯出已完成",
-    "AuditLogExportCompletedSubject": "稽核日誌匯出已完成"
+    "AuditLogExportCompletedSubject": "稽核日誌匯出已完成",
+    "DownloadLinkExplanation": "您可以使用下面的連結下載檔案，直到{0}（UTC）",
+    "DownloadNow": "立即下載",
+    "TryAgainMessage": "請再試一次。如果問題仍然存在，請聯絡支援人員。"
   }
 }

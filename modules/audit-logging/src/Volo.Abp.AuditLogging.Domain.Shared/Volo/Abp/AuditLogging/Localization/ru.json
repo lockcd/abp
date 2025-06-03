@@ -109,6 +109,9 @@
     "TotalRecords": "Всего записей",
     "ExcelFileAttachedMessage": "Файл Excel прикреплен к этому электронному письму.",
     "EntityChangeExportCompletedSubject": "Экспорт изменений сущности завершен",
-    "AuditLogExportCompletedSubject": "Экспорт журнала аудита завершен"
+    "AuditLogExportCompletedSubject": "Экспорт журнала аудита завершен",
+    "DownloadLinkExplanation": "Вы можете скачать файл по ссылке ниже до {0} (UTC)",
+    "DownloadNow": "Скачать сейчас",
+    "TryAgainMessage": "Пожалуйста, попробуйте еще раз. Если проблема не исчезнет, обратитесь в службу поддержки."
   }
 }

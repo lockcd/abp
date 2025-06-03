@@ -109,6 +109,9 @@
     "TotalRecords": "Łączna liczba rekordów",
     "ExcelFileAttachedMessage": "Plik Excel jest załączony do tego e-maila.",
     "EntityChangeExportCompletedSubject": "Eksport zmian encji zakończony",
-    "AuditLogExportCompletedSubject": "Eksport dziennika audytu zakończony"
+    "AuditLogExportCompletedSubject": "Eksport dziennika audytu zakończony",
+    "DownloadLinkExplanation": "Możesz pobrać plik, korzystając z poniższego łącza do {0} (UTC)",
+    "DownloadNow": "Pobierz teraz",
+    "TryAgainMessage": "Proszę spróbuj ponownie. Jeśli problem nie ustąpi, skontaktuj się z pomocą techniczną."
   }
 }

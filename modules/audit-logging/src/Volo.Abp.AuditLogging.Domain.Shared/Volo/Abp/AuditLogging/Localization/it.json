@@ -109,6 +109,9 @@
     "TotalRecords": "Record totali",
     "ExcelFileAttachedMessage": "Il file Excel è allegato a questa email.",
     "EntityChangeExportCompletedSubject": "Esportazione modifiche entità completata",
-    "AuditLogExportCompletedSubject": "Esportazione log di audit completata"
+    "AuditLogExportCompletedSubject": "Esportazione log di audit completata",
+    "DownloadLinkExplanation": "Puoi scaricare il file utilizzando il link qui sotto fino a {0} (UTC)",
+    "DownloadNow": "Scarica ora",
+    "TryAgainMessage": "Per favore riprova. Se il problema persiste, contatta il supporto."
   }
 }

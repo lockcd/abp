@@ -109,6 +109,9 @@
     "TotalRecords": "Totalt antal poster",
     "ExcelFileAttachedMessage": "Excel-filen är bifogad till detta e-postmeddelande.",
     "EntityChangeExportCompletedSubject": "Export av entitetsändringar slutförd",
-    "AuditLogExportCompletedSubject": "Export av granskningslogg slutförd"
+    "AuditLogExportCompletedSubject": "Export av granskningslogg slutförd",
+    "DownloadLinkExplanation": "Du kan ladda ner filen via länken nedan fram till {0} (UTC)",
+    "DownloadNow": "Ladda ner nu",
+    "TryAgainMessage": "Försök igen. Om problemet kvarstår, kontakta support."
   }
 }

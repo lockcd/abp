@@ -109,6 +109,9 @@
     "TotalRecords": "Skupaj zapisov",
     "ExcelFileAttachedMessage": "Datoteka Excel je priložena tej e-pošti.",
     "EntityChangeExportCompletedSubject": "Izvoz sprememb entitet dokončan",
-    "AuditLogExportCompletedSubject": "Izvoz dnevnika revizije dokončan"
+    "AuditLogExportCompletedSubject": "Izvoz dnevnika revizije dokončan",
+    "DownloadLinkExplanation": "Datoteko lahko prenesete s spodnjo povezavo do {0} (UTC)",
+    "DownloadNow": "Prenesi zdaj",
+    "TryAgainMessage": "Prosimo, poskusite znova. Če težava vztraja, se obrnite na podporo."
   }
 }

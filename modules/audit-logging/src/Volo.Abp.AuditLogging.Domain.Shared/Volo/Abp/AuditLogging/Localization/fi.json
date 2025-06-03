@@ -109,6 +109,9 @@
     "TotalRecords": "Tietueiden kokonaismäärä",
     "ExcelFileAttachedMessage": "Excel-tiedosto on liitetty tähän sähköpostiin.",
     "EntityChangeExportCompletedSubject": "Entiteettimuutosten vienti valmis",
-    "AuditLogExportCompletedSubject": "Tarkastuslokin vienti valmis"
+    "AuditLogExportCompletedSubject": "Tarkastuslokin vienti valmis",
+    "DownloadLinkExplanation": "Voit ladata tiedoston alla olevan linkin kautta {0} (UTC) asti",
+    "DownloadNow": "Lataa nyt",
+    "TryAgainMessage": "Yritä uudelleen. Jos ongelma jatkuu, ota yhteyttä tukeen."
   }
 }

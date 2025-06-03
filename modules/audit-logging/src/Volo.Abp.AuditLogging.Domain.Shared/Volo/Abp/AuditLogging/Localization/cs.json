@@ -109,6 +109,9 @@
     "TotalRecords": "Celkem záznamů",
     "ExcelFileAttachedMessage": "Soubor Excel je připojen k tomuto e-mailu.",
     "EntityChangeExportCompletedSubject": "Export změn entit dokončen",
-    "AuditLogExportCompletedSubject": "Export protokolu auditu dokončen"
+    "AuditLogExportCompletedSubject": "Export protokolu auditu dokončen",
+    "DownloadLinkExplanation": "Soubor můžete stáhnout pomocí odkazu níže až do {0} (UTC)",
+    "DownloadNow": "Stáhnout nyní",
+    "TryAgainMessage": "Zkuste to prosím znovu. Pokud problém přetrvává, kontaktujte podporu."
   }
 }

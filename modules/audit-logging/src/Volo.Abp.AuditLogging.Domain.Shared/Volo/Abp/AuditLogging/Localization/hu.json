@@ -109,6 +109,9 @@
     "TotalRecords": "Összes rekord",
     "ExcelFileAttachedMessage": "Az Excel fájl csatolva van ehhez az e-mailhez.",
     "EntityChangeExportCompletedSubject": "Entitás változás exportálás befejezve",
-    "AuditLogExportCompletedSubject": "Audit napló exportálás befejezve"
+    "AuditLogExportCompletedSubject": "Audit napló exportálás befejezve",
+    "DownloadLinkExplanation": "A fájlt letöltheti az alábbi linken keresztül {0} (UTC) időpontig",
+    "DownloadNow": "Letöltés most",
+    "TryAgainMessage": "Kérjük, próbálja újra. Ha a probléma továbbra is fennáll, forduljon az ügyfélszolgálathoz."
   }
 }
