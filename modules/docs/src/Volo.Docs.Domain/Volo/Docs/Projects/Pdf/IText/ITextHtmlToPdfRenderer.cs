@@ -45,6 +45,51 @@ public class ITextHtmlToPdfRenderer : IHtmlToPdfRenderer ,ITransientDependency
         return Task.FromResult(pdfStream);
     }
 
+    public virtual async Task<MemoryStream> MergePdfFilesAsync(List<MemoryStream> pdfFiles, string title, bool disposeStreams = true)
+    {
+        var mergedStream = new MemoryStream();
+        var mergedPdfWriter = new PdfWriter(mergedStream);
+        var mergedPdfDocument = new iText.Kernel.Pdf.PdfDocument(mergedPdfWriter);
+        mergedPdfDocument.GetDocumentInfo().SetTitle(title);
+        mergedPdfWriter.SetCloseStream(false);
+        
+        foreach (var pdfFile in pdfFiles)
+        {
+            try
+            {
+                using var reader = new PdfReader(pdfFile);
+                using var sourcePdf = new iText.Kernel.Pdf.PdfDocument(reader);
+
+                var pageCount = sourcePdf.GetNumberOfPages();
+
+                for (var i = 1; i <= pageCount; i++)
+                {
+                    var page = sourcePdf.GetPage(i);
+                    mergedPdfDocument.AddPage(page.CopyTo(mergedPdfDocument));
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error merging PDF file {pdfFile}: {ex.Message}", ex);
+            }
+            finally
+            {
+                try
+                {
+                    await pdfFile.DisposeAsync();
+                }
+                catch
+                {
+                    // Ignore any exceptions during disposal
+                }
+            }
+        }
+        
+        mergedPdfDocument.Close();
+        mergedStream.Position = 0;
+        return mergedStream;
+    }
+
     private void BuildPdfOutlines(PdfOutline parentOutline, List<PdfDocument> pdfDocumentNodes)
     {
         foreach (var pdfDocumentNode in pdfDocumentNodes)

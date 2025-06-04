@@ -5,10 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Volo.Abp;
-using Volo.Abp.Content;
 using Volo.Abp.DependencyInjection;
 using Volo.Docs.Documents;
 using Volo.Docs.Documents.Rendering;
@@ -33,6 +31,8 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
     protected Project Project { get; set; }
     protected List<PdfDocument> AllPdfDocuments { get; } = [];
 
+    protected int ChunkSize { get; set; } = 10;
+
     public ProjectPdfGenerator(
         IDocumentSourceFactory documentStoreFactory, 
         IDocumentRepository documentRepository,
@@ -40,7 +40,8 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
         IDocumentSectionRenderer documentSectionRenderer,
         IProjectPdfFileStore projectPdfFileStore, 
         IHtmlToPdfRenderer htmlToPdfRenderer, 
-        IDocumentToHtmlConverterFactory documentToHtmlConverterFactory)
+        IDocumentToHtmlConverterFactory documentToHtmlConverterFactory, 
+        ILogger<ProjectPdfGenerator> logger)
     {
         DocumentStoreFactory = documentStoreFactory;
         DocumentRepository = documentRepository;
@@ -49,7 +50,7 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
         ProjectPdfFileStore = projectPdfFileStore;
         HtmlToPdfRenderer = htmlToPdfRenderer;
         DocumentToHtmlConverterFactory = documentToHtmlConverterFactory;
-        Logger = NullLogger<ProjectPdfGenerator>.Instance;
+        Logger = logger;
     }
     
     public virtual async Task GenerateAsync(Project project, string version, string languageCode)
@@ -60,17 +61,85 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
         
         var navigation = await GetNavigationAsync(project, version, languageCode);
         await SetAllPdfDocumentsAsync(navigation.Items, project, version, languageCode);
-        
-        var html = await BuildHtmlAsync();
+
         var title = Options.Value.CalculatePdfFileTitle?.Invoke(project) ?? project.Name;
-        var pdfStream = await HtmlToPdfRenderer.RenderAsync(title, html, AllPdfDocuments);
-        
-        await ProjectPdfFileStore.SetAsync(project, version, languageCode, pdfStream);
+        var tempStreams = new List<MemoryStream>();
+
+        try
+        {
+            var documentChunks = ChunkDocuments(AllPdfDocuments);
+            Logger.LogInformation("Documents split into {ChunkCount} chunks for processing", documentChunks.Count);
+
+            foreach (var (chunk, index) in documentChunks.Select((chunk, index) => (chunk, index)))
+            {
+
+                Logger.LogInformation("Processing chunk {Index}/{Total}", index + 1, documentChunks.Count);
+
+                var chunkHtml = await BuildHtmlAsync(chunk);
+
+                var pdfStream = await HtmlToPdfRenderer.RenderAsync($"{title} - Part {index + 1}", chunkHtml, chunk);
+
+                tempStreams.Add(pdfStream);
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+
+            using var mergedPdfStream = await MergePdfFilesAsync(tempStreams, title, disposeStreams: true);
+            await ProjectPdfFileStore.SetAsync(project, version, languageCode, mergedPdfStream);
+        }
+        catch
+        {
+            foreach (var tempStream in tempStreams)
+            {
+                try
+                {
+                    await tempStream.DisposeAsync();
+                }
+                catch
+                {
+                    // ignore any exceptions during disposal
+                }
+            }
+        }
+        finally
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
     }
-    
-    protected virtual async Task<string> BuildHtmlAsync()
+
+    protected virtual List<List<PdfDocument>> ChunkDocuments(List<PdfDocument> documents)
     {
-        var htmlContent = await ConvertDocumentsToHtmlAsync(AllPdfDocuments);
+        var flatDocuments = FlattenDocuments(documents);
+        
+        return flatDocuments
+            .Select((doc, index) => new { doc, index })
+            .GroupBy(x => x.index / ChunkSize)
+            .Select(g => g.Select(x => x.doc).ToList())
+            .ToList();
+    }
+
+    protected virtual List<PdfDocument> FlattenDocuments(List<PdfDocument> documents)
+    {
+        var result = new List<PdfDocument>();
+        
+        foreach (var document in documents)
+        {
+            result.Add(document);
+            
+            if (document.HasChildren)
+            {
+                result.AddRange(FlattenDocuments(document.Children));
+            }
+        }
+        
+        return result;
+    }
+
+    protected virtual async Task<string> BuildHtmlAsync(List<PdfDocument> pdfDocuments)
+    {
+        var htmlContent = await ConvertDocumentsToHtmlAsync(pdfDocuments);
         
         var htmlBuilder = new StringBuilder();
         htmlBuilder.Append(Options.Value.HtmlLayout);
@@ -103,6 +172,16 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
         return contentBuilder.ToString();
     }
 
+    protected virtual async Task<MemoryStream> MergePdfFilesAsync(List<MemoryStream> pdfFiles, string title, bool disposeStreams = true)
+    {
+        if (pdfFiles.Count == 0)
+        {
+            throw new ArgumentException("No PDF files to merge", nameof(pdfFiles));
+        }
+
+        return await HtmlToPdfRenderer.MergePdfFilesAsync(pdfFiles, title, disposeStreams);
+    }
+    
     protected virtual IDocumentToHtmlConverter<PdfDocumentToHtmlConverterContext> GetDocumentToHtmlConverter(Project project, PdfDocument pdfDocument)
     {
         return DocumentToHtmlConverterFactory.Create<PdfDocumentToHtmlConverterContext>(DocsDomainConsts.PdfDocumentToHtmlConverterPrefix +(pdfDocument.Document.Format ?? project.Format));
