@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Volo.Abp.Data;
@@ -25,17 +24,16 @@ public class UnitOfWorkMongoDbContextProvider<TMongoDbContext> : IMongoDbContext
     protected readonly IConnectionStringResolver ConnectionStringResolver;
     protected readonly ICancellationTokenProvider CancellationTokenProvider;
     protected readonly ICurrentTenant CurrentTenant;
-    protected readonly AbpMongoDbContextOptions Options;
     protected readonly IMongoDbContextTypeProvider DbContextTypeProvider;
-    protected readonly IMongoClientFactory MongoClientFactory;
+    protected readonly IAbpMongoClientFactory MongoClientFactory;
 
     public UnitOfWorkMongoDbContextProvider(
         IUnitOfWorkManager unitOfWorkManager,
         IConnectionStringResolver connectionStringResolver,
         ICancellationTokenProvider cancellationTokenProvider,
         ICurrentTenant currentTenant,
-        IOptions<AbpMongoDbContextOptions> options,
-        IMongoDbContextTypeProvider dbContextTypeProvider, IMongoClientFactory mongoClientFactory)
+        IMongoDbContextTypeProvider dbContextTypeProvider,
+        IAbpMongoClientFactory mongoClientFactory)
     {
         UnitOfWorkManager = unitOfWorkManager;
         ConnectionStringResolver = connectionStringResolver;
@@ -43,7 +41,6 @@ public class UnitOfWorkMongoDbContextProvider<TMongoDbContext> : IMongoDbContext
         CurrentTenant = currentTenant;
         DbContextTypeProvider = dbContextTypeProvider;
         MongoClientFactory = mongoClientFactory;
-        Options = options.Value;
 
         Logger = NullLogger<UnitOfWorkMongoDbContextProvider<TMongoDbContext>>.Instance;
     }
@@ -129,7 +126,7 @@ public class UnitOfWorkMongoDbContextProvider<TMongoDbContext> : IMongoDbContext
     [Obsolete("Use CreateDbContextAsync")]
     private TMongoDbContext CreateDbContext(IUnitOfWork unitOfWork, MongoUrl mongoUrl, string databaseName)
     {
-        var client = CreateMongoClient(mongoUrl);
+        var client = MongoClientFactory.Get(mongoUrl);
         var database = client.GetDatabase(databaseName);
 
         if (unitOfWork.Options.IsTransactional)
@@ -149,7 +146,7 @@ public class UnitOfWorkMongoDbContextProvider<TMongoDbContext> : IMongoDbContext
         string databaseName,
         CancellationToken cancellationToken = default)
     {
-        var client = CreateMongoClient(mongoUrl);
+        var client = await MongoClientFactory.GetAsync(mongoUrl);
         var database = client.GetDatabase(databaseName);
 
         if (unitOfWork.Options.IsTransactional)
@@ -296,11 +293,6 @@ public class UnitOfWorkMongoDbContextProvider<TMongoDbContext> : IMongoDbContext
         }
 
         return ConnectionStringResolver.Resolve(dbContextType);
-    }
-
-    protected virtual MongoClient CreateMongoClient(MongoUrl mongoUrl)
-    {
-        return MongoClientFactory.GetClient(mongoUrl.ToString());
     }
 
     protected virtual CancellationToken GetCancellationToken(CancellationToken preferredValue = default)

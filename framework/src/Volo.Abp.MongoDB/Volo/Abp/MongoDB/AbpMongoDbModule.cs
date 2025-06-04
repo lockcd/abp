@@ -8,7 +8,6 @@ using Volo.Abp.Domain;
 using Volo.Abp.Domain.Entities.Events.Distributed;
 using Volo.Abp.Domain.Repositories.MongoDB;
 using Volo.Abp.Modularity;
-using Volo.Abp.MongoDB.Clients;
 using Volo.Abp.MongoDB.DependencyInjection;
 using Volo.Abp.Uow.MongoDB;
 using Volo.Abp.MongoDB.DistributedEvents;
@@ -31,8 +30,6 @@ public class AbpMongoDbModule : AbpModule
 
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        context.Services.AddSingleton<IMongoClientFactory, MongoClientFactory>();
-
         context.Services.TryAddTransient(
             typeof(IMongoDbContextProvider<>),
             typeof(UnitOfWorkMongoDbContextProvider<>)
