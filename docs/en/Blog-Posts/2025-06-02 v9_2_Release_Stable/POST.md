@@ -58,7 +58,7 @@ There are a few breaking changes in this version that may affect your applicatio
 
 As always, exciting articles have been contributed by the ABP community. I will highlight some of them here:
 
-* [Liming Ma](https://github.com/maliming) has created 3 new articles:
+* [Liming Ma](https://github.com/maliming) has published 3 new articles:
     * [Integrating .NET AI Chat Template with ABP Framework](https://abp.io/community/articles/integrating-.net-ai-chat-template-with-abp-framework-qavb5p2j)
     * [Resolving Tenant from Route in ABP Framework](https://abp.io/community/articles/resolving-tenant-from-route-in-abp-framework-ah7oru97)
     * [Common Errors in JWT Bearer Authentication](https://abp.io/community/articles/common-errors-in-jwt-bearer-authentication-4u3wrbs5)
