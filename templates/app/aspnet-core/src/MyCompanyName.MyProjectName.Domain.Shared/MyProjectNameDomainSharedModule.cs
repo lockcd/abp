@@ -3,6 +3,7 @@ using Volo.Abp.AuditLogging;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
+using Volo.Abp.Identity.Localization;
 using Volo.Abp.Localization;
 using Volo.Abp.Localization.ExceptionHandling;
 using Volo.Abp.Modularity;
@@ -23,7 +24,7 @@ namespace MyCompanyName.MyProjectName;
     typeof(AbpOpenIddictDomainSharedModule),
     typeof(AbpPermissionManagementDomainSharedModule),
     typeof(AbpSettingManagementDomainSharedModule),
-    typeof(AbpTenantManagementDomainSharedModule)    
+    typeof(AbpTenantManagementDomainSharedModule)
     )]
 public class MyProjectNameDomainSharedModule : AbpModule
 {
@@ -43,11 +44,8 @@ public class MyProjectNameDomainSharedModule : AbpModule
         Configure<AbpLocalizationOptions>(options =>
         {
             options.Resources
-                .Add<MyProjectNameResource>("en")
-                .AddBaseTypes(typeof(AbpValidationResource))
-                .AddVirtualJson("/Localization/MyProjectName");
-
-            options.DefaultResourceType = typeof(MyProjectNameResource);
+                .Get<IdentityResource>()
+                .AddVirtualJson("Your_Localization_Json_File_Path");
         });
 
         Configure<AbpExceptionLocalizationOptions>(options =>
