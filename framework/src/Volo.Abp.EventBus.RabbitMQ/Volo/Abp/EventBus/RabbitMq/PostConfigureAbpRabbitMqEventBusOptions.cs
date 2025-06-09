@@ -46,7 +46,7 @@ public class PostConfigureAbpRabbitMqEventBusOptions : IPostConfigureOptions<Abp
         {
             if (options.QueueArguments.TryGetValue(argument, out var value) && value is string stringValue && int.TryParse(stringValue, out var intValue))
             {
-                options.QueueArguments[argument] = intValue
+                options.QueueArguments[argument] = intValue;
             }
         }
     }
