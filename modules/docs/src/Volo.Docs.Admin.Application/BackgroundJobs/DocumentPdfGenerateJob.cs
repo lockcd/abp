@@ -27,6 +27,7 @@ public class DocumentPdfGenerateJob : AsyncBackgroundJob<DocumentPdfGenerateJobA
     {
         try
         {
+            Logger.LogInformation("Generating PDF for project {ProjectId}, version {Version}, language {LanguageCode}", args.ProjectId, args.Version, args.LanguageCode);
             using var uow = UnitOfWorkManager.Begin(requiresNew: true);
             var project = await ProjectRepository.GetAsync(args.ProjectId, includeDetails: true);
             await ProjectPdfGenerator.GenerateAsync(project, args.Version, args.LanguageCode);

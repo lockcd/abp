@@ -78,11 +78,10 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
                 var chunkHtml = await BuildHtmlAsync(chunk);
 
                 var pdfStream = await HtmlToPdfRenderer.RenderAsync($"{title} - Part {index + 1}", chunkHtml, chunk);
+                
+                Logger.LogInformation("Chunk {Index} rendered to PDF", index + 1);
 
                 tempStreams.Add(pdfStream);
-
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
             }
 
             using var mergedPdfStream = await MergePdfFilesAsync(tempStreams, title, disposeStreams: true);
@@ -90,6 +89,7 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
         }
         catch
         {
+            Logger.LogError("An error occurred while generating the PDF for project {ProjectName}", project.Name);
             foreach (var tempStream in tempStreams)
             {
                 try
