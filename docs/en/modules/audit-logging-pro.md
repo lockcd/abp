@@ -143,7 +143,6 @@ The *Period* doesn't mean the *Expired Item Deletion Period*. It's the period of
 ```csharp
 Configure<AuditLogExcelFileOptions>(options =>
 {
-    options.FileStoragePath = "wwwroot/audit-logs"; // Default path where Excel files are stored
     options.FileRetentionHours = 24; // How long to keep files before cleanup (default: 24 hours)
     options.DownloadBaseUrl = "https://yourdomain.com"; // Base URL for download links in emails
     options.ExcelFileCleanupOptions.Period = (int)TimeSpan.FromHours(24).TotalMilliseconds; // Interval of the cleanup worker (default: 24 hours)
