@@ -6,7 +6,7 @@ For the past several months, our core ABP team has been hard at work, focusing o
 
 ## What's New with ABP Studio v1.0?
 
-ABP Studio v1.0 is all about enhancing your development experience, from project creation to deployment. Here, we'll walk you through the latest features we've implemented, along with other key enhancements that make this release truly special.
+ABP Studio v1.0 is all about enhancing your development experience, from project creation to deployment. Here, we'll walk you through some of the latest features we've implemented, along with other key enhancements that make this release truly special.
 
 ### ❤️ Solution Runner with Ready/Health Checks
 
@@ -38,9 +38,9 @@ Ready to get started? You can download the stable v1.0 release right now from th
 
 If you are an existing ABP Studio user, it's even easier. You don't need to download the installer again. Simply launch ABP Studio, and it will prompt you to update to the latest version directly from the UI.
 
-Alternatively, you can click to the *Help -> Check for Updates* context menu item to check for updates and install the latest version:
-
-![ABP Studio 1.0 Check for Updates](abp-studio-check-for-updates.png)
+> Alternatively, you can click to the *Help -> Check for Updates* context menu item to check for updates and install the latest version:
+>
+> ![ABP Studio 1.0 Check for Updates](abp-studio-check-for-updates.png)
 
 ### 🔮 What's Next?
 
