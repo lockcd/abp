@@ -1,4 +1,4 @@
-# Announcing ABP Studio 1.0 Stable Release 🚀
+# Announcing ABP Studio 1.0 General Availability 🚀
 
 It's the moment you've been waiting for! We are thrilled to announce the stable release of ABP Studio v1.0. This milestone marks a significant step forward in our mission to provide a first-class, integrated development environment for ABP developers. Paired with the recently released [ABP v9.2](https://abp.io/community/articles/announcing-abp-9-2-stable-release-061qmtzb), ABP Studio v1.0 brings new features and improvements that will make your development work faster and more efficient.
 
