@@ -10,7 +10,17 @@ ABP Studio v1.0 is all about enhancing your development experience, from project
 
 ### ❤️ Solution Runner with Ready/Health Checks
 
-//TODO: ...
+ABP Studio's Solution Runner now provides visual health monitoring that makes tracking your applications' status easily. When you start an application, a spinner indicates it's "starting", then in the *Overall* tab, you can see the application's health (✅ for healthy, ⚠️ for unhealthy) that displays real-time health status:
+
+![Health Checks](health-checks.png)
+
+With [pre-configured health checks](https://abp.io/docs/9.2/solution-templates/layered-web-application/health-check-configuration) in ABP solution templates including database connectivity tests, you get instant feedback on your applications' health. 
+
+When health check UI is configured, you can access comprehensive health dashboards with a dedicated "Browse Health UI" command or see the last health response from the "Show Latest Health Check Response" command:
+
+![SaaS Health Check](saas-health-check.png)
+
+When you restart applications that are open in your browser, ABP Studio automatically refreshes the pages for you.
 
 ### 🎨 Theme Style Selection on Project Creation
 
@@ -20,9 +30,17 @@ ABP Studio v1.0 is all about enhancing your development experience, from project
 
 //TODO: ...
 
-### 🗃️ Handle Multiple DbContexts When Adding/Removing/Applying Migrations
+### ⚙️ Handle Multiple DbContexts When Adding/Removing/Applying Migrations
 
-//TODO: ...
+When working with ABP solutions that have multiple DbContexts (such as when using the separate tenant database option), ABP Studio now intelligently prompts you to select the appropriate DbContext for migration operations. This enhancement ensures you're always working with the correct database context and helps prevent common mistakes when managing multiple databases.
+
+![EF Core Migration Context Selection](new-migration-added.gif)
+
+The context selection dialog appears automatically when you perform any of these Entity Framework operations:
+
+- **Adding a new migration** - Choose which DbContext the new migration should target
+- **Removing an existing migration** - Select the DbContext from which to remove the migration  
+- **Updating the database** - Specify which database context should be updated
 
 ## Get Started with ABP Studio v1.0 Today!
 
