@@ -1,6 +1,6 @@
 # Announcing ABP Studio 1.0 Stable Release 🚀
 
-It's the moment you've been waiting for! We are thrilled to announce the stable release of ABP Studio v1.0. This milestone marks a significant step forward in our mission to provide a first-class, integrated development environment for ABP developers. Paired with the recently released [ABP v9.2](//TODO: v9.2 release post link goes here!!!), ABP Studio v1.0 brings new features and improvements that will make your development work faster and more efficient.
+It's the moment you've been waiting for! We are thrilled to announce the stable release of ABP Studio v1.0. This milestone marks a significant step forward in our mission to provide a first-class, integrated development environment for ABP developers. Paired with the recently released [ABP v9.2](https://abp.io/community/articles/announcing-abp-9-2-stable-release-061qmtzb), ABP Studio v1.0 brings new features and improvements that will make your development work faster and more efficient.
 
 For the past several months, our core ABP team has been hard at work, focusing on the features that matter most to you, our community of developers. This release is the peak of that effort, bringing a host of improvements and new capabilities to the forefront. Let's dive in and explore what's new in ABP Studio v1.0.
 
@@ -24,14 +24,14 @@ When you restart applications that are open in your browser, ABP Studio automati
 
 ### 🎨 Theme Style Selection on Project Creation
 
-When creating a new solution, you can now choose your theme, theme style, and layout right from the project creation wizard instead of having to configure these settings later. ABP Studio lets you pick from ABP's officially provided themes including Basic, LeptonX Lite, and LeptonX.
+When creating a new solution, you can now choose your theme, theme style, and layout right from the project creation wizard instead of having to configure these settings later. ABP Studio lets you pick from [ABP's officially provided themes including Basic, LeptonX Lite, and LeptonX](https://abp.io/docs/latest/ui-themes).
 
 ![Theme Style Selection LeptonX](theme-style-selection-leptonx.png)
 
 If you select Basic or LeptonX Lite themes, only the theme will be changed. However, if you select the LeptonX theme, you'll get additional options to fine-tune your setup:
 
-- **Theme Style Configuration** - Pick from System, Light, Dim, or Dark styles to match how you like your development environment 
-- **Layout Options** - Choose between sidebar menu, top menu, and other layout structures
+- **Theme Style Configuration** - Pick from **System, Light, Dim, or Dark** styles to match how you like your development environment 
+- **Layout Options** - **Sidebar menu** / **Top menu**
 
 ### 📦 "Container" Application Type for Solution Runner
 
@@ -61,7 +61,7 @@ The context selection dialog appears automatically when you perform any of these
 
 ## Get Started with ABP Studio v1.0 Today!
 
-ABP Studio v1.0 is built on the solid foundation of the [latest version of ABP Framework, which is v9.2](//TODO: v9.2 release post link goes here!!!). This means that when you create a new project with ABP Studio, you're getting all the latest features, performance improvements, and bug fixes that come with v9.2. This includes updates to dependencies, enhancements to the core framework, and improvements to application modules. 
+ABP Studio v1.0 is built on the solid foundation of the [latest version of ABP Framework, which is v9.2](https://abp.io/community/articles/announcing-abp-9-2-stable-release-061qmtzb). This means that when you create a new project with ABP Studio, you're getting all the latest features, performance improvements, and bug fixes that come with v9.2. This includes updates to dependencies, enhancements to the core framework, and improvements to application modules. 
 
 We are incredibly excited for you to get your hands on ABP Studio v1.0. We believe these new features will make a real difference in your day-to-day development workflow.
 
