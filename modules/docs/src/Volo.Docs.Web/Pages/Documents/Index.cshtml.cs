@@ -55,7 +55,7 @@ namespace Volo.Docs.Pages.Documents
                 routeValues.Add(nameof(Project.IndexModel.ProjectName), project?.ShortName);
             }
             
-            if(_uiOptions.MultiLanguageMode)
+            if (_uiOptions.MultiLanguageMode)
             {
                 routeValues.Add(nameof(Project.IndexModel.LanguageCode), language);
             }
