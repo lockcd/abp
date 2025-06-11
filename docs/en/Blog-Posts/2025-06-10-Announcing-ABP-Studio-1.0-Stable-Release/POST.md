@@ -24,11 +24,28 @@ When you restart applications that are open in your browser, ABP Studio automati
 
 ### 🎨 Theme Style Selection on Project Creation
 
-//TODO: ...
+When creating a new solution, you can now choose your theme, theme style, and layout right from the project creation wizard instead of having to configure these settings later. ABP Studio lets you pick from ABP's officially provided themes including Basic, LeptonX Lite, and LeptonX.
+
+![Theme Style Selection LeptonX](theme-style-selection-leptonx.png)
+
+If you select Basic or LeptonX Lite themes, only the theme will be changed. However, if you select the LeptonX theme, you'll get additional options to fine-tune your setup:
+
+- **Theme Style Configuration** - Pick from System, Light, Dim, or Dark styles to match how you like your development environment 
+- **Layout Options** - Choose between sidebar menu, top menu, and other layout structures
 
 ### 📦 "Container" Application Type for Solution Runner
 
-//TODO: ...
+ABP Studio v1.0 introduces a dedicated "Container" application type that gives you better control over your Docker containers directly from the Solution Runner. Instead of managing all your containers through PowerShell scripts or running them all together, you can now see and control each container individually in the Solution Runner panel.
+
+![Container Application Type](containers-type.png)
+
+This new feature replaces the previous _Infrastructure_ folder approach with a cleaner, more intuitive container section. You can now:
+
+- **Start and stop containers individually** - No more starting all containers at once when you only need specific services
+- **Monitor container status** - See which containers are running, stopped, or have issues directly in the UI
+- **Manage container dependencies** - Control the order and timing of container startup based on your application needs
+
+Whether you're working with databases, message brokers, or other containerized services, the new Container application type makes it much easier to manage your development environment. This is especially useful for microservice architectures where you might want to run only specific services during development or testing.
 
 ### ⚙️ Handle Multiple DbContexts When Adding/Removing/Applying Migrations
 
@@ -66,9 +83,9 @@ ABP Studio v1.0 represents just the beginning of our journey. We're committed to
 
 We will keep releasing new versions with exciting features based on our roadmap and your valuable feedback. To give you a sneak peek into what's planned for future releases, you can expect to see:
 
-* **Environment Variable Management:** A dedicated UI to easily manage environment variables for your solutions.
-* **OpenTelemetry Integration:** We'll be integrating OpenTelemetry support directly into the startup templates, making distributed tracing and observability a seamless part of your application from day one.
-* **and more...**
+- **Environment Variable Management:** A dedicated UI to easily manage environment variables for your solutions.
+- **OpenTelemetry Integration:** We'll be integrating OpenTelemetry support directly into the startup templates, making distributed tracing and observability a seamless part of your application from day one.
+- **and more...**
 
 We are incredibly excited about the future of ABP Studio and can't wait to share the next set of features with you. Your comments and suggestions are invaluable to us. If you have any feedback, please drop a comment below.
 
