@@ -153,6 +153,8 @@ Configure<AuditLogExcelFileOptions>(options =>
 
 These settings control where Excel export files are stored, how long they are kept before automatic cleanup, and what base URL is used in email download links.
 
+> You must use a valid [BLOB Storage Provider](https://abp.io/docs/latest/framework/infrastructure/blob-storing#blob-storage-providers) to use this feature.
+
 ## Internals
 
 ### Domain layer
