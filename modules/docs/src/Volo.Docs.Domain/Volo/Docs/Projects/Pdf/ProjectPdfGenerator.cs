@@ -83,13 +83,15 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
 
                 tempStreams.Add(pdfStream);
             }
+            
+            Logger.LogInformation("All chunks processed, merging PDF files");
 
             using var mergedPdfStream = await MergePdfFilesAsync(tempStreams, title, disposeStreams: true);
             await ProjectPdfFileStore.SetAsync(project, version, languageCode, mergedPdfStream);
         }
-        catch
+        catch(Exception e)
         {
-            Logger.LogError("An error occurred while generating the PDF for project {ProjectName}", project.Name);
+            Logger.LogError(e, "An error occurred while generating the PDF for project {ProjectName}", project.Name);
             foreach (var tempStream in tempStreams)
             {
                 try
