@@ -7,7 +7,7 @@ using Volo.Abp.DependencyInjection;
 
 namespace Volo.Docs.Projects.Pdf.Puppeteer;
 
-public class PuppeteerHtmlToPdfRenderer : IHtmlToPdfRenderer, ITransientDependency
+public class PuppeteerHtmlToPdfRenderer : IHtmlToPdfRenderer
 {
     public async Task<Stream> RenderAsync(string title, string html, List<PdfDocument> documents)
     {
@@ -16,7 +16,7 @@ public class PuppeteerHtmlToPdfRenderer : IHtmlToPdfRenderer, ITransientDependen
             Browser = SupportedBrowser.Chromium
         }.DownloadAsync();
 
-        await using var browser = await PuppeteerSharp.Puppeteer.LaunchAsync(new LaunchOptions { Headless = true, Timeout = 600000, Browser = SupportedBrowser.Chromium });
+        await using var browser = await PuppeteerSharp.Puppeteer.LaunchAsync(new LaunchOptions { Headless = false, Timeout = 600000, Browser = SupportedBrowser.Chromium });
         await using var page = await browser.NewPageAsync();
 
         await page.SetContentAsync(html, new NavigationOptions

@@ -30,9 +30,7 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
     protected IDocumentSource DocumentSource { get; set; }
     protected DocumentParams DocumentParams { get; set; }
     protected Project Project { get; set; }
-    protected List<PdfDocument> AllPdfDocuments { get; } = [];
-
-    protected int ChunkSize { get; set; } = 60;
+    protected List<PdfDocument> AllPdfDocuments { get; private set; } = [];
 
     public ProjectPdfGenerator(
         IDocumentSourceFactory documentStoreFactory, 
@@ -61,30 +59,31 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
         DocumentParams = await GetDocumentParamsAsync(project, version, languageCode);
         
         var navigation = await GetNavigationAsync(project, version, languageCode);
+        AllPdfDocuments = new List<PdfDocument>();
         await SetAllPdfDocumentsAsync(navigation.Items, project, version, languageCode);
 
         var title = Options.Value.CalculatePdfFileTitle?.Invoke(project) ?? project.Name;
-        var tempStreams = new List<Stream>();
+        var tempStreams = new List<(PdfDocument pdfDocument, Stream stream)>();
 
         try
         {
-            var documentChunks = ChunkDocuments(AllPdfDocuments);
-            Logger.LogInformation("Documents split into {ChunkCount} chunks for processing", documentChunks.Count);
-
-            foreach (var (chunk, index) in documentChunks.Select((chunk, index) => (chunk, index)))
+            var index = 0;
+            foreach (var document in AllPdfDocuments)
             {
                 try
                 {
 
-                    Logger.LogInformation("Processing chunk {Index}/{Total}", index + 1, documentChunks.Count);
+                    Logger.LogInformation("Processing chunk {Index}/{Total}", index + 1, AllPdfDocuments.Count);
 
-                    var chunkHtml = await BuildHtmlAsync(chunk);
+                    var chunkHtml = await BuildHtmlAsync([document]);
 
-                    var pdfStream = await HtmlToPdfRenderer.RenderAsync($"{title} - Part {index + 1}", chunkHtml, chunk);
+                    var pdfStream = await HtmlToPdfRenderer.RenderAsync($"{title} - Part {document.Title}", chunkHtml, [document]);
                 
                     Logger.LogInformation("Chunk {Index} rendered to PDF", index + 1);
 
-                    tempStreams.Add(pdfStream);
+                    tempStreams.Add((document, pdfStream));
+                    
+                    index++;
                 }
                 catch (Exception e)
                 {
@@ -94,7 +93,7 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
             
             Logger.LogInformation("All chunks processed, merging PDF files");
 
-            var mergedPdfStream = await MergePdfFilesAsync(tempStreams, title, disposeStreams: true);
+            var mergedPdfStream = await MergePdfFilesAsync(tempStreams, title);
             await ProjectPdfFileStore.SetAsync(project, version, languageCode, mergedPdfStream);
         }
         catch(Exception e)
@@ -104,7 +103,7 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
             {
                 try
                 {
-                    await tempStream.DisposeAsync();
+                    await tempStream.stream.DisposeAsync();
                 }
                 catch
                 {
@@ -117,34 +116,6 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
-    }
-
-    protected virtual List<List<PdfDocument>> ChunkDocuments(List<PdfDocument> documents)
-    {
-        var flatDocuments = FlattenDocuments(documents);
-        
-        return flatDocuments
-            .Select((doc, index) => new { doc, index })
-            .GroupBy(x => x.index / ChunkSize)
-            .Select(g => g.Select(x => x.doc).ToList())
-            .ToList();
-    }
-
-    protected virtual List<PdfDocument> FlattenDocuments(List<PdfDocument> documents)
-    {
-        var result = new List<PdfDocument>();
-        
-        foreach (var document in documents)
-        {
-            result.Add(document);
-            
-            if (document.HasChildren)
-            {
-                result.AddRange(FlattenDocuments(document.Children));
-            }
-        }
-        
-        return result;
     }
 
     protected virtual async Task<string> BuildHtmlAsync(List<PdfDocument> pdfDocuments)
@@ -182,7 +153,7 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
         return contentBuilder.ToString();
     }
 
-    protected virtual async Task<MemoryStream> MergePdfFilesAsync(List<Stream> pdfFiles, string title, bool disposeStreams = true)
+    protected virtual async Task<MemoryStream> MergePdfFilesAsync(List<(PdfDocument pdfDocument, Stream stream)> pdfFiles, string title)
     {
         if (pdfFiles.Count == 0)
         {
@@ -194,22 +165,18 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
         
         {
             using var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Create, true);
-            var index = 0;
-            foreach (var pdfFile in pdfFiles)
+            foreach (var (doc, pdfFile) in pdfFiles)
             {
                 if (pdfFile.CanSeek)
+                {
                     pdfFile.Position = 0;
+                }
 
-                var entry = zipArchive.CreateEntry($"{title}_{index}.pdf", CompressionLevel.Fastest);
+                var entry = zipArchive.CreateEntry($"{title}_{doc.Title}.pdf", CompressionLevel.Fastest);
                 await using var entryStream = entry.Open();
                 await pdfFile.CopyToAsync(entryStream);
 
-                if (disposeStreams)
-                {
-                    await pdfFile.DisposeAsync();
-                }
-
-                index++;
+                await pdfFile.DisposeAsync();
             }
         }
 
