@@ -12,7 +12,7 @@ using ITextDocument = iText.Layout.Document;
 
 namespace Volo.Docs.Projects.Pdf.IText;
 
-public class ITextHtmlToPdfRenderer : IHtmlToPdfRenderer ,ITransientDependency
+public class ITextHtmlToPdfRenderer : IHtmlToPdfRenderer
 {
     protected IOptions<DocsProjectPdfGeneratorOptions> Options { get; }
     
@@ -21,7 +21,7 @@ public class ITextHtmlToPdfRenderer : IHtmlToPdfRenderer ,ITransientDependency
         Options = options;
     }
     
-    public virtual Task<MemoryStream> RenderAsync(string title, string html, List<PdfDocument> documents)
+    public virtual Task<Stream> RenderAsync(string title, string html, List<PdfDocument> documents)
     {
         var pdfStream = new MemoryStream();
         var pdfWrite = new PdfWriter(pdfStream);
@@ -42,7 +42,7 @@ public class ITextHtmlToPdfRenderer : IHtmlToPdfRenderer ,ITransientDependency
                 
         textDocument.Close();
         pdfStream.Position = 0;
-        return Task.FromResult(pdfStream);
+        return Task.FromResult<Stream>(pdfStream);
     }
 
     public virtual async Task<MemoryStream> MergePdfFilesAsync(List<MemoryStream> pdfFiles, string title, bool disposeStreams = true)

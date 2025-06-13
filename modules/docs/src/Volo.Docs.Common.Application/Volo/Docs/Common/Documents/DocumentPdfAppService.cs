@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Volo.Abp.Content;
+using Volo.Abp.Http;
 using Volo.Docs.Projects;
 using Volo.Docs.Projects.Pdf;
 
@@ -37,7 +38,7 @@ public class DocumentPdfAppService : DocsCommonAppServiceBase, IDocumentPdfAppSe
         
         if (fileStream != null)
         {
-            return new RemoteStreamContent(fileStream, fileName, "application/pdf");
+            return new RemoteStreamContent(fileStream, fileName, MimeTypes.Application.Zip);
         }
 
         return null;

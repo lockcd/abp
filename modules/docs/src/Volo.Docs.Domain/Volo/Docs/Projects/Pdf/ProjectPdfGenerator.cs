@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,7 +32,7 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
     protected Project Project { get; set; }
     protected List<PdfDocument> AllPdfDocuments { get; } = [];
 
-    protected int ChunkSize { get; set; } = 10;
+    protected int ChunkSize { get; set; } = 60;
 
     public ProjectPdfGenerator(
         IDocumentSourceFactory documentStoreFactory, 
@@ -63,7 +64,7 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
         await SetAllPdfDocumentsAsync(navigation.Items, project, version, languageCode);
 
         var title = Options.Value.CalculatePdfFileTitle?.Invoke(project) ?? project.Name;
-        var tempStreams = new List<MemoryStream>();
+        var tempStreams = new List<Stream>();
 
         try
         {
@@ -72,21 +73,28 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
 
             foreach (var (chunk, index) in documentChunks.Select((chunk, index) => (chunk, index)))
             {
+                try
+                {
 
-                Logger.LogInformation("Processing chunk {Index}/{Total}", index + 1, documentChunks.Count);
+                    Logger.LogInformation("Processing chunk {Index}/{Total}", index + 1, documentChunks.Count);
 
-                var chunkHtml = await BuildHtmlAsync(chunk);
+                    var chunkHtml = await BuildHtmlAsync(chunk);
 
-                var pdfStream = await HtmlToPdfRenderer.RenderAsync($"{title} - Part {index + 1}", chunkHtml, chunk);
+                    var pdfStream = await HtmlToPdfRenderer.RenderAsync($"{title} - Part {index + 1}", chunkHtml, chunk);
                 
-                Logger.LogInformation("Chunk {Index} rendered to PDF", index + 1);
+                    Logger.LogInformation("Chunk {Index} rendered to PDF", index + 1);
 
-                tempStreams.Add(pdfStream);
+                    tempStreams.Add(pdfStream);
+                }
+                catch (Exception e)
+                {
+                    Logger.LogError(e, "Error processing chunk {Index} for project {ProjectName}", index + 1, project.Name);
+                }
             }
             
             Logger.LogInformation("All chunks processed, merging PDF files");
 
-            using var mergedPdfStream = await MergePdfFilesAsync(tempStreams, title, disposeStreams: true);
+            var mergedPdfStream = await MergePdfFilesAsync(tempStreams, title, disposeStreams: true);
             await ProjectPdfFileStore.SetAsync(project, version, languageCode, mergedPdfStream);
         }
         catch(Exception e)
@@ -174,15 +182,41 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
         return contentBuilder.ToString();
     }
 
-    protected virtual async Task<MemoryStream> MergePdfFilesAsync(List<MemoryStream> pdfFiles, string title, bool disposeStreams = true)
+    protected virtual async Task<MemoryStream> MergePdfFilesAsync(List<Stream> pdfFiles, string title, bool disposeStreams = true)
     {
         if (pdfFiles.Count == 0)
         {
             throw new ArgumentException("No PDF files to merge", nameof(pdfFiles));
         }
 
-        return await HtmlToPdfRenderer.MergePdfFilesAsync(pdfFiles, title, disposeStreams);
+        var zipStream = new MemoryStream();
+
+        
+        {
+            using var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Create, true);
+            var index = 0;
+            foreach (var pdfFile in pdfFiles)
+            {
+                if (pdfFile.CanSeek)
+                    pdfFile.Position = 0;
+
+                var entry = zipArchive.CreateEntry($"{title}_{index}.pdf", CompressionLevel.Fastest);
+                await using var entryStream = entry.Open();
+                await pdfFile.CopyToAsync(entryStream);
+
+                if (disposeStreams)
+                {
+                    await pdfFile.DisposeAsync();
+                }
+
+                index++;
+            }
+        }
+
+        zipStream.Position = 0;
+        return zipStream;
     }
+
     
     protected virtual IDocumentToHtmlConverter<PdfDocumentToHtmlConverterContext> GetDocumentToHtmlConverter(Project project, PdfDocument pdfDocument)
     {
