@@ -101,7 +101,7 @@ networks:
 ABP Studio automatically creates the network if they do no exist. But if you like you can create the network once using:
 
 ```
-docker network create abp-network
+docker network create my-network
 ```
 
 ------
