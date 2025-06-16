@@ -184,15 +184,15 @@ To create a new Azure Web App Service, choose one of the following options:
     ![Create Web App](../../../../images/azure-deploy-create-web-app-5.png)
 
 {{ else }}
-### Create a new Azure Web App Service for API application
+### Create a new Azure Static Web App for Blazor using the Azure Portal
 
-1. You can create a new Azure Web App Service for an API application in the same resource group.
+1. Log in to the [Azure Portal](https://portal.azure.com/).
 
-2. Click the **Create** button on the top of the resource group page.
+2. Click the **Create a resource** button.
 
-3. Search for **Web App** and select **Web App** from the results.
+3. Search for **Static Web App** and select **Static Web App** from the results.
 
-    ![Create a resource](../../../../images/azure-deploy-create-a-resource.png)
+    ![Create a resource blazor](../../../../images/azure-deploy-create-a-resource-angular.png)
 
 4. Click the **Create** button.
 
@@ -200,11 +200,9 @@ To create a new Azure Web App Service, choose one of the following options:
 
 6. Click the **Create** button.
 
-    ![Create Web App](../../../../images/azure-deploy-create-web-app-6.png)
+    ![Create Web App](../../../../images/azure-deploy-create-web-app-7.png)
 
 7. Wait for the deployment to complete.
-
-    ![Create Web App](../../../../images/azure-deploy-create-web-app-3.png)
 
 {{end}}
 
