@@ -21,7 +21,7 @@
 {{ else if UI == "Blazor" || UI == "BlazorServer" || UI == "BlazorWebApp" }}
     and **./src/yourapp.Blazor/appsettings.json**
 {{ end }}
-{{ if UI == "Blazor"|| UI == "NG}}
+{{ if UI == "Blazor"|| UI == "NG" }}
     **./src/yourapp.HttpApi.Host/appsettings.json**
 {{ end }}
 {{ else }}
@@ -49,14 +49,14 @@
     Modify the **`localhost:4200`** in every location throughout your project.
     **./angular/src/environments/environment.prod.ts** 
 {{ end }}
-{{ if UI == "Blazor"|| UI == "NG}}
+{{ if UI == "Blazor"|| UI == "NG" }}
     **./src/yourapp.HttpApi.Host/appsettings.json**
 {{ end }}
 {{ else }}
 {{ if UI == "MVC" }}
     **./src/yourapp.Web/appsettings.json**
 {{ else if UI == "Blazor" || UI == "BlazorServer" || UI == "BlazorWebApp" }}
-    and **./src/yourapp.Blazor/appsettings.json**
+    **./src/yourapp.Blazor/appsettings.json**
 {{ else }}
     Modify the **`localhost:4200`** in every location throughout your project.
     **./angular/src/environments/environment.prod.ts** 
