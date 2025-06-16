@@ -70,8 +70,8 @@ jobs:
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/apihost
         working-directory: ./aspnet-core/src/Demo.AzureAppsAngular.HttpApi.Host # Replace with your project name
 
-      - name: Generate authserver.pfx
-        run: dotnet dev-certs https -v -ep ${{env.DOTNET_ROOT}}/apihost/authserver.pfx -p 2D7AA457-5D33-48D6-936F-C48E5EF468ED # Replace with your password
+      - name: Generate openiddict.pfx
+        run: dotnet dev-certs https -v -ep ${{env.DOTNET_ROOT}}/apihost/openiddict.pfx -p 2D7AA457-5D33-48D6-936F-C48E5EF468ED # Replace with your password
 
       - name: Upload artifact for apihost
         uses: actions/upload-artifact@v4
@@ -170,8 +170,8 @@ jobs:
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/apihost
         working-directory: ./src/demo.BlazorNonTierEfCore.HttpApi.Host # Replace with your project name
 
-      - name: Generate authserver.pfx
-        run: dotnet dev-certs https -v -ep ${{env.DOTNET_ROOT}}/apihost/authserver.pfx -p 2D7AA457-5D33-48D6-936F-C48E5EF468ED # Replace with your password
+      - name: Generate openiddict.pfx
+        run: dotnet dev-certs https -v -ep ${{env.DOTNET_ROOT}}/apihost/openiddict.pfx -p 2D7AA457-5D33-48D6-936F-C48E5EF468ED # Replace with your password
       
       - name: Upload artifact for apihost
         uses: actions/upload-artifact@v4
@@ -360,8 +360,8 @@ jobs:
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/authserver
         working-directory: ./src/blazorservertierdemo.AuthServer # Replace with your project name
 
-      - name: Generate authserver.pfx
-        run: dotnet dev-certs https -v -ep ${{env.DOTNET_ROOT}}/authserver/authserver.pfx -p 2D7AA457-5D33-48D6-936F-C48E5EF468ED # Replace with your password
+      - name: Generate openiddict.pfx
+        run: dotnet dev-certs https -v -ep ${{env.DOTNET_ROOT}}/authserver/openiddict.pfx -p 2D7AA457-5D33-48D6-936F-C48E5EF468ED # Replace with your password
 
       - name: dotnet publish apihost
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/apihost
@@ -584,8 +584,8 @@ jobs:
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/authserver
         working-directory: ./src/BlzWapp.AuthServer # Replace with your project name
 
-      - name: Generate authserver.pfx
-        run: dotnet dev-certs https -v -ep ${{env.DOTNET_ROOT}}/authserver/authserver.pfx -p 2D7AA457-5D33-48D6-936F-C48E5EF468ED # Replace with your password
+      - name: Generate openiddict.pfx
+        run: dotnet dev-certs https -v -ep ${{env.DOTNET_ROOT}}/authserver/openiddict.pfx -p 2D7AA457-5D33-48D6-936F-C48E5EF468ED # Replace with your password
 
       - name: dotnet publish apihost
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/apihost
@@ -718,8 +718,8 @@ build:
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
         working-directory: ./src/yourapp.Web # Replace with your project name
 
-    - name: Generate authserver.pfx
-        run: dotnet dev-certs https -v -ep ${{env.DOTNET_ROOT}}/myapp/authserver.pfx -p 2D7AA457-5D33-48D6-936F-C48E5EF468ED # Replace with your password
+    - name: Generate openiddict.pfx
+        run: dotnet dev-certs https -v -ep ${{env.DOTNET_ROOT}}/myapp/openiddict.pfx -p 2D7AA457-5D33-48D6-936F-C48E5EF468ED # Replace with your password
 
     - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -798,8 +798,8 @@ jobs:
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/authserver
         working-directory: ./src/mvctierdemo.AuthServer # Replace with your project name
 
-      - name: Generate authserver.pfx
-        run: dotnet dev-certs https -v -ep ${{env.DOTNET_ROOT}}/authserver/authserver.pfx -p 2D7AA457-5D33-48D6-936F-C48E5EF468ED # Replace with your password
+      - name: Generate openiddict.pfx
+        run: dotnet dev-certs https -v -ep ${{env.DOTNET_ROOT}}/authserver/openiddict.pfx -p 2D7AA457-5D33-48D6-936F-C48E5EF468ED # Replace with your password
 
       - name: dotnet publish apihost
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/apihost

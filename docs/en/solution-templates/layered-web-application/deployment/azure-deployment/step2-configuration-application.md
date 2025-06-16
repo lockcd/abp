@@ -13,7 +13,8 @@
 
 - Modify the `ConnectionString` values in every location throughout your project. The `ConnectionString` values are stored in the `appsettings.json` files.
 
-    This includes the following files:
+    * This includes the following files:
+
     **./src/yourapp.DbMigrator/appsettings.json**
 {{ if Tiered == "No" }}
 {{ if UI == "MVC" }}
@@ -38,7 +39,7 @@
 
 - Modify the **yourapp.Web** URL in every location throughout your project, especially within the **./src/yourapp.Web/appsettings.json** and **./src/yourapp.DbMigrator/appsettings.json** files, to match your Azure Web App Service URL.
 
-    This includes the following files:
+    * This includes the following files:
     **./src/yourapp.DbMigrator/appsettings.json**
 {{ if Tiered == "No" }}
 {{ if UI == "MVC" }}
@@ -68,10 +69,33 @@
         "SelfUrl": "https://yourapp.azurewebsites.net"
     }
 ```
+- Modify the **yourapp.ApiHost** URL in every location throughout your project.
+
+    * This includes the following files:
+
+    **./src/yourapp.HttpApi.Host/appsettings.json** , **./src/yourapp.Web/appsettings.json** , **./src/yourapp.DbMigrator/appsettings.json** and **./src/yourapp.AuthServer/appsettings.json**
+
+```json
+"App": {
+    "SelfUrl": "https://yourapp-apihost.azurewebsites.net"
+}
+```
+
+- Modify the **yourapp.AuthServer** URL in every location throughout your project.
+
+    * This includes the following files:
+
+    **./src/yourapp.Web/appsettings.json** , **./src/yourapp.AuthServer/appsettings.json** ,  **./src/yourapp.DbMigrator/appsettings.json** and **./src/yourapp.HttpApi.Host/appsettings.json**
+
+```json
+"App": {
+    "SelfUrl": "https://yourapp-authserver.azurewebsites.net"
+}
+```
 
 - Modify the **Redis__Configuration** URL in every location throughout your project.
 
-    This includes the following files:
+    * This includes the following files:
 
     **./src/yourapp.Blazor/appsettings.json** , **./src/yourapp.AuthServer/appsettings.json** ,  **./src/yourapp.DbMigrator/appsettings.json** and **./src/yourapp.HttpApi.Host/appsettings.json**
 
