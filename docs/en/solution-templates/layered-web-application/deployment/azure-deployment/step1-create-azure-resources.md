@@ -15,7 +15,7 @@ To create a new Azure Web App Service, choose one of the following options:
 
 - [Create a new Azure Web App Service using the Terraform Template](terraform-web-app-service.md) (If you have experience with Terraform)
 
-{{ if UI == "MVC" && Tiered == "No" }}
+{{ if UI == "BlazorServer" || UI == "MVC" || UI == "BlazorWebApp" && Tiered == "No" }}
 
 ### Create a new Azure Web App service using the Azure Portal
 
@@ -41,7 +41,7 @@ To create a new Azure Web App Service, choose one of the following options:
 
 {{else}}
 
-{{ if UI == "BlazorServer" || UI == "MVC" || UI == "BlazorWebApp" }}
+<!-- {{ if UI == "BlazorServer" || UI == "MVC" || UI == "BlazorWebApp" }}
 
 ### Create a new Azure Web App service using the Azure Portal
 
@@ -63,9 +63,9 @@ To create a new Azure Web App Service, choose one of the following options:
 
 7. Wait for the deployment to complete.
 
-    ![Create Web App](../../../../images/azure-deploy-create-web-app-3.png)
+    ![Create Web App](../../../../images/azure-deploy-create-web-app-3.png) -->
 
-{{ else if UI == 'NG' }}
+{{ if UI == 'NG' }}
 
 ### Create a new Azure Static Web App for Angular using the Azure Portal
 
