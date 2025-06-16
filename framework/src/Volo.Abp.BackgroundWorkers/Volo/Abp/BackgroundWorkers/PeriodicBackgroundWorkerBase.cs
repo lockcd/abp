@@ -17,9 +17,9 @@ public abstract class PeriodicBackgroundWorkerBase : BackgroundWorkerBase
     protected AbpTimer Timer { get; }
     public int Period => Timer.Period;
     /// <summary>
-    ///  CornExpression has high priority over Period.
+    ///  CronExpression has high priority over Period.
     /// </summary>
-    public string? CornExpression { get; protected set; }
+    public string? CronExpression { get; protected set; }
 
     protected PeriodicBackgroundWorkerBase(
         AbpTimer timer,

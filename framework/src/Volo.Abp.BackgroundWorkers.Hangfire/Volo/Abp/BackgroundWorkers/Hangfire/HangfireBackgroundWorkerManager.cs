@@ -57,20 +57,20 @@ public class HangfireBackgroundWorkerManager : BackgroundWorkerManager, ISinglet
             case AsyncPeriodicBackgroundWorkerBase or PeriodicBackgroundWorkerBase:
             {
                 int? period = null;
-                string? cornExpression = null;
+                string? CronExpression = null;
 
                 if (worker is AsyncPeriodicBackgroundWorkerBase asyncPeriodicBackgroundWorkerBase)
                 {
                     period = asyncPeriodicBackgroundWorkerBase.Period;
-                    cornExpression = asyncPeriodicBackgroundWorkerBase.CornExpression;
+                    CronExpression = asyncPeriodicBackgroundWorkerBase.CronExpression;
                 }
                 else if (worker is PeriodicBackgroundWorkerBase periodicBackgroundWorkerBase)
                 {
                     period = periodicBackgroundWorkerBase.Period;
-                    cornExpression = periodicBackgroundWorkerBase.CornExpression;
+                    CronExpression = periodicBackgroundWorkerBase.CronExpression;
                 }
 
-                if (period == null && cornExpression.IsNullOrWhiteSpace())
+                if (period == null && CronExpression.IsNullOrWhiteSpace())
                 {
                     return;
                 }
@@ -85,7 +85,7 @@ public class HangfireBackgroundWorkerManager : BackgroundWorkerManager, ISinglet
                     recurringJobId,
                     workerAdapter.Queue.IsNullOrWhiteSpace() ? defaultQueue : defaultQueuePrefix + workerAdapter.Queue,
                     methodCall,
-                    cornExpression ?? GetCron(period!.Value),
+                    CronExpression ?? GetCron(period!.Value),
                     new RecurringJobOptions
                     {
                         TimeZone = workerAdapter.TimeZone

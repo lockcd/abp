@@ -26,20 +26,20 @@ public class QuartzPeriodicBackgroundWorkerAdapter<TWorker> : QuartzBackgroundWo
     public virtual void BuildWorker(IBackgroundWorker worker)
     {
         int? period = null;
-        string? cornExpression = null;
+        string? CronExpression = null;
 
         if (worker is AsyncPeriodicBackgroundWorkerBase asyncPeriodicBackgroundWorkerBase)
         {
             period = asyncPeriodicBackgroundWorkerBase.Period;
-            cornExpression = asyncPeriodicBackgroundWorkerBase.CornExpression;
+            CronExpression = asyncPeriodicBackgroundWorkerBase.CronExpression;
         }
         else if (worker is PeriodicBackgroundWorkerBase periodicBackgroundWorkerBase)
         {
             period = periodicBackgroundWorkerBase.Period;
-            cornExpression = periodicBackgroundWorkerBase.CornExpression;
+            CronExpression = periodicBackgroundWorkerBase.CronExpression;
         }
 
-        if (period == null && cornExpression.IsNullOrWhiteSpace())
+        if (period == null && CronExpression.IsNullOrWhiteSpace())
         {
             return;
         }
@@ -53,9 +53,9 @@ public class QuartzPeriodicBackgroundWorkerAdapter<TWorker> : QuartzBackgroundWo
             .ForJob(JobDetail)
             .WithIdentity(BackgroundWorkerNameAttribute.GetName<TWorker>());
 
-        if (!cornExpression.IsNullOrWhiteSpace())
+        if (!CronExpression.IsNullOrWhiteSpace())
         {
-            triggerBuilder.WithCronSchedule(cornExpression);
+            triggerBuilder.WithCronSchedule(CronExpression);
         }
         else
         {
