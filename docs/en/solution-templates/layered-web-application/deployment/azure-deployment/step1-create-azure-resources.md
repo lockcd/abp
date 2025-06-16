@@ -184,6 +184,7 @@ To create a new Azure Web App Service, choose one of the following options:
     ![Create Web App](../../../../images/azure-deploy-create-web-app-5.png)
 
 {{ else }}
+
 ### Create a new Azure Static Web App for Blazor using the Azure Portal
 
 1. Log in to the [Azure Portal](https://portal.azure.com/).
