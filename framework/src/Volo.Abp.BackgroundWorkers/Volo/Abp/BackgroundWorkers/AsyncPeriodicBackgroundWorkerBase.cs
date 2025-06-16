@@ -13,6 +13,11 @@ public abstract class AsyncPeriodicBackgroundWorkerBase : BackgroundWorkerBase
     protected IServiceScopeFactory ServiceScopeFactory { get; }
     protected AbpAsyncTimer Timer { get; }
     protected CancellationToken StartCancellationToken { get; set; }
+    public int Period => Timer.Period;
+    /// <summary>
+    ///  CornExpression has high priority over Period.
+    /// </summary>
+    public string? CornExpression { get; protected set; }
 
     protected AsyncPeriodicBackgroundWorkerBase(
         AbpAsyncTimer timer,
