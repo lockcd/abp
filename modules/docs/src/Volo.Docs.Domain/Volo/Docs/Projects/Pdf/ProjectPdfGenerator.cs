@@ -73,7 +73,7 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
 
                 var chunkHtml = await BuildHtmlAsync([document]);
 
-                var pdfStream = HtmlToPdfRenderer.Render($"{title} - Part {document.Title}", chunkHtml, [document]);
+                var pdfStream = await HtmlToPdfRenderer.RenderAsync($"{title} - Part {document.Title}", chunkHtml, [document]);
 
                 Logger.LogInformation("Chunk {Index} rendered to PDF", i + 1);
 
@@ -103,8 +103,6 @@ public class ProjectPdfGenerator : IProjectPdfGenerator, ITransientDependency
         finally
         {
             AllPdfDocuments.Clear();
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
         }
     }
 

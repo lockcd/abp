@@ -6,5 +6,5 @@ namespace Volo.Docs.Projects.Pdf;
 
 public interface IHtmlToPdfRenderer
 {
-    Stream Render(string title, string html, List<PdfDocument> documents);
+    Task<Stream> RenderAsync(string title, string html, List<PdfDocument> documents);
 }

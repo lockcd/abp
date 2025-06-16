@@ -23,14 +23,14 @@ public class DocsDocumentPdfController : DocsControllerBase, IDocumentPdfAppServ
 
     [HttpGet]
     [Route("download")]
-    public Task<IRemoteStreamContent> DownloadPdfAsync(DocumentPdfGeneratorInput input)
+    public virtual Task<IRemoteStreamContent> DownloadPdfAsync(DocumentPdfGeneratorInput input)
     {
         return DocumentPdfAppService.DownloadPdfAsync(input);
     }
 
     [HttpGet]
     [Route("exists")]
-    public Task<bool> ExistsAsync(DocumentPdfGeneratorInput input)
+    public virtual Task<bool> ExistsAsync(DocumentPdfGeneratorInput input)
     {
         return DocumentPdfAppService.ExistsAsync(input);
     }

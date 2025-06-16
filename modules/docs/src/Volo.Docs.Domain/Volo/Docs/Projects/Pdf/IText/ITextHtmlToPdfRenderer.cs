@@ -8,7 +8,6 @@ using iText.Kernel.Pdf.Action;
 using Microsoft.Extensions.Options;
 using Volo.Abp.DependencyInjection;
 using Volo.Docs.Utils;
-using ITextDocument = iText.Layout.Document;
 
 namespace Volo.Docs.Projects.Pdf.IText;
 
@@ -21,7 +20,7 @@ public class ITextHtmlToPdfRenderer : IHtmlToPdfRenderer, ITransientDependency
         Options = options;
     }
     
-    public virtual Stream Render(string title, string html, List<PdfDocument> documents)
+    public virtual Task<Stream> RenderAsync(string title, string html, List<PdfDocument> documents)
     {
         var pdfStream = new MemoryStream();
         using (var pdfWriter = new PdfWriter(pdfStream))
@@ -36,7 +35,7 @@ public class ITextHtmlToPdfRenderer : IHtmlToPdfRenderer, ITransientDependency
         }
             
         pdfStream.Position = 0;
-        return pdfStream;
+        return Task.FromResult<Stream>(pdfStream);
     }
 
     private void CreatePdfFromHtml(string html, iText.Kernel.Pdf.PdfDocument pdfDocument)
