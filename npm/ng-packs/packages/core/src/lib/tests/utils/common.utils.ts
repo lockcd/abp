@@ -10,7 +10,7 @@ export class DummyInjector extends Injector {
   get<T>(
     token: Type<T> | InjectionToken<T> | AbstractType<T>,
     notFoundValue?: T,
-    flags?: { optional: true; host: true; skipSelf: true },
+    flags?: { optional: true; host: true; skipSelf: true; self: true },
   ): T;
   get(token: any, notFoundValue?: any): any;
   get(token, notFoundValue?, flags?: { optional: true; host: true; skipSelf: true }): any {

@@ -93,6 +93,6 @@ export type ColumnPredicate = (getInjected: GetInjected, auxData?: any) => boole
 export type GetInjected = <T>(
   token: Type<T> | InjectionToken<T>,
   notFoundValue?: T,
-  options?: InjectOptions | { optional: true; host: true; skipSelf: true },
+  options?: InjectOptions,
 ) => T;
 type PropDataObject = { [key: string]: any };

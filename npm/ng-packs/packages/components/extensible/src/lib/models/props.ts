@@ -9,7 +9,7 @@ export abstract class PropData<R = any> {
   abstract getInjected: <T>(
     token: Type<T> | InjectionToken<T>,
     notFoundValue?: T,
-    options?: InjectOptions | { optional: true; host: true; skipSelf: true },
+    options?: InjectOptions,
   ) => T;
   index?: number;
   abstract record: R;

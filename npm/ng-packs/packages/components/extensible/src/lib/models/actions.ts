@@ -7,7 +7,7 @@ export abstract class ActionData<R = any> {
   abstract getInjected: <T>(
     token: Type<T> | InjectionToken<T>,
     notFoundValue?: T,
-    flags?: InjectOptions | { optional: true; host: true; skipSelf: true },
+    flags?: InjectOptions,
   ) => T;
   index?: number;
   abstract record: R;
