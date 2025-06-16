@@ -1,7 +1,7 @@
 ````json
 //[doc-params]
 {
-    "UI": ["MVC", "Blazor", "BlazorServer", "NG"],
+    "UI": ["MVC", "Blazor", "BlazorServer", "BlazorWebApp", "NG"],
     "DB": ["EF", "Mongo"],
     "Tiered": ["Yes", "No"]
 }
@@ -41,7 +41,7 @@ To create a new Azure Web App Service, choose one of the following options:
 
 {{else}}
 
-{{ if UI == "BlazorServer" || UI == "MVC" }}
+{{ if UI == "BlazorServer" || UI == "MVC" || UI == "BlazorWebApp" }}
 
 ### Create a new Azure Web App service using the Azure Portal
 
@@ -137,7 +137,7 @@ To create a new Azure Web App Service, choose one of the following options:
 
     ![Create Web App](../../../../images/azure-deploy-create-web-app-3.png)
 
-{{ if Tiered == "Yes" && (UI == "MVC" || UI == "BlazorServer")}}
+{{ if Tiered == "Yes" && (UI == "MVC" || UI == "BlazorServer"  || UI == "BlazorWebApp") }}
 
 ### Create a new Azure Web App Service for AuthServer application
 
