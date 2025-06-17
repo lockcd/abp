@@ -257,7 +257,7 @@ We can visit the websites from a browser.
 {{ if UI == "NG" }}
 ## Rewrite for getEnvConfig
 
-Please add the following rewrite rules to your `web.config` file to redirect requests for `getEnvConfig` to `dynamic-env.json`, See [Angular RemoteEnvironment](https://abp.io/docs/latest/framework/ui/angular/environment#remoteenvironment) for more details.
+Please add the following rewrite rules to your `web.config` file to redirect requests for `getEnvConfig` to `dynamic-env.json`:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -282,6 +282,9 @@ Please add the following rewrite rules to your `web.config` file to redirect req
 </system.webServer>
 </configuration>
 ```
+
+> See [Angular RemoteEnvironment](https://abp.io/docs/latest/framework/ui/angular/environment#remoteenvironment) for more details.
+
 {{ end }}
 
 ## Fix 405 Method Not Allowed Error
