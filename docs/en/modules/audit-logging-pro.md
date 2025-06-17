@@ -131,6 +131,7 @@ To see `AbpAuditingOptions` properties, please see its [documentation](../framew
 Configure<ExpiredAuditLogDeleterOptions>(options =>
 {
     options.Period = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
+    options.CronExpression = "0 23 * * *"; // This Cron expression only works if Hangfire or Quartz is used for background workers.
 });
 ```
 
@@ -146,6 +147,7 @@ Configure<AuditLogExcelFileOptions>(options =>
     options.FileRetentionHours = 24; // How long to keep files before cleanup (default: 24 hours)
     options.DownloadBaseUrl = "https://yourdomain.com"; // Base URL for download links in emails
     options.ExcelFileCleanupOptions.Period = (int)TimeSpan.FromHours(24).TotalMilliseconds; // Interval of the cleanup worker (default: 24 hours)
+    options.ExcelFileCleanupOptions.CronExpression = "0 23 * * *"; // This Cron expression only works if Hangfire or Quartz is used for background workers. 
 });
 ```
 
