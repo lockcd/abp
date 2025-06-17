@@ -16,7 +16,7 @@ With this update, you should update your method calls to use the new async/await
 
 ### Docs Module: Export as PDF
 
-In this version, we have introduced a new feature to the [Docs Module](../../modules/docs.md) that allows you to export the documentation as a PDF file. (Adminstrators generate PDF files from the back-office side, and then "Download PDF" button appears on the document system, allowing users to download the compiled documentation as a PDF file.)
+In this version, we have introduced a new feature to the [Docs Module](../../modules/docs.md) that allows you to export the documentation as a PDF file. (Administrators generate PDF files from the back-office side, and then "Download PDF" button appears on the document system, allowing users to download the compiled documentation as a PDF file.)
 
 While implementing this feature, we have made changes in some services of the Docs Module. Typically, you don't need to make any changes in your code unless you have overridden or used internal services of the Docs Module. 
 
