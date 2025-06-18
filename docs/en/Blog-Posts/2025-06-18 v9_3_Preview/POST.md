@@ -21,7 +21,79 @@ There are a few breaking changes in this version that may affect your applicatio
 In this section, I will introduce some major features released in this version.
 Here is a brief list of titles explained in the next sections:
 
-//TODO: list new features and explain them in detail!!!
+* Cron Expression Support for Background Workers
+* Docs Module: PDF Export
+* Angular UI: Standalone Package Structure
+* Upgraded to Blazorise v1.7.7
+* Audit Logging Module: Excel Export
+* Prevent Tenant Changes After External Login
+
+### Cron Expression Support for Background Workers
+
+We've enhanced the background workers system by adding support for Cron expressions when using [Hangfire](https://abp.io/docs/9.3/framework/infrastructure/background-workers/hangfire) or [Quartz](https://abp.io/docs/9.3/framework/infrastructure/background-workers/quartz) as the background worker manager. This new feature provides more flexibility in scheduling background tasks compared to the simple period-based timing system.
+
+Now you can define complex scheduling patterns using standard Cron expressions. For example, you can schedule a task to run: "Every day at midnight", "Every Monday at 9 AM", or "First day of every month".
+
+Here's how you can use it in your background worker:
+
+```csharp
+public class MyPeriodicBackgroundWorker : AsyncPeriodicBackgroundWorkerBase
+{
+    public MyPeriodicBackgroundWorker(
+        AbpAsyncTimer timer,
+        IServiceScopeFactory serviceScopeFactory)
+        : base(timer, serviceScopeFactory)
+    {
+        // You can either use Period for simple intervals
+        Timer.Period = 600000; //10 minutes
+
+        // 👇 or use CronExpression for more complex scheduling 👇
+        CronExpression = "0 0/10 * * * ?"; //Run every 10 minutes
+    }
+
+    protected async override Task DoWorkAsync(
+        PeriodicBackgroundWorkerContext context)
+    {
+        // Your background work...
+    }
+}
+```
+
+The `CronExpression` property takes precedence over the `Period` property when both are set. This feature is available when you use either the [Hangfire](https://abp.io/docs/9.3/framework/infrastructure/background-workers/hangfire) or [Quartz](https://abp.io/docs/9.3/framework/infrastructure/background-workers/quartz) background worker managers.
+
+> See the [Background Workers documentation](https://abp.io/docs/9.3/framework/infrastructure/background-workers) for more information about configuring and using background workers with Cron expressions.
+
+### Docs Module: PDF Export
+
+We're excited to introduce a new feature in the Docs Module that allows users to export documentation as PDF files. This feature makes it easier for users to access documentation offline or share it with team members who might not have immediate access to the online documentation system.
+
+**Administrators can generate PDF files from the back-office side**:
+
+![PDF generation settings in the admin side](generate-pdf-docs.png)
+
+and **then a "Download PDF" button appears in the document system** (as shown in the image below - the bottom right of the navigation menu -), allowing users to download the compiled documentation as a PDF file:
+
+![Download PDF button in the documentation system](download-pdf-on-docs.png)
+
+The feature supports multiple versions of documentation, different language variants, and ensures proper formatting of all content including code blocks and technical documentation.
+
+### Angular UI: Standalone Package Structure
+
+//TODO: explain this feature!!!
+
+### Upgraded to Blazorise v1.7.7
+
+Upgraded the [Blazorise](https://blazorise.com/) library to v1.7.7 for Blazor UI. If you are upgrading your project to v9.3.0, please ensure that all the Blazorise-related packages are using v1.7.7 in your application. Otherwise, you might get errors due to incompatible versions.
+
+> See [PR #23013](https://github.com/abpframework/abp/pull/23013) for the updated NuGet packages.
+
+### Audit Logging Module: Excel Export
+
+//TODO: explain this feature!!!
+
+### Prevent Tenant Changes After External Login
+
+//TODO: explain this feature!!!
 
 ## Community News
 
