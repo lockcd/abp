@@ -29,7 +29,7 @@ Here is a brief list of titles explained in the next sections:
 
 ### Cron Expression Support for Background Workers
 
-We've enhanced the background workers system by adding support for Cron expressions when using [Hangfire](https://abp.io/docs/9.3/framework/infrastructure/background-workers/hangfire) or [Quartz](https://abp.io/docs/9.3/framework/infrastructure/background-workers/quartz) as the background worker manager. This new feature provides more flexibility in scheduling background tasks compared to the simple period-based timing system.
+We've enhanced the [Background Workers System](https://abp.io/docs/9.3/framework/infrastructure/background-workers) by adding support for Cron expressions when using [Hangfire](https://abp.io/docs/9.3/framework/infrastructure/background-workers/hangfire) or [Quartz](https://abp.io/docs/9.3/framework/infrastructure/background-workers/quartz) as the background worker manager. This new feature provides more flexibility in scheduling background tasks compared to the simple period-based timing system.
 
 Now you can define complex scheduling patterns using standard Cron expressions. For example, you can schedule a task to run: "Every day at midnight", "Every Monday at 9 AM", or "First day of every month".
 
@@ -78,7 +78,7 @@ The feature supports multiple versions of documentation, different language vari
 
 ### Angular UI: Standalone Package Structure
 
-ABP v9.3 introduces support for Angular's standalone components architecture while maintaining full compatibility with existing module-based applications. This update aligns with Angular's strategic direction toward standalone components as the recommended approach for building Angular applications.
+ABP v9.3 introduces support for Angular's standalone components architecture while maintaining **full compatibility with existing module-based applications**. This update aligns with Angular's strategic direction toward standalone components as the recommended approach for building Angular applications.
 
 The key improvements include:
 
@@ -86,11 +86,9 @@ The key improvements include:
 * **ABP Suite integration** for generating code that supports standalone components
 * **Updated schematics** that provide templates for both development patterns
 
-This enhancement gives developers the flexibility to choose their preferred Angular architecture. Existing module-based applications continue to work without modifications, while new projects can leverage the standalone approach for simplified dependency management, reduced boilerplate code, and better lazy-loading capabilities.
+This enhancement gives developers the flexibility to choose their preferred Angular architecture. Existing module-based applications **continue to work without modifications**, while new projects can leverage the standalone approach for simplified dependency management, reduced boilerplate code, and better lazy-loading capabilities.
 
-For developers interested in migrating to standalone components or starting new projects, we'll be publishing a comprehensive blog post with detailed guidance and best practices.
-
-> See [#22829](https://github.com/abpframework/abp/pull/22829) for implementation details of the standalone package structure.
+> For developers interested in migrating to standalone components or starting new projects, we'll be publishing a comprehensive blog post with detailed guidance and best practices. In the meantime, you can check [#22829](https://github.com/abpframework/abp/pull/22829) for implementation details of the standalone package structure and make the necessary changes to your project.
 
 ### Upgraded to Blazorise v1.7.7
 
