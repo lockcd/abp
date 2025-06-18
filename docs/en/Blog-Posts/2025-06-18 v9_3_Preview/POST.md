@@ -26,7 +26,6 @@ Here is a brief list of titles explained in the next sections:
 * Angular UI: Standalone Package Structure
 * Upgraded to Blazorise v1.7.7
 * Audit Logging Module: Excel Export
-* Prevent Tenant Changes After External Login
 
 ### Cron Expression Support for Background Workers
 
@@ -79,21 +78,65 @@ The feature supports multiple versions of documentation, different language vari
 
 ### Angular UI: Standalone Package Structure
 
-//TODO: explain this feature!!!
+ABP v9.3 introduces support for Angular's standalone components architecture while maintaining full compatibility with existing module-based applications. This update aligns with Angular's strategic direction toward standalone components as the recommended approach for building Angular applications.
+
+The key improvements include:
+
+* **Dual-support routing configurations** that work seamlessly with both module-based and standalone approaches
+* **ABP Suite integration** for generating code that supports standalone components
+* **Updated schematics** that provide templates for both development patterns
+
+This enhancement gives developers the flexibility to choose their preferred Angular architecture. Existing module-based applications continue to work without modifications, while new projects can leverage the standalone approach for simplified dependency management, reduced boilerplate code, and better lazy-loading capabilities.
+
+For developers interested in migrating to standalone components or starting new projects, we'll be publishing a comprehensive blog post with detailed guidance and best practices.
+
+> See [#22829](https://github.com/abpframework/abp/pull/22829) for implementation details of the standalone package structure.
 
 ### Upgraded to Blazorise v1.7.7
 
 Upgraded the [Blazorise](https://blazorise.com/) library to v1.7.7 for Blazor UI. If you are upgrading your project to v9.3.0, please ensure that all the Blazorise-related packages are using v1.7.7 in your application. Otherwise, you might get errors due to incompatible versions.
 
-> See [PR #23013](https://github.com/abpframework/abp/pull/23013) for the updated NuGet packages.
+> See [#23013](https://github.com/abpframework/abp/pull/23013) for the updated NuGet packages.
 
 ### Audit Logging Module: Excel Export
 
-//TODO: explain this feature!!!
+In this version, we've added Excel export capabilities to the [Audit Logging Module](https://abp.io/docs/latest/modules/audit-logging-pro), allowing administrators to export audit logs and entity changes to Excel files for further analysis or reporting purposes.
 
-### Prevent Tenant Changes After External Login
+![](audit-logs-export-to-excel.png)
 
-//TODO: explain this feature!!!
+This feature enables users to:
+
+- Export audit logs with filtering options
+- Export entity changes with detailed information
+- Receive email notifications when exports are completed or fail
+- Download exported files via secure links
+
+The export process runs in the background, and once completed, users receive an email with a download link. This approach ensures that even large audit log exports don't block the UI or time out during processing.
+
+You can configure various aspects of this feature using the `AuditLogExcelFileOptions` in your module's configuration:
+
+```csharp
+Configure<AuditLogExcelFileOptions>(options =>
+{
+    // How long to keep exported files before cleanup
+    options.FileRetentionHours = 48;
+    
+    // Base URL for download links in notification emails
+    options.DownloadBaseUrl = "https://yourdomain.com";
+    
+    // Configure the cleanup worker schedule
+    options.ExcelFileCleanupOptions.Period = (int)TimeSpan.FromHours(24).TotalMilliseconds;
+    
+    // Use cron expression for more advanced scheduling (requires Hangfire or Quartz)
+    options.ExcelFileCleanupOptions.CronExpression = "0 2 * * *"; // Run at 2 AM daily
+});
+```
+
+The module includes pre-configured email templates for notifications about completed or failed exports, ensuring users are always informed about the status of their export requests.
+
+> **Note**: This feature requires a configured BLOB storage provider to store the generated Excel files. See the [BLOB Storing documentation](https://abp.io/docs/9.3/framework/infrastructure/blob-storing) for more information.
+
+For more details about the Audit Logging Module and its Excel export capabilities, please refer to the [official documentation](https://abp.io/docs/9.3/modules/audit-logging-pro).
 
 ## Community News
 
