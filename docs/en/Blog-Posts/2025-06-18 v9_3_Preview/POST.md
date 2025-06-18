@@ -25,23 +25,61 @@ Here is a brief list of titles explained in the next sections:
 
 ## Community News
 
-### ABP Studio 1.0 General Availability
+### Announcing ABP Studio 1.0 General Availability 🚀
 
-//TODO: https://abp.io/community/articles/announcing-abp-studio-1-0-general-availability-82yw62bt
+![](abp-studio.png)
+
+We are thrilled to announce that ABP Studio has reached version 1.0 and is now generally available! This marks a significant milestone for our integrated development environment designed specifically for ABP developers. The stable release brings several powerful features including:
+
+* Enhanced Solution Runner with health monitoring capabilities
+* Theme style selection during project creation (Basic, LeptonX Lite, and LeptonX Themes)
+* New "Container" application type for better Docker container management
+* Improved handling of multiple DbContexts for migration operations
+
+> For a detailed overview of these features and to learn more about what's coming next, check out our [announcement post](https://abp.io/community/articles/announcing-abp-studio-1-0-general-availability-82yw62bt).
 
 ### ABP Community Talks 2025.05: Empower Elsa Workflows with AI in .NET + ABP Framework
 
-//TODO: https://kommunity.com/volosoft/events/abp-community-talks-202505empower-elsa-workflows-with-ai-in-netabp-framework-3965dd32
+In this episode of ABP Community Talks, 2025.05, we are thrilled to host [**Sipke Schoorstra**](https://github.com/sfmskywalker), the creator of the [Elsa Workflows](https://docs.elsaworkflows.io/) library! This month's session is all about **"Empower Elsa Workflows with AI in .NET + ABP Framework"**.
 
-### Bootcamp: Mastering Infrastructure & Features
+![](community-talk-2025-5.png)
 
-//TODO: https://abp.io/bootcamp
+Sipke will join us to demonstrate how you can leverage AI within Elsa Workflows using .NET and the ABP Framework. The session will explore practical techniques and showcase how to integrate AI capabilities to enhance and automate your business processes within the Elsa workflow engine.
+
+> 👉 Don't miss this opportunity to learn directly from the creator of Elsa and see real-world examples of building intelligent, automated workflows! You can register from [here](https://kommunity.com/volosoft/events/abp-community-talks-202505empower-elsa-workflows-with-ai-in-netabp-framework-3965dd32).
+
+### ABP Bootcamp: Mastering Infrastructure & Features
+
+We are excited to announce the very first **ABP Bootcamp: Mastering Infrastructure & Features**! This is a live training program designed to give you hands-on, practical experience with ABP's core infrastructure and features.
+
+![ABP Bootcamp: Mastering Infrastructure & Features](bootcamp.png)
+
+Join the ABP Bootcamp to learn directly from the core team in a focused, hands-on program designed for busy developers. Over four days, you'll gain a deep understanding of ABP's infrastructure, best practices, and practical skills you can immediately apply to your projects.
+
+> **Seats are limited!** Don't miss this opportunity to level up your ABP skills with direct guidance from the experts.
+>
+> 👉 [See full details and reserve your seat!](https://abp.io/bootcamp)
 
 ### New ABP Community Articles
 
 There are exciting articles contributed by the ABP community as always. I will highlight some of them here:
 
-//TODO: list them here!!!
+* [Prabhjot Singh](https://abp.io/community/members/prabhjot) has published 3 new articles:
+    * [Accessing Multiple Remote ABP based Backends Using HttpApi.Client](https://abp.io/community/articles/consume-multi-backends-using-clients-6f4vcggh)
+    * [Adopting the new .slnx format to organize applications and services](https://abp.io/community/articles/adopting-the-new-.slnx-format-to-organize-applications-6cm3vl8k)
+    * [Replacing Dynamic client proxies with Static client proxies](https://abp.io/community/articles/replacing-dynamic-client-proxies-with-static-client-proxies-g30lf0vx)
+* [Liming Ma](https://github.com/maliming) has published 2 new articles:
+    * [Resolving Tenant from Route in ABP Framework](https://abp.io/community/articles/resolving-tenant-from-route-in-abp-framework-ah7oru97)
+    * [Integrating .NET AI Chat Template with ABP Framework](https://abp.io/community/articles/integrating-.net-ai-chat-template-with-abp-framework-qavb5p2j)    
+* [Engincan Veske](https://engincanveske.substack.com/) has published 2 new articles:
+    * [Understanding HttpApi.Client Project & Remote Services in an ABP Based Application](https://abp.io/community/articles/http-api-client-and-remote-services-in-abp-based-application-xkknsp6m)
+    * [Using Elsa 3 with the ABP Framework: A Comprehensive Guide](https://abp.io/community/articles/using-elsa-3-workflow-with-abp-framework-usqk8afg)
+* [Enis Necipoğlu](https://github.com/enisn) has published 2 new articles:
+    * [White Labeling in ABP Framework](https://abp.io/community/articles/white-labeling-in-abp-framework-5trwmrfm) by [Enis Necipoğlu](https://github.com/enisn)
+    * [You do it wrong! Customizing ABP Login Page Correctly](https://abp.io/community/articles/you-do-it-wrong-customizing-abp-login-page-correctly-bna7wzt5)
+* [New in ABP Studio: Docker Container Management](https://abp.io/community/articles/abp-studio-docker-container-management-ex7r27y8) by [Yunus Emre Kalkan](https://github.com/yekalkan)
+* [Solving MongoDB GUID Issues After an ABP Framework Upgrade](https://abp.io/community/articles/solving-mongodb-guid-issues-after-an-abp-framework-upgrade-tv8waw1n) by [Burak Demir](https://abp.io/community/members/burakdemir)
+
 
 Thanks to the ABP Community for all the content they have published. You can also [post your ABP-related (text or video) content](https://abp.io/community/posts/create) to the ABP Community.
 
