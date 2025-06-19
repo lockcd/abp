@@ -1,8 +1,5 @@
 # Installing ABP Studio
 
-> **Warning: Beta Version Information**\
-> Currently, ABP Studio is in its beta phase and available for everyone. To access the beta version, kindly visit [this web page](https://abp.io/studio).
-
 ## Pre-requirements
 
 ABP Studio now features automatic installation of most required dependencies. When you first launch the application, it will check for and install the following components:
