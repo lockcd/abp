@@ -14,13 +14,13 @@
 }
 ````
 
-In the previous parts, we created two modules: the Products module to store and manage products and the Orders module to accept orders. However, these modules were completely independent from each other. Only the main application brought them together to execute in the same application, but these modules don't communicate with each other.
+In the previous parts, we created two modules: the **Catalog** module to store and manage products and the **Ordering** module to accept orders. However, these modules were completely independent from each other. Only the main application brought them together to execute in the same application, but these modules don't communicate with each other.
 
 In the next three parts, you will learn to implement three patterns for integrating these modules:
 
-1. The Order module will make a request to the Products module to get product information when needed.
-2. The Product module will listen to events from the Orders module, so it can decrease a product's stock count when an order is placed.
-3. Finally, we will execute a database query that includes product and order data.
+1. The Order module will make a request to the Catalog module to get product information when needed.
+2. The Product module will listen to events from the Ordering module, so it can decrease a product's stock count when an order is placed.
+3. Finally, you will execute a database query that includes product and order data.
 
 Let's begin from the first one: The Integration Services.
 
@@ -30,23 +30,23 @@ Remember from the [previous part](part-05.md), the Orders page shows product's i
 
 ![abp-studio-browser-orders-menu-item](images/abp-studio-browser-orders-menu-item.png)
 
-That is because the Orders module has no access to the product data, so it can not perform a JOIN query to get the names of products from the `Products` table. That is a natural result of the modular design. However, we also don't want to show a product's identity on the UI, which is not a good user experience.
+That is because the Ordering module has no access to the product data, so it can not perform a JOIN query to get the names of products from the `Products` table. That is a natural result of the modular design. However, we also don't want to show a product's identity on the UI, which is not a good user experience.
 
-As a solution to that problem, the Orders module may ask product names to the Product module using an [integration service](../../framework/api-development/integration-services.md). Integration service concept in ABP is designed for request/response style inter-module (in modular applications) and inter-microservice (in distributed systems) communication.
+As a solution to that problem, the Ordering module may ask product names to the Catalog module using an [integration service](../../framework/api-development/integration-services.md). Integration service concept in ABP is designed for request/response style inter-module (in modular applications) and inter-microservice (in distributed systems) communication.
 
 > When you implement integration services for inter-module communication, you can easily convert them to REST API calls if you convert your solution to a microservice system and convert your modules to services later.
 
 ## Creating a Products Integration Service
 
-The first step is to create an integration service in the Products module, so other modules can consume it.
+The first step is to create an integration service in the Catalog module, so other modules can consume it.
 
-We will define an interface in the `ModularCrm.Products.Application.Contracts` package and implement it in the  `ModularCrm.Products.Application` package.
+You will define an interface in the `ModularCrm.Catalog.Contracts` package and implement it in the  `ModularCrm.Catalog` package.
 
 ### Defining the `IProductIntegrationService` Interface
 
-Open the `ModularCrm.Products` .NET solution in your IDE, find the `ModularCrm.Products.Application.Contracts` project, create an `Integration` folder inside inside of that project and finally create an interface named `IProductIntegrationService` into that folder. The final folder structure should be like that:
+Open the `ModularCrm.Catalog` .NET solution in your IDE, find the `ModularCrm.Catalog.Contracts` project, create an `Integration` folder inside inside of that project and finally create an interface named `IProductIntegrationService` into that folder. The final folder structure should be like that:
 
-![visual-studio-product-integration-service](images/visual-studio-product-integration-service.png)
+![vscode-product-integration-service](images/vscode-product-integration-service.png)
 
 (Creating an`Integration` folder is not required, but it can be a good practice)
 
@@ -56,16 +56,15 @@ Open the `IProductIntegrationService.cs` file and replace it's content with the 
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ModularCrm.Catalog;
 using Volo.Abp;
 using Volo.Abp.Application.Services;
 
-namespace ModularCrm.Products.Integration
+namespace ModularCrm.Products.Integration;
+[IntegrationService]
+public interface IProductIntegrationService : IApplicationService
 {
-    [IntegrationService]
-    public interface IProductIntegrationService : IApplicationService
-    {
-        Task<List<ProductDto>> GetProductsByIdsAsync(List<Guid> ids);
-    }
+    Task<List<ProductDto>> GetProductsByIdsAsync(List<Guid> ids);
 }
 ````
 
@@ -81,7 +80,7 @@ namespace ModularCrm.Products.Integration
 
 ### Implementing the `ProductIntegrationService` Class
 
-We've defined the integration service interface. Now, we can implement it in the  `ModularCrm.Products.Application` project. Create an `Integration` folder and then create a `ProductIntegrationService` class in that folder. The final folder structure should be like this:
+We've defined the integration service interface. Now, we can implement it in the  `ModularCrm.Catalog` project. Create an `Integration` folder and then create a `ProductIntegrationService` class in that folder. The final folder structure should be like this:
 
 ![visual-studio-product-integration-service-implementation](images/visual-studio-product-integration-service-implementation.png)
 
@@ -91,30 +90,30 @@ Open the `ProductIntegrationService.cs` file and replace its content with the fo
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ModularCrm.Catalog;
 using Volo.Abp;
 using Volo.Abp.Domain.Repositories;
 
-namespace ModularCrm.Products.Integration
+namespace ModularCrm.Products.Integration;
+
+[IntegrationService]
+public class ProductIntegrationService
+    : CatalogAppService, IProductIntegrationService
 {
-    [IntegrationService]
-    public class ProductIntegrationService
-        : ProductsAppService, IProductIntegrationService
+    private readonly IRepository<Product, Guid> _productRepository;
+
+    public ProductIntegrationService(IRepository<Product, Guid> productRepository)
     {
-        private readonly IRepository<Product, Guid> _productRepository;
+        _productRepository = productRepository;
+    }
 
-        public ProductIntegrationService(IRepository<Product, Guid> productRepository)
-        {
-            _productRepository = productRepository;
-        }
+    public async Task<List<ProductDto>> GetProductsByIdsAsync(List<Guid> ids)
+    {
+        var products = await _productRepository.GetListAsync(
+            product => ids.Contains(product.Id)
+        );
 
-        public async Task<List<ProductDto>> GetProductsByIdsAsync(List<Guid> ids)
-        {
-            var products = await _productRepository.GetListAsync(
-                product => ids.Contains(product.Id)
-            );
-
-            return ObjectMapper.Map<List<Product>, List<ProductDto>>(products);
-        }
+        return ObjectMapper.Map<List<Product>, List<ProductDto>>(products);
     }
 }
 ````
@@ -127,19 +126,19 @@ The implementation is pretty simple. Just using a [repository](../../framework/a
 
 The Product Integration Service is ready for the other modules to use. In this section, we will use it in the Ordering module to convert product IDs to product names.
 
-### Adding a Reference to the `ModularCrm.Products.Application.Contracts` Package
+### Adding a Reference of the `ModularCrm.Catalog.Contracts` Package
 
 Open the ABP Studio UI and stop the application if it is already running. Then open the *Solution Explorer* in ABP Studio, right-click the `ModularCrm.Ordering` package and select the *Add Package Reference* command:
 
 ![abp-studio-add-package-reference-4](images/abp-studio-add-package-reference-4.png)
 
-In the opening dialog, select the *This solution* tab, find and check the `ModularCrm.Products.Application.Contracts` package and click the OK button:
+In the opening dialog, select the *This solution* tab, find and check the `ModularCrm.Catalog.Contracts` package and click the OK button:
 
 ![abp-studio-add-package-reference-dialog-3](images/abp-studio-add-package-reference-dialog-3.png)
 
 ABP Studio adds the package reference and arranges the [module](../../framework/architecture/modularity/basics.md) dependency.
 
-> Instead of directly adding such a package reference, it can be best to import the module first (right-click the `ModularCrm.Ordering` module, select the _Import Module_ command and import the `ModularCrm.Products` module), then install the package reference. In that way, it would be easy to see and keep track of inter-module dependencies.
+> Instead of directly adding such a package reference, it can be best to import the module first (right-click the `ModularCrm.Ordering` module, select the _Import Module_ command and import the `ModularCrm.Catalog` module), then install the package reference. In that way, it would be easy to see and keep track of inter-module dependencies.
 
 ### Using the Products Integration Service
 
@@ -154,6 +153,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ModularCrm.Ordering.Enums;
 using ModularCrm.Ordering.Entities;
+using ModularCrm.Products.Integration;
 using ModularCrm.Products.Integration;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
@@ -218,10 +218,10 @@ namespace ModularCrm.Ordering.Services;
 public class OrderDto
 {
     public Guid Id { get; set; }
-    public string CustomerName { get; set; }
+    public string CustomerName { get; set; } = null!;
     public Guid ProductId { get; set; }
-    public string ProductName { get; set; } // New property
     public OrderState State { get; set; }
+    public string ProductName { get; set; } = null!; //NEW PROPERTY
 }
 ````
 
@@ -290,4 +290,4 @@ In the way explained in this section, you can easily create integration services
 
 > **Design Tip**
 >
-> It is suggested that you keep that type of communication to a minimum and not couple your modules with each other. It can make your solution complicated and may also decrease your system performance. When you need to do it, think about performance and try to make some optimizations. For example, if the Ordering module frequently needs product data, you can use a kind of [cache layer](../../framework/fundamentals/caching.md), so it doesn't make frequent requests to the Products module. Especially if you consider converting your system to a microservice solution in the future, too many direct integration API calls can be a performance bottleneck.
+> It is suggested that you keep that type of communication to a minimum and not couple your modules with each other. It can make your solution complicated and may also decrease your system performance. When you need to do it, think about performance and try to make some optimizations. For example, if the Ordering module frequently needs product data, you can use a kind of [cache layer](../../framework/fundamentals/caching.md), so it doesn't make frequent requests to the Catalog module. Especially if you consider converting your system to a microservice solution in the future, too many direct integration API calls can be a performance bottleneck.
