@@ -18,7 +18,7 @@ Now let's add the Hangfire Dashboard to the `API` project and configure it to us
 
 ## Adding a New Hangfire Application 🔧
 
-We need to add a new Hangfire application to the `appsettings.json` file in the `AuthServer` project.
+We need to add a new Hangfire application to the `appsettings.json` file in the `DbMigrator` project:
 
 > **Note:** Replace `44371` with your `API` project's port.
 
