@@ -151,7 +151,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ModularCrm.Ordering.Enums;
+using ModularCrm.Ordering.Contracts.Enums;
 using ModularCrm.Ordering.Entities;
 using ModularCrm.Products.Integration;
 using ModularCrm.Products.Integration;
@@ -211,7 +211,7 @@ And also, open the `OrderDto` class (the `OrderDto.cs` file under the `Services`
 
 ````csharp
 using System;
-using ModularCrm.Ordering.Enums;
+using ModularCrm.Ordering.Contracts.Enums;
 
 namespace ModularCrm.Ordering.Services;
 

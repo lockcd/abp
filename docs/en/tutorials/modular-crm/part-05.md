@@ -28,7 +28,7 @@ Create an `Order` class to the `ModularCrm.Ordering` project (open an `Entities`
 
 ````csharp
 using System;
-using ModularCrm.Ordering.Enums;
+using ModularCrm.Ordering.Contracts.Enums;
 using Volo.Abp.Domain.Entities.Auditing;
 
 namespace ModularCrm.Ordering.Entities;
@@ -48,7 +48,7 @@ We allow users to place only a single product within an order. The `Order` entit
 We used an `OrderState` enumeration that has not yet been defined. Open an `Enums` folder in the `ModularCrm.Ordering.Contracts` project and create an `OrderState.cs` file inside it:
 
 ````csharp
-namespace ModularCrm.Ordering.Enums;
+namespace ModularCrm.Ordering.Contracts.Enums;
 
 public enum OrderState : byte
 {
@@ -266,7 +266,7 @@ Create a `OrderDto` class under the `ModularCrm.Ordering.Contracts` project:
 
 ````csharp
 using System;
-using ModularCrm.Ordering.Enums;
+using ModularCrm.Ordering.Contracts.Enums;
 
 namespace ModularCrm.Ordering.Services;
 
@@ -309,7 +309,7 @@ Now, we can implement the `IOrderAppService` interface. Create an `OrderAppServi
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ModularCrm.Ordering.Enums;
+using ModularCrm.Ordering.Contracts.Enums;
 using ModularCrm.Ordering.Entities;
 using Volo.Abp.Domain.Repositories;
 

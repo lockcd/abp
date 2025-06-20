@@ -18,14 +18,14 @@ One essential purpose of modularity is to create modules that hide (encapsulate)
 
 In a non-modular application, accessing the related data is easy. You could write a LINQ expression that joins `Orders` and `Products` database tables to get the data with a single database query. It would be easier to implement and execute with a good performance.
 
-On the other hand, it becomes harder to perform operations or get reports requiring access to multiple modules' internal data in a modular system. Remember the *[Implementing Integration Services](part-06.md)* part; We couldn't access the product data inside the Ordering module (`IOrderingDbContext` only defines a `DbSet<Order>`), so we needed to create an integration service just to get names of products. This approach is harder to implement and less performant (yet it is acceptable if you don't show too many orders on the UI or properly implement a caching layer). Still, it gives freedom to the Products module about its internal database or application logic changes. For example, you can decide to move product data to another physical database or even to another database management system (DBMS) without affecting the other modules.
+On the other hand, it becomes harder to perform operations or get reports requiring access to multiple modules' internal data in a modular system. Remember the *[Implementing Integration Services](part-06.md)* part; We couldn't access the product data inside the Ordering module (`IOrderingDbContext` only defines a `DbSet<Order>`), so we needed to create an integration service just to get names of products. This approach is harder to implement and less performant (yet it is acceptable if you don't show too many orders on the UI or properly implement a caching layer). Still, it gives freedom to the Catalog module about its internal database or application logic changes. For example, you can decide to move product data to another physical database or even to another database management system (DBMS) without affecting the other modules.
 
 ## A Solution Option
 
 If you want to perform a single database query that spans database tables of multiple modules in a modular system, you still have some options. One option can be creating a reporting module with access to all entities (or database tables). However, when you do that, you accept the following limitations:
 
 * When you change a module's database structure, you should also update your reporting code. That is reasonable, but all module developers should let you know in such a case.
-* You can not change the DBMS of a module easily. For example, performing such a JOIN operation would be impossible if you decide to use MongoDB for your Products module while the Ordering module still uses SQL Server. Moving the Products module to another SQL Server database in another physical server can also break your reporting logic.
+* You can not change the DBMS of a module easily. For example, performing such a JOIN operation would be impossible if you decide to use MongoDB for your Catalog module while the Ordering module still uses SQL Server. Moving the Catalog module to another SQL Server database in another physical server can also break your reporting logic.
 
 If these are not problems for you, or if you can handle them when they become problems, you can create reporting modules or aggregator modules that work with multiple modules' data.
 
@@ -58,16 +58,14 @@ The package reference has been added, and we can now use the types in the `Modul
 Open the main `ModularCrm` .NET solution in your IDE, create an `Orders` folder under the `Services` folder and add an `IOrderReportingAppService` interface. Here is the definition of that interface:
 
 ````csharp
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using ModularCrm.Orders;
 using Volo.Abp.Application.Services;
 
-namespace ModularCrm.Orders
+namespace ModularCrm.Services.Orders;
+
+public interface IOrderReportingAppService : IApplicationService
 {
-    public interface IOrderReportingAppService : IApplicationService
-    {
-        Task<List<OrderReportDto>> GetLatestOrders();
-    }
+    Task<List<OrderReportDto>> GetLatestOrders();
 }
 ````
 
@@ -77,19 +75,18 @@ We have a single method, `GetLatestOrders`, that will return a list of the lates
 using System;
 using ModularCrm.Ordering.Contracts.Enums;
 
-namespace ModularCrm.Orders
-{
-    public class OrderReportDto
-    {
-        // Order data
-        public Guid OrderId { get; set; }
-        public string CustomerName { get; set; }
-        public OrderState State { get; set; }
+namespace ModularCrm.Orders;
 
-        // Product data
-        public Guid ProductId { get; set; }
-        public string ProductName { get; set; }
-    }
+public class OrderReportDto
+{
+    // Order data
+    public Guid OrderId { get; set; }
+    public string CustomerName { get; set; } = null!;
+    public OrderState State { get; set; }
+
+    // Product data
+    public Guid ProductId { get; set; }
+    public string ProductName { get; set; } = null!;
 }
 ````
 
@@ -106,52 +103,49 @@ Create a class named `OrderReportingAppService` under the `Services/Orders` fold
 Open the `OrderReportingAppService.cs` file and change its content by the following code block:
 
 ````csharp
+using ModularCrm.Catalog;
 using ModularCrm.Ordering.Entities;
-using ModularCrm.Products;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using ModularCrm.Services;
+using ModularCrm.Services.Orders;
 using Volo.Abp.Domain.Repositories;
 
-namespace ModularCrm.Orders
+namespace ModularCrm.Orders;
+
+public class OrderReportingAppService :
+    ModularCrmAppService,
+    IOrderReportingAppService
 {
-    public class OrderReportingAppService :
-    	ModularCrmAppService,
-        IOrderReportingAppService
+    private readonly IRepository<Order, Guid> _orderRepository;
+    private readonly IRepository<Product, Guid> _productRepository;
+
+    public OrderReportingAppService(
+        IRepository<Order, Guid> orderRepository,
+        IRepository<Product, Guid> productRepository)
     {
-        private readonly IRepository<Order, Guid> _orderRepository;
-        private readonly IRepository<Product, Guid> _productRepository;
+        _orderRepository = orderRepository;
+        _productRepository = productRepository;
+    }
 
-        public OrderReportingAppService(
-            IRepository<Order, Guid> orderRepository,
-            IRepository<Product, Guid> productRepository)
-        {
-            _orderRepository = orderRepository;
-            _productRepository = productRepository;
-        }
+    public async Task<List<OrderReportDto>> GetLatestOrders()
+    {
+        var orders = await _orderRepository.GetQueryableAsync();
+        var products = await _productRepository.GetQueryableAsync();
 
-        public async Task<List<OrderReportDto>> GetLatestOrders()
-        {
-            var orders = await _orderRepository.GetQueryableAsync();
-            var products = await _productRepository.GetQueryableAsync();
+        var latestOrders = (from order in orders
+                            join product in products on order.ProductId equals product.Id
+                            orderby order.CreationTime descending
+                            select new OrderReportDto
+                            {
+                                OrderId = order.Id,
+                                CustomerName = order.CustomerName,
+                                State = order.State,
+                                ProductId = product.Id,
+                                ProductName = product.Name
+                            })
+            .Take(10)
+            .ToList();
 
-            var latestOrders = (from order in orders
-                    join product in products on order.ProductId equals product.Id
-                    orderby order.CreationTime descending
-                    select new OrderReportDto
-                    {
-                        OrderId = order.Id,
-                        CustomerName = order.CustomerName,
-                        State = order.State,
-                        ProductId = product.Id,
-                        ProductName = product.Name
-                    })
-                .Take(10)
-                .ToList();
-
-            return latestOrders;
-        }
+        return latestOrders;
     }
 }
 ````
@@ -188,7 +182,7 @@ Now, you know the fundamental principles and mechanics of building sophisticated
 
 ## Download the Source Code
 
-You can download the completed sample solution [here](https://github.com/abpframework/abp-samples/tree/master/ModularCrm).
+You can download the completed sample solution [here](https://github.com/abpframework/abp-samples/tree/master/ModularCrm-Standard).
 
 ## See Also
 
