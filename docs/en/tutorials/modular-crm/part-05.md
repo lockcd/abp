@@ -14,7 +14,7 @@
 }
 ````
 
-In the previous part, we created Ordering module and installed it into the main application. However, the Ordering module has no functionality now. In this part, we will create an `Order` entity and add functionality to create and list the orders.
+In the previous part, you created Ordering module and installed it into the main application. However, the Ordering module has no functionality now. In this part, you will create an `Order` entity and add functionality to create and list the orders.
 
 ## Creating an `Order` Entity
 
@@ -31,14 +31,13 @@ using System;
 using ModularCrm.Ordering.Enums;
 using Volo.Abp.Domain.Entities.Auditing;
 
-namespace ModularCrm.Ordering.Entities
+namespace ModularCrm.Ordering.Entities;
+
+public class Order : CreationAuditedAggregateRoot<Guid>
 {
-    public class Order : CreationAuditedAggregateRoot<Guid>
-    {
-        public Guid ProductId { get; set; }
-        public string CustomerName { get; set; }
-        public OrderState State { get; set; }
-    }
+    public Guid ProductId { get; set; }
+    public string CustomerName { get; set; } = null!;
+    public OrderState State { get; set; }
 }
 ````
 
@@ -65,7 +64,7 @@ The final structure of the Ordering module should be similar to the following fi
 
 ## Configuring the Database Mapping
 
-The `Order` entity has been created. Now, we need to configure the database mapping for that entity. We will first define the database table mapping, create a database migration and update the database.
+The `Order` entity has been created. Now, you need to configure the database mapping for that entity. You will first define the database table mapping, create a database migration and update the database.
 
 ### Defining the Database Mappings
 
@@ -90,7 +89,7 @@ public interface IOrderingDbContext : IEfCoreDbContext
 }
 ````
 
-Afterwards, create *Orders* `DbSet` for the `OrderingDbContext` class in the `Data` folder under the `ModularCrm.Ordering` project.
+Afterwards, create *Orders* `DbSet` for the `OrderingDbContext` class in the `Data` folder under the `ModularCrm.Ordering` project:
 
 ````csharp
 using Microsoft.EntityFrameworkCore;
@@ -119,10 +118,9 @@ public class OrderingDbContext : AbpDbContext<OrderingDbContext>, IOrderingDbCon
 }
 ````
 
+You can inject and use the `IOrderingDbContext` in the Ordering module. However, you will not usually directly use that interface. Instead, you will use ABP's [repositories](../../framework/architecture/domain-driven-design/repositories.md), which internally uses that interface.
 
-We can inject and use the `IOrderingDbContext` in the Ordering module. However, we will not usually directly use that interface. Instead, we will use ABP's [repositories](../../framework/architecture/domain-driven-design/repositories.md), which internally uses that interface.
-
-It is best to configure the database table mapping for the `Order` entity in the Ordering module. We will use the `OrderingDbContextModelCreatingExtensions` in the same `Data` folder:
+It is best to configure the database table mapping for the `Order` entity in the Ordering module. You will use the `OrderingDbContextModelCreatingExtensions` in the same `Data` folder:
 
 ````csharp
 using Microsoft.EntityFrameworkCore;
@@ -180,7 +178,7 @@ public class ModularCrmDbContext :
 }
 ````
 
-**(3)** Finally, call the `ConfigureOrdering()` extension method inside the `OnModelCreating` method after other `Configure...` module calls:
+**(3)** Finally, call the `ConfigureOrdering()` extension method inside the `OnModelCreating` method after other `Configure...` module calls (this should already be done from ABP Studio):
 
 ````csharp
 protected override void OnModelCreating(ModelBuilder builder)
@@ -190,7 +188,7 @@ protected override void OnModelCreating(ModelBuilder builder)
 }
 ````
 
-In this way, the Ordering module can use 'ModularCrmDbContext' over the `IProductsDbContext` interface. This part is only needed once for a module. Next time, you can add a new database migration, as explained in the next section.
+In this way, the Ordering module can use 'ModularCrmDbContext' over the `IOrderingDbContext` interface. This part is only needed once for a module. Next time, you can add a new database migration, as explained in the next section.
 
 #### Add a Database Migration
 
@@ -229,6 +227,7 @@ We're gonna create the `IOrderAppService` interface under the `ModularCrm.Orderi
 ````csharp
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ModularCrm.Ordering.Contracts.Services;
 using Volo.Abp.Application.Services;
 
 namespace ModularCrm.Ordering.Services;
@@ -256,7 +255,7 @@ public class OrderCreationDto
 {
     [Required]
     [StringLength(150)]
-    public string CustomerName { get; set; }
+    public string CustomerName { get; set; } = null!;
 
     [Required]
     public Guid ProductId { get; set; }
@@ -274,7 +273,7 @@ namespace ModularCrm.Ordering.Services;
 public class OrderDto
 {
     public Guid Id { get; set; }
-    public string CustomerName { get; set; }
+    public string CustomerName { get; set; } = null!;
     public Guid ProductId { get; set; }
     public OrderState State { get; set; }
 }
@@ -357,7 +356,7 @@ private void ConfigureAutoApiControllers()
         options.ConventionalControllers.Create(typeof(ModularCrmModule).Assembly);
         options.ConventionalControllers.Create(typeof(ProductsApplicationModule).Assembly, settings => 
         {
-            settings.RootPath = "products";
+            settings.RootPath = "catalog";
         });
 
         //ADD THE FOLLOWING LINE:
@@ -401,23 +400,22 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ModularCrm.Ordering.Services;
 
-namespace ModularCrm.Ordering.UI.Pages.Ordering
+namespace ModularCrm.Ordering.UI.Pages.Ordering;
+
+public class IndexModel : PageModel
 {
-    public class IndexModel : PageModel
+    public List<OrderDto> Orders { get; set; }
+
+    private readonly IOrderAppService _orderAppService;
+
+    public IndexModel(IOrderAppService orderAppService)
     {
-        public List<OrderDto> Orders { get; set; }
+        _orderAppService = orderAppService;
+    }
 
-        private readonly IOrderAppService _orderAppService;
-
-        public IndexModel(IOrderAppService orderAppService)
-        {
-            _orderAppService = orderAppService;
-        }
-
-        public async Task OnGetAsync()
-        {
-            Orders = await _orderAppService.GetListAsync();
-        }
+    public async Task OnGetAsync()
+    {
+        Orders = await _orderAppService.GetListAsync();
     }
 }
 ````
@@ -493,11 +491,11 @@ public class OrderingMenuContributor : IMenuContributor
 
 ### Building the Application
 
-Now, we will run the application to see the result. Please stop the application if it is already running. Then open the *Solution Runner* panel, right-click the `ModularCrm` application, and select the *Build* -> *Graph Build* command:
+Now, you will run the application to see the result. Please stop the application if it is already running. Then open the *Solution Runner* panel, right-click the `ModularCrm` application, and select the *Build* -> *Graph Build* command:
 
 ![abp-studio-solution-runner-graph-build](images/abp-studio-solution-runner-graph-build.png)
 
-We've performed a graph build since we've made a change on a module, and more than building the main application is needed. *Graph Build* command also builds the depended modules if necessary. Alternatively, you could build the Ordering module first (on ABP Studio or your IDE). This approach can be faster if you have too many modules and you make a change in one of the modules. Now you can run the application by right-clicking the `ModularCrm` application and selecting the *Start* command.
+You've performed a graph build since you've made a change on a module, and more than building the main application is needed. *Graph Build* command also builds the depended modules if necessary. Alternatively, you could build the Ordering module first (on ABP Studio or your IDE). This approach can be faster if you have too many modules and you make a change in one of the modules. Now you can run the application by right-clicking the `ModularCrm` application and selecting the *Start* command.
 
 ![abp-studio-browser-orders-menu-item](images/abp-studio-browser-orders-menu-item.png)
 
@@ -509,4 +507,4 @@ We will solve this problem in the [next part](part-06.md).
 
 ## Summary
 
-In this part of the *Modular CRM* tutorial, we've built the functionality inside the Ordering module we created in the [previous part](part-04.md). In the next part, we will work on establishing communication between the Orders module and the Products module.
+In this part of the *Modular CRM* tutorial, you've built the functionality inside the Ordering module you created in the [previous part](part-04.md). In the next part, you will work on establishing communication between the Orders module and the Products module.
