@@ -27,7 +27,7 @@ You can select the other options based on your preference but at the **Modularit
 Since modularity is a key aspect of the ABP Framework, it provides an option to create a modular system from the beginning. Here, you're creating a `ModularCrm.Catalog` module and setting it as a "Standard Module" (a module template similar to the DDD module but without the domain layer). This will create four projects (-depends on the options you selected-):
 - `ModularCrm.Catalog`: The main module project
 - `ModularCrm.Catalog.Contracts`: Contains service interfaces and DTOs
-- `ModularCrm.Catalog.Tests`: Unit and integration tests (since we selected the _Include Test_ option)
+- `ModularCrm.Catalog.Tests`: Unit and integration tests (since you selected the _Include Test_ option)
 - `ModularCrm.Catalog.UI`: Contains UI components for the module
 
 > **Note:** This tutorial will guide you through creating two modules: `Catalog` and `Ordering`. While you just created the `Catalog` module in the _Modularity_ step, you could also create the `Ordering` module at this stage. However, you'll create the `Ordering` module in subsequent parts to better demonstrate ABP Studio's module management capabilities and to simulate a more realistic development workflow where modules are typically added incrementally as the application evolves.
@@ -48,4 +48,4 @@ The `ModularCrm` module is the core of your application, built as a single-layer
 
 ## Summary
 
-We've created the initial single layer monolith solution. In the next part, we will learn how to create a new application module and install it to the main application.
+You've created the initial single layer monolith solution. In the next part, you will learn how to create a new application module and install it to the main application.

@@ -137,7 +137,7 @@ public static class CatalogDbContextModelCreatingExtensions
 }
 ````
 
-First, you are setting the database table name with the `ToTable` method. `CatalogDbProperties.DbTablePrefix` defines a constant that is added as a prefix to all database table names of this module. If you see the `CatalogDbProperties` class, `DbTablePrefix` value is `Catalog`. In that case, the table name for the `Product` entity will be `CatalogProducts`. That is unnecessary for such a simple module; we can remove that prefix. So, you can change the `CatalogDbProperties` class with the following content to set an empty string to the `DbTablePrefix` property:
+First, you are setting the database table name with the `ToTable` method. `CatalogDbProperties.DbTablePrefix` defines a constant that is added as a prefix to all database table names of this module. If you see the `CatalogDbProperties` class, `DbTablePrefix` value is `Catalog`. In that case, the table name for the `Product` entity will be `CatalogProducts`. That is unnecessary for such a simple module; you can remove that prefix. So, you can change the `CatalogDbProperties` class with the following content to set an empty string to the `DbTablePrefix` property:
 
 ````csharp
 namespace ModularCrm.Catalog;
@@ -209,7 +209,7 @@ In this way, `ModularCrmDbContext` can be used by the catalog module over the `I
 
 #### Add a Database Migration
 
-Now, we can add a new database migration. You can use Entity Framework Core's `Add-Migration` (or `dotnet ef migrations add`) terminal command, but we will use ABP Studio's shortcut UI in this tutorial.
+Now, you can add a new database migration. You can use Entity Framework Core's `Add-Migration` (or `dotnet ef migrations add`) terminal command, but you will use ABP Studio's shortcut UI in this tutorial.
 
 Ensure that the solution has built. You can right-click the `ModularCrm` (under the `main` folder) on ABP Studio *Solution Runner* and select the *Dotnet CLI* -> *Graph Build* command.
 
@@ -364,7 +364,7 @@ You've added the `CreateMap<Product, ProductDto>();` line to define the mapping.
 
 To create HTTP API endpoints for the catalog module, you have two options:
 
-* You can create a regular ASP.NET Core Controller class in the `ModularCrm.Catalog` project, inject `IProductAppService` and use it to create wrapper methods. We will do this later while we create the Ordering module. (Also, you can check the `SampleController` class under the **Samples** folder in the `ModularCrm.Catalog` project for an example.)
+* You can create a regular ASP.NET Core Controller class in the `ModularCrm.Catalog` project, inject `IProductAppService` and use it to create wrapper methods. You will do this later while you create the Ordering module. (Also, you can check the `SampleController` class under the **Samples** folder in the `ModularCrm.Catalog` project for an example.)
 * Alternatively, you can use the ABP's [Auto API Controllers](../../framework/api-development/auto-controllers.md) feature to expose your application services as API controllers by conventions. We will do it here.
 
 Open the `ModularCrmModule` class in the main application's solution (the `ModularCrm` solution), find the `PreConfigureServices` method and add the following lines inside that method:
@@ -427,7 +427,7 @@ You've some entities in the database and now you can show them on the user inter
 
 ## Creating the User Interface
 
-In this section, you will create a very simple user interface to demonstrate how to build UI in the products module and make it work in the main application.
+In this section, you will create a very simple user interface to demonstrate how to build UI in the catalog module and make it work in the main application.
 
 As a first step, you can stop the application on ABP Studio's Solution Runner if it is currently running.
 

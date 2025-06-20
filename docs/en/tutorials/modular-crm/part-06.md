@@ -14,7 +14,7 @@
 }
 ````
 
-In the previous parts, we created two modules: the **Catalog** module to store and manage products and the **Ordering** module to accept orders. However, these modules were completely independent from each other. Only the main application brought them together to execute in the same application, but these modules don't communicate with each other.
+In the previous parts, you created two modules: the **Catalog** module to store and manage products and the **Ordering** module to accept orders. However, these modules were completely independent from each other. Only the main application brought them together to execute in the same application, but these modules don't communicate with each other.
 
 In the next three parts, you will learn to implement three patterns for integrating these modules:
 
@@ -30,7 +30,7 @@ Remember from the [previous part](part-05.md), the Orders page shows product's i
 
 ![abp-studio-browser-orders-menu-item](images/abp-studio-browser-orders-menu-item.png)
 
-That is because the Ordering module has no access to the product data, so it can not perform a JOIN query to get the names of products from the `Products` table. That is a natural result of the modular design. However, we also don't want to show a product's identity on the UI, which is not a good user experience.
+That is because the Ordering module has no access to the product data, so it can not perform a JOIN query to get the names of products from the `Products` table. That is a natural result of the modular design. However, you also don't want to show a product's identity on the UI, which is not a good user experience.
 
 As a solution to that problem, the Ordering module may ask product names to the Catalog module using an [integration service](../../framework/api-development/integration-services.md). Integration service concept in ABP is designed for request/response style inter-module (in modular applications) and inter-microservice (in distributed systems) communication.
 
@@ -80,7 +80,7 @@ public interface IProductIntegrationService : IApplicationService
 
 ### Implementing the `ProductIntegrationService` Class
 
-We've defined the integration service interface. Now, we can implement it in the  `ModularCrm.Catalog` project. Create an `Integration` folder and then create a `ProductIntegrationService` class in that folder. The final folder structure should be like this:
+We've defined the integration service interface. Now, you can implement it in the  `ModularCrm.Catalog` project. Create an `Integration` folder and then create a `ProductIntegrationService` class in that folder. The final folder structure should be like this:
 
 ![visual-studio-product-integration-service-implementation](images/visual-studio-product-integration-service-implementation.png)
 
@@ -120,11 +120,11 @@ public class ProductIntegrationService
 
 The implementation is pretty simple. Just using a [repository](../../framework/architecture/domain-driven-design/repositories.md) to query `Product` [entities](../../framework/architecture/domain-driven-design/entities.md).
 
-> Here, we directly used `List<T>` classes, but instead, you could wrap inputs and outputs into [DTOs](../../framework/architecture/domain-driven-design/data-transfer-objects.md). In that way, it can be possible to add new properties to these DTOs without changing the signature of your integration service method (and without introducing breaking changes for your client modules).
+> Here, you directly used `List<T>` classes, but instead, you could wrap inputs and outputs into [DTOs](../../framework/architecture/domain-driven-design/data-transfer-objects.md). In that way, it can be possible to add new properties to these DTOs without changing the signature of your integration service method (and without introducing breaking changes for your client modules).
 
 ## Consuming the Products Integration Service
 
-The Product Integration Service is ready for the other modules to use. In this section, we will use it in the Ordering module to convert product IDs to product names.
+The Product Integration Service is ready for the other modules to use. In this section, you will use it in the Ordering module to convert product IDs to product names.
 
 ### Adding a Reference of the `ModularCrm.Catalog.Contracts` Package
 
@@ -142,7 +142,7 @@ ABP Studio adds the package reference and arranges the [module](../../framework/
 
 ### Using the Products Integration Service
 
-Now, we can inject and use `IProductIntegrationService` in the Ordering module codebase.
+Now, you can inject and use `IProductIntegrationService` in the Ordering module codebase.
 
 Open the `OrderAppService` class (the `OrderAppService.cs` file under the `Services` folder of the `ModularCrm.Ordering` project of the `ModularCrm.Ordering` .NET solution) and change its content as like the following code block:
 
@@ -248,11 +248,11 @@ public class OrderingApplicationAutoMapperProfile : Profile
 Let's see what we've changed:
 
 * We've added a `ProductName` property to the `OrderDto` class to store the product name.
-* Injecting the `IProductIntegrationService` interface so we can use it to request products.
+* Injecting the `IProductIntegrationService` interface so you can use it to request products.
 * In the `GetListAsync` method;
   * First getting the orders from the ordering module's database just like done before.
-  * Next, we are preparing a unique list of product IDs since the `GetProductsByIdsAsync` method requests it.
-  * Then we are calling the `IProductIntegrationService.GetProductsByIdsAsync` method to get a `List<ProductDto>` object.
+  * Next, you are preparing a unique list of product IDs since the `GetProductsByIdsAsync` method requests it.
+  * Then you are calling the `IProductIntegrationService.GetProductsByIdsAsync` method to get a `List<ProductDto>` object.
   * In the last line, we are converting the product list to a dictionary, where the key is `Guid Id` and the value is `string Name`. That way, we can easily find a product's name with its ID.
   * Finally, we are mapping the orders to `OrderDto` objects and setting the product name by looking up the product ID in the dictionary.
 
