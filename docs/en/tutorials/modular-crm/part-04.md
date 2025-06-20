@@ -18,9 +18,11 @@ In this part, you will build a new module for placing orders and install it in t
 
 ## Creating a Standard Module
 
-In this part, we have used the *DDD Module* template for the Product module and will use the *Standard Module* template for the Ordering module.
+In the first part of this tutorial, you created the `ModularCrm` solution with modularity enabled by selecting the _Setup as a modular solution_ option. At that time, you also created your first module - `ModularCrm.Catalog` - using the *Standard Module* template.
 
-Right-click the `modules` folder on the *Solution Explorer* panel, and select the *Add* -> *New Module* -> *Standard Module* command:
+Now, you will create a second module for the `ModularCrm` solution through ABP Studio. This new module, called `Ordering`, will handle all order related functionality in the application.
+
+To add a new module, right-click the `modules` folder on the *Solution Explorer* panel, and select the *Add* -> *New Module* -> *Standard Module* command:
 
 ![abp-studio-add-new-standard-module](images/abp-studio-add-new-standard-module.png)
 
@@ -32,7 +34,7 @@ Set `ModularCrm.Ordering` as the *Module name*, leave the *Output folder* as is 
 
 ![abp-studio-add-new-standard-module-ui-dialog](images/abp-studio-add-new-standard-module-ui-dialog.png)
 
-Similar to DDD module creation, you can choose the type of UI you want to support in your module or select *No UI* if you don't need a user interface. In this example, we'll select the *MVC* option and click *Next*. One difference is that, for a standard module, you can only choose one UI type.
+You can choose the type of UI you want to support in your module or select *No UI* if you don't need a user interface. In this example, we'll select the *MVC* option and click *Next*. One difference is that, for a standard module, you can only choose one UI type.
 
 ![abp-studio-add-new-standard-module-db-dialog](images/abp-studio-add-new-standard-module-db-dialog.png)
 
@@ -44,17 +46,9 @@ You can uncheck the *Include Tests* option to keep the module simple. Click the 
 
 ![abp-studio-modular-crm-with-standard-module](images/abp-studio-modular-crm-with-standard-module.png)
 
-Since we've created a standard module, it doesn't have multiple layers like the DDD module. If you open the `modules/modularcrm.ordering` in your file system, you can see the initial files:
-
-![file-system-odering-module-initial-folder](images/file-system-ordering-module-initial-folder.png)
-
-Because only a single UI package can be chosen, the UI type doesn’t matter. This is why the package name is changed to *ModularCrm.Ordering.UI*. Additionally, there are no *Domain*, *EntityFrameworkCore*, or *Http* layers like in the DDD module. We're going to use the `ModularCrm.Ordering` package for the domain business logic. You can open `ModularCrm.Ordering.sln` in your favorite IDE (e.g. Visual Studio):
-
-![ordering-module-visual-studio](images/ordering-module-visual-studio.png)
-
 ## Installing into the Main Application
 
-In this section, we will install the `ModularCrm.Ordering` module in the main application so it can be part of the system.
+In this section, you will install the `ModularCrm.Ordering` module in the main application so it can be part of the system.
 
 > Before the installation, please ensure the web application is not running.
 
@@ -72,4 +66,6 @@ Select the `ModularCrm.Ordering` module and check the *Install this module* opti
 
 Select the `ModuleCrm.Ordering` and `ModularCrm.Ordering.UI` packages from the left area and the `ModularCrm` package from the middle area as shown in the preceding figure. Finally, click *OK*.
 
-In this part of the tutorial, we've created a standard module. This allows you to create modules or applications with a different structure. In the next part, we will add functionality to the Ordering module.
+## Summary
+
+In this part of the tutorial, you've created a standard module. This allows you to create modules or applications with a different structure. In the next part, you will add functionality to the Ordering module.
