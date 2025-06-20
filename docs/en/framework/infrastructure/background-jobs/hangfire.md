@@ -190,18 +190,20 @@ private void ConfigureAuthentication(ServiceConfigurationContext context, IConfi
             options.Authority = configuration["AuthServer:Authority"];
             options.RequireHttpsMetadata = configuration.GetValue<bool>("AuthServer:RequireHttpsMetadata");
             options.Audience = "MyProjectName";
-        });
 
-    context.Services.AddAuthentication()
-        .AddCookie("Cookies")
-        .AddOpenIdConnect("oidc", options =>
+            options.ForwardDefaultSelector = httpContext => httpContext.Request.Path.StartsWithSegments("/hangfire", StringComparison.OrdinalIgnoreCase)
+                ? CookieAuthenticationDefaults.AuthenticationScheme
+                : null;
+        })
+        .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddAbpOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
         {
             options.Authority = configuration["AuthServer:Authority"];
-            options.RequireHttpsMetadata = configuration.GetValue<bool>("AuthServer:RequireHttpsMetadata");
-            options.ResponseType = OpenIdConnectResponseType.CodeIdToken;
+            options.RequireHttpsMetadata = Convert.ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
+            options.ResponseType = OpenIdConnectResponseType.Code;
 
-            options.ClientId = configuration["AuthServer:ClientId"];
-            options.ClientSecret = configuration["AuthServer:ClientSecret"];
+            options.ClientId = configuration["AuthServer:HangfireClientId"];
+            options.ClientSecret = configuration["AuthServer:HangfireClientSecret"];
 
             options.UsePkce = true;
             options.SaveTokens = true;
@@ -211,6 +213,8 @@ private void ConfigureAuthentication(ServiceConfigurationContext context, IConfi
             options.Scope.Add("email");
             options.Scope.Add("phone");
             options.Scope.Add("MyProjectName");
+
+            options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         });
 }
 ```
@@ -218,26 +222,27 @@ private void ConfigureAuthentication(ServiceConfigurationContext context, IConfi
 ```csharp
 app.Use(async (httpContext, next) =>
 {
-    if (httpContext.Request.Path.StartsWithSegments("/hangfire"))
+    if (httpContext.Request.Path.StartsWithSegments("/hangfire", StringComparison.OrdinalIgnoreCase))
     {
-        var result = await httpContext.AuthenticateAsync("Cookies");
-        if (result.Succeeded)
+        var authenticateResult = await httpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        if (!authenticateResult.Succeeded)
         {
-            httpContext.User = result.Principal;
-            await next(httpContext);
+            await httpContext.ChallengeAsync(
+                OpenIdConnectDefaults.AuthenticationScheme,
+                new AuthenticationProperties
+                {
+                    RedirectUri = httpContext.Request.Path + httpContext.Request.QueryString
+                });
             return;
         }
-
-        await httpContext.ChallengeAsync("oidc");
     }
-    else
-    {
-        await next(httpContext);
-    }
+    await next.Invoke();
 });
-
 app.UseAbpHangfireDashboard("/hangfire", options =>
 {
-    options.AsyncAuthorization = new[] {new AbpHangfireAuthorizationFilter()};
+    options.AsyncAuthorization = new[]
+    {
+        new AbpHangfireAuthorizationFilter()
+    };
 });
 ```
