@@ -160,7 +160,7 @@ app.UseAbpHangfireDashboard("/hangfire", options =>
 
 * **`enableTenant`  (`bool`, default: `false`):** Enables/disables accessing the Hangfire dashboard on tenant users.
 * **`requiredPermissionName`  (`string`, default: `null`):** Hangfire dashboard is accessible only if the current user has the specified permission. 
-* **`requiredRoleNames`  (`string[]`, default: `null`):** Hangfire dashboard is accessible only if the current user has one of the specified roles. 
+* **`requiredRoleNames`  (`string[]`, default: `[]`):** Hangfire dashboard is accessible only if the current user has one of the specified roles. 
 
 If you want to require more policies, You can use the `PolicyBuilder` property of the `AbpHangfireAuthorizationFilter` class. 
 
