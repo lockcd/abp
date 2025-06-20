@@ -159,14 +159,24 @@ app.UseAbpHangfireDashboard("/hangfire", options =>
 `AbpHangfireAuthorizationFilter` class has the following fields:
 
 * **`enableTenant`  (`bool`, default: `false`):** Enables/disables accessing the Hangfire dashboard on tenant users.
-* **`requiredPermissionName`  (`string`, default: `null`):** Hangfire dashboard is accessible only if the current user has the specified permission. In this case, if we specify a permission name, we don't need to set `enableTenant` `true` because the permission system already does it.
+* **`requiredPermissionName`  (`string`, default: `null`):** Hangfire dashboard is accessible only if the current user has the specified permission. 
+* **`requiredRoleNames`  (`string[]`, default: `null`):** Hangfire dashboard is accessible only if the current user has one of the specified roles. 
 
-If you want to require an additional permission, you can pass it into the constructor as below:
+If you want to require more policies you can use the `PolicyBuilder` property of the `AbpHangfireAuthorizationFilter` class. 
 
 ```csharp
 app.UseAbpHangfireDashboard("/hangfire", options =>
 {
-    options.AsyncAuthorization = new[] { new AbpHangfireAuthorizationFilter(requiredPermissionName: "MyHangFireDashboardPermissionName") };
+    var hangfireAuthorizationFilter = new AbpHangfireAuthorizationFilter(requiredPermissionName: "MyHangFireDashboardPermissionName");
+
+    //hangfireAuthorizationFilter.PolicyBuilder.RequireClaim("my_custom_claim", "my_custom_value");
+    //hangfireAuthorizationFilter.PolicyBuilder.RequireRole();
+    //hangfireAuthorizationFilter.PolicyBuilder.Requirements.Add(new YourCustomRequirement());
+
+    options.AsyncAuthorization = new[]
+    {
+        hangfireAuthorizationFilter
+    };
 });
 ```
 
