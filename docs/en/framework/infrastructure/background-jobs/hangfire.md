@@ -162,15 +162,15 @@ app.UseAbpHangfireDashboard("/hangfire", options =>
 * **`requiredPermissionName`  (`string`, default: `null`):** Hangfire dashboard is accessible only if the current user has the specified permission. 
 * **`requiredRoleNames`  (`string[]`, default: `null`):** Hangfire dashboard is accessible only if the current user has one of the specified roles. 
 
-If you want to require more policies you can use the `PolicyBuilder` property of the `AbpHangfireAuthorizationFilter` class. 
+If you want to require more policies, You can use the `PolicyBuilder` property of the `AbpHangfireAuthorizationFilter` class. 
 
 ```csharp
 app.UseAbpHangfireDashboard("/hangfire", options =>
 {
     var hangfireAuthorizationFilter = new AbpHangfireAuthorizationFilter(requiredPermissionName: "MyHangFireDashboardPermissionName");
 
-    //hangfireAuthorizationFilter.PolicyBuilder.RequireClaim("my_custom_claim", "my_custom_value");
-    //hangfireAuthorizationFilter.PolicyBuilder.RequireRole();
+    //hangfireAuthorizationFilter.PolicyBuilder.AddRequirements(new PermissionRequirement("YourPermissionName"));
+    //hangfireAuthorizationFilter.PolicyBuilder.RequireRole("YourCustomRole");
     //hangfireAuthorizationFilter.PolicyBuilder.Requirements.Add(new YourCustomRequirement());
 
     options.AsyncAuthorization = new[]
