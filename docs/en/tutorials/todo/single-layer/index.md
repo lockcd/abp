@@ -57,8 +57,6 @@ This documentation has a video tutorial on **YouTube**!! You can watch it here:
 
 {{end}}
 
-> We suggest you install [Yarn v1.22+ (not v2)](https://classic.yarnpkg.com/en/docs/install) to prevent possible package inconsistencies, if you haven't installed it yet.
-
 ## Creating a New Solution
 
 In this tutorial, we will use the [ABP CLI](../../../cli/index.md) to create the sample application with the ABP. You can run the following command in a command-line terminal to install the **ABP CLI**, if you haven't installed it yet:

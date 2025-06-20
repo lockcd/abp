@@ -61,8 +61,6 @@ This documentation has a video tutorial on **YouTube**!! You can watch it here:
 
 {{end}}
 
-> We suggest you install [Yarn v1.22+ (not v2)](https://classic.yarnpkg.com/en/docs/install) to prevent possible package inconsistencies, if you haven't installed it yet.
-
 ## Install ABP CLI Tool
 
 We will use the [ABP CLI](../../../cli/index.md) to create new ABP solutions. You can run the following command on a terminal window to install this dotnet tool:
