@@ -24,43 +24,43 @@ We need to add a new Hangfire application to the `appsettings.json` file in the 
 
 ```json
 "OpenIddict": {
-	"Applications": {
-		//...
-		"AbpHangfireDemoApp_Hangfire": {
-			"ClientId": "AbpHangfireDemoApp_Hangfire",
-			"RootUrl": "https://localhost:44371/"
-		}
-		//...
-	}
+    "Applications": {
+        //...
+        "AbpHangfireDemoApp_Hangfire": {
+            "ClientId": "AbpHangfireDemoApp_Hangfire",
+            "RootUrl": "https://localhost:44371/"
+        }
+        //...
+    }
 }
 ```
 
-2. Update the `OpenIddictDataSeedContributor`'s `CreateApplicationsAsync` method in the `Domain` project to seed the new Hangfire application.	
+2. Update the `OpenIddictDataSeedContributor`'s `CreateApplicationsAsync` method in the `Domain` project to seed the new Hangfire application.
 
 ```csharp
  //Hangfire Client
 var hangfireClientId = configurationSection["AbpHangfireDemoApp_Hangfire:ClientId"];
 if (!hangfireClientId.IsNullOrWhiteSpace())
 {
-	var hangfireClientRootUrl = configurationSection["AbpHangfireDemoApp_Hangfire:RootUrl"]!.EnsureEndsWith('/');
+    var hangfireClientRootUrl = configurationSection["AbpHangfireDemoApp_Hangfire:RootUrl"]!.EnsureEndsWith('/');
 
-	await CreateApplicationAsync(
-		applicationType: OpenIddictConstants.ApplicationTypes.Web,
-		name: hangfireClientId!,
-		type: OpenIddictConstants.ClientTypes.Confidential,
-		consentType: OpenIddictConstants.ConsentTypes.Implicit,
-		displayName: "Hangfire Application",
-		secret: configurationSection["AbpHangfireDemoApp_Hangfire:ClientSecret"] ?? "1q2w3e*",
-		grantTypes: new List<string> //Hybrid flow
-		{
-			OpenIddictConstants.GrantTypes.AuthorizationCode, OpenIddictConstants.GrantTypes.Implicit
-		},
-		scopes: commonScopes,
-		redirectUris: new List<string> { $"{hangfireClientRootUrl}signin-oidc" },
-		postLogoutRedirectUris: new List<string> { $"{hangfireClientRootUrl}signout-callback-oidc" },
-		clientUri: hangfireClientRootUrl,
-		logoUri: "/images/clients/aspnetcore.svg"
-	);
+    await CreateApplicationAsync(
+        applicationType: OpenIddictConstants.ApplicationTypes.Web,
+        name: hangfireClientId!,
+        type: OpenIddictConstants.ClientTypes.Confidential,
+        consentType: OpenIddictConstants.ConsentTypes.Implicit,
+        displayName: "Hangfire Application",
+        secret: configurationSection["AbpHangfireDemoApp_Hangfire:ClientSecret"] ?? "1q2w3e*",
+        grantTypes: new List<string> //Hybrid flow
+        {
+            OpenIddictConstants.GrantTypes.AuthorizationCode, OpenIddictConstants.GrantTypes.Implicit
+        },
+        scopes: commonScopes,
+        redirectUris: new List<string> { $"{hangfireClientRootUrl}signin-oidc" },
+        postLogoutRedirectUris: new List<string> { $"{hangfireClientRootUrl}signout-callback-oidc" },
+        clientUri: hangfireClientRootUrl,
+        logoUri: "/images/clients/aspnetcore.svg"
+    );
 }
 ```
 
@@ -85,12 +85,12 @@ typeof(AbpAspNetCoreAuthenticationOpenIdConnectModule)
 
 ```csharp
 "AuthServer": {
-	"Authority": "https://localhost:44358",
-	"RequireHttpsMetadata": true,
-	"MetaAddress": "https://localhost:44358",
-	"SwaggerClientId": "AbpHangfireDemoApp_Swagger",
-	"HangfireClientId": "AbpHangfireDemoApp_Hangfire",
-	"HangfireClientSecret": "1q2w3e*"
+    "Authority": "https://localhost:44358",
+    "RequireHttpsMetadata": true,
+    "MetaAddress": "https://localhost:44358",
+    "SwaggerClientId": "AbpHangfireDemoApp_Swagger",
+    "HangfireClientId": "AbpHangfireDemoApp_Hangfire",
+    "HangfireClientSecret": "1q2w3e*"
 }
 ```
 
@@ -99,22 +99,22 @@ typeof(AbpAspNetCoreAuthenticationOpenIdConnectModule)
 ```csharp
 public override void ConfigureServices(ServiceConfigurationContext context)
 {
-	var configuration = context.Services.GetConfiguration();
-	var hostingEnvironment = context.Services.GetHostingEnvironment();
+    var configuration = context.Services.GetConfiguration();
+    var hostingEnvironment = context.Services.GetHostingEnvironment();
 
-	//...
+    //...
 
-	//Add Hangfire
-	ConfigureHangfire(context, configuration);
-	//...
+    //Add Hangfire
+    ConfigureHangfire(context, configuration);
+    //...
 }
 
 private void ConfigureHangfire(ServiceConfigurationContext context, IConfiguration configuration)
 {
-	context.Services.AddHangfire(config =>
-	{
-		config.UseSqlServerStorage(configuration.GetConnectionString("Default"));
-	});
+    context.Services.AddHangfire(config =>
+    {
+        config.UseSqlServerStorage(configuration.GetConnectionString("Default"));
+    });
 }
 ```
 
@@ -123,40 +123,40 @@ private void ConfigureHangfire(ServiceConfigurationContext context, IConfigurati
 ```csharp
 private void ConfigureAuthentication(ServiceConfigurationContext context, IConfiguration configuration)
 {
-	context.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-		.AddAbpJwtBearer(options =>
-		{
-			options.Authority = configuration["AuthServer:Authority"];
-			options.RequireHttpsMetadata = configuration.GetValue<bool>("AuthServer:RequireHttpsMetadata");
-			options.Audience = "AbpHangfireDemoApp";
+    context.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddAbpJwtBearer(options =>
+        {
+            options.Authority = configuration["AuthServer:Authority"];
+            options.RequireHttpsMetadata = configuration.GetValue<bool>("AuthServer:RequireHttpsMetadata");
+            options.Audience = "AbpHangfireDemoApp";
 
-			options.ForwardDefaultSelector = httpContext => httpContext.Request.Path.StartsWithSegments("/hangfire", StringComparison.OrdinalIgnoreCase)
-				? CookieAuthenticationDefaults.AuthenticationScheme
-				: null;
-		})
-		.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-		.AddAbpOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
-		{
-			options.Authority = configuration["AuthServer:Authority"];
-			options.RequireHttpsMetadata = Convert.ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
-			options.ResponseType = OpenIdConnectResponseType.Code;
+            options.ForwardDefaultSelector = httpContext => httpContext.Request.Path.StartsWithSegments("/hangfire", StringComparison.OrdinalIgnoreCase)
+                ? CookieAuthenticationDefaults.AuthenticationScheme
+                : null;
+        })
+        .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddAbpOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+        {
+            options.Authority = configuration["AuthServer:Authority"];
+            options.RequireHttpsMetadata = Convert.ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
+            options.ResponseType = OpenIdConnectResponseType.Code;
 
-			options.ClientId = configuration["AuthServer:HangfireClientId"];
-			options.ClientSecret = configuration["AuthServer:HangfireClientSecret"];
+            options.ClientId = configuration["AuthServer:HangfireClientId"];
+            options.ClientSecret = configuration["AuthServer:HangfireClientSecret"];
 
-			options.UsePkce = true;
-			options.SaveTokens = true;
-			options.GetClaimsFromUserInfoEndpoint = true;
+            options.UsePkce = true;
+            options.SaveTokens = true;
+            options.GetClaimsFromUserInfoEndpoint = true;
 
-			options.Scope.Add("roles");
-			options.Scope.Add("email");
-			options.Scope.Add("phone");
-			options.Scope.Add("AbpHangfireDemoApp");
+            options.Scope.Add("roles");
+            options.Scope.Add("email");
+            options.Scope.Add("phone");
+            options.Scope.Add("AbpHangfireDemoApp");
 
-			options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-		});
+            options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        });
 
-	//...
+    //...
 }
 ```
 
@@ -168,28 +168,28 @@ app.UseAuthorization();
 
 app.Use(async (httpContext, next) =>
 {
-	if (httpContext.Request.Path.StartsWithSegments("/hangfire", StringComparison.OrdinalIgnoreCase))
-	{
-		var authenticateResult = await httpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-		if (!authenticateResult.Succeeded)
-		{
-			await httpContext.ChallengeAsync(
-				OpenIdConnectDefaults.AuthenticationScheme,
-				new AuthenticationProperties
-				{
-					RedirectUri = httpContext.Request.Path + httpContext.Request.QueryString
-				});
-			return;
-		}
-	}
-	await next.Invoke();
+    if (httpContext.Request.Path.StartsWithSegments("/hangfire", StringComparison.OrdinalIgnoreCase))
+    {
+        var authenticateResult = await httpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        if (!authenticateResult.Succeeded)
+        {
+            await httpContext.ChallengeAsync(
+                OpenIdConnectDefaults.AuthenticationScheme,
+                new AuthenticationProperties
+                {
+                    RedirectUri = httpContext.Request.Path + httpContext.Request.QueryString
+                });
+            return;
+        }
+    }
+    await next.Invoke();
 });
 app.UseAbpHangfireDashboard("/hangfire", options =>
 {
-	options.AsyncAuthorization = new[]
-	{
-		new AbpHangfireAuthorizationFilter()
-	};
+    options.AsyncAuthorization = new[]
+    {
+        new AbpHangfireAuthorizationFilter()
+    };
 });
 
 //...
@@ -215,8 +215,8 @@ This means that if the request path starts with `/hangfire`, the request will be
 
 ```csharp
 options.ForwardDefaultSelector = httpContext => httpContext.Request.Path.StartsWithSegments("/hangfire", StringComparison.OrdinalIgnoreCase)
-	? CookieAuthenticationDefaults.AuthenticationScheme
-	: null;
+    ? CookieAuthenticationDefaults.AuthenticationScheme
+    : null;
 ```
 
 ### 2. Custom Middleware for Authentication
@@ -226,21 +226,21 @@ We've also implemented a custom middleware to handle `Cookies` authentication fo
 ```csharp
 app.Use(async (httpContext, next) =>
 {
-	if (httpContext.Request.Path.StartsWithSegments("/hangfire", StringComparison.OrdinalIgnoreCase))
-	{
-		var authenticateResult = await httpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-		if (!authenticateResult.Succeeded)
-		{
-			await httpContext.ChallengeAsync(
-				OpenIdConnectDefaults.AuthenticationScheme,
-				new AuthenticationProperties
-				{
-					RedirectUri = httpContext.Request.Path + httpContext.Request.QueryString
-				});
-			return;
-		}
-	}
-	await next.Invoke();
+    if (httpContext.Request.Path.StartsWithSegments("/hangfire", StringComparison.OrdinalIgnoreCase))
+    {
+        var authenticateResult = await httpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        if (!authenticateResult.Succeeded)
+        {
+            await httpContext.ChallengeAsync(
+                OpenIdConnectDefaults.AuthenticationScheme,
+                new AuthenticationProperties
+                {
+                    RedirectUri = httpContext.Request.Path + httpContext.Request.QueryString
+                });
+            return;
+        }
+    }
+    await next.Invoke();
 });
 ```
 
