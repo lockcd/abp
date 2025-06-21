@@ -159,7 +159,7 @@ This command takes time, but eventually runs and opens the application in your d
 
 {{end}}
 
-![todo-ui-initial](../images/todo-ui-initial.png)
+![todo-ui-initial](../images/todo-ui-initial-v2.png)
 
 You can click on the *Login* button, use `admin` as the username and `1q2w3E*` as the password to login to the application.
 
