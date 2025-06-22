@@ -139,7 +139,8 @@ public static class OrderingDbContextModelCreatingExtensions
         builder.Entity<Order>(b =>
         {
             //Configure table name
-            b.ToTable("Orders");
+            b.ToTable(OrderingDbProperties.DbTablePrefix + "Orders", 
+                      OrderingDbProperties.DbSchema);
 
             //Always call this method to set base entity properties
             b.ConfigureByConvention();
@@ -177,7 +178,7 @@ public class ModularCrmDbContext :
 }
 ````
 
-**(3)** Finally, call the `ConfigureOrdering()` extension method inside the `OnModelCreating` method after other `Configure...` module calls (this should already be done from ABP Studio):
+**(3)** Finally, ensure that the `ConfigureOrdering()` extension method is called inside the `OnModelCreating` method (this should already be done from ABP Studio):
 
 ````csharp
 protected override void OnModelCreating(ModelBuilder builder)
@@ -187,7 +188,7 @@ protected override void OnModelCreating(ModelBuilder builder)
 }
 ````
 
-In this way, the Ordering module can use 'ModularCrmDbContext' over the `IOrderingDbContext` interface. This part is only needed once for a module. Next time, you can add a new database migration, as explained in the next section.
+In this way, the Ordering module can use `ModularCrmDbContext` over the `IOrderingDbContext` interface. This part is only needed once for a module. Next time, you can add a new database migration, as explained in the next section.
 
 #### Add a Database Migration
 
