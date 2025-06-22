@@ -14,6 +14,10 @@
 }
 ````
 
+In this first part of this tutorial, we will create a new ABP solution with modularity enabled.
+
+## Getting Started with a new ABP Solution
+
 Follow the *[Get Started](../../get-started/single-layer-web-application.md)* guide to create a single layer web application with the following configuration:
 
 * **Solution name**: `ModularCrm`
@@ -24,28 +28,33 @@ You can select the other options based on your preference but at the **Modularit
 
 ![](./images/modular-crm-wizard-modularity-step.png)
 
-Since modularity is a key aspect of the ABP Framework, it provides an option to create a modular system from the beginning. Here, you're creating a `ModularCrm.Catalog` module and setting it as a "Standard Module" (a module template similar to the DDD module but without the domain layer). This will create four projects (-depends on the options you selected-):
-- `ModularCrm.Catalog`: The main module project
-- `ModularCrm.Catalog.Contracts`: Contains service interfaces and DTOs
-- `ModularCrm.Catalog.Tests`: Unit and integration tests (since you selected the _Include Test_ option)
-- `ModularCrm.Catalog.UI`: Contains UI components for the module
+Since modularity is a key aspect of the ABP Framework, it provides an option to create a modular system from the beginning. Here, you're creating a `ModularCrm.Catalog` module using the *Standard Module* template.
 
-> **Note:** This tutorial will guide you through creating two modules: `Catalog` and `Ordering`. While you just created the `Catalog` module in the _Modularity_ step, you could also create the `Ordering` module at this stage. However, you'll create the `Ordering` module in subsequent parts to better demonstrate ABP Studio's module management capabilities and to simulate a more realistic development workflow where modules are typically added incrementally as the application evolves.
-
-This approach allows you to start with a modular architecture right from the beginning, making it easier to maintain and extend the application as it grows. ABP Studio automatically creates the module projects and places them under the `modules` folder for you, and later on you can add more modules to the solution.
+> **Note:** This tutorial will guide you through creating two modules: `Catalog` and `Ordering`. We've just created the `Catalog` module in the _Modularity_ step. You could also create the `Ordering` module at this stage. However, we'll create the `Ordering` module later in this tutorial to better demonstrate ABP Studio's module management capabilities and to simulate a more realistic development workflow where modules are typically added incrementally as the application evolves.
 
 > **Please complete the [Get Started](../../get-started/single-layer-web-application.md) guide and run the web application before going further.**
+
+## The Solution Structure
 
 The initial solution structure should be like the following in ABP Studio's *[Solution Explorer](../../studio/solution-explorer.md)*:
 
 ![solution-explorer-modular-crm-initial-with-modules](images/solution-explorer-modular-crm-initial-with-modules.png)
 
-Initially, you see a `ModularCrm` solution, a `ModularCrm` module under that solution (our main single layer application), and a `modules` folder that contains the `ModularCrm.Catalog` module.
+Initially, you see a `ModularCrm` solution, a `ModularCrm` module under that solution (our main single layer application), and a `modules` folder that contains the `ModularCrm.Catalog` module and its sub .NET projects.
 
 > An ABP Studio module is typically a .NET solution and an ABP Studio solution is an umbrella concept for multiple .NET Solutions (see the [concepts](../../studio/concepts.md) document for more).
 
-The `ModularCrm` module is the core of your application, built as a single-layer ASP.NET Core Web application. On the other hand, the `ModularCrm.Catalog` module is a standard module template, consist of 4 layers and used to implement the catalog features.
+The `ModularCrm` module is the core of your application, built as a single-layer ASP.NET Core Web application. On the other hand, the `ModularCrm.Catalog` module consist of four packages (.NET projects) and used to implement the catalog module's functionality.
+
+## Catalog Module's Packages
+
+Here are the .NET projects (ABP Studio packages) of the Catalog module:
+
+- `ModularCrm.Catalog`: The main module project that contains your [entities](../../framework/architecture/domain-driven-design/entities.md), [application service](../../framework/architecture/domain-driven-design/application-services.md) implementations and other business objects
+- `ModularCrm.Catalog.Contracts`: Basically contains [application service](../../framework/architecture/domain-driven-design/application-services.md) interfaces and [DTOs](../../framework/architecture/domain-driven-design/data-transfer-objects.md)
+- `ModularCrm.Catalog.Tests`: Unit and integration tests (if you selected the _Include Tests_ option)
+- `ModularCrm.Catalog.UI`: Contains user interface pages components for the module
 
 ## Summary
 
-You've created the initial single layer monolith solution. In the next part, you will learn how to create a new application module and install it to the main application.
+You've created the initial single layer monolith modular solution with a Catalog module included. In the next part, you will learn how install the Catalog module to the main application.
