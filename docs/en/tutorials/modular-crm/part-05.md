@@ -14,7 +14,7 @@
 }
 ````
 
-In the previous part, you created Ordering module and installed it into the main application. However, the Ordering module has no functionality now. In this part, you will create an `Order` entity and add functionality to create and list the orders.
+In the [previous part](part-04), you created Ordering module and installed it into the main application. However, the Ordering module has no functionality yet. In this part, you will create an `Order` entity and add functionality to create and list the orders.
 
 ## Creating an `Order` Entity
 
@@ -24,14 +24,13 @@ Open the `ModularCrm.Ordering` .NET solution in your IDE.
 
 ### Adding an `Order` Class
 
-Create an `Order` class to the `ModularCrm.Ordering` project (open an `Entities` folder and place the `Order.cs` into that folder):
+Create an `Order` class to the `ModularCrm.Ordering` project:
 
 ````csharp
 using System;
-using ModularCrm.Ordering.Contracts.Enums;
 using Volo.Abp.Domain.Entities.Auditing;
 
-namespace ModularCrm.Ordering.Entities;
+namespace ModularCrm.Ordering;
 
 public class Order : CreationAuditedAggregateRoot<Guid>
 {
@@ -41,14 +40,14 @@ public class Order : CreationAuditedAggregateRoot<Guid>
 }
 ````
 
-We allow users to place only a single product within an order. The `Order` entity would be much more complex in a real-world application. However, the complexity of the `Order` entity doesn't affect modularity, so we keep it simple to focus on modularity in this tutorial. We are inheriting from the [`CreationAuditedAggregateRoot` class](../../framework/architecture/domain-driven-design/entities.md) since I want to know when an order has been created and who has created it.
+We allow users to place only a single product within an order. The `Order` entity would be much more complex in a real-world application. However, the complexity of the `Order` entity doesn't affect modularity. So, we keep it simple to focus on modularity in this tutorial. We are inheriting from the [`CreationAuditedAggregateRoot` class](../../framework/architecture/domain-driven-design/entities.md) since I want to know when an order has been created and who has created it.
 
 ### Adding an `OrderState` Enumeration
 
-You used an `OrderState` enumeration that has not yet been defined. Open an `Enums` folder in the `ModularCrm.Ordering.Contracts` project and create an `OrderState.cs` file inside it:
+We used an `OrderState` enumeration that has not yet been defined. Create a `OrderState.cs` file inside the `ModularCrm.Ordering.Contracts` project and define the following Enum:
 
 ````csharp
-namespace ModularCrm.Ordering.Contracts.Enums;
+namespace ModularCrm.Ordering;
 
 public enum OrderState : byte
 {
@@ -60,7 +59,7 @@ public enum OrderState : byte
 
 The final structure of the Ordering module should be similar to the following figure in your IDE:
 
-![visual-studio-order-entity](images/visual-studio-order-entity.png)
+![visual-studio-order-entity](images/visual-studio-order-entity-v2.png)
 
 ## Configuring the Database Mapping
 
@@ -202,19 +201,21 @@ Right-click the `ModularCrm` package and select the *EF Core CLI* -> *Add Migrat
 
 The *Add Migration* command opens a new dialog to get a migration name:
 
-![abp-studio-entity-framework-core-add-migration-order](images/abp-studio-entity-framework-core-add-migration-order.png)
+![abp-studio-entity-framework-core-add-migration-order](images/abp-studio-entity-framework-core-add-migration-order-v2.png)
 
 Once you click the *OK* button, a new database migration class is added to the `Migrations` folder of the `ModularCrm` project:
 
-![visual-studio-new-migration-class-2](images/visual-studio-new-migration-class-2.png)
+![visual-studio-new-migration-class-2](images/visual-studio-new-migration-class-2-v2.png)
 
 Now, you can return to ABP Studio, right-click the `ModularCrm` project and select the *EF Core CLI* -> *Update Database* command:
 
 ![abp-studio-entity-framework-core-update-database](images/abp-studio-entity-framework-core-update-database.png)
 
-After the operation completes, you can check your database to see the new `Orders` table has been created:
+After the operation completes, you can check your database to see the new `OrderingOrders` table has been created:
 
-![sql-server-products-database-table](images/sql-server-orders-database-table.png)
+![sql-server-products-database-table](images/sql-server-orders-database-table-v2.png)
+
+`Ordering` prefix is added to all table names of the Ordering module. If you want to change or remove it, see the `OrderingDbProperties` class in the Ordering module's .NET solution.
 
 ## Creating the Application Service
 

@@ -45,6 +45,8 @@ public class Product : AggregateRoot<Guid>
 }
 ````
 
+> Note that in this tutorial, we create classes directly in the project's root folder to keep things simple. It is up to you to create subfolders (namespaces) in your project to achieve finer code organization, especially for large modules.
+
 ## Mapping Entity to Database
 
 The next step is to configure the Entity Framework Core `DbContext` class and the database for the new entity.
@@ -182,13 +184,13 @@ public class ModularCrmDbContext :
 }
 ````
 
-**(3)** Finally, ensure that the `ConfigureCatalog()` extension method is called inside the `OnModelCreating` method (this should be already done because you set the _Setup as a modular solution_ option in the _Modularity_ step while creating the initial solution):
+**(3)** Finally, ensure that the `ConfigureCatalog()` extension method is called inside the `OnModelCreating` method (this should be already done because you set the _Setup as a modular solution_ option in the _Modularity_ step while creating the initial solution).
 
 In this way, `ModularCrmDbContext` can be used by the catalog module over the `ICatalogDbContext` interface. This part is only needed once for a module. Next time, you can directly add a new database migration, as explained in the next section.
 
 #### Add a Database Migration
 
-Now, you can add a new database migration. You can use Entity Framework Core's `Add-Migration` (or `dotnet ef migrations add`) terminal command, but we will use ABP Studio's shortcut UI in this tutorial.
+You can use Entity Framework Core's `Add-Migration` (or `dotnet ef migrations add`) terminal command, but we will use ABP Studio's shortcut UI in this tutorial.
 
 Ensure that the solution has built. You can right-click the `ModularCrm` (under the `main` folder) on ABP Studio *Solution Runner* and select the *Dotnet CLI* -> *Graph Build* command.
 
