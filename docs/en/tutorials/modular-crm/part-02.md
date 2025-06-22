@@ -14,19 +14,21 @@
 }
 ````
 
-In this part, you will install the `ModularCrm.Catalog` module to the main application, which is created in the previous part.
+In this part, you will install the `ModularCrm.Catalog` module to the main application, which was created in the [previous part](part-01.md).
 
-Before installing the `ModularCrm.Catalog` module to the main application, let's create a "main" folder and move the `ModularCrm` module to it to tidy up the solution structure. Right-click to the solution root on the *Solution Explorer* panel, and select *Add* -> *New Folder* command:
+## Creating an ABP Studio Solution Folder
+
+Before installing the `ModularCrm.Catalog` module to the main application, let's create a "main" folder and move the `ModularCrm` module (the main application) to it to tidy up the solution structure. Right-click to the solution root on the *Solution Explorer* panel, and select *Add* -> *New Folder* command:
 
 ![abp-studio-add-new-folder-command-2](images/abp-studio-add-new-folder-command-2.png)
 
-That command opens a dialog where you can set the folder name:
+That command opens a dialog where you can set the *Folder name*:
 
 ![abp-studio-new-folder-dialog](images/abp-studio-new-folder-dialog.png)
 
 After the folder is created, now you can move the `ModularCrm` module to the `main` folder (simply by drag & drop). The _Solution Explorer_ panel should look like the following figure now:
 
-![abp-studio-solution-explorer-with-folders](images/abp-studio-solution-explorer-with-folders.png)
+![abp-studio-solution-explorer-with-folders](images/abp-studio-solution-explorer-with-folders-v2.png)
 
 ## Installing the Catalog Module to the Main Application
 
@@ -48,7 +50,7 @@ When you click the *OK* button, ABP Studio opens the *Install Module* dialog:
 
 ![abp-studio-module-installation-dialog-for-catalog](images/abp-studio-module-installation-dialog-for-catalog.png)
 
-Select the `ModularCrm.Catalog` and `ModularCrm.Catalog.UI` packages from the left area and the `ModularCrm` package from the middle area as shown in the preceding figure. Finally, click _OK_.
+Select the `ModularCrm.Catalog` and `ModularCrm.Catalog.UI` packages from the left area and ensure the  `ModularCrm` package from the middle area was checked as shown in the preceding figure. Finally, click _OK_.
 
 ## Building the Main Application
 
@@ -68,6 +70,4 @@ Open the *Solution Runner* panel, click the *Play* button (near to the solution 
 
 ## Summary
 
-In this part, you installed the `ModularCrm.Catalog` module to the main application and run the solution to test if it has successfully installed.
-
-In the next part, you will learn how to create entities, services and a basic user interface for the catalog module.
+In this part, you installed the `ModularCrm.Catalog` module to the main application and run the solution to test if it has successfully installed. In the [next part](part-03.md), you will learn how to create entities, services and a basic user interface for the catalog module.
