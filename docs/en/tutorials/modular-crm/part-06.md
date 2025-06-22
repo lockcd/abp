@@ -14,9 +14,9 @@
 }
 ````
 
-In the previous parts, you created two modules: the **Catalog** module to store and manage products and the **Ordering** module to accept orders. However, these modules were completely independent from each other. Only the main application brought them together to execute in the same application, but these modules don't communicate with each other.
+You have created two modules so far: the **Catalog** module to store and manage products and the **Ordering** module to accept orders. However, these modules were completely independent from each other. The main application brought them together to execute in the same application, but these modules don't communicate with each other.
 
-In the next three parts, you will learn to implement three patterns for integrating these modules:
+In this part and next two pars, you will learn to implement three common patterns for integrating these modules:
 
 1. The Order module will make a request to the Catalog module to get product information when needed.
 2. The Product module will listen to events from the Ordering module, so it can decrease a product's stock count when an order is placed.
@@ -28,9 +28,9 @@ Let's begin from the first one: The Integration Services.
 
 Remember from the [previous part](part-05.md), the Orders page shows product's identities instead of their names:
 
-![abp-studio-browser-orders-menu-item](images/abp-studio-browser-orders-menu-item.png)
+![abp-studio-browser-orders-menu-item](images/abp-studio-browser-orders-menu-item-v2.png)
 
-That is because the Ordering module has no access to the product data, so it can not perform a JOIN query to get the names of products from the `Products` table. That is a natural result of the modular design. However, you also don't want to show a product's identity on the UI, which is not a good user experience.
+That is because the Ordering module has no access to the product data, so it can not perform a JOIN query to get the names of products from the `Products` table. That is a natural result of the modular design. However, you also don't want to show a product's GUID identity on the UI, which is not a good user experience.
 
 As a solution to that problem, the Ordering module may ask product names to the Catalog module using an [integration service](../../framework/api-development/integration-services.md). Integration service concept in ABP is designed for request/response style inter-module (in modular applications) and inter-microservice (in distributed systems) communication.
 
@@ -48,7 +48,7 @@ Open the `ModularCrm.Catalog` .NET solution in your IDE, find the `ModularCrm.Ca
 
 ![vscode-product-integration-service](images/vscode-product-integration-service.png)
 
-(Creating an`Integration` folder is not required, but it can be a good practice)
+Creating an`Integration` folder is not required, but it can be a good practice to isolate integration-related code from the business logic of your module.
 
 Open the `IProductIntegrationService.cs` file and replace it's content with the following code block:
 
@@ -61,6 +61,7 @@ using Volo.Abp;
 using Volo.Abp.Application.Services;
 
 namespace ModularCrm.Products.Integration;
+
 [IntegrationService]
 public interface IProductIntegrationService : IApplicationService
 {
@@ -130,7 +131,7 @@ The Product Integration Service is ready for the other modules to use. In this s
 
 Open the ABP Studio UI and stop the application if it is already running. Then open the *Solution Explorer* in ABP Studio, right-click the `ModularCrm.Ordering` package and select the *Add Package Reference* command:
 
-![abp-studio-add-package-reference-4](images/abp-studio-add-package-reference-4.png)
+![abp-studio-add-package-reference-4](images/abp-studio-add-package-reference-4-v2.png)
 
 In the opening dialog, select the *This solution* tab, find and check the `ModularCrm.Catalog.Contracts` package and click the OK button:
 
@@ -138,31 +139,28 @@ In the opening dialog, select the *This solution* tab, find and check the `Modul
 
 ABP Studio adds the package reference and arranges the [module](../../framework/architecture/modularity/basics.md) dependency.
 
-> Instead of directly adding such a package reference, it can be best to import the module first (right-click the `ModularCrm.Ordering` module, select the _Import Module_ command and import the `ModularCrm.Catalog` module), then install the package reference. In that way, it would be easy to see and keep track of inter-module dependencies.
+> Instead of directly adding such a package reference, it can be possible to import the module first (right-click the `ModularCrm.Ordering` module, select the _Import Module_ command and import the `ModularCrm.Catalog` module), then add the package references. ABP automatically import module when you add a package reference from a local module, but for other sources you may need to do it manually.
 
 ### Using the Products Integration Service
 
 Now, you can inject and use `IProductIntegrationService` in the Ordering module codebase.
 
-Open the `OrderAppService` class (the `OrderAppService.cs` file under the `Services` folder of the `ModularCrm.Ordering` project of the `ModularCrm.Ordering` .NET solution) and change its content as like the following code block:
+Open the `OrderAppService` class of the `ModularCrm.Ordering` project of the `ModularCrm.Ordering` .NET solution and change its content as like the following code block:
 
 ````csharp
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ModularCrm.Ordering.Contracts.Enums;
-using ModularCrm.Ordering.Entities;
-using ModularCrm.Products.Integration;
 using ModularCrm.Products.Integration;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
-namespace ModularCrm.Ordering.Services;
+namespace ModularCrm.Ordering;
 
 public class OrderAppService : ApplicationService, IOrderAppService
 {
-    private readonly IRepository<Order, Guid>  _orderRepository;
+    private readonly IRepository<Order, Guid> _orderRepository;
     private readonly IProductIntegrationService _productIntegrationService;
 
     public OrderAppService(
@@ -207,13 +205,12 @@ public class OrderAppService : ApplicationService, IOrderAppService
 }
 ````
 
-And also, open the `OrderDto` class (the `OrderDto.cs` file under the `Services` folder of the `ModularCrm.Ordering.Contracts` project of the `ModularCrm.Ordering` .NET solution) and add a `ProductName` property to it:
+And also, open the `OrderDto` class of the `ModularCrm.Ordering.Contracts` project of the `ModularCrm.Ordering` .NET solution and add a `ProductName` property to it:
 
 ````csharp
 using System;
-using ModularCrm.Ordering.Contracts.Enums;
 
-namespace ModularCrm.Ordering.Services;
+namespace ModularCrm.Ordering;
 
 public class OrderDto
 {
@@ -221,7 +218,7 @@ public class OrderDto
     public string CustomerName { get; set; } = null!;
     public Guid ProductId { get; set; }
     public OrderState State { get; set; }
-    public string ProductName { get; set; } = null!; //NEW PROPERTY
+    public string ProductName { get; set; } = null!; // New Property
 }
 ````
 
@@ -229,8 +226,6 @@ Lastly, open the `OrderingAutoMapperProfile` class (the `OrderingAutoMapperProfi
 
 ````csharp
 using AutoMapper;
-using ModularCrm.Ordering.Services;
-using ModularCrm.Ordering.Entities;
 using Volo.Abp.AutoMapper;
 
 namespace ModularCrm.Ordering;
@@ -286,8 +281,10 @@ That's all. Now, you can graph build the main application and run it in ABP Stud
 
 As you can see, we can see the product names instead of product IDs.
 
-In the way explained in this section, you can easily create integration services for your modules and consume these integration services in any other module.
-
 > **Design Tip**
 >
 > It is suggested that you keep that type of communication to a minimum and not couple your modules with each other. It can make your solution complicated and may also decrease your system performance. When you need to do it, think about performance and try to make some optimizations. For example, if the Ordering module frequently needs product data, you can use a kind of [cache layer](../../framework/fundamentals/caching.md), so it doesn't make frequent requests to the Catalog module. Especially if you consider converting your system to a microservice solution in the future, too many direct integration API calls can be a performance bottleneck.
+
+## Conclusion
+
+In the way explained in this part of this tutorial, you can easily create integration services for your modules and consume these integration services in any other module. In the [next part](part-07.md), we will explore event based messaging between the modules.
