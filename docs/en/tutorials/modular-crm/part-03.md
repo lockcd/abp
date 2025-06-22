@@ -101,7 +101,7 @@ public interface ICatalogDbContext : IEfCoreDbContext
 }
 ````
 
-Having such an `ICatalogDbContext` interface allows us to decouple our repositories (and other classes) from the concrete `CatalogDbContext` class. This provides flexibility to the final application to merge multiple `DbContext`s into a single `DbContext` to manage database migrations easier and have a database level transaction support for multi-module database operations.
+Having such an `ICatalogDbContext` interface allows us to decouple our repositories (and other classes) from the concrete `CatalogDbContext` class. This provides flexibility to the final application to merge multiple `DbContext`s into a single `DbContext` to manage database migrations easier and have a database level transaction support for multi-module database operations. We will do it later in this tutorial.
 
 ### Configure the Table Mapping
 
