@@ -367,7 +367,7 @@ Configure<AbpAspNetCoreMvcOptions>(options =>
 });
 ````
 
-This will tell the ABP framework to create API controllers for the application services in the `CatalogModule` assembly.
+This will tell the ABP framework to create API controllers for the application services in the `ModularCrm.Catalog` assembly.
 
 Now, ABP will automatically expose the application services defined in the `ModularCrm.Catalog` project as API controllers. The next section will use these API controllers to create some example products.
 
@@ -383,9 +383,9 @@ Once you see the user interface of the web application, type `/swagger` at the e
 
 ![abp-studio-swagger-ui-in-browser](images/abp-studio-swagger-ui-in-browser.png)
 
-> **Note:** If you don't see the `Catalog` API and instead see a swagger error on the UI, then you can open the `SampleAppService` class in the `ModularCrm.Catalog` project and add `[RemoteService(false)]` attribute to the `SampleAppService` class. With this attribute, the `SampleAppService` class will not be exposed as a remote service automatically but since there is a `SampleController` class in the `ModularCrm.Catalog` project, the `Catalog` API will be exposed as a remote service.
+> **Note:** If you have a swagger error on the UI, then you can open the `SampleAppService` class in the `ModularCrm.Catalog` project and add `[RemoteService(false)]` attribute to the `SampleAppService` class. With this attribute, the `SampleAppService` class will not be exposed as a remote service automatically but since there is a `SampleController` class in the `ModularCrm.Catalog` project, the `Catalog` API will be exposed as a remote service.
 
-Expand the `/api/catalog/product` API and click the *Try it out* button as shown in the following figure:
+Expand the `POST /api/catalog/product` API and click the *Try it out* button as shown in the following figure:
 
 ![abp-studio-swagger-ui-create-product-try](images/abp-studio-swagger-ui-create-product-try.png)
 
@@ -404,6 +404,8 @@ You've some entities in the database and now you can show them on the user inter
 In this section, you will create a very simple user interface to demonstrate how to build UI in the catalog module and make it work in the main application.
 
 As a first step, you can stop the application on ABP Studio's Solution Runner if it is currently running.
+
+### Creating the Products Page
 
 Open the `ModularCrm.Catalog` .NET solution in your IDE, and find the `Pages/Catalog/Index.cshtml` file under the `ModularCrm.Catalog.UI` project:
 

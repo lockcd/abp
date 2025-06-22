@@ -223,15 +223,14 @@ You will create an application service to manage the `Order` entities.
 
 ### Defining the Application Service Contract
 
-You're gonna create the `IOrderAppService` interface under the `ModularCrm.Ordering.Contracts` project. Return to your IDE, open the `ModularCrm.Ordering` module's .NET solution and create an `IOrderAppService` interface under the `Services` folder for `ModularCrm.Ordering.Contracts` project:
+You're gonna create the `IOrderAppService` interface under the `ModularCrm.Ordering.Contracts` project. Return to your IDE, open the `ModularCrm.Ordering` module's .NET solution and create an `IOrderAppService` interface in the `ModularCrm.Ordering.Contracts` project:
 
 ````csharp
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ModularCrm.Ordering.Contracts.Services;
 using Volo.Abp.Application.Services;
 
-namespace ModularCrm.Ordering.Services;
+namespace ModularCrm.Ordering;
 
 public interface IOrderAppService : IApplicationService
 {
@@ -250,7 +249,7 @@ Create a `OrderCreationDto` class under the `ModularCrm.Ordering.Contracts` proj
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace ModularCrm.Ordering.Contracts.Services;
+namespace ModularCrm.Ordering;
 
 public class OrderCreationDto
 {
@@ -267,9 +266,8 @@ Create a `OrderDto` class under the `ModularCrm.Ordering.Contracts` project:
 
 ````csharp
 using System;
-using ModularCrm.Ordering.Contracts.Enums;
 
-namespace ModularCrm.Ordering.Services;
+namespace ModularCrm.Ordering;
 
 public class OrderDto
 {
@@ -282,16 +280,14 @@ public class OrderDto
 
 The new files under the `ModularCrm.Ordering.Contracts` project should be like the following figure:
 
-![visual-studio-ordering-contracts](images/visual-studio-ordering-contracts.png)
+![visual-studio-ordering-contracts](images/visual-studio-ordering-contracts-v2.png)
 
 ### Implementing the Application Service
 
-Now you should configure the *AutoMapper* object to map the `Order` entity to the `OrderDto` object. You will use the `OrderingAutoMapperProfile` under the `ModularCrm.Ordering` project:
+First we configure the *AutoMapper* to map the `Order` entity to the `OrderDto` object, because we will need it later. Open the `OrderingAutoMapperProfile` under the `ModularCrm.Ordering` project:
 
 ````csharp
 using AutoMapper;
-using ModularCrm.Ordering.Entities;
-using ModularCrm.Ordering.Services;
 
 namespace ModularCrm.Ordering;
 
@@ -304,21 +300,19 @@ public class OrderingAutoMapperProfile : Profile
 }
 ````
 
-Now, you can implement the `IOrderAppService` interface. Create an `OrderAppService` class under the `Services` folder of the `ModularCrm.Ordering` project:
+Now, you can implement the `IOrderAppService` interface. Create an `OrderAppService` class under the `ModularCrm.Ordering` project:
 
 ````csharp
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ModularCrm.Ordering.Contracts.Enums;
-using ModularCrm.Ordering.Entities;
 using Volo.Abp.Domain.Repositories;
 
 namespace ModularCrm.Ordering.Services;
 
 public class OrderAppService : OrderingAppService, IOrderAppService
 {
-    private readonly IRepository<Order, Guid>  _orderRepository;
+    private readonly IRepository<Order, Guid> _orderRepository;
 
     public OrderAppService(IRepository<Order, Guid> orderRepository)
     {
@@ -347,27 +341,19 @@ public class OrderAppService : OrderingAppService, IOrderAppService
 
 ### Exposing Application Services as HTTP API Controllers
 
-After implementing the application service, now you need to create HTTP API endpoints for the ordering module. For that purpose, open the `ModularCrmModule` class in the main application's solution (the `ModularCrm` solution), find the `ConfigureAutoApiControllers` method and add the following lines inside that method:
+After implementing the application service, we can create HTTP API endpoints for the ordering module using the ABP's [Auto API Controllers](../../framework/api-development/auto-controllers.md) feature. For that purpose, open the `OrderingModule` class in the Ordering module's .NET solution (the `ModularCrm.Ordering` solution), find the `ConfigureServices` method and add the following lines inside that method:
 
 ````csharp
-private void ConfigureAutoApiControllers()
+Configure<AbpAspNetCoreMvcOptions>(options =>
 {
-    Configure<AbpAspNetCoreMvcOptions>(options =>
+    options.ConventionalControllers.Create(typeof(OrderingModule).Assembly, settings =>
     {
-        options.ConventionalControllers.Create(typeof(ModularCrmModule).Assembly);
-        options.ConventionalControllers.Create(typeof(ProductsApplicationModule).Assembly, settings => 
-        {
-            settings.RootPath = "catalog";
-        });
-
-        //ADD THE FOLLOWING LINE:
-        options.ConventionalControllers.Create(typeof(OrderingModule).Assembly, settings => 
-        {
-            settings.RootPath = "orders";
-        });
+        settings.RootPath = "ordering";
     });
-}
+});
 ````
+
+This will tell the ABP framework to create API controllers for the application services in the `ModularCrm.Ordering` assembly.
 
 ### Creating Example Orders
 
@@ -377,19 +363,25 @@ Now, right-click the `ModularCrm` under the `main` folder in the Solution Explor
 
 After the build process completes, open the Solution Runner panel and click the *Play* button near the solution root. Once the `ModularCrm` application runs, you can right-click it and select the *Browse* command to open the user interface.
 
-Once you see the user interface of the web application, type `/swagger` at the end of the URL to open the Swagger UI. If you scroll down, you should see the `Orders` API:
+Once you see the user interface of the web application, type `/swagger` at the end of the URL to open the Swagger UI. If you scroll down, you should see the `Order` API:
 
-![abp-studio-ordering-swagger-ui-in-browser](images/abp-studio-ordering-swagger-ui-in-browser.png)
+![abp-studio-ordering-swagger-ui-in-browser](images/abp-studio-ordering-swagger-ui-in-browser-v2.png)
 
-Expand the `/api/orders/order` API and click the *Try it out* button. Then, create a few orders by filling in the request body and clicking the *Execute* button:
+> **Note:** If you have a swagger error on the UI, then you can open the `SampleAppService` class in the `ModularCrm.Ordering` project and add `[RemoteService(false)]` attribute to the `SampleAppService` class. With this attribute, the `SampleAppService` class will not be exposed as a remote service automatically but since there is a `SampleController` class in the `ModularCrm.Catalog` project, the `Catalog` API will be exposed as a remote service.
 
-![abp-studio-swagger-ui-create-order-execute](images/abp-studio-swagger-ui-create-order-execute.png)
+Expand the `POST /api/ordering/order` API and click the *Try it out* button. Then, create a few orders by filling in the request body and clicking the *Execute* button:
+
+![abp-studio-swagger-ui-create-order-execute](images/abp-studio-swagger-ui-create-order-execute-v2.png)
 
 If you check the database, you should see the entities created in the *Orders* table:
 
-![sql-server-orders-database-table-filled](images/sql-server-orders-database-table-filled.png)
+![sql-server-orders-database-table-filled](images/sql-server-orders-database-table-filled-v2.png)
 
 ## Creating the User Interface
+
+In this section, you will create a very simple user interface to demonstrate how to build UI in the catalog module and make it work in the main application.
+
+As a first step, you can stop the application on ABP Studio's Solution Runner if it is currently running.
 
 ### Creating the Orders Page
 
@@ -399,7 +391,6 @@ Replace the `Index.cshtml.cs` content in the `Pages/Ordering` folder of the `Mod
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using ModularCrm.Ordering.Services;
 
 namespace ModularCrm.Ordering.UI.Pages.Ordering;
 
@@ -498,14 +489,10 @@ Now, you will run the application to see the result. Please stop the application
 
 You've performed a graph build since you've made a change on a module, and more than building the main application is needed. *Graph Build* command also builds the depended modules if necessary. Alternatively, you could build the Ordering module first (on ABP Studio or your IDE). This approach can be faster if you have too many modules and you make a change in one of the modules. Now you can run the application by right-clicking the `ModularCrm` application and selecting the *Start* command.
 
-![abp-studio-browser-orders-menu-item](images/abp-studio-browser-orders-menu-item.png)
+![abp-studio-browser-orders-menu-item](images/abp-studio-browser-orders-menu-item-v2.png)
 
-Great! We can see the list of orders. However, there is a problem:
-
-1. We see Product's GUID ID instead of its name. This is because the Ordering module has no integration with the Catalog module and doesn't have access to Product module's database to perform a JOIN query.
-
-We will solve this problem in the [next part](part-06.md).
+Great! We can see the list of orders. However, there is a problem: We see Product's GUID ID instead of its name. This is because the Ordering module has no integration with the Catalog module and doesn't have access to Product module's database to perform a JOIN query. We will solve this problem in the [next part](part-06.md).
 
 ## Summary
 
-In this part of the *Modular CRM* tutorial, you've built the functionality inside the Ordering module you created in the [previous part](part-04.md). In the next part, you will work on establishing communication between the Orders module and the Catalog module.
+In this part of the *Modular CRM* tutorial, you've built the functionality inside the Ordering module you created in the [previous part](part-04.md). In the [next part](part-06.md), you will work on establishing communication between the Orders module and the Catalog module.
