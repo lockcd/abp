@@ -164,7 +164,7 @@ Now, you know the fundamental principles and mechanics of building sophisticated
 
 ## Download the Source Code
 
-You can download the completed sample solution [here](https://github.com/abpframework/abp-samples/tree/master/ModularCrm-Standard).
+You can download the completed sample solution [here](https://github.com/abpframework/abp-samples/tree/master/ModularCRM).
 
 ## See Also
 
