@@ -346,6 +346,42 @@ context.Services
 
 ```
 
+### `ConfigurationTenantResolveContributor`
+
+This tenant resolver reads the tenant identifier from application configuration `appsettings.json`.
+
+It is intended primarily for **development or testing environments** where setting the tenant manually is helpful, especially in **non-HTTP** contexts (e.g., console apps, background workers).
+
+##### **Configuration Example:**
+
+```json
+{
+    "MultiTenancy": {
+        "Tenant": "my-tenant-name"
+    }
+}
+```
+
+The value can be either the **tenant name** or the **tenant ID**.
+
+###### **How to Use:**
+
+This resolver is not registered by default. You can add it manually in your module's `ConfigureServices`:
+
+```csharp
+var env = context.Services.GetHostingEnvironment();
+if (env.IsDevelopment()) // Optional but preferred: only register in development
+{
+    Configure<AbpTenantResolveOptions>(options =>
+    {
+        options.AddConfigurationTenantResolver();
+    });
+}
+```
+
+> Recommended to limit this resolver to development to avoid static tenant resolution in production.
+
+
 ##### Custom Tenant Resolvers
 
 You can add implement your custom tenant resolver and configure the `AbpTenantResolveOptions` in your module's `ConfigureServices` method as like below:
