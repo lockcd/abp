@@ -34,10 +34,10 @@ It's suggested to depend on a standard package instead of directly depending on 
 
 #### Package Installation
 
-After depending on a NPM package, all you should do is to run the **npm install** command from the command line to install all the packages and their dependencies:
+After depending on a NPM package, you should run the **abp install-libs** command from the command line to install all the packages and their dependencies, and copy the required resources to the wwwroot/libs folder:
 
 ```bash
-npm install
+abp install-libs
 ```
 
 #### Package Contribution
