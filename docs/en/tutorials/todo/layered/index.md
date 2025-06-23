@@ -111,8 +111,6 @@ For such cases, run the `abp install-libs` command on the root directory of your
 abp install-libs
 ````
 
-> We suggest you install [Yarn v1.22+ (not v2)](https://classic.yarnpkg.com/en/docs/install) to prevent possible package inconsistencies, if you haven't installed it yet.
-
 ### Run the Application
 
 {{if UI=="MVC" || UI=="BlazorServer" || UI=="BlazorWebApp"}}

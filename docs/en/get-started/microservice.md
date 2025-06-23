@@ -11,7 +11,7 @@ First things first! Let's setup your development environment before creating the
 * [Visual Studio 2022](https://visualstudio.microsoft.com/vs/) or another IDE that supports .NET development
 * [.NET 9.0+](https://dotnet.microsoft.com/en-us/download/dotnet)
 * [Node v22.11+](https://nodejs.org/)
-* [Yarn v1.22+ (not v2+)](https://classic.yarnpkg.com/en/docs/install) or npm v10+ (already installed with Node)
+* [Yarn v1.22+ (not v2+)](https://classic.yarnpkg.com/en/docs/install) or npm v10+ (already installed with Node), **This is required for the Angular applications.**
 * [Docker Desktop (with Kubernetes enabled)](https://www.docker.com/products/docker-desktop/)
 * [Helm](https://helm.sh/docs/intro/install/)
 * [NGINX Ingress Controller](https://kubernetes.github.io/ingress-nginx/deploy/)
