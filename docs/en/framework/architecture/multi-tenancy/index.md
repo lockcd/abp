@@ -346,13 +346,13 @@ context.Services
 
 ```
 
-### `ConfigurationTenantResolveContributor`
+##### ConfigurationTenantResolveContributor
 
 This tenant resolver reads the tenant identifier from application configuration `appsettings.json`.
 
 It is intended primarily for **development or testing environments** where setting the tenant manually is helpful, especially in **non-HTTP** contexts (e.g., console apps, background workers).
 
-##### **Configuration Example:**
+###### **Configuration Example:**
 
 ```json
 {
