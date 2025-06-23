@@ -55,7 +55,7 @@ Client side installation depends on your UI framework / client type.
 Run the following command in the root folder of your web project:
 
 ```bash
-npm install @abp/signalr
+abp add-package @abp/signalr
 ```
 
 This will add the `@abp/signalr` to the dependencies in the `package.json` of your project:
