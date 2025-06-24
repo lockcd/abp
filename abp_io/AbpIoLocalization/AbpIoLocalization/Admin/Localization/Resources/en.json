@@ -721,6 +721,8 @@
     "NuGetApiKey": "NuGet API key",
     "QuestionCount": "Question Count",
     "MakeAnnouncement": "Make Announcement",
-    "MakeAnnouncementInfo": "Check it if you want to make an announcement for this post"
+    "MakeAnnouncementInfo": "Check it if you want to make an announcement for this post",
+    "Permission:ViewCounts": "View counts",
+    "ReadCount": "Read Count"
   }
 }
