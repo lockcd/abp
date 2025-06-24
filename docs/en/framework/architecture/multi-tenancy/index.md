@@ -206,6 +206,7 @@ The following resolvers are provided and configured by default;
 - `RouteTenantResolveContributor`: Tries to find current tenant id from route (URL path). The variable name is `__tenant` by default. If you defined a route with this variable, then it can determine the current tenant from the route.
 - `HeaderTenantResolveContributor`: Tries to find current tenant id from HTTP headers. The header name is `__tenant` by default.
 - `CookieTenantResolveContributor`: Tries to find current tenant id from cookie values. The cookie name is `__tenant` by default.
+- `DefaultTenantResolveContributor`: Resolves a fallback tenant from configuration if none of the above resolvers succeed. This resolver is automatically registered and runs last by default. It should be configured via `AbpAspNetCoreMultiTenancyOptions.DefaultTenant`, as described in the `Default Tenant Resolver` section below.
 
 ###### Problems with the NGINX
 
@@ -346,41 +347,34 @@ context.Services
 
 ```
 
-##### ConfigurationTenantResolveContributor
+##### Default Tenant Resolver
 
-This tenant resolver reads the tenant identifier from application configuration `appsettings.json`.
+In some cases, especially in **development environments**, resolving a tenant based on domain may not be practical (e.g., due to use of `localhost`). In such cases, a default fallback tenant can be configured using `AbpAspNetCoreMultiTenancyOptions.DefaultTenant`.
 
-It is intended primarily for **development or testing environments** where setting the tenant manually is useful (e.g., without headers, route parameters, or query strings).
+This fallback is resolved by the `DefaultTenantResolveContributor`, which attempts to set a default tenant if none of the other resolvers succeed. This contributor is automatically added at the **end** of the tenant resolver list.
 
-###### **Configuration Example:**
+###### Configuration
+
+Set the default tenant value via code or `appsettings.json`:
 
 ```json
 {
-    "MultiTenancy": {
-        "Tenant": "my-tenant-name"
-    }
+  "MultiTenancy": {
+    "DefaultTenant": "acme" // can be tenant name or ID
+  }
 }
 ```
 
-The value can be either the **tenant name** or the **tenant ID**.
-
-###### **How to Use:**
-
-This resolver is not registered by default. You can add it manually in your module's `ConfigureServices`:
+**Startup Configuration:**
 
 ```csharp
-var env = context.Services.GetHostingEnvironment();
-if (env.IsDevelopment()) // Optional but preferred: only register in development
+Configure<AbpAspNetCoreMultiTenancyOptions>(options =>
 {
-    Configure<AbpTenantResolveOptions>(options =>
-    {
-        options.AddConfigurationTenantResolver();
-    });
-}
+    options.DefaultTenant = configuration["MultiTenancy:DefaultTenant"];
+});
 ```
 
-> Recommended to limit this resolver to development to avoid static tenant resolution in production.
-
+> The `DefaultTenantResolveContributor` must be configured via options as shown above. It is included by default and is evaluated only if all other resolvers fail.
 
 ##### Custom Tenant Resolvers
 
