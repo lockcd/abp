@@ -1,6 +1,14 @@
 # Microservice Development Tutorial
 
 ````json
+//[doc-params]
+{
+    "UI": ["MVC","Blazor","BlazorServer", "BlazorWebApp", "NG"],
+    "DB": ["EF","Mongo"]
+}
+````
+
+````json
 //[doc-nav]
 {
   "Next": {
@@ -30,7 +38,7 @@ This tutorial is organized as the following parts:
 
 ## Download the Source Code
 
-After logging in to the ABP website, you can download the source code from [here](https://abp.io/api/download/samples/cloud-crm-mvc-ef).
+After logging in to the ABP website, you can download the source code from {{if UI == "MVC"}} [here](https://abp.io/api/download/samples/cloud-crm-mvc-ef) {{else if UI == "NG"}} [here](https://abp.io/api/download/samples/cloud-crm-ng-ef) {{else}} [here](https://abp.io/api/download/samples/cloud-crm-blazor-ef) {{end}}.
 
 ## See Also
 
