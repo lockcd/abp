@@ -360,15 +360,13 @@ This will tell the ABP framework to create API controllers for the application s
 
 This section will create a few example orders using the [Swagger UI](../../framework/api-development/swagger.md). Thus, you will have some sample orders to show on the UI.
 
-Now, right-click the `ModularCrm` under the `main` folder in the Solution Explorer panel and select the *Dotnet CLI* -> *Graph Build* command. This will ensure that the order module and the main application are built and ready to run.
-
-After the build process completes, open the Solution Runner panel and click the *Play* button near the solution root. Once the `ModularCrm` application runs, you can right-click it and select the *Browse* command to open the user interface.
+Open the Solution Runner panel and click the *Play* button near the solution root. Once the `ModularCrm` application runs, you can right-click it and select the *Browse* command to open the user interface.
 
 Once you see the user interface of the web application, type `/swagger` at the end of the URL to open the Swagger UI. If you scroll down, you should see the `Order` API:
 
 ![abp-studio-ordering-swagger-ui-in-browser](images/abp-studio-ordering-swagger-ui-in-browser-v2.png)
 
-> **Note:** If you have a swagger error on the UI, then you can open the `SampleAppService` class in the `ModularCrm.Ordering` project and add `[RemoteService(false)]` attribute to the `SampleAppService` class. With this attribute, the `SampleAppService` class will not be exposed as a remote service automatically but since there is a `SampleController` class in the `ModularCrm.Catalog` project, the `Catalog` API will be exposed as a remote service.
+> If you don't see the Order API, you may need to re-build the entire solution. Right-click the `ModularCrm` under the `main` folder in the ABP Studio Solution Explorer panel and select the *Dotnet CLI* -> *Graph Build* command. This will ensure that all the modules and the main application are completely built.
 
 Expand the `POST /api/ordering/order` API and click the *Try it out* button. Then, create a few orders by filling in the request body and clicking the *Execute* button:
 
