@@ -27,12 +27,6 @@ namespace Volo.Abp.AspNetCore.MultiTenancy;
 public class AbpAspNetCoreMultiTenancyOptions
 {
     /// <summary>
-    /// Used by <see cref="DefaultTenantResolveContributor"/> to resolve a fallback tenant
-    /// when no other tenant resolvers return a value.
-    /// </summary>
-    public string? DefaultTenant { get; set; }
-
-    /// <summary>
     /// Default: <see cref="TenantResolverConsts.DefaultTenantKey"/>.
     /// </summary>
     public string TenantKey { get; set; }

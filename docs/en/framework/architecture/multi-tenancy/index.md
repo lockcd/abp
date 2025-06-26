@@ -206,7 +206,6 @@ The following resolvers are provided and configured by default;
 - `RouteTenantResolveContributor`: Tries to find current tenant id from route (URL path). The variable name is `__tenant` by default. If you defined a route with this variable, then it can determine the current tenant from the route.
 - `HeaderTenantResolveContributor`: Tries to find current tenant id from HTTP headers. The header name is `__tenant` by default.
 - `CookieTenantResolveContributor`: Tries to find current tenant id from cookie values. The cookie name is `__tenant` by default.
-- `DefaultTenantResolveContributor`: Resolves a fallback tenant from configuration if none of the above resolvers succeed. This resolver is automatically registered and runs last by default. It should be configured via `AbpAspNetCoreMultiTenancyOptions.DefaultTenant`, as described in the `Default Tenant Resolver` section below.
 
 ###### Problems with the NGINX
 
@@ -347,35 +346,6 @@ context.Services
 
 ```
 
-##### Default Tenant Resolver
-
-In some cases, especially in **development environments**, resolving a tenant based on domain may not be practical (e.g., due to use of `localhost`). In such cases, a default fallback tenant can be configured using `AbpAspNetCoreMultiTenancyOptions.DefaultTenant`.
-
-This fallback is resolved by the `DefaultTenantResolveContributor`, which attempts to set a default tenant if none of the other resolvers succeed. This contributor is automatically added at the **end** of the tenant resolver list.
-
-###### Configuration
-
-Set the default tenant value via code or `appsettings.json`:
-
-```json
-{
-  "MultiTenancy": {
-    "DefaultTenant": "acme" // can be tenant name or ID
-  }
-}
-```
-
-**Startup Configuration:**
-
-```csharp
-Configure<AbpAspNetCoreMultiTenancyOptions>(options =>
-{
-    options.DefaultTenant = configuration["MultiTenancy:DefaultTenant"];
-});
-```
-
-> The `DefaultTenantResolveContributor` must be configured via options as shown above. It is included by default and is evaluated only if all other resolvers fail.
-
 ##### Custom Tenant Resolvers
 
 You can add implement your custom tenant resolver and configure the `AbpTenantResolveOptions` in your module's `ConfigureServices` method as like below:
@@ -409,6 +379,23 @@ namespace MultiTenancyDemo.Web
 
 * A tenant resolver should set `context.TenantIdOrName` if it can determine it. If not, just leave it as is to allow the next resolver to determine it.
 * `context.ServiceProvider` can be used if you need to additional services to resolve from the [dependency injection](../../fundamentals/dependency-injection.md) system.
+
+##### Fallback Tenant
+
+In some cases, the tenant cannot be resolved using any of the configured tenant resolvers. To handle such situations, ABP allows setting a **fallback tenant**.
+
+The fallback tenant can be configured using the `FallbackTenant` property in `AbpTenantResolveOptions`:
+
+```csharp
+Configure<AbpTenantResolveOptions>(options =>
+{
+    options.FallbackTenant = "default-tenant";
+});
+```
+
+If no tenant is resolved and the `FallbackTenant` is not null or empty, ABP will automatically use this value as the current tenant. This provides a simple and consistent way to ensure that a tenant context is always available when needed.
+
+> **Note:** The fallback tenant is only used if all other resolvers fail. It will never override an already resolved tenant.
 
 #### Multi-Tenancy Middleware
 

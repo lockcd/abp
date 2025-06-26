@@ -17,7 +17,6 @@ public class AbpAspNetCoreMultiTenancyModule : AbpModule
             options.TenantResolvers.Add(new RouteTenantResolveContributor());
             options.TenantResolvers.Add(new HeaderTenantResolveContributor());
             options.TenantResolvers.Add(new CookieTenantResolveContributor());
-            options.TenantResolvers.Add(new DefaultTenantResolveContributor());
         });
     }
 }

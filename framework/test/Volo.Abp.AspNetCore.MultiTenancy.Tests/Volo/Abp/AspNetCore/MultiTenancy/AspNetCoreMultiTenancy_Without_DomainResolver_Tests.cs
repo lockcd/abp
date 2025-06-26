@@ -70,23 +70,4 @@ public class AspNetCoreMultiTenancy_Without_DomainResolver_Tests : AspNetCoreMul
         var result = await GetResponseAsObjectAsync<Dictionary<string, string>>("http://abp.io");
         result["TenantId"].ShouldBe(_testTenantId.ToString());
     }
-
-    [Fact]
-    public async Task Should_Use_DefaultTenant_If_No_Other_Resolvers_Succeed()
-    {
-        _options.DefaultTenant = _testTenantName;
-
-        var result = await GetResponseAsObjectAsync<Dictionary<string, string>>("http://abp.io");
-
-        result["TenantId"].ShouldBe(_testTenantId.ToString());
-    }
-
-    [Fact]
-    public async Task Should_Return_404_If_DefaultTenant_Is_Invalid()
-    {
-        _options.DefaultTenant = "non-existent-tenant";
-
-        // This method asserts the status code internally using ShouldBe(...)
-        await GetResponseAsync("http://abp.io", HttpStatusCode.NotFound);
-    }
 }
