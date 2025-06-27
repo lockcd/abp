@@ -69,6 +69,15 @@
     "@ng-bootstrap/ng-bootstrap": "~19.0.0-rc.0",
     "@ngneat/spectator": "~19.6.2",
     "@ngx-validate/core": "^0.2.0",
+    "@nx/angular": "~21.2.0",
+    "@nx/cypress": "~21.2.0",
+    "@nx/devkit": "~21.2.0",
+    "@nx/eslint": "~21.2.0",
+    "@nx/eslint-plugin": "~21.2.0",
+    "@nx/jest": "~21.2.0",
+    "@nx/js": "~21.2.0",
+    "@nx/plugin": "~21.2.0",
+    "@nx/workspace": "~21.2.0",
     "@nx/angular": "~21.0.0",
     "@nx/cypress": "~21.0.0",
     "@nx/devkit": "~21.0.0",
@@ -79,6 +88,7 @@
     "@nx/plugin": "~21.0.0",
     "@nx/workspace": "~21.0.0",
     "@popperjs/core": "~2.11.0",
+    "@schematics/angular": "~20.0.2",
     "@schematics/angular": "~20.0.0",
     "@swc-node/register": "1.9.2",
     "@swc/cli": "0.6.0",
@@ -137,3 +147,4 @@
   },
   "dependencies": {}
 }
+
