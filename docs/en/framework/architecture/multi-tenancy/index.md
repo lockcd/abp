@@ -380,22 +380,18 @@ namespace MultiTenancyDemo.Web
 * A tenant resolver should set `context.TenantIdOrName` if it can determine it. If not, just leave it as is to allow the next resolver to determine it.
 * `context.ServiceProvider` can be used if you need to additional services to resolve from the [dependency injection](../../fundamentals/dependency-injection.md) system.
 
-##### Fallback Tenant
+##### The Fallback Tenant
 
-In some cases, the tenant cannot be resolved using any of the configured tenant resolvers. To handle such situations, ABP allows setting a **fallback tenant**.
-
-The fallback tenant can be configured using the `FallbackTenant` property in `AbpTenantResolveOptions`:
+If you want to always fallback to a tenant (in case of no tenant was found by the tenant resolution logic), you can set the `AbpTenantResolveOptions.FallbackTenant` option:
 
 ```csharp
 Configure<AbpTenantResolveOptions>(options =>
 {
-    options.FallbackTenant = "default-tenant";
+    options.FallbackTenant = "acme";
 });
 ```
 
-If no tenant is resolved and the `FallbackTenant` is not null or empty, ABP will automatically use this value as the current tenant. This provides a simple and consistent way to ensure that a tenant context is always available when needed.
-
-> **Note:** The fallback tenant is only used if all other resolvers fail. It will never override an already resolved tenant.
+This option can be helpful on development time or some specific scenarios to set a constant tenant for the application. It is a simple and consistent way to ensure that a tenant context is always available when needed. However, when you do that, no way to switch to the host side. It is not something you will need it most of the time, but here if you need such a resolution logic.
 
 #### Multi-Tenancy Middleware
 
