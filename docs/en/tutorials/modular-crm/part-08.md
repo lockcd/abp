@@ -40,7 +40,7 @@ In this section, we will create an application service in the main application's
 Open the main `ModularCrm` .NET solution in your IDE, create an `Orders` folder under the `Services` folder and add an `IOrderReportingAppService` interface. Here is the definition of that interface:
 
 ````csharp
-using ModularCrm.Services.Dtos;
+using ModularCrm.Services.Dtos.Orders;
 using Volo.Abp.Application.Services;
 
 namespace ModularCrm.Services.Orders;
@@ -56,7 +56,7 @@ We have a single method, `GetLatestOrders`, that will return a list of the lates
 ````csharp
 using ModularCrm.Ordering;
 
-namespace ModularCrm.Services.Dtos;
+namespace ModularCrm.Services.Dtos.Orders;
 
 public class OrderReportDto
 {
@@ -86,7 +86,7 @@ Open the `OrderReportingAppService.cs` file and change its content by the follow
 ````csharp
 using ModularCrm.Catalog;
 using ModularCrm.Ordering;
-using ModularCrm.Services.Dtos;
+using ModularCrm.Services.Dtos.Orders;
 using Volo.Abp.Domain.Repositories;
 
 namespace ModularCrm.Services.Orders;
