@@ -44,6 +44,7 @@ public class AbpApplicationManager : OpenIddictApplicationManager<OpenIddictAppl
 
         if (descriptor is AbpApplicationDescriptor model)
         {
+            model.FrontChannelLogoutUri = application.FrontChannelLogoutUri;
             model.ClientUri = application.ClientUri;
             model.LogoUri = application.LogoUri;
         }
@@ -55,10 +56,20 @@ public class AbpApplicationManager : OpenIddictApplicationManager<OpenIddictAppl
 
         if (descriptor is AbpApplicationDescriptor model)
         {
+            application.FrontChannelLogoutUri = model.FrontChannelLogoutUri;
             application.ClientUri = model.ClientUri;
             application.LogoUri = model.LogoUri;
         }
     }
+
+    public virtual async ValueTask<string> GetFrontChannelLogoutUriAsync(object application, CancellationToken cancellationToken = default)
+    {
+        Check.NotNull(application, nameof(application));
+        Check.AssignableTo<IAbpOpenIdApplicationStore>(application.GetType(), nameof(application));
+
+        return await Store.As<IAbpOpenIdApplicationStore>().GetFrontChannelLogoutUriAsync(application.As<OpenIddictApplicationModel>(), cancellationToken);
+    }
+
 
     public virtual async ValueTask<string> GetClientUriAsync(object application, CancellationToken cancellationToken = default)
     {
