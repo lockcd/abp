@@ -46,7 +46,7 @@ Select the `CloudCrm.CatalogService` module and click the *OK* button. It will o
 
 ## Generating a Products Page
 
-In the next section, we will use ABP Suite to create a fully functional CRUD page with ABP Suite. The UI part will be in the main web application (`CloudCrm.Web`) and the application service and other parts will be generated in the Catalog microservice.
+In the next section, we will use ABP Suite to create a fully functional CRUD page with ABP Suite. The UI part will be in the main web application (`{{if UI == "MVC"}} `CloudCrm.Web` {{else if UI == "BlazorServer" || UI == "Blazor" || UI == "BlazorWebApp"}} `CloudCrm.Blazor` {{else}} `Angular` {{end}}`) and the application service and other parts will be generated in the Catalog microservice.
 
 ### Configuring the Product Entity Information
 

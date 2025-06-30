@@ -295,6 +295,8 @@ Open the `Index.cshtml` file (the `Index.cshtml` file under the `Pages/Orders` f
 
 {{else if UI == "NG"}}
 
+Open the `order.component.html` file (the `order.component.html` file under the `angular\projects\ordering-service\src\lib\order`) and update the table content to display the product name instead of the product ID:
+
 ```html
 <div class="card">
     <div class="card-body">
@@ -317,6 +319,8 @@ Open the `Index.cshtml` file (the `Index.cshtml` file under the `Pages/Orders` f
 ```
 
 {{else if UI == "Blazor" || UI == "BlazorServer" || UI == "BlazorWebApp"}}
+
+Open the `Orders.razor` file (the `Orders.razor` file under the {{if UI == "BlazorServer"}} `CloudCrm.Blazor\Pages` {{else}} `CloudCrm.Blazor.Client\Pages` {{end}} and update the table content to display the product name instead of the product ID:
 
 ```html
 <ul class="list-group">
