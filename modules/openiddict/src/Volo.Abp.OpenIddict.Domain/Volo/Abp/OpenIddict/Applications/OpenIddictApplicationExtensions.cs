@@ -27,6 +27,7 @@ public static class OpenIddictApplicationExtensions
             RedirectUris = model.RedirectUris,
             Requirements = model.Requirements,
             Settings = model.Settings,
+            FrontChannelLogoutUri = model.FrontChannelLogoutUri,
             ClientUri = model.ClientUri,
             LogoUri = model.LogoUri
         };
@@ -59,6 +60,7 @@ public static class OpenIddictApplicationExtensions
         entity.RedirectUris = model.RedirectUris;
         entity.Requirements = model.Requirements;
         entity.Settings = model.Settings;
+        entity.FrontChannelLogoutUri = model.FrontChannelLogoutUri;
         entity.ClientUri = model.ClientUri;
         entity.LogoUri = model.LogoUri;
 

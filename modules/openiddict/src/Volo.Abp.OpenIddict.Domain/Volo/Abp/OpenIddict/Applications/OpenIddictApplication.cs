@@ -95,6 +95,11 @@ public class OpenIddictApplication : FullAuditedAggregateRoot<Guid>
     public virtual string Settings { get; set; }
 
     /// <summary>
+    /// Gets or sets the front-channel logout URI associated with the application.
+    /// </summary>
+    public virtual string FrontChannelLogoutUri { get; set; }
+
+    /// <summary>
     /// URI to further information about client.
     /// </summary>
     public string ClientUri { get; set; }
