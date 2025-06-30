@@ -1,4 +1,5 @@
-﻿using OpenIddict.Abstractions;
+﻿using System;
+using OpenIddict.Abstractions;
 
 namespace Volo.Abp.OpenIddict.Applications;
 
@@ -7,7 +8,7 @@ public class AbpApplicationDescriptor : OpenIddictApplicationDescriptor
     /// <summary>
     /// Gets or sets the front-channel logout URI associated with the application.
     /// </summary>
-    public virtual string FrontChannelLogoutUri { get; set; }
+    public virtual Uri FrontChannelLogoutUri { get; set; }
 
     /// <summary>
     /// URI to further information about client.

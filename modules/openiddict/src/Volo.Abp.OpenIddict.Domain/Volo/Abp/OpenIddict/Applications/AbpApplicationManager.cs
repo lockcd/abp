@@ -44,7 +44,17 @@ public class AbpApplicationManager : OpenIddictApplicationManager<OpenIddictAppl
 
         if (descriptor is AbpApplicationDescriptor model)
         {
-            model.FrontChannelLogoutUri = application.FrontChannelLogoutUri;
+
+            if (!application.FrontChannelLogoutUri.IsNullOrWhiteSpace())
+            {
+                if (!Uri.TryCreate(application.FrontChannelLogoutUri, UriKind.Absolute, out var uri) || IsImplicitFileUri(uri))
+                {
+                    throw new ArgumentException(OpenIddictResources.GetResourceString("ID0214"));
+                }
+
+                model.FrontChannelLogoutUri = uri;
+            }
+
             model.ClientUri = application.ClientUri;
             model.LogoUri = application.LogoUri;
         }
@@ -56,7 +66,7 @@ public class AbpApplicationManager : OpenIddictApplicationManager<OpenIddictAppl
 
         if (descriptor is AbpApplicationDescriptor model)
         {
-            application.FrontChannelLogoutUri = model.FrontChannelLogoutUri;
+            application.FrontChannelLogoutUri = model.FrontChannelLogoutUri?.OriginalString;
             application.ClientUri = model.ClientUri;
             application.LogoUri = model.LogoUri;
         }
@@ -69,7 +79,6 @@ public class AbpApplicationManager : OpenIddictApplicationManager<OpenIddictAppl
 
         return await Store.As<IAbpOpenIdApplicationStore>().GetFrontChannelLogoutUriAsync(application.As<OpenIddictApplicationModel>(), cancellationToken);
     }
-
 
     public virtual async ValueTask<string> GetClientUriAsync(object application, CancellationToken cancellationToken = default)
     {
@@ -85,5 +94,12 @@ public class AbpApplicationManager : OpenIddictApplicationManager<OpenIddictAppl
         Check.AssignableTo<IAbpOpenIdApplicationStore>(application.GetType(), nameof(application));
 
         return await Store.As<IAbpOpenIdApplicationStore>().GetLogoUriAsync(application.As<OpenIddictApplicationModel>(), cancellationToken);
+    }
+
+    protected virtual bool IsImplicitFileUri(Uri uri)
+    {
+        Check.NotNull(uri, nameof(uri));
+
+        return uri.IsAbsoluteUri && uri.IsFile && !uri.OriginalString.StartsWith(uri.Scheme, StringComparison.OrdinalIgnoreCase);
     }
 }
