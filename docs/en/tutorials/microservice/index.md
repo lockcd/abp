@@ -38,7 +38,7 @@ This tutorial is organized as the following parts:
 
 ## Download the Source Code
 
-After logging in to the ABP website, you can download the source code from {{if UI == "MVC"}} [here](https://abp.io/api/download/samples/cloud-crm-mvc-ef) {{else if UI == "NG"}} [here](https://abp.io/api/download/samples/cloud-crm-ng-ef) {{else}} [here](https://abp.io/api/download/samples/cloud-crm-blazor-ef) {{end}}.
+After logging in to the ABP website, you can download the source code from {{if UI == "MVC"}} [here](https://abp.io/api/download/samples/cloud-crm-mvc-ef) {{else if UI == "NG"}} [here](https://abp.io/api/download/samples/cloud-crm-ng-ef) {{else if UI == "Blazor"}} [here](https://abp.io/api/download/samples/cloud-crm-blazor-wasm-ef) {{else if UI == "BlazorServer"}} [here](https://abp.io/api/download/samples/cloud-crm-blazor-server-ef) {{else if UI == "BlazorWebApp"}} [here](https://abp.io/api/download/samples/cloud-crm-blazor-webapp-ef) {{end}}.
 
 ## See Also
 
