@@ -75,7 +75,7 @@ public class AbpApplicationManager : OpenIddictApplicationManager<OpenIddictAppl
     public virtual async ValueTask<string> GetFrontChannelLogoutUriAsync(object application, CancellationToken cancellationToken = default)
     {
         Check.NotNull(application, nameof(application));
-        Check.AssignableTo<IAbpOpenIdApplicationStore>(application.GetType(), nameof(application));
+        Check.AssignableTo<OpenIddictApplicationModel>(application.GetType(), nameof(application));
 
         return await Store.As<IAbpOpenIdApplicationStore>().GetFrontChannelLogoutUriAsync(application.As<OpenIddictApplicationModel>(), cancellationToken);
     }
@@ -83,7 +83,7 @@ public class AbpApplicationManager : OpenIddictApplicationManager<OpenIddictAppl
     public virtual async ValueTask<string> GetClientUriAsync(object application, CancellationToken cancellationToken = default)
     {
         Check.NotNull(application, nameof(application));
-        Check.AssignableTo<IAbpOpenIdApplicationStore>(application.GetType(), nameof(application));
+        Check.AssignableTo<OpenIddictApplicationModel>(application.GetType(), nameof(application));
 
         return await Store.As<IAbpOpenIdApplicationStore>().GetClientUriAsync(application.As<OpenIddictApplicationModel>(), cancellationToken);
     }
@@ -91,7 +91,7 @@ public class AbpApplicationManager : OpenIddictApplicationManager<OpenIddictAppl
     public virtual async ValueTask<string> GetLogoUriAsync(object application, CancellationToken cancellationToken = default)
     {
         Check.NotNull(application, nameof(application));
-        Check.AssignableTo<IAbpOpenIdApplicationStore>(application.GetType(), nameof(application));
+        Check.AssignableTo<OpenIddictApplicationModel>(application.GetType(), nameof(application));
 
         return await Store.As<IAbpOpenIdApplicationStore>().GetLogoUriAsync(application.As<OpenIddictApplicationModel>(), cancellationToken);
     }

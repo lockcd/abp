@@ -102,6 +102,7 @@ public static class OpenIddictApplicationExtensions
             RedirectUris = entity.RedirectUris,
             Requirements = entity.Requirements,
             Settings = entity.Settings,
+            FrontChannelLogoutUri = entity.FrontChannelLogoutUri,
             ClientUri = entity.ClientUri,
             LogoUri = entity.LogoUri
         };
