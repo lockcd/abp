@@ -4,8 +4,6 @@ This document contains **brief release notes** for each ABP Studio release. Rele
 
 ## 1.0.2 (2025-06-24)
 
-* Various improvements and fixes related to Docker containers.
-* Resolved issues in Blazor Web App microservices.
 * Enhanced the ABP NuGet package installation experience.
 * Upgraded template dependencies for ABP Framework and LeptonX. (targeting ABP `9.2.1`)
 * Replaced the `System.Data` package with `Microsoft.Data`.
@@ -21,13 +19,17 @@ This document contains **brief release notes** for each ABP Studio release. Rele
 
 ## 1.0.0 (2025-06-11)
 
+* **Solution Runner with Health Checks:** ABP Studio's Solution Runner now provides visual health monitoring that makes tracking your applications' status easily.
+* **Improved Multi-DbContext Migration Handling:** ABP Studio now prompts you to select the correct DbContext for migration operations when working with multiple DbContexts.
+* **Theme Style Selection on Project Creation:** When creating a new solution, you can now choose your theme, theme style, and layout right from the project creation wizard instead of having to configure these settings later.
 * **Solution & Module Creation:** Introduced major enhancements, including language selection, database provider choice for microservices, improved folder handling, theme visualization, and better module installation recommendations.
 * **MAUI & Blazor:** Configured the new MAUI/Blazor bundling system, added dashboard pages to MAUI projects, and applied various fixes for themes and dependencies.
 * **Solution Runner & Docker:** Added Docker container support to the solution runner, enabling users to add and manage containers within run profiles.
-* **Authentication & Authorization:** Improved login flows with `select_account` support, fixed Swagger authentication, and added dynamic claims support for microservices.
+* **Authentication & Authorization:** Fixed Swagger authentication, and added dynamic claims support for microservices.
+* **ABP Studio Login:** Improved login flows with selecting account and organization support.
 * **Language Selection:** Added language selection during solution creation. You can now include only the languages you need in your project.
 * **Performance:** Sped up the development cycle by skipping package restores during project runs when no dependencies have changed.
-* **Dependency Updates:** Upgraded ABP Framework, ABP Commercial, LeptonX, and other Microsoft dependencies to the latest versions. (targeting ABP `9.2.0`)
+* **Dependency Updates:** Upgraded ABP Framework, LeptonX, and other Microsoft dependencies to the latest versions. (targeting ABP `9.2.0`)
 * **User Experience:** Implemented several UI/UX improvements, such as remembering user choices in wizards and sorting items alphabetically.
 * **Testing & Internals:** Switched to `MongoSandbox` for integration tests, improved local development against abp.io websites, and made various fixes to CI/CD workflows.
 
