@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Volo.Abp.BackgroundWorkers;
 
@@ -26,6 +27,12 @@ public static class BackgroundWorkersApplicationInitializationContextExtensions
         if (!workerType.IsAssignableTo<IBackgroundWorker>())
         {
             throw new AbpException($"Given type ({workerType.AssemblyQualifiedName}) must implement the {typeof(IBackgroundWorker).AssemblyQualifiedName} interface, but it doesn't!");
+        }
+
+        if (cancellationToken == default)
+        {
+            var hostApplicationLifetime = context.ServiceProvider.GetRequiredService<IHostApplicationLifetime>();
+            cancellationToken = hostApplicationLifetime.ApplicationStopping;
         }
 
         await context.ServiceProvider
