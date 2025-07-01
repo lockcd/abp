@@ -25,21 +25,10 @@ public class AbpSecurityHeadersMiddleware : AbpMiddlewareBase, ITransientDepende
     {
         var endpoint = context.GetEndpoint();
 
-        if (endpoint?.Metadata.GetMetadata<IgnoreAbpSecurityHeaderAttribute>() != null)
+        if (endpoint?.Metadata.GetMetadata<IgnoreAbpSecurityHeaderAttribute>() != null ||
+            await AlwaysIgnoreContentTypes(context) ||
+            Options.Value.IgnoredScriptNoncePaths.Any(x => context.Request.Path.StartsWithSegments(x.EnsureStartsWith('/'), StringComparison.OrdinalIgnoreCase)))
         {
-            await next.Invoke(context);
-            return;
-        }
-        var requestAcceptTypeHtml = context.Request.Headers["Accept"].Any(x =>
-            x!.Contains("text/html") || x.Contains("*/*") || x.Contains("application/xhtml+xml"));
-
-        if (!requestAcceptTypeHtml
-            || !Options.Value.UseContentSecurityPolicyHeader
-            || await AlwaysIgnoreContentTypes(context)
-            || endpoint == null
-            || Options.Value.IgnoredScriptNoncePaths.Any(x => context.Request.Path.StartsWithSegments(x.EnsureStartsWith('/'), StringComparison.OrdinalIgnoreCase)))
-        {
-            AddOtherHeaders(context);
             await next.Invoke(context);
             return;
         }
@@ -52,6 +41,20 @@ public class AbpSecurityHeadersMiddleware : AbpMiddlewareBase, ITransientDepende
 
         /*The X-Frame-Options HTTP response header can be used to indicate whether or not a browser should be allowed to render a page in a <frame>, <iframe> or <object>. SAMEORIGIN makes it being displayed in a frame on the same origin as the page itself. The spec leaves it up to browser vendors to decide whether this option applies to the top level, the parent, or the whole chain*/
         AddHeader(context, "X-Frame-Options", "SAMEORIGIN");
+
+        var requestAcceptTypeHtml = context.Request.Headers["Accept"].Any(x =>
+            x!.Contains("text/html", StringComparison.OrdinalIgnoreCase) ||
+            x.Contains("*/*", StringComparison.OrdinalIgnoreCase) ||
+            x.Contains("application/xhtml+xml", StringComparison.OrdinalIgnoreCase));
+
+        if (!requestAcceptTypeHtml
+            || !Options.Value.UseContentSecurityPolicyHeader
+            || endpoint == null)
+        {
+            AddOtherHeaders(context);
+            await next.Invoke(context);
+            return;
+        }
 
         if (Options.Value.UseContentSecurityPolicyScriptNonce)
         {
