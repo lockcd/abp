@@ -107,7 +107,7 @@ If you uncheck the *Kubernetes Configuration* option, the solution will not incl
 
 On the next screen, you can configure the modularity options for your solution:
 
-If you select the *Setup as a modular solution* option, the solution is created more ready for [modular monolith development](../tutorials/modular-crm/index.md) and allows you to add sub-modules during the solution creation phase.
+> If you select the *Setup as a modular solution* option, the solution is created more ready for [modular monolith development](../tutorials/modular-crm/index.md) and allows you to add sub-modules during the solution creation phase.
 
 ![abp-studio-new-solution-modularity](images/abp-studio-new-solution-dialog-modularity.png)
 
