@@ -31,8 +31,11 @@ public static class BackgroundWorkersApplicationInitializationContextExtensions
 
         if (cancellationToken == default)
         {
-            var hostApplicationLifetime = context.ServiceProvider.GetRequiredService<IHostApplicationLifetime>();
-            cancellationToken = hostApplicationLifetime.ApplicationStopping;
+            var hostApplicationLifetime = context.ServiceProvider.GetService<IHostApplicationLifetime>();
+            if (hostApplicationLifetime != null)
+            {
+                cancellationToken = hostApplicationLifetime.ApplicationStopping;
+            }
         }
 
         await context.ServiceProvider
