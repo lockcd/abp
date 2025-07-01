@@ -111,7 +111,6 @@ If you select the *Setup as a modular solution* option, the solution is created 
 
 ![abp-studio-new-solution-modularity](images/abp-studio-new-solution-dialog-modularity.png)
 
-
 Now, we are ready to allow ABP Studio to create our solution. Just click the *Create* button and let the ABP Studio do the rest for you. After clicking the Create button, the dialog is closed and your solution is loaded into ABP Studio:
 
 ![abp-studio-created-new-solution](images/abp-studio-created-new-solution.png)
