@@ -159,4 +159,4 @@ You can open the Sql Server Management Studio to see the created tables and data
 
 ## Summary
 
-In this part, we've created a new entity named *Product* and generated the necessary code for it. We've also generated the UI proxy for the `CatalogService` application and configured the static HTTP client for it in the `Web` project. We've run the application and tested the *Products* page.
+In this part, we've created a new entity named *Product* and generated the necessary code for it. We've also generated the UI proxy for the `CatalogService` application and configured the static HTTP client for it in the {{if UI == "MVC"}} `CloudCrm.Web` {{else if UI == "BlazorServer"}} `CloudCrm.Blazor` {{else}} `CloudCrm.Blazor.Client` {{end}} project. We've run the application and tested the *Products* page.
