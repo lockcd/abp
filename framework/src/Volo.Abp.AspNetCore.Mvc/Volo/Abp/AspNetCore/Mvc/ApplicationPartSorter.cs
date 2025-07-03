@@ -23,7 +23,7 @@ public static class ApplicationPartSorter
 
             if (!parts.IsNullOrEmpty())
             {
-                sortedParts.AddRange(parts);
+                sortedParts.AddRange(parts.OrderBy(x => x is AssemblyPart ? 1 : 0));
             }
         }
         sortedParts.Reverse();
