@@ -56,9 +56,9 @@ jobs:
       with:
         dotnet-version: 9.0.100
 
-    - name: chown
-      run: |
-        sudo chown -R $USER:$USER /home/runneradmin
+    # - name: chown
+    #   run: |
+    #     sudo chown -R $USER:$USER /home/runneradmin
 
     - name: Build All
       run: ./build-all.ps1
