@@ -95,7 +95,6 @@ using Volo.Abp.Domain.Repositories;
 
 namespace ModularCrm.Catalog.Integration;
 
-[IntegrationService]
 public class ProductIntegrationService
     : CatalogAppService, IProductIntegrationService
 {
