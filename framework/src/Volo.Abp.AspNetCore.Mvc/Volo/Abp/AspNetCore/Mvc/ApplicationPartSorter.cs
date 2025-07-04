@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Volo.Abp.Modularity;
 
@@ -13,24 +13,36 @@ public static class ApplicationPartSorter
 {
     public static void Sort(ApplicationPartManager partManager, IModuleContainer moduleContainer)
     {
-        var sortedParts = new List<ApplicationPart>();
-        foreach (var module in moduleContainer.Modules)
-        {
-            var parts = partManager.ApplicationParts.Where(part =>
-                    (part is AssemblyPart ap && ap.Assembly == module.Assembly) ||
-                    (part is CompiledRazorAssemblyPart crp && crp.Assembly == module.Assembly))
-                .ToList();
+        var orderedModuleAssemblies = moduleContainer.Modules
+            .Select((moduleDescriptor, index) => new { moduleDescriptor.Assembly, index })
+            .ToDictionary(x => x.Assembly, x => x.index);
 
-            if (!parts.IsNullOrEmpty())
-            {
-                sortedParts.AddRange(parts.OrderBy(x => x is AssemblyPart ? 1 : 0));
-            }
-        }
-        sortedParts.Reverse();
+        var modulesAssemblies = moduleContainer.Modules.Select(x => x.Assembly).ToList();
+        var sortedTypes = partManager.ApplicationParts
+            .Where(x => modulesAssemblies.Contains(GetApplicationPartAssembly(x)))
+            .OrderBy(x => orderedModuleAssemblies[GetApplicationPartAssembly(x)])
+            .ToList();
+
+        var sortIndex = 0;
+        var sortedParts = partManager.ApplicationParts
+            .Select(x => modulesAssemblies.Contains(GetApplicationPartAssembly(x)) ? sortedTypes[sortIndex++] : x)
+            .ToList();
+
         partManager.ApplicationParts.Clear();
+        sortedParts.Reverse();
         foreach (var applicationPart in sortedParts)
         {
             partManager.ApplicationParts.Add(applicationPart);
         }
+    }
+
+    private static Assembly GetApplicationPartAssembly(ApplicationPart part)
+    {
+        return part switch
+        {
+            AssemblyPart assemblyPart => assemblyPart.Assembly,
+            CompiledRazorAssemblyPart compiledRazorAssemblyPart => compiledRazorAssemblyPart.Assembly,
+            _ => throw new AbpException("Unknown application part type")
+        };
     }
 }
