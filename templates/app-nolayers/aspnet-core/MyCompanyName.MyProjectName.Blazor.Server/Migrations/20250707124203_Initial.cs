@@ -427,6 +427,7 @@ namespace MyCompanyName.MyProjectName.Blazor.Server.Migrations
                     RedirectUris = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Requirements = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Settings = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FrontChannelLogoutUri = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClientUri = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LogoUri = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
