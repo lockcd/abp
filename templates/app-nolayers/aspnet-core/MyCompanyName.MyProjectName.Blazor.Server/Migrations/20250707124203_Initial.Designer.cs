@@ -13,7 +13,7 @@ using Volo.Abp.EntityFrameworkCore;
 namespace MyCompanyName.MyProjectName.Blazor.Server.Migrations
 {
     [DbContext(typeof(MyProjectNameDbContext))]
-    [Migration("20250611122251_Initial")]
+    [Migration("20250707124203_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -1228,6 +1228,9 @@ namespace MyCompanyName.MyProjectName.Blazor.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ExtraProperties");
+
+                    b.Property<string>("FrontChannelLogoutUri")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()

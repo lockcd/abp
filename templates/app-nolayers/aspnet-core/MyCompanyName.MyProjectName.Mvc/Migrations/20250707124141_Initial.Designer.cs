@@ -10,10 +10,10 @@ using Volo.Abp.EntityFrameworkCore;
 
 #nullable disable
 
-namespace MyCompanyName.MyProjectName.Host.Migrations
+namespace MyCompanyName.MyProjectName.Mvc.Migrations
 {
     [DbContext(typeof(MyProjectNameDbContext))]
-    [Migration("20250611122225_Initial")]
+    [Migration("20250707124141_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -1228,6 +1228,9 @@ namespace MyCompanyName.MyProjectName.Host.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ExtraProperties");
+
+                    b.Property<string>("FrontChannelLogoutUri")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace MyCompanyName.MyProjectName.Host.Migrations
+namespace MyCompanyName.MyProjectName.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -427,6 +427,7 @@ namespace MyCompanyName.MyProjectName.Host.Migrations
                     RedirectUris = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Requirements = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Settings = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FrontChannelLogoutUri = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClientUri = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LogoUri = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
