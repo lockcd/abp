@@ -441,7 +441,6 @@ Here, you simply use the `IProductAppService` to get a list of all products and 
 @page
 @using Microsoft.Extensions.Localization
 @using ModularCrm.Catalog.Localization
-@using ModularCrm.Catalog.UI.Pages.Catalog
 @model ModularCrm.Catalog.UI.Pages.Catalog.IndexModel
 @inject IStringLocalizer<CatalogResource> L
 
