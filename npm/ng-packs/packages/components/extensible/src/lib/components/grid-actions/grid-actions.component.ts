@@ -1,9 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Injector,
-  Input,
-  TrackByFunction,
+import { 
+  ChangeDetectionStrategy, 
+  Component, 
+  Injector, 
+  Input, 
+  TrackByFunction, 
+  inject 
 } from '@angular/core';
 import { EntityAction, EntityActionList } from '../../models/entity-actions';
 import { EXTENSIONS_ACTION_TYPE } from '../../tokens/extensions.token';
@@ -43,7 +44,9 @@ export class GridActionsComponent<R = any> extends AbstractActionsComponent<Enti
 
   readonly trackByFn: TrackByFunction<EntityAction<R>> = (_, item) => item.text;
 
-  constructor(injector: Injector) {
-    super(injector);
+  constructor() {
+    const injector = inject(Injector);
+
+    super();
   }
 }
