@@ -90,8 +90,8 @@ export function createLazyStyleHref(style: string, dir: string): string {
   return style.replace(/{{\s*dir\s*}}/g, dir);
 }
 
-export function initLazyStyleHandler(injector: Injector) {
-  return () => new LazyStyleHandler(injector);
+export function initLazyStyleHandler() {
+  return () => new LazyStyleHandler();
 }
 
 interface LoadedStyle {
