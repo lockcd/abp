@@ -10,7 +10,6 @@ public static class AbpAspNetCoreMultiTenancyApplicationBuilderExtensions
 {
     private const string AuthenticationMiddlewareSetKey = "__AuthenticationMiddlewareSet";
 
-
     public static IApplicationBuilder UseMultiTenancy(this IApplicationBuilder app)
     {
         var multiTenancyOptions = app.ApplicationServices.GetRequiredService<AbpTenantResolveOptions>();
