@@ -22,7 +22,6 @@ import { LoadingComponent } from '../components';
 })
 export class LoadingDirective implements OnInit, OnDestroy {
   private elRef = inject<ElementRef<HTMLElement>>(ElementRef);
-  private vcRef = inject(ViewContainerRef);
   private cdRes = inject(ComponentFactoryResolver);
   private injector = inject(Injector);
   private renderer = inject(Renderer2);

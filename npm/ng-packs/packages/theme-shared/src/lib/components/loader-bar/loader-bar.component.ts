@@ -24,7 +24,6 @@ import { HttpWaitService, RouterWaitService, SubscriptionService } from '@abp/ng
   imports: [CommonModule],
 })
 export class LoaderBarComponent implements OnDestroy, OnInit {
-  private router = inject(Router);
   private cdRef = inject(ChangeDetectorRef);
   private subscription = inject(SubscriptionService);
   private httpWaitService = inject(HttpWaitService);

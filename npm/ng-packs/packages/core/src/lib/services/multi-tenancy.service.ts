@@ -7,12 +7,10 @@ import {
 } from '../proxy/volo/abp/asp-net-core/mvc/multi-tenancy/models';
 import { TENANT_KEY } from '../tokens/tenant-key.token';
 import { ConfigStateService } from './config-state.service';
-import { RestService } from './rest.service';
 import { SessionStateService } from './session-state.service';
 
 @Injectable({ providedIn: 'root' })
 export class MultiTenancyService {
-  private restService = inject(RestService);
   private sessionState = inject(SessionStateService);
   private tenantService = inject(AbpTenantService);
   private configStateService = inject(ConfigStateService);
