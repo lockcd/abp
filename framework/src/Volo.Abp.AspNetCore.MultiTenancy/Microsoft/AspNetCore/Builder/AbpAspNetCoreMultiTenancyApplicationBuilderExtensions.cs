@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Volo.Abp.AspNetCore.MultiTenancy;
 using Volo.Abp.MultiTenancy;
 
@@ -12,8 +13,8 @@ public static class AbpAspNetCoreMultiTenancyApplicationBuilderExtensions
 
     public static IApplicationBuilder UseMultiTenancy(this IApplicationBuilder app)
     {
-        var multiTenancyOptions = app.ApplicationServices.GetRequiredService<AbpTenantResolveOptions>();
-        var hasCurrentUserTenantResolveContributor = multiTenancyOptions.TenantResolvers.Any(r => r is CurrentUserTenantResolveContributor);
+        var multiTenancyOptions = app.ApplicationServices.GetRequiredService<IOptions<AbpTenantResolveOptions>>();
+        var hasCurrentUserTenantResolveContributor = multiTenancyOptions.Value.TenantResolvers.Any(r => r is CurrentUserTenantResolveContributor);
         if (hasCurrentUserTenantResolveContributor)
         {
             var authenticationMiddlewareSet = app.Properties.TryGetValue(AuthenticationMiddlewareSetKey, out var value) && value is true;
