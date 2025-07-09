@@ -10,9 +10,15 @@
 }
 ````
 
-ABP Studio offers a comprehensive centralized monitoring solution, enabling you to oversee all applications from a single interface. To see the monitoring tabs you can select the [Solution Runner](./running-applications.md) or *Kubernetes* from the left menu, monitoring tabs are automatically opened in the center. You can start the applications for monitoring. Various monitoring options are available, including [Overall](#overall), [Browse](#browse), [HTTP Requests](#http-requests), [Events](#events), [Exceptions](#exceptions), [Logs](#logs). 
+ABP Studio offers a comprehensive centralized monitoring solution, enabling you to oversee all applications from a single interface. To see the monitoring tabs you can select the [Solution Runner](./running-applications.md) or *Kubernetes* from the left menu, monitoring tabs are automatically opened in the center. You can start the applications for monitoring. Various monitoring options are available, including [Overall](#overall), [Browse](#browse), [HTTP Requests](#http-requests), [Events](#events), [Exceptions](#exceptions), [Logs](#logs), [Tools](#tools). 
 
 ![monitoring](./images/monitoring-applications/monitoring.png)
+
+If you want to open any of these tabs in separate window, just drag it from the header a little bit and it will pop-up in a new window. In this way you can monitor multiple tabs at once.
+
+![monitoring-window-hint](./images/monitoring-applications/monitoring-window-hint.png)
+
+
 
 ## Collecting Telemetry Information
 
