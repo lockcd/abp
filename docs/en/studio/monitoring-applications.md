@@ -14,11 +14,9 @@ ABP Studio offers a comprehensive centralized monitoring solution, enabling you 
 
 ![monitoring](./images/monitoring-applications/monitoring.png)
 
-If you want to open any of these tabs in separate window, just drag it from the header a little bit and it will pop-up in a new window. In this way you can monitor multiple tabs at once.
+If you want to open any of these tabs in separate window, just drag it from the header a little bit and it will pop-up in a new window. In this way you can monitor multiple tabs at once:
 
 ![monitoring-window-hint](./images/monitoring-applications/monitoring-window-hint.png)
-
-
 
 ## Collecting Telemetry Information
 
