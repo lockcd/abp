@@ -3,7 +3,6 @@ import {
   CORE_OPTIONS,
   EnvironmentService,
   ExternalHttpClient,
-  HttpErrorReporterService,
   RestService,
 } from '@abp/ng.core';
 import { HttpClient } from '@angular/common/http';
@@ -25,7 +24,7 @@ export class MockRestService extends RestService {
     const externalhttp = inject(ExternalHttpClient);
     const environment = inject(EnvironmentService);
 
-    super(options, http,externalhttp, environment, null as unknown as HttpErrorReporterService);
+    super();
   
     this.options = options;
     this.http = http;

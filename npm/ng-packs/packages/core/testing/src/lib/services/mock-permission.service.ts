@@ -9,8 +9,7 @@ export class MockPermissionService extends PermissionService {
 
   constructor() {
     const configState = inject(ConfigStateService);
-
-    super(configState);
+    super();
     this.configState = configState;
 
     this.grantAllPolicies();
