@@ -13,6 +13,5 @@
         <ProjectReference Include="..\..\src\Volo.Abp.Mapperly\Volo.Abp.Mapperly.csproj" />
         <ProjectReference Include="..\..\test\Volo.Abp.ObjectExtending.Tests\Volo.Abp.ObjectExtending.Tests.csproj" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
-        <PackageReference Include="Riok.Mapperly" ExcludeAssets="runtime" PrivateAssets="all" />
     </ItemGroup>
 </Project>

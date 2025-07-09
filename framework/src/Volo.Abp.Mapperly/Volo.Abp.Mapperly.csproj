@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Riok.Mapperly" ExcludeAssets="runtime" PrivateAssets="all" />
+        <PackageReference Include="Riok.Mapperly" />
     </ItemGroup>
 
 </Project>
