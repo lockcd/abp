@@ -5,7 +5,6 @@ import {
   ElementRef, 
   HostBinding, 
   Input, 
-  NgModule, 
   inject 
 } from '@angular/core';
 

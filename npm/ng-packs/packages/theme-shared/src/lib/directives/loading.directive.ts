@@ -10,7 +10,6 @@ import {
   OnDestroy, 
   OnInit, 
   Renderer2, 
-  ViewContainerRef, 
   inject 
 } from '@angular/core';
 import { Subscription, timer } from 'rxjs';

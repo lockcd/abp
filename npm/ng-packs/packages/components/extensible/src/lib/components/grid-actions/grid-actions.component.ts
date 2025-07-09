@@ -45,8 +45,6 @@ export class GridActionsComponent<R = any> extends AbstractActionsComponent<Enti
   readonly trackByFn: TrackByFunction<EntityAction<R>> = (_, item) => item.text;
 
   constructor() {
-    const injector = inject(Injector);
-
     super();
   }
 }

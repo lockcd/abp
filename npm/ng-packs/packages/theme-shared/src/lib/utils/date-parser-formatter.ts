@@ -16,6 +16,10 @@ export class DateParserFormatter extends NgbDateParserFormatter {
   private configState = inject(ConfigStateService);
   private locale = inject(LOCALE_ID);
 
+  constructor() {
+    super();
+  }
+
 
   parse(value: string): NgbDateStruct | null {
     if (value) {
