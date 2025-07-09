@@ -1,10 +1,8 @@
 import { 
   ChangeDetectionStrategy, 
   Component, 
-  Injector, 
   Input, 
   TrackByFunction, 
-  inject 
 } from '@angular/core';
 import { EntityAction, EntityActionList } from '../../models/entity-actions';
 import { EXTENSIONS_ACTION_TYPE } from '../../tokens/extensions.token';
