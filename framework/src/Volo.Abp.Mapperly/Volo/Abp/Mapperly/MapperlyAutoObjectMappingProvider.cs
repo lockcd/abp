@@ -37,6 +37,16 @@ public class MapperlyAutoObjectMappingProvider : IAutoObjectMappingProvider
             return destination;
         }
 
+        var reverseMapper = ServiceProvider.GetService<IAbpReverseMapperly<TSource, TDestination>>();
+        if (reverseMapper != null)
+        {
+            reverseMapper.BeforeReverseMap((TSource)source);
+            var destination = reverseMapper.ReverseMap((TSource)source);
+            TryMapExtraProperties(reverseMapper.As<IAbpMapperly<TDestination, TSource>>(),  destination, (TSource)source, GetExtraProperties(destination));
+            reverseMapper.AfterReverseMap((TSource)source, destination);
+            return destination;
+        }
+
         throw new AbpException($"No {nameof(IAbpMapperly<TSource, TDestination>)} mapper found for {typeof(TSource).FullName} to {typeof(TDestination).FullName}");
     }
 

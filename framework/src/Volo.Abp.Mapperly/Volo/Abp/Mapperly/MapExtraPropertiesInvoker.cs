@@ -31,10 +31,10 @@ public static class MapExtraPropertiesInvoker
         string[]? ignoredProperties = null,
         bool mapToRegularProperties = false)
     {
-        var key = (typeof(TSource), typeof(TDestination));
-
-        var action = Cache.GetOrAdd(key, static key =>
+        var mapExtraProperties = Cache.GetOrAdd((typeof(TSource), typeof(TDestination)), static key =>
         {
+            Check.NotNull(MethodDefinition, nameof(MethodDefinition));
+
             var genericMethod = MethodDefinition.MakeGenericMethod(key.Item1, key.Item2);
 
             var targetParam = Expression.Parameter(typeof(object), "target");
@@ -66,6 +66,6 @@ public static class MapExtraPropertiesInvoker
             return lambda.Compile();
         });
 
-        action(targetInstance, source, destination, destinationExtraProperty, definitionChecks, ignoredProperties, mapToRegularProperties);
+        mapExtraProperties(targetInstance, source, destination, destinationExtraProperty, definitionChecks, ignoredProperties, mapToRegularProperties);
     }
 }
