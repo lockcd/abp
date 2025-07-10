@@ -102,7 +102,7 @@ public class MapperlyAutoObjectMappingProvider : IAutoObjectMappingProvider
             typeof(IHasExtraProperties).IsAssignableFrom(typeof(TDestination)) &&
             typeof(IHasExtraProperties).IsAssignableFrom(typeof(TSource)))
         {
-            MapExtraPropertiesInvoker.Invoke<TSource, TDestination>(this,
+            MapExtraProperties<TSource, TDestination>(
                 source!.As<IHasExtraProperties>(),
                 destination!.As<IHasExtraProperties>(),
                 destinationExtraProperty,
@@ -120,8 +120,6 @@ public class MapperlyAutoObjectMappingProvider : IAutoObjectMappingProvider
         MappingPropertyDefinitionChecks? definitionChecks = null,
         string[]? ignoredProperties = null,
         bool mapToRegularProperties = false)
-        where TSource : IHasExtraProperties
-        where TDestination : IHasExtraProperties
     {
         var result = destinationExtraProperty.IsNullOrEmpty()
             ? new Dictionary<string, object?>()
@@ -130,7 +128,9 @@ public class MapperlyAutoObjectMappingProvider : IAutoObjectMappingProvider
         if (source.ExtraProperties != null && destination.ExtraProperties != null)
         {
             ExtensibleObjectMapper
-                .MapExtraPropertiesTo<TSource, TDestination>(
+                .MapExtraPropertiesTo(
+                    typeof(TSource),
+                    typeof(TDestination),
                     source.ExtraProperties,
                     result,
                     definitionChecks,
