@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Data;
 using Volo.Abp.ObjectExtending;
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.Reflection;
 
 namespace Volo.Abp.Mapperly;
 
@@ -47,7 +48,8 @@ public class MapperlyAutoObjectMappingProvider : IAutoObjectMappingProvider
             return destination;
         }
 
-        throw new AbpException($"No {nameof(IAbpMapperly<TSource, TDestination>)} mapper found for {typeof(TSource).FullName} to {typeof(TDestination).FullName}");
+        throw new AbpException($"No {TypeHelper.GetFullNameHandlingNullableAndGenerics(typeof(IAbpMapperly<TSource, TDestination>))} or" +
+                               $" {TypeHelper.GetFullNameHandlingNullableAndGenerics(typeof(IAbpReverseMapperly<TSource, TDestination>))} was found");
     }
 
     public virtual TDestination Map<TSource, TDestination>(TSource source, TDestination destination)
@@ -63,7 +65,19 @@ public class MapperlyAutoObjectMappingProvider : IAutoObjectMappingProvider
             return destination;
         }
 
-        throw new AbpException($"No {nameof(IAbpMapperly<TSource, TDestination>)} mapper found for {typeof(TSource).FullName} to {typeof(TDestination).FullName}");
+        var reverseMapper = ServiceProvider.GetService<IAbpReverseMapperly<TSource, TDestination>>();
+        if (reverseMapper != null)
+        {
+            reverseMapper.BeforeReverseMap(source);
+            var destinationExtraProperties = GetExtraProperties(destination);
+            reverseMapper.ReverseMap(source, destination);
+            TryMapExtraProperties(reverseMapper.As<IAbpReverseMapperly<TDestination, TSource>>(), source, destination, destinationExtraProperties);
+            reverseMapper.AfterReverseMap(source, destination);
+            return destination;
+        }
+
+        throw new AbpException($"No {TypeHelper.GetFullNameHandlingNullableAndGenerics(typeof(IAbpMapperly<TSource, TDestination>))} or" +
+                               $" {TypeHelper.GetFullNameHandlingNullableAndGenerics(typeof(IAbpReverseMapperly<TSource, TDestination>))} was found");
     }
 
     protected virtual ExtraPropertyDictionary GetExtraProperties<TDestination>(TDestination destination)

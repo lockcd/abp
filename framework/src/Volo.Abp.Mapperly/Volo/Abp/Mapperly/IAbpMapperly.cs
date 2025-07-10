@@ -1,6 +1,6 @@
 namespace Volo.Abp.Mapperly;
 
-public interface IAbpMapperly<TSource, TDestination>
+public interface IAbpMapperly<in TSource, TDestination>
 {
     TDestination Map(TSource source);
 

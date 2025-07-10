@@ -16,9 +16,9 @@ public class AbpMapperlyConventionalRegistrar : DefaultConventionalRegistrar
     protected override List<Type> GetExposedServiceTypes(Type type)
     {
         var exposedServiceTypes = base.GetExposedServiceTypes(type);
-        var mapperlyInterfaces = type.GetInterfaces()
-            .Where(x => x.IsGenericType && typeof(IAbpMapperly<,>) == x.GetGenericTypeDefinition() ||
-                        x.IsGenericType && typeof(IAbpReverseMapperly<,>) == x.GetGenericTypeDefinition()).ToList();
+        var mapperlyInterfaces = type.GetInterfaces().Where(x =>
+            x.IsGenericType && (typeof(IAbpMapperly<,>) == x.GetGenericTypeDefinition() ||
+                                typeof(IAbpReverseMapperly<,>) == x.GetGenericTypeDefinition()));
         return exposedServiceTypes
             .Union(mapperlyInterfaces)
             .Distinct()

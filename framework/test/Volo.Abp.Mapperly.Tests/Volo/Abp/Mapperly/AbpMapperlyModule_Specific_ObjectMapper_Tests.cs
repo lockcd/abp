@@ -11,11 +11,11 @@ using Xunit;
 
 namespace Volo.Abp.Mapperly;
 
-public class AbpAutoMapperModule_Specific_ObjectMapper_Tests : AbpIntegratedTest<MapperlyTestModule>
+public class AbpMapperlyModule_Specific_ObjectMapper_Tests : AbpIntegratedTest<MapperlyTestModule>
 {
     private readonly IObjectMapper _objectMapper;
 
-    public AbpAutoMapperModule_Specific_ObjectMapper_Tests()
+    public AbpMapperlyModule_Specific_ObjectMapper_Tests()
     {
         _objectMapper = ServiceProvider.GetRequiredService<IObjectMapper>();
     }
