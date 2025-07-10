@@ -53,8 +53,8 @@ public class AbpMapperlyModule_Basic_Tests : AbpIntegratedTest<MapperlyTestModul
     {
         var exception = Assert.Throws<AbpException>(() =>_objectMapper.Map<MyEntity, MyClassDto>(new MyEntity()));
         exception.Message.ShouldBe("No " +
-                                   "Volo.Abp.Mapperly.IAbpMapperly<Volo.Abp.Mapperly.SampleClasses.MyEntity,Volo.Abp.Mapperly.MyClassDto> or " +
-                                   "Volo.Abp.Mapperly.IAbpReverseMapperly<Volo.Abp.Mapperly.SampleClasses.MyEntity,Volo.Abp.Mapperly.MyClassDto>" +
+                                   "Volo.Abp.Mapperly.IAbpMapperlyMapper<Volo.Abp.Mapperly.SampleClasses.MyEntity,Volo.Abp.Mapperly.MyClassDto> or " +
+                                   "Volo.Abp.Mapperly.IAbpReverseMapperlyMapper<Volo.Abp.Mapperly.SampleClasses.MyEntity,Volo.Abp.Mapperly.MyClassDto>" +
                                    " was found");
     }
 }

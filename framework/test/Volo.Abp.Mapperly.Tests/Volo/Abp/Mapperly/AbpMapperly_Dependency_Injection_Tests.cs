@@ -28,7 +28,7 @@ public class BirthdayCalculatorService : ITransientDependency
 }
 
 [Mapper]
-public partial class MyDIClassMapper : AbpMapperlyBase<MyDIClass, MyDIClassDto>
+public partial class MyDIClassMapper : AbpMapperlyMapperBase<MyDIClass, MyDIClassDto>
 {
     private readonly BirthdayCalculatorService _birthdayCalculatorService;
 

@@ -1,6 +1,6 @@
 namespace Volo.Abp.Mapperly;
 
-public interface IAbpMapperly<in TSource, TDestination>
+public interface IAbpMapperlyMapper<in TSource, TDestination>
 {
     TDestination Map(TSource source);
 
@@ -11,7 +11,7 @@ public interface IAbpMapperly<in TSource, TDestination>
     void AfterMap(TSource source, TDestination destination);
 }
 
-public interface IAbpReverseMapperly<TDestination, TSource> : IAbpMapperly<TSource, TDestination>
+public interface IAbpReverseMapperlyMapper<TDestination, TSource> : IAbpMapperlyMapper<TSource, TDestination>
 {
     TSource ReverseMap(TDestination destination);
 

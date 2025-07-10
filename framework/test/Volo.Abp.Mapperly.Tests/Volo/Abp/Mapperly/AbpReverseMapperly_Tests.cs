@@ -22,7 +22,7 @@ public class MyReverseClassDto
 }
 
 [Mapper]
-public partial class MyReverseClassMapper : AbpReverseMapperlyBase<MyReverseClassDto, MyReverseClass>
+public partial class MyReverseClassMapper : AbpReverseMapperlyMapperBase<MyReverseClassDto, MyReverseClass>
 {
     public override partial MyReverseClassDto Map(MyReverseClass source);
 

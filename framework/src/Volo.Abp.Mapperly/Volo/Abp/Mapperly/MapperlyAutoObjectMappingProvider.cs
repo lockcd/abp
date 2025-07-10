@@ -28,7 +28,7 @@ public class MapperlyAutoObjectMappingProvider : IAutoObjectMappingProvider
 
     public virtual TDestination Map<TSource, TDestination>(object source)
     {
-        var mapper = ServiceProvider.GetService<IAbpMapperly<TSource, TDestination>>();
+        var mapper = ServiceProvider.GetService<IAbpMapperlyMapper<TSource, TDestination>>();
         if (mapper != null)
         {
             mapper.BeforeMap((TSource)source);
@@ -38,23 +38,23 @@ public class MapperlyAutoObjectMappingProvider : IAutoObjectMappingProvider
             return destination;
         }
 
-        var reverseMapper = ServiceProvider.GetService<IAbpReverseMapperly<TSource, TDestination>>();
+        var reverseMapper = ServiceProvider.GetService<IAbpReverseMapperlyMapper<TSource, TDestination>>();
         if (reverseMapper != null)
         {
             reverseMapper.BeforeReverseMap((TSource)source);
             var destination = reverseMapper.ReverseMap((TSource)source);
-            TryMapExtraProperties(reverseMapper.As<IAbpMapperly<TDestination, TSource>>(),  destination, (TSource)source, GetExtraProperties(destination));
+            TryMapExtraProperties(reverseMapper.As<IAbpMapperlyMapper<TDestination, TSource>>(),  destination, (TSource)source, GetExtraProperties(destination));
             reverseMapper.AfterReverseMap((TSource)source, destination);
             return destination;
         }
 
-        throw new AbpException($"No {TypeHelper.GetFullNameHandlingNullableAndGenerics(typeof(IAbpMapperly<TSource, TDestination>))} or" +
-                               $" {TypeHelper.GetFullNameHandlingNullableAndGenerics(typeof(IAbpReverseMapperly<TSource, TDestination>))} was found");
+        throw new AbpException($"No {TypeHelper.GetFullNameHandlingNullableAndGenerics(typeof(IAbpMapperlyMapper<TSource, TDestination>))} or" +
+                               $" {TypeHelper.GetFullNameHandlingNullableAndGenerics(typeof(IAbpReverseMapperlyMapper<TSource, TDestination>))} was found");
     }
 
     public virtual TDestination Map<TSource, TDestination>(TSource source, TDestination destination)
     {
-        var mapper = ServiceProvider.GetService<IAbpMapperly<TSource, TDestination>>();
+        var mapper = ServiceProvider.GetService<IAbpMapperlyMapper<TSource, TDestination>>();
         if (mapper != null)
         {
             mapper.BeforeMap(source);
@@ -65,19 +65,19 @@ public class MapperlyAutoObjectMappingProvider : IAutoObjectMappingProvider
             return destination;
         }
 
-        var reverseMapper = ServiceProvider.GetService<IAbpReverseMapperly<TSource, TDestination>>();
+        var reverseMapper = ServiceProvider.GetService<IAbpReverseMapperlyMapper<TSource, TDestination>>();
         if (reverseMapper != null)
         {
             reverseMapper.BeforeReverseMap(source);
             var destinationExtraProperties = GetExtraProperties(destination);
             reverseMapper.ReverseMap(source, destination);
-            TryMapExtraProperties(reverseMapper.As<IAbpReverseMapperly<TDestination, TSource>>(), source, destination, destinationExtraProperties);
+            TryMapExtraProperties(reverseMapper.As<IAbpReverseMapperlyMapper<TDestination, TSource>>(), source, destination, destinationExtraProperties);
             reverseMapper.AfterReverseMap(source, destination);
             return destination;
         }
 
-        throw new AbpException($"No {TypeHelper.GetFullNameHandlingNullableAndGenerics(typeof(IAbpMapperly<TSource, TDestination>))} or" +
-                               $" {TypeHelper.GetFullNameHandlingNullableAndGenerics(typeof(IAbpReverseMapperly<TSource, TDestination>))} was found");
+        throw new AbpException($"No {TypeHelper.GetFullNameHandlingNullableAndGenerics(typeof(IAbpMapperlyMapper<TSource, TDestination>))} or" +
+                               $" {TypeHelper.GetFullNameHandlingNullableAndGenerics(typeof(IAbpReverseMapperlyMapper<TSource, TDestination>))} was found");
     }
 
     protected virtual ExtraPropertyDictionary GetExtraProperties<TDestination>(TDestination destination)
@@ -95,7 +95,7 @@ public class MapperlyAutoObjectMappingProvider : IAutoObjectMappingProvider
         return extraProperties;
     }
 
-    protected virtual void TryMapExtraProperties<TSource, TDestination>(IAbpMapperly<TSource, TDestination> mapper, TSource source, TDestination destination, ExtraPropertyDictionary destinationExtraProperty)
+    protected virtual void TryMapExtraProperties<TSource, TDestination>(IAbpMapperlyMapper<TSource, TDestination> mapper, TSource source, TDestination destination, ExtraPropertyDictionary destinationExtraProperty)
     {
         var mapToRegularPropertiesAttribute = mapper.GetType().GetSingleAttributeOrNull<MapExtraPropertiesAttribute>();
         if (mapToRegularPropertiesAttribute != null &&
