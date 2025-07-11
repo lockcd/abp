@@ -38,20 +38,23 @@ public partial class EntityActions<TItem> : ComponentBase
     [Inject]
     public IStringLocalizer<AbpUiResource> UiLocalizer { get; set; } = default!;
 
+    public bool Initialized { get; set; }
+
     internal void AddAction(EntityAction<TItem> action)
     {
         Actions.Add(action);
     }
-    
-    private bool DisabledOrNoActions()
+
+    protected virtual bool DisabledOrNoActions()
     {
-        return Disabled || !Actions.Any(t => t is { Visible: true, HasPermission: true });
+        return !Initialized && (Disabled || Actions.All(t => !t.Visible || !t.HasPermission));
     }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
         ToggleText = UiLocalizer["Actions"];
+        Initialized = true;
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
