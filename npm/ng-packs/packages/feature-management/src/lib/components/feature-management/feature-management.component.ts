@@ -184,6 +184,15 @@ export class FeatureManagementComponent
     }
   }
 
+  isParentDisabled(parentName: string, groupName: string): boolean {
+    const children = this.features[groupName]?.filter(f => f.parentName === parentName);
+
+    return children.some(child => {
+      const provider = child.provider?.name;
+      return provider !== this.providerName && provider !== this.defaultProviderName;
+    });
+  }
+
   private uncheckToggleDescendants(feature: FeatureDto) {
     this.findAllDescendantsOfByType(feature, ValueTypes.ToggleStringValueType).forEach(node =>
       this.setFeatureValue(node, false),
