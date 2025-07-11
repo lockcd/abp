@@ -90,12 +90,10 @@ Open the `ProductIntegrationService.cs` file and replace its content with the fo
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Volo.Abp;
 using Volo.Abp.Domain.Repositories;
 
 namespace ModularCrm.Catalog.Integration;
 
-[IntegrationService]
 public class ProductIntegrationService
     : CatalogAppService, IProductIntegrationService
 {
