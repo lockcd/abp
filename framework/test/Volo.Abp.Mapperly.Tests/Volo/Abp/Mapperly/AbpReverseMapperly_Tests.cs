@@ -58,15 +58,21 @@ public class AbpReverseMapperly_Tests : AbpIntegratedTest<MapperlyTestModule>
         var myClass = new MyReverseClass { Id = "1", Name = "Test" };
         var myClassDto = _objectMapper.Map<MyReverseClass, MyReverseClassDto>(myClass);
         myClassDto.Name.ShouldBe("Test");
+
+        myClass.Id = "2";
+        myClass.Name = "Test2";
+
+        _objectMapper.Map<MyReverseClass, MyReverseClassDto>(myClass, myClassDto);
+
+        myClassDto.Id.ShouldBe("2");
+        myClassDto.Name.ShouldBe("Test2");
     }
 
     [Fact]
     public void ReverseMap_Test()
     {
         var myClassDto = new MyReverseClassDto { Id = "1", Name = "Test" };
-
         var myClass = _objectMapper.Map<MyReverseClassDto, MyReverseClass>(myClassDto);
-
         myClass.Name.ShouldBe("BeforeReverseMap Test AfterReverseMap");
 
         myClassDto.Id = "2";
