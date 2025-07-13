@@ -33,17 +33,17 @@ public class MapperlyAutoObjectMappingProvider : IAutoObjectMappingProvider
         {
             mapper.BeforeMap((TSource)source);
             var destination = mapper.Map((TSource)source);
-            TryMapExtraProperties(mapper, (TSource)source, destination, new ExtraPropertyDictionary());
+            TryMapExtraProperties(mapper.GetType().GetSingleAttributeOrNull<MapExtraPropertiesAttribute>(), (TSource)source, destination, new ExtraPropertyDictionary());
             mapper.AfterMap((TSource)source, destination);
             return destination;
         }
 
-        var reverseMapper = ServiceProvider.GetService<IAbpReverseMapperlyMapper<TSource, TDestination>>();
+        var reverseMapper = ServiceProvider.GetService<IAbpReverseMapperlyMapper<TDestination, TSource>>();
         if (reverseMapper != null)
         {
             reverseMapper.BeforeReverseMap((TSource)source);
             var destination = reverseMapper.ReverseMap((TSource)source);
-            TryMapExtraProperties(reverseMapper.As<IAbpMapperlyMapper<TDestination, TSource>>(),  destination, (TSource)source, GetExtraProperties(destination));
+            TryMapExtraProperties(reverseMapper.GetType().GetSingleAttributeOrNull<MapExtraPropertiesAttribute>(),  destination, (TSource)source, GetExtraProperties(destination));
             reverseMapper.AfterReverseMap((TSource)source, destination);
             return destination;
         }
@@ -60,18 +60,18 @@ public class MapperlyAutoObjectMappingProvider : IAutoObjectMappingProvider
             mapper.BeforeMap(source);
             var destinationExtraProperties = GetExtraProperties(destination);
             mapper.Map(source, destination);
-            TryMapExtraProperties(mapper, source, destination, destinationExtraProperties);
+            TryMapExtraProperties(mapper.GetType().GetSingleAttributeOrNull<MapExtraPropertiesAttribute>(), source, destination, destinationExtraProperties);
             mapper.AfterMap(source, destination);
             return destination;
         }
 
-        var reverseMapper = ServiceProvider.GetService<IAbpReverseMapperlyMapper<TSource, TDestination>>();
+        var reverseMapper = ServiceProvider.GetService<IAbpReverseMapperlyMapper<TDestination, TSource>>();
         if (reverseMapper != null)
         {
             reverseMapper.BeforeReverseMap(source);
             var destinationExtraProperties = GetExtraProperties(destination);
             reverseMapper.ReverseMap(source, destination);
-            TryMapExtraProperties(reverseMapper.As<IAbpReverseMapperlyMapper<TDestination, TSource>>(), source, destination, destinationExtraProperties);
+            TryMapExtraProperties(reverseMapper.GetType().GetSingleAttributeOrNull<MapExtraPropertiesAttribute>(), source, destination, destinationExtraProperties);
             reverseMapper.AfterReverseMap(source, destination);
             return destination;
         }
@@ -95,10 +95,9 @@ public class MapperlyAutoObjectMappingProvider : IAutoObjectMappingProvider
         return extraProperties;
     }
 
-    protected virtual void TryMapExtraProperties<TSource, TDestination>(IAbpMapperlyMapper<TSource, TDestination> mapper, TSource source, TDestination destination, ExtraPropertyDictionary destinationExtraProperty)
+    protected virtual void TryMapExtraProperties<TSource, TDestination>(MapExtraPropertiesAttribute? mapExtraPropertiesAttribute, TSource source, TDestination destination, ExtraPropertyDictionary destinationExtraProperty)
     {
-        var mapToRegularPropertiesAttribute = mapper.GetType().GetSingleAttributeOrNull<MapExtraPropertiesAttribute>();
-        if (mapToRegularPropertiesAttribute != null &&
+        if (mapExtraPropertiesAttribute != null &&
             typeof(IHasExtraProperties).IsAssignableFrom(typeof(TDestination)) &&
             typeof(IHasExtraProperties).IsAssignableFrom(typeof(TSource)))
         {
@@ -106,13 +105,12 @@ public class MapperlyAutoObjectMappingProvider : IAutoObjectMappingProvider
                 source!.As<IHasExtraProperties>(),
                 destination!.As<IHasExtraProperties>(),
                 destinationExtraProperty,
-                mapToRegularPropertiesAttribute.DefinitionChecks,
-                mapToRegularPropertiesAttribute.IgnoredProperties,
-                mapToRegularPropertiesAttribute.MapToRegularProperties
+                mapExtraPropertiesAttribute.DefinitionChecks,
+                mapExtraPropertiesAttribute.IgnoredProperties,
+                mapExtraPropertiesAttribute.MapToRegularProperties
             );
         }
     }
-
     protected virtual void MapExtraProperties<TSource, TDestination>(
         IHasExtraProperties source,
         IHasExtraProperties destination,

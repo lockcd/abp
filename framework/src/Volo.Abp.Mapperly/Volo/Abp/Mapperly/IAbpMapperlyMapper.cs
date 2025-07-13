@@ -11,7 +11,7 @@ public interface IAbpMapperlyMapper<in TSource, TDestination>
     void AfterMap(TSource source, TDestination destination);
 }
 
-public interface IAbpReverseMapperlyMapper<TDestination, TSource> : IAbpMapperlyMapper<TSource, TDestination>
+public interface IAbpReverseMapperlyMapper<TSource, TDestination> : IAbpMapperlyMapper<TSource, TDestination>
 {
     TSource ReverseMap(TDestination destination);
 

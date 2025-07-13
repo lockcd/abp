@@ -16,7 +16,7 @@ public abstract class AbpMapperlyMapperBase<TSource, TDestination> : IAbpMapperl
     }
 }
 
-public abstract class AbpReverseMapperlyMapperBase<TDestination, TSource> : AbpMapperlyMapperBase<TSource, TDestination>, IAbpReverseMapperlyMapper<TDestination, TSource>
+public abstract class AbpReverseMapperlyMapperBase<TSource, TDestination> : AbpMapperlyMapperBase<TSource, TDestination>, IAbpReverseMapperlyMapper<TSource, TDestination>
 {
     public abstract TSource ReverseMap(TDestination destination);
 

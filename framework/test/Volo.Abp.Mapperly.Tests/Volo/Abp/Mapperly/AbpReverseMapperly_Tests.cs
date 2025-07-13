@@ -22,7 +22,7 @@ public class MyReverseClassDto
 }
 
 [Mapper]
-public partial class MyReverseClassMapper : AbpReverseMapperlyMapperBase<MyReverseClassDto, MyReverseClass>
+public partial class MyReverseClassMapper : AbpReverseMapperlyMapperBase<MyReverseClass, MyReverseClassDto>
 {
     public override partial MyReverseClassDto Map(MyReverseClass source);
 
@@ -68,5 +68,13 @@ public class AbpReverseMapperly_Tests : AbpIntegratedTest<MapperlyTestModule>
         var myClass = _objectMapper.Map<MyReverseClassDto, MyReverseClass>(myClassDto);
 
         myClass.Name.ShouldBe("BeforeReverseMap Test AfterReverseMap");
+
+        myClassDto.Id = "2";
+        myClassDto.Name = "Test2";
+
+        _objectMapper.Map<MyReverseClassDto, MyReverseClass>(myClassDto, myClass);
+
+        myClass.Id.ShouldBe("2");
+        myClass.Name.ShouldBe("BeforeReverseMap Test2 AfterReverseMap");
     }
 }
