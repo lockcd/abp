@@ -14,9 +14,11 @@ import {
 } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { LoadingComponent } from '../components/loading/loading.component';
+import { LoadingComponent } from '../components';
 
-@Directive({ selector: '[abpLoading]' })
+@Directive({
+  selector: '[abpLoading]',
+})
 export class LoadingDirective implements OnInit, OnDestroy {
   private _loading!: boolean;
 

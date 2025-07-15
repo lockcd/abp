@@ -40,7 +40,7 @@ ABP supports all the following approaches to store the tenant data in the databa
 - **Database per Tenant**: Every tenant has a separate, dedicated database to store the data related to that tenant.
 - **Hybrid**: Some tenants share a single database while some tenants may have their own databases.
 
-[Tenant management module](../../../modules/tenant-management.md) (which comes pre-installed with the startup projects) allows you to set a connection string for any tenant (as optional), so you can achieve any of the approaches.
+[Saas module (PRO)](../../../modules/saas.md) allows you to set a connection string for any tenant (as optional), so you can achieve any of the approaches.
 
 ## Usage
 
@@ -380,6 +380,19 @@ namespace MultiTenancyDemo.Web
 * A tenant resolver should set `context.TenantIdOrName` if it can determine it. If not, just leave it as is to allow the next resolver to determine it.
 * `context.ServiceProvider` can be used if you need to additional services to resolve from the [dependency injection](../../fundamentals/dependency-injection.md) system.
 
+##### The Fallback Tenant
+
+If you want to always fallback to a tenant (in case of no tenant was found by the tenant resolution logic), you can set the `AbpTenantResolveOptions.FallbackTenant` option:
+
+```csharp
+Configure<AbpTenantResolveOptions>(options =>
+{
+    options.FallbackTenant = "acme";
+});
+```
+
+The `FallbackTenant` value can be a tenant name or tenant's Id. This option can be helpful on development time or some specific scenarios to set a constant tenant for the application. It is a simple and consistent way to ensure that a tenant context is always available when needed. However, when you do that, no way to switch to the host side. It is not something you will need it most of the time, but here if you need such a resolution logic.
+
 #### Multi-Tenancy Middleware
 
 Multi-Tenancy middleware is an ASP.NET Core request pipeline [middleware](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware) that determines the current tenant from the HTTP request and sets the `ICurrentTenant` properties.
@@ -400,7 +413,7 @@ app.UseMultiTenancy();
 
 #### Tenant Management Module
 
-The [tenant management module](../../../modules/tenant-management.md) is **included in the startup templates** and implements the `ITenantStore` interface to get the tenants and their configuration from a database. It also provides the necessary functionality and UI to manage the tenants and their connection strings.
+The [tenant management module](../../../modules/tenant-management.md) is **included in the startup templates** and implements the `ITenantStore` interface to get the tenants and their configuration from a database. It also provides the necessary functionality and UI to manage the tenants.
 
 #### Configuration Data Store
 
@@ -438,7 +451,12 @@ BLOB Storing, Caching, Data Filtering, Data Seeding, Authorization and all the o
 
 ABP provides all the the infrastructure to create a multi-tenant application, but doesn't make any assumption about how you manage (create, delete...) your tenants.
 
-The [Tenant Management module](../../../modules/tenant-management.md) provides a basic UI to manage your tenants and set their connection strings. It is pre-configured for the [application startup template](../../../solution-templates/layered-web-application).
+The [Tenant Management module](../../../modules/tenant-management.md) provides a basic UI to manage your tenants. It is pre-configured for the [application startup template](../../../solution-templates/layered-web-application).
+
+### A note about separate database per tenant approach in open source version
+
+While ABP fully supports this option, managing connection strings of tenants from the UI is not available in open source version. You need to have [Saas module (PRO)](../../../modules/saas.md).
+Alternatively you can implement this feature yourself by customizing the tenant management module and tenant application service to create and migrate the database on the fly.
 
 ## See Also
 

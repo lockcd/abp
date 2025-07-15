@@ -1,44 +1,63 @@
-# Module Startup Template
+# ABP Application Module Template
 
-This template can be used to create a **reusable [application module](../../modules)** based on the [module development best practices & conventions](../../framework/architecture/best-practices). It is also suitable for creating **microservices** (with or without UI).
+This document explains how to create a **reusable [application module](../../modules)** based on the [module development best practices & conventions](../../framework/architecture/best-practices).
+
+> Notice that the application module that is created in this tutorial is not an executable application. To see the module in action, you should install it into an executable application.
+>
+> It is advised to see the *[Modular Monolith Application Development Tutorial](../../tutorials/modular-crm/index.md)* to learn how to create application modules, install them into an executable web application, run and test the application. That tutorial uses the *Standard* module template, while this document explains the *DDD* module template.
 
 ## How to Start With?
 
-You can use the [ABP CLI](../../cli) to create a new project using this startup template. Alternatively, you can generate a CLI command from the [Get Started](https://abp.io/get-started) page. CLI approach is used here.
+You can use the [ABP CLI](../../cli) or [ABP Studio](../../studio/overview.md) to create a new project using this startup template. We will use the ABP Studio for this guide.
 
-First, install the ABP CLI if you haven't installed before:
+First, install the ABP Studio if you haven't installed before. You can follow the [installation guide](../../studio/installation.md) for this purpose.
 
-```bash
-dotnet tool install -g Volo.Abp.Studio.Cli
-```
+### Creating a New Empty Solution
 
-Then use the `abp new` command in an empty folder to create a new solution:
+Open the ABP Studio and click the `New solution` button in the welcome page or the `File > New Solution` top menu item. Click the `empty solution` link to select the empty solution template.
 
-```bash
-abp new Acme.IssueManagement -t module
-```
+![New Solution](images/new-solution-v2.png)
+
+Enter the solution name, select the solution folder and click the `Create` button.
+
+![Solution Properties](images/solution-properties.png)
 
 - `Acme.IssueManagement` is the solution name, like *YourCompany.YourProduct*. You can use single level, two-levels or three-levels naming.
 
-### Without User Interface
+> To understand the terms solution, module, and package, refer to the ABP Studio [concepts](../../studio/concepts.md) document.
 
-The template comes with MVC, Blazor & Angular user interfaces by default. You can use `--no-ui` option to not include any of these UI layers.
+### Creating a New DDD Module
 
-````bash
-abp new Acme.IssueManagement -t module --no-ui
-````
+When you create a new solution, the solution explorer on the left side of the screen will appear empty. Right-click on the root of the solution and select `Add > New Module > DDD Module` from the context menu.
+
+![New Module](images/new-module.png)
+
+The `Create New Module` dialog will open. Enter the module name and click the `Next` button.
+
+![Create New Module](images/create-new-module.png)
+
+Now, you can select the user interface options or leave it empty to create a module without a user interface. A module can support multiple user interfaces, such as MVC, Blazor, Angular, etc., or none at all. Click the `Next` button to specify the database provider.
+
+![Select User Interface](images/select-user-interface.png)
+
+Select the database provider(s) you want to use in your module. You can choose `EntityFrameworkCore`, `MongoDB`, or both. Unlike the user interface options, you must select at least one database provider. Click the `Next` button to see the additional options.
+
+![Select Database Provider](images/select-database-provider.png)
+
+You can exclude the test projects from the module by unchecking the `Include Tests` option. Click the `Create` button to create the module.
+
+![Additional Options](images/additional-options.png)
 
 ## Solution Structure
 
 Based on the options you've specified, you will get a slightly different solution structure. If you don't specify any option, you will have a solution like shown below:
 
-![issuemanagement-module-solution](../../images/issuemanagement-module-solution.png)
+![issuemanagement-module-solution](images/issuemanagement-module-solution.png)
 
-Projects are organized as `src`, `test` and `host` folders:
+Projects are organized as `src` and`test` folders:
 
 * `src` folder contains the actual module which is layered based on [DDD](../../framework/architecture/domain-driven-design) principles.
 * `test` folder contains unit & integration tests.
-* `host` folder contains applications with different configurations to demonstrate how to host the module in an application. These are not a part of the module, but useful on development.
 
 The diagram below shows the layers & project dependencies of the module:
 
@@ -105,8 +124,6 @@ The solution has multiple test projects, one for each layer:
 - `.MongoDB.Tests` is used to test MongoDB configuration and custom repositories.
 - `.TestBase` is a base (shared) project for all tests.
 
-In addition, `.HttpApi.Client.ConsoleTestApp` is a console application (not an automated test project) which demonstrate the usage of HTTP APIs from a Dotnet application.
-
 Test projects are prepared for integration testing;
 
 - It is fully integrated to ABP and all services in your application.
@@ -117,64 +134,24 @@ You can still create unit tests for your classes which will be harder to write (
 
 > Domain & Application tests are using EF Core. If you remove EF Core integration or you want to use MongoDB for testing these layers, you should manually change project references & module dependencies.
 
-### Host Projects
+### Host Applications
 
-The solution has a few host applications to run your module. Host applications are used to run your module in a fully configured application. It is useful on development. Host applications includes some other modules in addition to the module being developed:
+The solution doesn't have a host application to run your module. However, you can create a [single-layer](../../get-started/single-layer-web-application.md) or [layered](../../get-started/layered-web-application.md) application and [import](../../studio/solution-explorer.md#imports) the created module into the host application.
 
-Host applications support two types of scenarios.
+You can also see the *[Modular Monolith Application Development Tutorial](../../tutorials/modular-crm/index.md)* to learn how to create application modules, install them into an executable web application, run and test the application
 
-#### Single (Unified) Application Scenario
+## Angular UI
 
-If your module has a UI, then `.Web.Unified` application is used to host the UI and API on a single point. It has its own `appsettings.json` file (that includes the database connection string) and EF Core database migrations.
-
-For the `.Web.Unified` application, there is a single database, named `YourProjectName_Unified` (like *IssueManagement_Unified* for this sample).
-
-> If you've selected the `--no-ui` option, this project will not be in your solution.
-
-##### How to Run?
-
-Set `host/YourProjectName.Web.Unified` as the startup project, run `Update-Database` command for the EF Core from Package Manager Console and run your application. Default username is `admin` and password is `1q2w3E*`.
-
-#### Separated Deployment & Databases Scenario
-
-In this scenario, there are three applications;
-
-* `.AuthServer` application is an authentication server used by other applications. It has its own `appsettings.json` that contains database connection and other configurations.
-* `.HttpApi.Host` hosts the HTTP API of the module. It has its own `appsettings.json` that contains database connections and other configurations.
-* `.Web.Host` host the UI of the module. This project contains an `appsettings.json` file, but it does not have a connection string because it never connects to the database. Instead, it mainly contains endpoint of the remote API server and the authentication server.
-
-The diagram below shows the relation of the applications:
-
-![tiered-solution-applications](../../images/tiered-solution-applications.png)
-
-`.Web.Host` project uses OpenId Connect Authentication to get identity and access tokens for the current user from the `.AuthServer`. Then uses the access token to call the `.HttpApi.Host`. HTTP API server uses bearer token authentication to obtain claims from the access token to authorize the current user.
-
-##### Pre-requirements
-
-* [Redis](https://redis.io/): The applications use Redis as as distributed cache. So, you need to have Redis installed & running.
-
-##### How to Run?
-
-You should run the application with the given order:
-
-- First, run the `.AuthServer` since other applications depends on it.
-- Then run the `.HttpApi.Host` since it is used by the `.Web.Host` application.
-- Finally, you can run the `.Web.Host` project and login to the application using `admin` as the username and `1q2w3E*` as the password.
-
-## UI
-
-### Angular UI
-
-The solution will have a folder called `angular` in it. This is where the Angular client-side code is located. When you open that folder in an IDE, the folder structure will look like below:
+If you've selected the Angular UI, the solution will have a folder called `angular` inside it. This is where the Angular client-side code is located. When you open that folder in an IDE, the folder structure will look like below:
 
 ![Folder structure of ABP Angular module project](../../images/angular-module-folder-structure.png)
 
 * _angular/projects/issue-management_ folder contains the Angular module project.
 * _angular/projects/dev-app_ folder contains a development application that runs your module.
 
-The server-side is similar to the solution described above. `*.HttpApi.Host` project serves the API and the `Angular` demo application consumes it. You will not need to run the `.Web.Host` project though.
+The server-side is similar to the solution described above. After you create a *Host* application, the API and the `Angular` demo application consume it.
 
-#### How to Run the Angular Development App
+### How to Run the Angular Development App
 
 For module development, you will need the `dev-app` project up and running. So, here is how we can start the development server.
 
@@ -195,9 +172,10 @@ The module you will develop depends on two of these ABP packages: _@abp/ng.core_
 
 Once all dependencies are installed, follow the steps below to serve your development app:
 
-1. Make sure `.AuthServer` and `*.HttpApi.Host` projects are up and running.
-2. Open your terminal at the root folder, i.e. `angular`.
-3. Run `yarn start` or `npm start`.
+1. Make sure *Host* application project is up and running.
+2. Change the `environment.ts` file in the `angular/projects/dev-app/src/environments` folder to match your *Host* application URL.
+3. Open your terminal at the root folder, i.e. `angular`.
+4. Run `yarn start` or `npm start`.
 
 ![ABP Angular module dev-app project](../../images/angular-module-dev-app-project.png)
 
@@ -205,7 +183,7 @@ The issue management page is empty in the beginning. You may change the content 
 
 Now, let's have a closer look at some key elements of your project.
 
-#### Main Module
+### The Main Module
 
 `IssueManagementModule` at the _angular/projects/issue-management/src/lib/issue-management.module.ts_ path is the main module of your module project. There are a few things worth mentioning in it:
 
@@ -215,7 +193,7 @@ Now, let's have a closer look at some key elements of your project.
 - It is prepared for configurability. The `forLazy` static method enables [a configuration to be passed to the module when it is loaded by the router](https://volosoft.com/blog/how-to-configure-angular-modules-loaded-by-the-router).
 
 
-#### Main Routing Module
+### The Main Routing Module
 
 `IssueManagementRoutingModule` at the _angular/projects/issue-management/src/lib/issue-management-routing.module.ts_ path is the main routing module of your module project. It currently does two things:
 
@@ -224,7 +202,7 @@ Now, let's have a closer look at some key elements of your project.
 
 You can rearrange this module to load more than one component at different routes, but you need to update the route provider at _angular/projects/issue-management/config/src/providers/route.provider.ts_ to match the new routing structure with the routes in the menu. Please check [Modifying the Menu](../../framework/ui/angular/modifying-the-menu.md) to see how route providers work.
 
-#### Config Module
+### The Config Module
 
 There is a config module at the _angular/projects/issue-management/config/src/issue-management-config.module.ts_ path. The static `forRoot` method of this module is supposed to be called at the route level. So, you may assume the following will take place:
 
@@ -245,6 +223,6 @@ You can use this static method to configure an application that uses your module
 
 The difference between the `forRoot` method of the config module and the `forLazy` method of the main module is that, for smallest bundle size, the former should only be used when you have to configure an app before your module is even loaded.
 
-#### Testing Angular UI
+### Testing Angular UI
 
 Please see the [testing document](../../framework/ui/angular/testing.md).

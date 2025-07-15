@@ -9,6 +9,7 @@ using Volo.Abp.DependencyInjection;
 
 namespace Volo.Abp.Cli.Commands.Internal;
 
+[HideFromCommandList]
 public class RecreateInitialMigrationCommand : IConsoleCommand, ITransientDependency
 {
     public const string Name = "recreate-initial-migration";
@@ -82,7 +83,7 @@ public class RecreateInitialMigrationCommand : IConsoleCommand, ITransientDepend
         return GetShortDescription();
     }
 
-    public string GetShortDescription()
+    public static string GetShortDescription()
     {
         return "This is a internal command. Please run 'abp recreate-initial-migration' command in abp or volo root directory.";
     }

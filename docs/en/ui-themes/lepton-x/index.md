@@ -52,11 +52,11 @@ This module follows the [module development best practices guide](../../framewor
 
 LeptonX Theme module doesn't provide any UI pages. It just changes the existing UI pages of an application. Here are some sample pages:
 
-#### Login page
+### Login page
 
 ![lepton-theme-module-login-page](../../images/lepton-x-theme-module-login-page.png) 
 
-#### Languages Page
+### Languages Page
 
 ![lepton-theme-module-languages-page](../../images/lepton-x-theme-module-languages-page.png)
 
@@ -85,13 +85,15 @@ LeptonX Module doesn't define any permissions.
 You can use the following CLI command to download the source-code:
 
 ```bash
-abp get-source Volo.Abp.LeptonXTheme.Pro	
+abp get-source Volo.Abp.LeptonXTheme	
 ```
+
+> If you are using the old ABP CLI, you can use the command: `abp get-source Volo.Abp.LeptonXTheme.Pro`
 
 If you want to download the source code of the preview version, you can use the following command:
 
 ```bash
-abp get-source Volo.Abp.LeptonXTheme.Pro --preview
+abp get-source Volo.Abp.LeptonXTheme --preview
 ```
 
 > You can download the source code of a certain version by using the `--version` parameter. See the [ABP CLI documentation](../../cli/index#get-source) for other possible options.

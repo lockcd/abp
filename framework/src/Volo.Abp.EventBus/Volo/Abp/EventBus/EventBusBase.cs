@@ -135,9 +135,9 @@ public abstract class EventBusBase : IEventBus
     {
         await new SynchronizationContextRemover();
 
-        foreach (var handlerFactories in GetHandlerFactories(eventType))
+        foreach (var handlerFactories in GetHandlerFactories(eventType).ToList())
         {
-            foreach (var handlerFactory in handlerFactories.EventHandlerFactories)
+            foreach (var handlerFactory in handlerFactories.EventHandlerFactories.ToList())
             {
                 await TriggerHandlerAsync(handlerFactory, handlerFactories.EventType, eventData, exceptions, inboxConfig);
             }
@@ -240,19 +240,6 @@ public abstract class EventBusBase : IEventBus
             IEventDataMayHaveTenantId eventDataMayHaveTenantId when eventDataMayHaveTenantId.IsMultiTenant(out var tenantId) => tenantId,
             _ => CurrentTenant.Id
         };
-    }
-
-    protected class EventTypeWithEventHandlerFactories
-    {
-        public Type EventType { get; }
-
-        public List<IEventHandlerFactory> EventHandlerFactories { get; }
-
-        public EventTypeWithEventHandlerFactories(Type eventType, List<IEventHandlerFactory> eventHandlerFactories)
-        {
-            EventType = eventType;
-            EventHandlerFactories = eventHandlerFactories;
-        }
     }
 
     // Reference from

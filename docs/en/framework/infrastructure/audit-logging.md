@@ -14,7 +14,7 @@ An **audit log object** (see the Audit Log Object section below) is typically cr
 
 > [Startup templates](../../solution-templates) are configured for the audit logging system which is suitable for most of the applications. Use this document for a detailed control over the audit log system.
 
-### Database Provider Support
+## Database Provider Support
 
 * Fully supported by the [Entity Framework Core](../data/entity-framework-core) provider.
 * Entity change logging is not supported by the [MongoDB](../data/mongodb) provider. Other features work as expected.
@@ -105,6 +105,24 @@ Configure<AbpAspNetCoreAuditingOptions>(options =>
 ````
 
 `IgnoredUrls` is the only option. It is a list of ignored URLs prefixes. In the preceding example, all URLs starting with `/products` will be ignored for audit logging.
+
+## AbpAspNetCoreAuditingUrlOptions
+
+`AbpAspNetCoreAuditingUrlOptions` is the [options object](../fundamentals/options.md) to configure audit logging in the ASP.NET Core layer. You can configure it in the `ConfigureServices` method of your [module](../architecture/modularity/basics.md):
+
+````csharp
+Configure<AbpAspNetCoreAuditingUrlOptions>(options =>
+{
+    options.IncludeQuery = true;
+});
+````
+
+Here, a list of the options you can configure:
+
+* `IncludeSchema` (default: `false`): If you set to true, it will include the schema in the URL.
+* `IncludeHost` (default: `false`): If you set to true, it will include the host in the URL.
+* `IncludeQuery` (default: `false`): If you set to true, it will include the query string in the URL.
+
 
 ## Enabling/Disabling Audit Logging for Services
 

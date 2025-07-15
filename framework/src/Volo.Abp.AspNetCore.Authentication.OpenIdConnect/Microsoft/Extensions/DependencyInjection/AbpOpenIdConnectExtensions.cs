@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.RequestLocalization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Authentication.OpenIdConnect;
 using Volo.Abp.AspNetCore.MultiTenancy;
@@ -89,6 +88,9 @@ public static class AbpOpenIdConnectExtensions
                 }
             };
 
+            // The application needs to be granted the `OpenIddictConstants.Permissions.Endpoints.PushedAuthorization` permission to use the PAR endpoint.
+            // You can enable it after you have granted the `PushedAuthorization` permission.
+            options.PushedAuthorizationBehavior = PushedAuthorizationBehavior.Disable;
             configureOptions?.Invoke(options);
         });
     }

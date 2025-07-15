@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Shouldly;
 using Volo.Abp.AspNetCore.Security;
 using Xunit;
@@ -16,6 +15,8 @@ public class SecurityHeadersTestController_Tests : AspNetCoreMvcTestBase
         {
             options.UseContentSecurityPolicyHeader = true;
             options.Headers["Referrer-Policy"] = "no-referrer";
+
+            options.IgnoredScriptNoncePaths.Add("/SecurityHeadersTest/ignored");
         });
 
         base.ConfigureServices(services);
@@ -28,7 +29,6 @@ public class SecurityHeadersTestController_Tests : AspNetCoreMvcTestBase
         responseMessage.Headers.ShouldContain(x => x.Key == "X-Content-Type-Options" & x.Value.First().ToString() == "nosniff");
         responseMessage.Headers.ShouldContain(x => x.Key == "X-XSS-Protection" & x.Value.First().ToString() == "1; mode=block");
         responseMessage.Headers.ShouldContain(x => x.Key == "X-Frame-Options" & x.Value.First().ToString() == "SAMEORIGIN");
-        responseMessage.Headers.ShouldContain(x => x.Key == "X-Content-Type-Options" & x.Value.First().ToString() == "nosniff");
     }
 
     [Fact]
@@ -37,5 +37,16 @@ public class SecurityHeadersTestController_Tests : AspNetCoreMvcTestBase
         var responseMessage = await GetResponseAsync("/SecurityHeadersTest/Get");
         responseMessage.Headers.ShouldNotBeEmpty();
         responseMessage.Headers.ShouldContain(x => x.Key == "Referrer-Policy" && x.Value.First().ToString() == "no-referrer");
+    }
+
+    [Fact]
+    public async Task SecurityHeaders_Should_Be_Ignored()
+    {
+        var responseMessage = await GetResponseAsync("/SecurityHeadersTest/ignored");
+        responseMessage.Headers.ShouldNotBeEmpty();
+        responseMessage.Headers.ShouldNotContain(x => x.Key == "X-Content-Type-Options" & x.Value.First().ToString() == "nosniff");
+        responseMessage.Headers.ShouldNotContain(x => x.Key == "X-XSS-Protection" & x.Value.First().ToString() == "1; mode=block");
+        responseMessage.Headers.ShouldNotContain(x => x.Key == "X-Frame-Options" & x.Value.First().ToString() == "SAMEORIGIN");
+        responseMessage.Headers.ShouldNotContain(x => x.Key == "Referrer-Policy" && x.Value.First().ToString() == "no-referrer");
     }
 }

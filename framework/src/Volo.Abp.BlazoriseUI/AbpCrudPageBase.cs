@@ -4,19 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using Blazorise;
 using Blazorise.DataGrid;
-using JetBrains.Annotations;
 using Localization.Resources.AbpUi;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Options;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.AspNetCore.Components;
 using Volo.Abp.Localization;
 using Volo.Abp.Authorization;
 using Volo.Abp.BlazoriseUI.Components;
-using Volo.Abp.BlazoriseUI.Components.ObjectExtending;
 using Volo.Abp.ObjectExtending.Modularity;
 using Volo.Abp.ObjectExtending;
 using Volo.Abp.AspNetCore.Components.Web.Extensibility.EntityActions;
@@ -319,6 +316,7 @@ public abstract class AbpCrudPageBase<
     {
         CurrentSorting = e.Columns
             .Where(c => c.SortDirection != SortDirection.Default)
+            .OrderBy(c => c.SortIndex)
             .Select(c => c.SortField + (c.SortDirection == SortDirection.Descending ? " DESC" : ""))
             .JoinAsString(",");
         CurrentPage = e.Page;
@@ -359,10 +357,10 @@ public abstract class AbpCrudPageBase<
         }
     }
 
-    protected virtual Task CloseCreateModalAsync()
+    protected virtual async Task CloseCreateModalAsync()
     {
+        await InvokeAsync(CreateModal!.Hide);
         NewEntity = new TCreateViewModel();
-        return InvokeAsync(CreateModal!.Hide);
     }
 
     protected virtual Task ClosingCreateModal(ModalClosingEventArgs eventArgs)
@@ -476,11 +474,11 @@ public abstract class AbpCrudPageBase<
 
     protected virtual async Task OnCreatedEntityAsync()
     {
-        NewEntity = new TCreateViewModel();
         await GetEntitiesAsync();
 
         await InvokeAsync(CreateModal!.Hide);
         await Notify.Success(GetCreateMessage());
+        NewEntity = new TCreateViewModel();
     }
 
     protected virtual string GetCreateMessage()
@@ -554,6 +552,11 @@ public abstract class AbpCrudPageBase<
 
     protected virtual async Task OnDeletedEntityAsync()
     {
+        if (Entities.Count == 1 && CurrentPage > 1)
+        {
+            CurrentPage -= 1;
+        }
+
         await GetEntitiesAsync();
         await InvokeAsync(StateHasChanged);
         await Notify.Success(GetDeleteMessage());

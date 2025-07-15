@@ -48,7 +48,7 @@ public static void ConfigureExtraProperties()
 * `AddOrUpdateProperty` gets a second argument (the `property =>` lambda expression) to configure additional options for the new property.
   * We can add data annotation attributes like shown here, just like adding a data annotation attribute to a class property.
 
-#### Create & Update Forms
+### Create & Update Forms
 
 Once you define a property, it appears in the create and update forms of the related entity:
 
@@ -150,6 +150,17 @@ property =>
 `options.DefaultValueFactory` has a higher priority than the `options.DefaultValue` .
 
 > Tip: Use `DefaultValueFactory` option only if the default value may change over the time (like `DateTime.Now` in this example). If it is a constant value, then use the `DefaultValue` option.
+
+### DataTypeAttribute
+
+`DataTypeAttribute` is used to specify the type of the property. It is used to determine how to render the property on the user interface:
+
+```csharp
+property =>
+{
+    property.Attributes.Add(new DataTypeAttribute(DataType.Date));
+}
+```
 
 ### Validation
 

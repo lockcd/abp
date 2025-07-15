@@ -183,7 +183,7 @@ public class MyService : ITransientDependency
 }
 ````
 
-##### Format Arguments
+### Format Arguments
 
 Format arguments can be passed after the localization key. If your message is `Hello {0}, welcome!`, then you can pass the `{0}` argument to the localizer like `_localizer["HelloMessage", "John"]`.
 
@@ -247,6 +247,17 @@ namespace MyProject
 ```
 
 The `L` property is also available for some other base classes like `AbpController` and `AbpPageModel`.
+
+## Supported Languages
+
+You can configure the `AbpLocalizationOptions`'s `Languages` property to add the languages supported by the application. The template already sets common languages, but you can add new languages as shown below:
+
+```csharp
+Configure<AbpLocalizationOptions>(options =>
+{
+    options.Languages.Add(new LanguageInfo("uz", "uz", "Uzbek"));
+});
+```
 
 ## The Client Side
 

@@ -3,7 +3,7 @@
 ````json
 //[doc-params]
 {
-    "UI": ["MVC", "Blazor", "BlazorServer", "NG"],
+    "UI": ["MVC", "Blazor", "BlazorServer", "BlazorWebApp", "NG"],
     "DB": ["EF", "Mongo"],
     "Tiered": ["Yes", "No"]
 }
@@ -13,35 +13,17 @@ In this quick start guide, you will learn how to create and run a layered (and p
 
 ## Setup your development environment
 
-First things first! Let's setup your development environment before creating the first project.
+First things first! Let's setup your development environment before creating the first project. The following tools should be installed on your development machine:
 
-### Pre-requirements
+* [Visual Studio 2022](https://visualstudio.microsoft.com/) or another IDE that supports [.NET 9.0+](https://dotnet.microsoft.com/download/dotnet) development.
+* [.NET 9.0+](https://dotnet.microsoft.com/en-us/download/dotnet){{ if UI != "Blazor" }}
+* [Node v22.11+](https://nodejs.org/){{ end }}{{ if UI == "NG" }}
+* [Yarn v1.22+ (not v2+)](https://classic.yarnpkg.com/en/docs/install) or npm v10+ (already installed with Node){{ end }}
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
-The following tools should be installed on your development machine:
-
-* [Visual Studio 2022](https://visualstudio.microsoft.com/vs/) (v17.3+) for Windows / [Visual Studio for Mac](https://visualstudio.microsoft.com/vs/mac/). <sup id="a-editor">[1](#f-editor)</sup>
-* [.NET 8.0+](https://dotnet.microsoft.com/en-us/download/dotnet)
-{{ if UI != "Blazor" }}
-* [Node v18.19+](https://nodejs.org/)
-* [Yarn v1.22+ (not v2)](https://classic.yarnpkg.com/en/docs/install) <sup id="a-yarn">[2](#f-yarn)</sup> or npm v10+ (already installed with Node)
-{{ end }}
-{{ if Tiered == "Yes" }}
-* [Redis](https://redis.io/) (as the [distributed cache](../framework/fundamentals/caching.md)).
-{{ else }}
-* [Redis](https://redis.io/) (as the [distributed cache](../framework/fundamentals/caching.md)) is required if you select the Public website option.
-{{ end }}
-
-<sup id="f-editor"><b>1</b></sup> _You can use another editor instead of Visual Studio as long as it supports .NET Core and ASP.NET Core._ <sup>[↩](#a-editor)</sup>
-
-{{ if UI != "Blazor" }}
-
-<sup id="f-yarn"><b>2</b></sup> _Yarn v2 works differently and is not supported._ <sup>[↩](#a-yarn)</sup>
-
-{{ end }}
+> Check the [Pre-requirements document](pre-requirements.md) for more detailed information about these tools.
 
 ## Creating a New Solution
-
-> 🛈 This document uses [ABP Studio](../studio/index.md) to create new ABP solutions. **ABP Studio** is in the beta version now. If you have any issues, you can use the [ABP CLI](../cli/index.md) to create new solutions. You can also use the [getting started page](https://abp.io/get-started) to easily build ABP CLI commands for new project creations.
 
 > ABP startup solution templates have many options for your specific needs. If you don't understand an option that probably means you don't need it. We selected common defaults for you, so you can leave these options as they are.
 
@@ -77,17 +59,25 @@ LeptonX is the suggested UI theme that is proper for production usage. Select on
 
 Here, you see all the mobile applications available in that startup solution template. These mobile applications are well-integrated into your solution and can use the same backend with your web application. They are simple (do not have pre-built features as much as the web application) but a very good starting point to build your mobile application.
 
-Pick the one best for you, or select the *None* if you don't want a mobile application in your solution, then click Next to navigate to the *Additional UI options* screen:
+Pick the one best for you, or select the *None* if you don't want a mobile application in your solution, then click Next to navigate to the *Public website* screen:
 
-![abp-studio-new-solution-dialog-additional-ui-options](images/abp-studio-new-solution-dialog-additional-ui-options.png)
+![abp-studio-new-solution-dialog-public-website](images/abp-studio-new-solution-dialog-public-website.png)
 
 That startup solution template also provides an option to create a second web application inside the solution. The second application is called the Public website, an ASP.NET Core MVC / Razor Page application. It can be used to create a public landing/promotion for your product. It is well integrated into the solution (can share the same services, entities, database, and the same authentication logic, for example). If you want, you can also include the [CMS Kit module](../modules/cms-kit) to your solution to add dynamic content features to your web application.
 
-So, either select the *Public website* or skip it and click the Next button for the *Solution Structure* selection:
+So, either select the *Public website* or skip it and click the Next button for the *Optional Modules* selection:
+
+![abp-studio-new-solution-dialog-optional-modules.png](images/abp-studio-new-solution-dialog-optional-modules.png)
+
+Each item in that list is a pre-built application module. You can click the blue icon near to the module name to get more information about the module. You can leave the list as is (so, it installs the most common and used modules for you) or customize based on your preference.
+
+Installing a module after creating the solution may require manual steps. So, it is better to decide the modules in the beginning. You can create an example solutions before your real solution to explore the solution and modules.
+
+Once you select the desired modules, click the *Next* button for the *Solution Structure* screen:
 
 ![abp-studio-new-solution-dialog-solution-structure](images/abp-studio-new-solution-dialog-solution-structure.png)
 
-The *Tiered* option is used to physically separate the web application (the UI part) from the backend HTTP APIs. It creates a separate host application that only serves the HTTP (REST) APIs. The web application then performs remote HTTP calls to that application for every operation. If the *Tiered* option is not selected, then the web and HTTP APIs are hosted in a single application, and the calls from the UI layer to the API layer are performed in-process.
+It creates a separate host application that only serves the HTTP (REST) APIs. The web application then performs remote HTTP calls to that application for every operation. If the *Tiered* option is not selected, then the web and HTTP APIs are hosted in a single application, and the calls from the UI layer to the API layer are performed in-process.
 
 The tiered architecture allows you to host the web (UI) application in a server that can not access to your database server. However, it brings a slight loss of performance (because of the HTTP calls between UI and HTTP API applications) and makes your architecture, development, and deployment more complex. If you don't understand the tiered structure, just skip it.
 
@@ -107,9 +97,19 @@ On that screen, you can decide on your database provider by selecting one of the
 ![abp-studio-new-solution-dialog-database-configurations](images/abp-studio-new-solution-dialog-database-configurations-mongo.png)
 {{ end }}
 
-Here, you can select the database management systems (DBMS){{ if DB == "EF" }} and the connection string{{ end }}. Now, we are ready to allow ABP Studio to create our solution. Just click the *Create* button and let the ABP Studio do the rest for you.
+Here, you can select the database management systems (DBMS){{ if DB == "EF" }} and the connection string{{ end }}. Click *Next* button to see the *Additional Options*.
 
-After clicking the Create button, the dialog is closed and your solution is loaded into ABP Studio:
+![abp-studio-new-solution-dialog-additional-options](images/abp-studio-new-solution-dialog-additional-options.png)
+
+If you uncheck the *Kubernetes Configuration* option, the solution will not include the Kubernetes configuration files, such as Helm charts and other Kubernetes-related files. You can also specify *Social Logins*; if you uncheck this option, the solution will not be configured for social login. Lastly, you can specify the *Include Tests* option to include or exclude the test projects from the solution.
+
+On the next screen, you can configure the modularity options for your solution:
+
+> If you select the *Setup as a modular solution* option, the solution is created more ready for [modular monolith development](../tutorials/modular-crm/index.md) and allows you to add sub-modules during the solution creation phase.
+
+![abp-studio-new-solution-modularity](images/abp-studio-new-solution-dialog-modularity.png)
+
+Now, we are ready to allow ABP Studio to create our solution. Just click the *Create* button and let the ABP Studio do the rest for you. After clicking the Create button, the dialog is closed and your solution is loaded into ABP Studio:
 
 ![abp-studio-created-new-solution](images/abp-studio-created-new-solution.png)
 
@@ -129,13 +129,13 @@ Open the [Solution Runner](../studio/running-applications.md) section on the lef
 
 Once you click the *Play* icon on the left side, the section is open in the same place as the Solution Explorer section. ABP Studio also opens the *Application Monitor* view on the main content area. *Application Monitor* shows useful insights for your applications (e.g. *HTTP Request*, *Events* and *Exceptions*) in real-time. You can use it to see the happenings in your applications, so you can easily track errors and many helpful details.
 
-In the Solution Runner section (on the left side) you can see all the runnable applications in the current solution. For the MVC with public website example, we have three applications:
+In the Solution Runner section (on the left side) you can see all the runnable applications in the current solution. For the MVC with public website and MAUI mobile example, we have four applications:
 
 ![abp-studio-quick-start-example-applications-in-solution-runner](images/abp-studio-quick-start-example-applications-in-solution-runner.png)
 
 You can run all the applications or start them one by one. To start an application, either click the *Play* icon near to the application or right-click and select the *Run* -> *Start* context menu item.
 
-> For the first run, you'll need to build the application. You can achieve this by selecting *Run* -> *Build & Start* from the context menu.
+> ABP Studio builds the application by default. So, you don't need to manually build the application before running it.
 
 You can start the following application(s): 
 
@@ -150,7 +150,7 @@ You can start the following application(s):
 {{ else if UI == "Blazor" }}
 {{ if Tiered == "No" }}- `Acme.BookStore.HttpApi.Host`{{ end }}
 - `Acme.BookStore.Blazor`
-{{ else if UI == "BlazorServer" }}
+{{ else if UI == "BlazorServer" || UI == "BlazorWebApp" }}
 - `Acme.BookStore.Blazor`
 {{ else }}
 - `Acme.BookStore.Web`
@@ -162,7 +162,7 @@ You can start the following application(s):
 > Notice that the services running in docker-compose are exposed to your localhost. If any service in your localhost is already using the same port(s), you will get an error. In that case, stop your local services first.
 {{ end }}
 
-Once the `Acme.BookStore.{{ if UI == "NG" }}Angular{{ else if UI == "BlazorServer" || UI == "Blazor" }}Blazor{{ else }}Web{{ end }}` application started, you can right-click it and select the *Browse* command:
+Once the `Acme.BookStore.{{ if UI == "NG" }}Angular{{ else if UI == "BlazorServer" || UI == "Blazor" || UI == "BlazorWebApp" }}Blazor{{ else }}Web{{ end }}` application started, you can right-click it and select the *Browse* command:
 
 ![abp-studio-quick-start-browse-command](images/abp-studio-quick-start-browse-command.png)
 
@@ -194,7 +194,7 @@ Once the solution is opened in Visual Studio, you should see a screen like shown
 
 ![visual-studio-bookstore-application](images/visual-studio-bookstore-application.png)
 
-Right-click the `Acme.BookStore.{{ if UI == "NG" || UI == "Blazor" }}HttpApi.Host{{ else if UI == "BlazorServer" }}Blazor{{ else }}Web{{ end }}` project and select the *Set as Startup Project* command. You can then hit *F5* or *Ctrl + F5* to run the web application. It will run and open the application UI in your default browser:
+Right-click the `Acme.BookStore.{{ if UI == "NG" || UI == "Blazor" }}HttpApi.Host{{ else if UI == "BlazorServer" || UI == "BlazorWebApp" }}Blazor{{ else }}Web{{ end }}` project and select the *Set as Startup Project* command. You can then hit *F5* or *Ctrl + F5* to run the web application. It will run and open the application UI in your default browser:
 
 ![bookstore-browser-users-page](images/bookstore-browser-users-page.png)
 
@@ -217,7 +217,7 @@ You can start the following application(s):
 {{ else }}
 - `Acme.BookStore.Web`
 {{ end }}
- 
+
 Before starting the mobile application, ensure that you configure it for [react-native](../framework/ui/react-native) or [MAUI](../framework/ui/maui).
 
 ![mobile-sample](images/abp-studio-mobile-sample.gif)

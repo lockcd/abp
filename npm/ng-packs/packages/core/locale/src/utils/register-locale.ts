@@ -55,7 +55,7 @@ export function registerLocaleForEsBuild(
       const l = localeMap[locale] || locale;
       const localeSupportList = "ar|cs|en|en-GB|es|de|fi|fr|hi|hu|is|it|pt|tr|ru|ro|sk|sl|zh-Hans|zh-Hant".split("|");
 
-      if (localeSupportList.indexOf(locale) == -1) {
+      if (localeSupportList.indexOf(l) == -1) {
           return;
       }
       return new Promise((resolve, reject) => {
@@ -96,6 +96,7 @@ export function registerLocale(
         /* webpackChunkName: "locales"*/
         /* webpackInclude: /[/\\](ar|cs|en|en-GB|es|de|fi|fr|hi|hu|is|it|pt|tr|ru|ro|sk|sl|zh-Hans|zh-Hant)\.(mjs|js)$/ */
         /* webpackExclude: /[/\\]global|extra/ */
+        /* @vite-ignore */
         `@angular/common${localePath}`
       )
         .then(val => {
@@ -130,7 +131,7 @@ export async function defaultLocalErrorHandlerFn({ locale, resolve }: LocaleErro
 
   if (isDevMode()) {
     console.error(
-      `Cannot find the ${locale} locale file. You can check how can add new culture at https://docs.abp.io/en/abp/latest/UI/Angular/Localization#adding-a-new-culture`,
+      `Cannot find the ${locale} locale file. You can check how can add new culture at https://abp.io/docs/latest/framework/ui/angular/localization#adding-a-new-culture`,
     );
   }
 
