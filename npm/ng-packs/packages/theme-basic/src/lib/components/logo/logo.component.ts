@@ -1,6 +1,5 @@
 import { ApplicationInfo, EnvironmentService } from '@abp/ng.core';
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'abp-logo',
@@ -13,7 +12,7 @@ import { CommonModule } from '@angular/common';
       }
     </a>
   `,
-  imports: [CommonModule],
+  imports: [],
 })
 export class LogoComponent {
   get appInfo(): ApplicationInfo {
