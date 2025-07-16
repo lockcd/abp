@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgClass, NgIf, AsyncPipe } from '@angular/common';
 import { ReplaySubject } from 'rxjs';
 import { Confirmation } from '../../models/confirmation';
 import { CONFIRMATION_ICONS, ConfirmationIcons } from '../../tokens/confirmation-icons.token';
@@ -9,7 +9,7 @@ import { LocalizationPipe } from '@abp/ng.core';
   selector: 'abp-confirmation',
   templateUrl: './confirmation.component.html',
   styleUrls: ['./confirmation.component.scss'],
-  imports: [CommonModule, LocalizationPipe],
+  imports: [NgClass, NgIf, AsyncPipe, LocalizationPipe],
 })
 export class ConfirmationComponent {
   constructor(@Inject(CONFIRMATION_ICONS) private icons: ConfirmationIcons) {}

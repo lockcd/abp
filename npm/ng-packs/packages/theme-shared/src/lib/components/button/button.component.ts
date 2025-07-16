@@ -9,7 +9,7 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { ABP } from '@abp/ng.core';
 
 @Component({
@@ -29,7 +29,7 @@ import { ABP } from '@abp/ng.core';
       <i [ngClass]="icon" class="me-1" aria-hidden="true"></i><ng-content></ng-content>
     </button>
   `,
-  imports: [CommonModule],
+  imports: [NgClass],
 })
 export class ButtonComponent implements OnInit {
   @Input()

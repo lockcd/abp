@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { NgClass, NgStyle } from '@angular/common';
 import { combineLatest, Subscription, timer } from 'rxjs';
 import { HttpWaitService, RouterWaitService, SubscriptionService } from '@abp/ng.core';
 
@@ -21,7 +21,7 @@ import { HttpWaitService, RouterWaitService, SubscriptionService } from '@abp/ng
   `,
   styleUrls: ['./loader-bar.component.scss'],
   providers: [SubscriptionService],
-  imports: [CommonModule],
+  imports: [NgClass, NgStyle],
 })
 export class LoaderBarComponent implements OnDestroy, OnInit {
   protected _isLoading!: boolean;
