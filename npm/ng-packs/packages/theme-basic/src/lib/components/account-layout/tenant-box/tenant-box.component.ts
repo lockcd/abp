@@ -2,14 +2,16 @@ import { TenantBoxService } from '@abp/ng.account.core';
 import { Component } from '@angular/core';
 import { LocalizationPipe } from '@abp/ng.core';
 import { ButtonComponent, ModalCloseDirective, ModalComponent } from '@abp/ng.theme.shared';
-import { NgModel } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'abp-tenant-box',
   templateUrl: './tenant-box.component.html',
   providers: [TenantBoxService],
   imports: [
-    NgModel,
+    FormsModule,
+    AsyncPipe,
     ModalComponent,
     LocalizationPipe,
     ButtonComponent,

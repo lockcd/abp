@@ -2,7 +2,7 @@ import { ConfigStateService, LanguageInfo, SessionStateService } from '@abp/ng.c
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { NgClass } from '@angular/common';
+import { NgClass, AsyncPipe } from '@angular/common';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -39,7 +39,7 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
       </div>
     }
   `,
-  imports: [NgClass, NgbDropdownModule],
+  imports: [NgClass, AsyncPipe, NgbDropdownModule],
 })
 export class LanguagesComponent {
   get smallScreen(): boolean {
