@@ -1,5 +1,5 @@
 import { Component, forwardRef, Input } from '@angular/core';
-import { FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { AbstractNgModelComponent } from '@abp/ng.core';
 import { NgxValidateCoreModule } from '@ngx-validate/core';
@@ -10,7 +10,7 @@ import { NgxValidateCoreModule } from '@ngx-validate/core';
  */
 @Component({
   selector: 'abp-password',
-  imports: [NgClass, FormsModule, ReactiveFormsModule, NgxValidateCoreModule],
+  imports: [NgClass, FormsModule, NgxValidateCoreModule],
   templateUrl: `./password.component.html`,
   providers: [
     {
