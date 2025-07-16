@@ -17,31 +17,31 @@ public class MenuItem : AuditedAggregateRoot<Guid>, IMultiTenant
     /// Presents another <see cref="MenuItem"/> Id.
     /// If it's <see langword="null"/>, then it's a root menu item.
     /// </summary>
-    public virtual Guid? ParentId { get; set; }
+    public Guid? ParentId { get; set; }
 
     [NotNull]
-    public virtual string DisplayName { get; protected set; }
+    public string DisplayName { get; protected set; }
 
-    public virtual bool IsActive { get; set; }
+    public bool IsActive { get; set; }
 
     [NotNull]
-    public virtual string Url { get; protected set; }
+    public string Url { get; protected set; }
 
-    public virtual string Icon { get; set; }
+    public string Icon { get; set; }
 
-    public virtual int Order { get; set; }
+    public int Order { get; set; }
 
-    public virtual string Target { get; set; }
+    public string Target { get; set; }
 
-    public virtual string ElementId { get; set; }
+    public string ElementId { get; set; }
 
-    public virtual string CssClass { get; set; }
+    public string CssClass { get; set; }
 
-    public virtual Guid? PageId { get; protected set; }
+    public Guid? PageId { get; protected set; }
 
-    public virtual Guid? TenantId { get; protected set; }
-
-    public virtual string RequiredPermissionName { get; set; }
+    public Guid? TenantId { get; protected set; }
+    
+    public string RequiredPermissionName { get; set; }
 
     protected MenuItem()
     {

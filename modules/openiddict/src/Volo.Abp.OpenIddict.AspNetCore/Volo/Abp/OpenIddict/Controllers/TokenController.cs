@@ -42,11 +42,6 @@ public partial class TokenController : AbpOpenIdDictControllerBase
             return await HandleClientCredentialsAsync(request);
         }
 
-        if (request.IsTokenExchangeGrantType())
-        {
-            return await HandleTokenExchangeGrantTypeAsync(request);
-        }
-
         var extensionGrantsOptions = HttpContext.RequestServices.GetRequiredService<IOptions<AbpOpenIddictExtensionGrantsOptions>>();
         var extensionTokenGrant = extensionGrantsOptions.Value.Find<ITokenExtensionGrant>(request.GrantType);
         if (extensionTokenGrant != null)

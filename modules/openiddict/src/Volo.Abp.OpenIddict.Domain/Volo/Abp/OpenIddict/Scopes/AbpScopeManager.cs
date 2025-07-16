@@ -16,7 +16,7 @@ public class AbpScopeManager : OpenIddictScopeManager<OpenIddictScopeModel>
         [NotNull] [ItemNotNull] IOpenIddictScopeCache<OpenIddictScopeModel> cache,
         [NotNull] [ItemNotNull] ILogger<OpenIddictScopeManager<OpenIddictScopeModel>> logger,
         [NotNull] [ItemNotNull] IOptionsMonitor<OpenIddictCoreOptions> options,
-        [NotNull] IOpenIddictScopeStore<OpenIddictScopeModel> resolver,
+        [NotNull] IOpenIddictScopeStoreResolver resolver,
         AbpOpenIddictIdentifierConverter identifierConverter)
         : base(cache, logger, options, resolver)
     {

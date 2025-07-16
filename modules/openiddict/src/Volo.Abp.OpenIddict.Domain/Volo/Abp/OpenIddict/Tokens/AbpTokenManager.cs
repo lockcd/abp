@@ -16,7 +16,7 @@ public class AbpTokenManager : OpenIddictTokenManager<OpenIddictTokenModel>
         [NotNull] [ItemNotNull] IOpenIddictTokenCache<OpenIddictTokenModel> cache,
         [NotNull] [ItemNotNull] ILogger<OpenIddictTokenManager<OpenIddictTokenModel>> logger,
         [NotNull] [ItemNotNull] IOptionsMonitor<OpenIddictCoreOptions> options,
-        [NotNull] IOpenIddictTokenStore<OpenIddictTokenModel> resolver,
+        [NotNull] IOpenIddictTokenStoreResolver resolver,
         AbpOpenIddictIdentifierConverter identifierConverter)
         : base(cache, logger, options, resolver)
     {

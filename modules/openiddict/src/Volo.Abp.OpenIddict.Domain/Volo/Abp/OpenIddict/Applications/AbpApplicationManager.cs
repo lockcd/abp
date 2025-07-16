@@ -17,7 +17,7 @@ public class AbpApplicationManager : OpenIddictApplicationManager<OpenIddictAppl
         [NotNull] IOpenIddictApplicationCache<OpenIddictApplicationModel> cache,
         [NotNull] ILogger<AbpApplicationManager> logger,
         [NotNull] IOptionsMonitor<OpenIddictCoreOptions> options,
-        [NotNull] IOpenIddictApplicationStore<OpenIddictApplicationModel> resolver,
+        [NotNull] IOpenIddictApplicationStoreResolver resolver,
         AbpOpenIddictIdentifierConverter identifierConverter)
         : base(cache, logger, options, resolver)
     {

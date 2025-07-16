@@ -5,15 +5,15 @@ namespace Volo.Docs.Documents
 {
     public class DocumentContributor : Entity
     {
-        public virtual Guid DocumentId { get; set; }
+        public Guid DocumentId { get; set; }
 
-        public virtual string Username { get; set; }
+        public string Username { get; set; }
 
-        public virtual int CommitCount { get; set; }
+        public int CommitCount { get; set; }
 
-        public virtual string UserProfileUrl { get; set; }
+        public string UserProfileUrl { get; set; }
 
-        public virtual string AvatarUrl { get; set; }
+        public string AvatarUrl { get; set; }
 
         protected DocumentContributor()
         {
