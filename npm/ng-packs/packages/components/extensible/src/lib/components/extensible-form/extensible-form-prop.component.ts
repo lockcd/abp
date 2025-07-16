@@ -47,7 +47,7 @@ import { eExtensibleComponents } from '../../enums/components';
 import { ExtensibleDateTimePickerComponent } from '../date-time-picker/extensible-date-time-picker.component';
 import { NgxValidateCoreModule } from '@ngx-validate/core';
 import { ExtensibleFormPropService } from '../../services/extensible-form-prop.service';
-import { CommonModule } from '@angular/common';
+import { NgClass, NgComponentOutlet, NgTemplateOutlet } from '@angular/common';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { ExtensibleFormMultiselectComponent } from '../multi-select/extensible-form-multiselect.component';
 
@@ -67,7 +67,9 @@ import { ExtensibleFormMultiselectComponent } from '../multi-select/extensible-f
     ShowPasswordDirective,
     PermissionDirective,
     LocalizationModule,
-    CommonModule,
+    NgClass,
+    NgComponentOutlet,
+    NgTemplateOutlet,
     FormsModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
