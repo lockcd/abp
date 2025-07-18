@@ -24,6 +24,12 @@ public class AbpEfCoreNavigationHelper_Tests : EntityFrameworkCoreTestBase
     [Fact]
     public async Task Performance_Test()
     {
+        if (!Environment.GetEnvironmentVariable("GITHUB_ACTIONS").IsNullOrWhiteSpace())
+        {
+            //Skipping this unit test due to insufficient performance on the Github CI machine.
+            return;
+        }
+
         var stopWatch = Stopwatch.StartNew();
 
         await WithUnitOfWorkAsync(async () =>
@@ -49,7 +55,7 @@ public class AbpEfCoreNavigationHelper_Tests : EntityFrameworkCoreTestBase
         });
 
         stopWatch.Stop();
-        stopWatch.Elapsed.ShouldBeLessThan(TimeSpan.FromSeconds(106));
+        stopWatch.Elapsed.ShouldBeLessThan(TimeSpan.FromSeconds(10));
 
         stopWatch.Restart();
         var blogs = await _blogRepository.GetListAsync(includeDetails: true);
