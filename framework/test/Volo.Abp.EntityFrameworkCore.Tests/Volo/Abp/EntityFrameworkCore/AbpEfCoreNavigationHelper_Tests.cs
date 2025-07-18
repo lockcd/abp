@@ -22,16 +22,17 @@ public class AbpEfCoreNavigationHelper_Tests : EntityFrameworkCoreTestBase
     [Fact]
     public async Task Performance_Test()
     {
-        if (!Environment.GetEnvironmentVariable("GITHUB_ACTIONS").IsNullOrWhiteSpace())
-        {
-            //Skipping this unit test due to insufficient performance on the Github CI machine.
-            return;
-        }
-
         //These time taken varies on different machines.
         //I used relatively large values, but it can also check for performance problem.
         var batchUpdateTime = TimeSpan.FromSeconds(30);
         var queryTime = TimeSpan.FromSeconds(10);
+
+        if (!Environment.GetEnvironmentVariable("GITHUB_ACTIONS").IsNullOrWhiteSpace())
+        {
+            batchUpdateTime = batchUpdateTime * 6;
+            queryTime = queryTime * 6;
+        }
+
 
         var stopWatch = Stopwatch.StartNew();
         await WithUnitOfWorkAsync(async () =>
