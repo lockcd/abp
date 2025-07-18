@@ -17,28 +17,15 @@ public class Blog : FullAuditedAggregateRoot<Guid>
     public List<BlogPost> BlogPosts { get; set; }
 }
 
-public class Post : FullAuditedAggregateRoot<Guid>
+public class BlogPost : Entity<Guid>
 {
-    public Post(Guid id)
+    public BlogPost(Guid id)
         : base(id)
     {
     }
 
-    public string Title { get; set; }
-
-    public List<BlogPost> BlogPosts { get; set; }
-}
-
-public class BlogPost : Entity
-{
     public Guid BlogId { get; set; }
     public Blog Blog { get; set; }
 
-    public Guid PostId { get; set; }
-    public Post Post { get; set; }
-
-    public override object[] GetKeys()
-    {
-        return new object[] { BlogId, PostId };
-    }
+    public string Title { get; set; }
 }

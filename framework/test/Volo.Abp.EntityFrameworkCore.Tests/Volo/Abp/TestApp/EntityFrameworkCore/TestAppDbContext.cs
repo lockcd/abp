@@ -38,7 +38,6 @@ public class TestAppDbContext : AbpDbContext<TestAppDbContext>, IThirdDbContext,
     public DbSet<AppEntityWithNavigationsForeign> AppEntityWithNavigationsForeign { get; set; }
 
     public DbSet<Blog> Blogs { get; set; }
-    public DbSet<Post> Posts { get; set; }
     public DbSet<BlogPost> BlogPosts { get; set; }
 
     public TestAppDbContext(DbContextOptions<TestAppDbContext> options)
@@ -136,18 +135,9 @@ public class TestAppDbContext : AbpDbContext<TestAppDbContext>, IThirdDbContext,
                 .HasForeignKey(bp => bp.BlogId);
         });
 
-        modelBuilder.Entity<Post>(b =>
-        {
-            b.ConfigureByConvention();
-            b.HasMany(bp => bp.BlogPosts)
-                .WithOne(bp => bp.Post)
-                .HasForeignKey(bp => bp.PostId);
-        });
-
         modelBuilder.Entity<BlogPost>(b =>
         {
             b.ConfigureByConvention();
-            b.HasKey(p => new { p.BlogId, p.PostId });
         });
 
         modelBuilder.TryConfigureObjectExtensions<TestAppDbContext>();

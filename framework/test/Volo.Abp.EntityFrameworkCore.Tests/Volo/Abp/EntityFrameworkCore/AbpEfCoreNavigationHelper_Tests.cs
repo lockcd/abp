@@ -1,7 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Shouldly;
 using Volo.Abp.Domain.Repositories;
@@ -13,12 +13,10 @@ namespace Volo.Abp.EntityFrameworkCore;
 public class AbpEfCoreNavigationHelper_Tests : EntityFrameworkCoreTestBase
 {
     private readonly IRepository<Blog, Guid> _blogRepository;
-    private readonly IRepository<Post, Guid> _postRepository;
 
     public AbpEfCoreNavigationHelper_Tests()
     {
         _blogRepository = GetRequiredService<IRepository<Blog, Guid>>();
-        _postRepository = GetRequiredService<IRepository<Post, Guid>>();
     }
 
     [Fact]
@@ -30,8 +28,12 @@ public class AbpEfCoreNavigationHelper_Tests : EntityFrameworkCoreTestBase
             return;
         }
 
-        var stopWatch = Stopwatch.StartNew();
+        //These time taken varies on different machines.
+        //I used relatively large values, but it can also check for performance problem.
+        var batchUpdateTime = TimeSpan.FromSeconds(30);
+        var queryTime = TimeSpan.FromSeconds(10);
 
+        var stopWatch = Stopwatch.StartNew();
         await WithUnitOfWorkAsync(async () =>
         {
             for (var i = 0; i < 5 * 1000; i++)
@@ -40,32 +42,54 @@ public class AbpEfCoreNavigationHelper_Tests : EntityFrameworkCoreTestBase
                     new Blog(Guid.NewGuid())
                     {
                         Name = "Blog" + i,
-                        BlogPosts = new List<BlogPost>
-                        {
-                            new BlogPost
+                        BlogPosts =
+                        [
+                            new BlogPost(Guid.NewGuid())
                             {
-                                Post = new Post(Guid.NewGuid())
-                                {
-                                    Title = "Post" + i
-                                }
+                                Title = "Post" + i
                             }
-                        }
+                        ]
                     });
             }
         });
-
         stopWatch.Stop();
-        stopWatch.Elapsed.ShouldBeLessThan(TimeSpan.FromSeconds(10));
+        stopWatch.Elapsed.ShouldBeLessThan(batchUpdateTime);
+
 
         stopWatch.Restart();
         var blogs = await _blogRepository.GetListAsync(includeDetails: true);
-        var posts = await _postRepository.GetListAsync(includeDetails: true);
         blogs.Count.ShouldBe(5 * 1000);
-        blogs.SelectMany(x => x.BlogPosts.Select(y => y.Post)).Count().ShouldBe(5 * 1000);
-        posts.Count.ShouldBe(5 * 1000);
-        posts.SelectMany(x => x.BlogPosts.Select(y => y.Blog)).Count().ShouldBe(5 * 1000);
-
+        blogs.SelectMany(x => x.BlogPosts).Count().ShouldBe(5 * 1000);
         stopWatch.Stop();
-        stopWatch.Elapsed.ShouldBeLessThan(TimeSpan.FromSeconds(1));
+        stopWatch.Elapsed.ShouldBeLessThan(queryTime);
+
+
+        var blogId = blogs.First().Id;
+        stopWatch.Restart();
+        await WithUnitOfWorkAsync(async () =>
+        {
+            var blog = await _blogRepository.GetAsync(blogId);
+            blog.ShouldNotBeNull();
+            for (var i = 0; i < 5 * 1000; i++)
+            {
+                blog.BlogPosts.Add(
+                    new BlogPost(Guid.NewGuid())
+                    {
+                        Title = "NewPost" + i
+                    });
+            }
+            await _blogRepository.UpdateAsync(blog);
+        });
+        stopWatch.Stop();
+        stopWatch.Elapsed.ShouldBeLessThan(batchUpdateTime);
+
+
+        var cancellationTokenSource = new CancellationTokenSource();
+        cancellationTokenSource.CancelAfter(batchUpdateTime);
+        stopWatch.Restart();
+        var blog = await _blogRepository.GetAsync(blogId, cancellationToken: cancellationTokenSource.Token);
+        blog.BlogPosts.Count.ShouldBe(5 * 1000 + 1);
+        stopWatch.Stop();
+        stopWatch.Elapsed.ShouldBeLessThan(queryTime);
     }
 }

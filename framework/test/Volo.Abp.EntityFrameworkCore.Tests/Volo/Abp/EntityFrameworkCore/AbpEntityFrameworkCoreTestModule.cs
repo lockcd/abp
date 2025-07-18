@@ -56,11 +56,7 @@ public class AbpEntityFrameworkCoreTestModule : AbpModule
 
             options.Entity<Blog>(opt =>
             {
-                opt.DefaultWithDetailsFunc = q => q.Include(p => p.BlogPosts).ThenInclude(bp => bp.Post);
-            });
-            options.Entity<Post>(opt =>
-            {
-                opt.DefaultWithDetailsFunc = q => q.Include(p => p.BlogPosts).ThenInclude(bp => bp.Blog);
+                opt.DefaultWithDetailsFunc = q => q.Include(p => p.BlogPosts);
             });
         });
 
