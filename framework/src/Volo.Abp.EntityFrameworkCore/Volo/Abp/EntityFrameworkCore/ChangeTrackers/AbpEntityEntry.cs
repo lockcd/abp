@@ -21,10 +21,7 @@ public class AbpEntityEntry
         {
             return _isModified || EntityEntry.State == EntityState.Modified || NavigationEntries.Any(n => n.IsModified);
         }
-        set
-        {
-            _isModified = value;
-        }
+        set => _isModified = value;
     }
 
     public AbpEntityEntry(string id, EntityEntry entityEntry)
@@ -46,14 +43,11 @@ public class AbpEntityEntry
                 continue;
             }
 
-            var navigation = EntityEntry.Navigations.FirstOrDefault(n => n.Metadata.Name == navigationEntry.Name);
-
-            var currentValue = AbpNavigationEntry.GetOriginalValue(navigation?.CurrentValue);
+            var currentValue = AbpNavigationEntry.GetOriginalValue(navigationEntry.NavigationEntry.CurrentValue);
             if (currentValue == null)
             {
                 continue;
             }
-
             switch (navigationEntry.OriginalValue)
             {
                 case null:
