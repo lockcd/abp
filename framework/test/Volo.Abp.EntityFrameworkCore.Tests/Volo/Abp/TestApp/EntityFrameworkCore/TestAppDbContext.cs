@@ -1,6 +1,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Logging;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.Modeling;
@@ -35,6 +36,10 @@ public class TestAppDbContext : AbpDbContext<TestAppDbContext>, IThirdDbContext,
     public DbSet<AppEntityWithNavigations> AppEntityWithNavigations { get; set; }
 
     public DbSet<AppEntityWithNavigationsForeign> AppEntityWithNavigationsForeign { get; set; }
+
+    public DbSet<Blog> Blogs { get; set; }
+    public DbSet<Post> Posts { get; set; }
+    public DbSet<BlogPost> BlogPosts { get; set; }
 
     public TestAppDbContext(DbContextOptions<TestAppDbContext> options)
         : base(options)
@@ -121,6 +126,28 @@ public class TestAppDbContext : AbpDbContext<TestAppDbContext>, IThirdDbContext,
         modelBuilder.Entity<AppEntityWithNavigationsForeign>(b =>
         {
             b.ConfigureByConvention();
+        });
+
+        modelBuilder.Entity<Blog>(b =>
+        {
+            b.ConfigureByConvention();
+            b.HasMany(bp => bp.BlogPosts)
+                .WithOne(bp => bp.Blog)
+                .HasForeignKey(bp => bp.BlogId);
+        });
+
+        modelBuilder.Entity<Post>(b =>
+        {
+            b.ConfigureByConvention();
+            b.HasMany(bp => bp.BlogPosts)
+                .WithOne(bp => bp.Post)
+                .HasForeignKey(bp => bp.PostId);
+        });
+
+        modelBuilder.Entity<BlogPost>(b =>
+        {
+            b.ConfigureByConvention();
+            b.HasKey(p => new { p.BlogId, p.PostId });
         });
 
         modelBuilder.TryConfigureObjectExtensions<TestAppDbContext>();
