@@ -60,7 +60,7 @@ public class AbpEntityEntry
                 }
                 navigationEntry.OriginalValue ??= new List<object>();
                 var ls = navigationEntry.OriginalValue.As<List<object>>();
-                ls.Add(entityEntry.Entity);
+                ls.AddIfNotContains(entityEntry.Entity);
             }
             else
             {
