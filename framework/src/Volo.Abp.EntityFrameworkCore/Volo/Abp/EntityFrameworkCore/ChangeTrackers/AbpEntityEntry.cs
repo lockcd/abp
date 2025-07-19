@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -51,8 +52,12 @@ public class AbpEntityEntry
                 continue;
             }
 
-            if (navigationEntry.NavigationEntry is CollectionEntry && navigationEntry == entityEntryNavigationEntry)
+            if (navigationEntry.NavigationEntry is CollectionEntry)
             {
+                if (navigationEntry != entityEntryNavigationEntry)
+                {
+                    continue;
+                }
                 navigationEntry.OriginalValue ??= new List<object>();
                 var ls = navigationEntry.OriginalValue.As<List<object>>();
                 ls.Add(entityEntry.Entity);
