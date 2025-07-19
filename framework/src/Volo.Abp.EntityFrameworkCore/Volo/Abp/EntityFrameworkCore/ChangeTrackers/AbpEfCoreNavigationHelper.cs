@@ -60,7 +60,7 @@ public class AbpEfCoreNavigationHelper : ITransientDependency
             return;
         }
 
-        var foreignKeys = entityEntry.Metadata.GetForeignKeys().ToList();
+        var foreignKeys = entityEntry.Metadata.GetForeignKeys();
         foreach (var foreignKey in foreignKeys)
         {
             var principal = stateManager.FindPrincipal(internalEntityEntityEntry, foreignKey);
@@ -75,7 +75,11 @@ public class AbpEfCoreNavigationHelper : ITransientDependency
                 continue;
             }
 
-            abpEntityEntry.UpdateNavigationEntries();
+            if (checkEntityEntryState && entityEntry.State == EntityState.Unchanged)
+            {
+                abpEntityEntry.UpdateNavigationEntries(entityEntry, foreignKey);
+            }
+
             if (!abpEntityEntry.IsModified && (!checkEntityEntryState || IsEntityEntryChanged(entityEntry)))
             {
                 abpEntityEntry.IsModified = true;
@@ -115,7 +119,11 @@ public class AbpEfCoreNavigationHelper : ITransientDependency
                     continue;
                 }
 
-                abpEntityEntry.UpdateNavigationEntries();
+                if (checkEntityEntryState && entityEntry.State == EntityState.Unchanged)
+                {
+                    abpEntityEntry.UpdateNavigationEntries(entityEntry, inverseForeignKey);
+                }
+
                 if (!abpEntityEntry.IsModified  && (!checkEntityEntryState || IsEntityEntryChanged(entityEntry)))
                 {
                     abpEntityEntry.IsModified = true;

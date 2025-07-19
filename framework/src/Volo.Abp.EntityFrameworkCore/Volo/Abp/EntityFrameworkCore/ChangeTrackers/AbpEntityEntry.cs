@@ -1,8 +1,9 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Volo.Abp.EntityFrameworkCore.ChangeTrackers;
 
@@ -31,42 +32,34 @@ public class AbpEntityEntry
         NavigationEntries = EntityEntry.Navigations.Select(x => new AbpNavigationEntry(x, x.Metadata.Name)).ToList();
     }
 
-    public void UpdateNavigationEntries()
+    public void UpdateNavigationEntries(EntityEntry entityEntry, IForeignKey foreignKey)
     {
+        var entityEntryNavigationEntry = NavigationEntries.FirstOrDefault(x => x.NavigationEntry.Metadata is INavigation navigationMetadata && navigationMetadata.ForeignKey == foreignKey) ??
+                                         NavigationEntries.FirstOrDefault(x => x.NavigationEntry.Metadata is ISkipNavigation skipNavigationMetadata && skipNavigationMetadata.ForeignKey == foreignKey);
         foreach (var navigationEntry in NavigationEntries)
         {
             if (IsModified ||
                 EntityEntry.State == EntityState.Modified ||
-                navigationEntry.IsModified ||
-                navigationEntry.NavigationEntry.IsModified)
+                navigationEntry.IsModified)
             {
                 continue;
             }
 
-            var currentValue = AbpNavigationEntry.GetOriginalValue(navigationEntry.NavigationEntry.CurrentValue);
+            var currentValue = navigationEntry.NavigationEntry.CurrentValue;
             if (currentValue == null)
             {
                 continue;
             }
-            switch (navigationEntry.OriginalValue)
-            {
-                case null:
-                    navigationEntry.OriginalValue = currentValue;
-                    break;
-                case IEnumerable originalValueCollection when currentValue is IEnumerable currentValueCollection:
-                {
-                    var existingList = originalValueCollection.Cast<object?>().ToList();
-                    var newList = currentValueCollection.Cast<object?>().ToList();
-                    if (newList.Count > existingList.Count)
-                    {
-                        navigationEntry.OriginalValue = currentValue;
-                    }
 
-                    break;
-                }
-                default:
-                    navigationEntry.OriginalValue = currentValue;
-                    break;
+            if (navigationEntry.NavigationEntry is CollectionEntry && navigationEntry == entityEntryNavigationEntry)
+            {
+                navigationEntry.OriginalValue ??= new List<object>();
+                var ls = navigationEntry.OriginalValue.As<List<object>>();
+                ls.Add(entityEntry.Entity);
+            }
+            else
+            {
+                navigationEntry.OriginalValue = currentValue;
             }
         }
     }
@@ -80,7 +73,7 @@ public class AbpNavigationEntry
 
     public bool IsModified { get; set; }
 
-    public List<object>? OriginalValue { get; set; }
+    public object? OriginalValue { get; set; }
 
     public object? CurrentValue => NavigationEntry.CurrentValue;
 
@@ -88,21 +81,11 @@ public class AbpNavigationEntry
     {
         NavigationEntry = navigationEntry;
         Name = name;
-        OriginalValue = GetOriginalValue(navigationEntry.CurrentValue);
-    }
-
-    public static List<object>? GetOriginalValue(object? currentValue)
-    {
-        if (currentValue is null)
+        if (navigationEntry.CurrentValue != null)
         {
-            return null;
+            OriginalValue = navigationEntry is CollectionEntry collection
+                ? collection.CurrentValue!.Cast<object>().ToList()
+                : navigationEntry.CurrentValue;
         }
-
-        if (currentValue is IEnumerable enumerable)
-        {
-            return enumerable.Cast<object>().ToList();
-        }
-
-        return new List<object> { currentValue };
     }
 }
