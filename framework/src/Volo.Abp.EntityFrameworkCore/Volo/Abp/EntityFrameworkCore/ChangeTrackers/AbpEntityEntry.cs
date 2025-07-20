@@ -1,10 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Volo.Abp.EntityFrameworkCore.ChangeTrackers;
 
@@ -33,39 +31,30 @@ public class AbpEntityEntry
         NavigationEntries = EntityEntry.Navigations.Select(x => new AbpNavigationEntry(x, x.Metadata.Name)).ToList();
     }
 
-    public void UpdateNavigationEntries(EntityEntry entityEntry, IForeignKey foreignKey)
+    public void UpdateNavigation(EntityEntry entityEntry, AbpNavigationEntry navigationEntry)
     {
-        var entityEntryNavigationEntry = NavigationEntries.FirstOrDefault(x => x.NavigationEntry.Metadata is INavigation navigationMetadata && navigationMetadata.ForeignKey == foreignKey) ??
-                                         NavigationEntries.FirstOrDefault(x => x.NavigationEntry.Metadata is ISkipNavigation skipNavigationMetadata && skipNavigationMetadata.ForeignKey == foreignKey);
-        foreach (var navigationEntry in NavigationEntries)
+        if (IsModified ||
+            EntityEntry.State == EntityState.Modified ||
+            navigationEntry.IsModified)
         {
-            if (IsModified ||
-                EntityEntry.State == EntityState.Modified ||
-                navigationEntry.IsModified)
-            {
-                continue;
-            }
+            return;
+        }
 
-            var currentValue = navigationEntry.NavigationEntry.CurrentValue;
-            if (currentValue == null)
-            {
-                continue;
-            }
+        var currentValue = navigationEntry.NavigationEntry.CurrentValue;
+        if (currentValue == null)
+        {
+            return;
+        }
 
-            if (navigationEntry.NavigationEntry is CollectionEntry)
-            {
-                if (navigationEntry != entityEntryNavigationEntry)
-                {
-                    continue;
-                }
-                navigationEntry.OriginalValue ??= new List<object>();
-                var ls = navigationEntry.OriginalValue.As<List<object>>();
-                ls.AddIfNotContains(entityEntry.Entity);
-            }
-            else
-            {
-                navigationEntry.OriginalValue = currentValue;
-            }
+        if (navigationEntry.NavigationEntry is CollectionEntry)
+        {
+            navigationEntry.OriginalValue ??= new List<object>();
+            var ls = navigationEntry.OriginalValue.As<List<object>>();
+            ls.AddIfNotContains(entityEntry.Entity);
+        }
+        else
+        {
+            navigationEntry.OriginalValue = currentValue;
         }
     }
 }

@@ -75,9 +75,12 @@ public class AbpEfCoreNavigationHelper : ITransientDependency
                 continue;
             }
 
-            if (checkEntityEntryState && entityEntry.State == EntityState.Unchanged)
+            var navigationEntry = abpEntityEntry.NavigationEntries.FirstOrDefault(x => x.NavigationEntry.Metadata is INavigation navigationMetadata && navigationMetadata.ForeignKey == foreignKey) ??
+                                  abpEntityEntry.NavigationEntries.FirstOrDefault(x => x.NavigationEntry.Metadata is ISkipNavigation skipNavigationMetadata && skipNavigationMetadata.ForeignKey == foreignKey);
+
+            if (navigationEntry != null && checkEntityEntryState && entityEntry.State == EntityState.Unchanged)
             {
-                abpEntityEntry.UpdateNavigationEntries(entityEntry, foreignKey);
+                abpEntityEntry.UpdateNavigation(entityEntry, navigationEntry);
             }
 
             if (!abpEntityEntry.IsModified && (!checkEntityEntryState || IsEntityEntryChanged(entityEntry)))
@@ -86,8 +89,6 @@ public class AbpEfCoreNavigationHelper : ITransientDependency
                 DetectChanges(abpEntityEntry.EntityEntry, false);
             }
 
-            var navigationEntry = abpEntityEntry.NavigationEntries.FirstOrDefault(x => x.NavigationEntry.Metadata is INavigation navigationMetadata && navigationMetadata.ForeignKey == foreignKey) ??
-                                  abpEntityEntry.NavigationEntries.FirstOrDefault(x => x.NavigationEntry.Metadata is ISkipNavigation skipNavigationMetadata && skipNavigationMetadata.ForeignKey == foreignKey);
             if (navigationEntry != null && IsEntityEntryChanged(entityEntry))
             {
                 navigationEntry.IsModified = true;
@@ -119,9 +120,12 @@ public class AbpEfCoreNavigationHelper : ITransientDependency
                     continue;
                 }
 
-                if (checkEntityEntryState && entityEntry.State == EntityState.Unchanged)
+                var navigationEntry = abpEntityEntry.NavigationEntries.FirstOrDefault(x => x.NavigationEntry.Metadata is INavigation navigationMetadata && navigationMetadata.ForeignKey == inverseForeignKey) ??
+                                      abpEntityEntry.NavigationEntries.FirstOrDefault(x => x.NavigationEntry.Metadata is ISkipNavigation skipNavigationMetadata && skipNavigationMetadata.ForeignKey == inverseForeignKey);
+
+                if (navigationEntry != null && checkEntityEntryState && entityEntry.State == EntityState.Unchanged)
                 {
-                    abpEntityEntry.UpdateNavigationEntries(entityEntry, inverseForeignKey);
+                    abpEntityEntry.UpdateNavigation(entityEntry, navigationEntry);
                 }
 
                 if (!abpEntityEntry.IsModified  && (!checkEntityEntryState || IsEntityEntryChanged(entityEntry)))
@@ -130,8 +134,6 @@ public class AbpEfCoreNavigationHelper : ITransientDependency
                     DetectChanges(abpEntityEntry.EntityEntry, false);
                 }
 
-                var navigationEntry = abpEntityEntry.NavigationEntries.FirstOrDefault(x => x.NavigationEntry.Metadata is INavigation navigationMetadata && navigationMetadata.ForeignKey == inverseForeignKey) ??
-                                      abpEntityEntry.NavigationEntries.FirstOrDefault(x => x.NavigationEntry.Metadata is ISkipNavigation skipNavigationMetadata && skipNavigationMetadata.ForeignKey == inverseForeignKey);
                 if (navigationEntry != null && (!checkEntityEntryState || IsEntityEntryChanged(entityEntry)))
                 {
                     navigationEntry.IsModified = true;
