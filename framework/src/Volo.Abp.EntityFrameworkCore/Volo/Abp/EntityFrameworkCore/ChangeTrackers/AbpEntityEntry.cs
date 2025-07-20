@@ -48,7 +48,8 @@ public class AbpEntityEntry
 
         if (navigationEntry.NavigationEntry is CollectionEntry)
         {
-            navigationEntry.OriginalValue!.As<List<object>>().Add(entityEntry.Entity);
+            navigationEntry.OriginalValue ??= new List<object>();
+            navigationEntry.OriginalValue.As<List<object>>().Add(entityEntry.Entity);
         }
         else
         {
