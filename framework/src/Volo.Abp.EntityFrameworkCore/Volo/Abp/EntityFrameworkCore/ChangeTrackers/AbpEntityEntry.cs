@@ -48,9 +48,7 @@ public class AbpEntityEntry
 
         if (navigationEntry.NavigationEntry is CollectionEntry)
         {
-            navigationEntry.OriginalValue ??= new List<object>();
-            var ls = navigationEntry.OriginalValue.As<List<object>>();
-            ls.AddIfNotContains(entityEntry.Entity);
+            navigationEntry.OriginalValue!.As<List<object>>().Add(entityEntry.Entity);
         }
         else
         {
@@ -75,11 +73,9 @@ public class AbpNavigationEntry
     {
         NavigationEntry = navigationEntry;
         Name = name;
-        if (navigationEntry.CurrentValue != null)
+        if (navigationEntry.CurrentValue != null )
         {
-            OriginalValue = navigationEntry is CollectionEntry collection
-                ? collection.CurrentValue!.Cast<object>().ToList()
-                : navigationEntry.CurrentValue;
+            OriginalValue = navigationEntry is CollectionEntry ? new List<object>() : navigationEntry.CurrentValue;
         }
     }
 }
