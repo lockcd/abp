@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Shouldly;
 using Volo.Abp.Domain.Repositories;
@@ -84,11 +83,8 @@ public class AbpEfCoreNavigationHelper_Tests : EntityFrameworkCoreTestBase
         stopWatch.Stop();
         stopWatch.Elapsed.ShouldBeLessThan(batchUpdateTime);
 
-
-        var cancellationTokenSource = new CancellationTokenSource();
-        cancellationTokenSource.CancelAfter(batchUpdateTime);
         stopWatch.Restart();
-        var blog = await _blogRepository.GetAsync(blogId, cancellationToken: cancellationTokenSource.Token);
+        var blog = await _blogRepository.GetAsync(blogId);
         blog.BlogPosts.Count.ShouldBe(5 * 1000 + 1);
         stopWatch.Stop();
         stopWatch.Elapsed.ShouldBeLessThan(queryTime);
