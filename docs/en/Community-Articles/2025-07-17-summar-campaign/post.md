@@ -6,14 +6,11 @@ Since it’s summer time, we wanted to make it even hotter by announcing a summe
 
 Please review the following terms and conditions carefully. 
 
-* Campaign is available from July 21 to July 31 only.   
-* Discounts are valid on selected products only.   
-* This offer cannot be combined with other promotions or discounts.  
-* The campaign is available exclusively online.  
-* Limited to one purchase per customer.   
-* Offer is valid while stocks last.  
-* Returns and exchanges are only accepted for items in original condition.   
-* Discounts are not applicable on gift card purchases.
+* This offer is available for extensions and new purchases. 
+* Developer seat purchases are also included to the campaign.
+* Campaign is available from July 21st to July 31st.
+* Discounts are valid on selected licenses only.
+* This offer cannot be combined with other promotions or discounts.
 
 **Why Choose ABP?** 
 
