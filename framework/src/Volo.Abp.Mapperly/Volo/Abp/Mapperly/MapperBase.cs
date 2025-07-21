@@ -2,7 +2,7 @@ using Volo.Abp.DependencyInjection;
 
 namespace Volo.Abp.Mapperly;
 
-public abstract class AbpMapperlyMapperBase<TSource, TDestination> : IAbpMapperlyMapper<TSource, TDestination>, ITransientDependency
+public abstract class MapperBase<TSource, TDestination> : IAbpMapperlyMapper<TSource, TDestination>, ITransientDependency
 {
     public abstract TDestination Map(TSource source);
 
@@ -16,7 +16,7 @@ public abstract class AbpMapperlyMapperBase<TSource, TDestination> : IAbpMapperl
     }
 }
 
-public abstract class AbpReverseMapperlyMapperBase<TSource, TDestination> : AbpMapperlyMapperBase<TSource, TDestination>, IAbpReverseMapperlyMapper<TSource, TDestination>
+public abstract class TwoWayMapperBase<TSource, TDestination> : MapperBase<TSource, TDestination>, IAbpReverseMapperlyMapper<TSource, TDestination>
 {
     public abstract TSource ReverseMap(TDestination destination);
 

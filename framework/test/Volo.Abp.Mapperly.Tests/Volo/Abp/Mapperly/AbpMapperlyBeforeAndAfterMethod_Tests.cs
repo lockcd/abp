@@ -22,7 +22,7 @@ public class MyClassDto
 }
 
 [Mapper]
-public partial class MyClassMapper : AbpMapperlyMapperBase<MyClass, MyClassDto>
+public partial class MyClassMapper : MapperBase<MyClass, MyClassDto>
 {
     public override partial MyClassDto Map(MyClass source);
 

@@ -4,7 +4,7 @@ using Volo.Abp.Mapperly.SampleClasses;
 using Volo.Abp.ObjectExtending.TestObjects;
 
 [Mapper]
-public partial class MyEntityMapper : AbpMapperlyMapperBase<MyEntity, MyEntityDto>
+public partial class MyEntityMapper : MapperBase<MyEntity, MyEntityDto>
 {
     public override partial MyEntityDto Map(MyEntity source);
 
@@ -12,7 +12,7 @@ public partial class MyEntityMapper : AbpMapperlyMapperBase<MyEntity, MyEntityDt
 }
 
 [Mapper]
-public partial class MyEnumMapper : AbpMapperlyMapperBase<MyEnum, MyEnumDto>
+public partial class MyEnumMapper : MapperBase<MyEnum, MyEnumDto>
 {
     public override partial MyEnumDto Map(MyEnum source);
 
@@ -24,7 +24,7 @@ public partial class MyEnumMapper : AbpMapperlyMapperBase<MyEnum, MyEnumDto>
 
 [Mapper]
 [MapExtraProperties(IgnoredProperties = ["CityName"])]
-public partial class ExtensibleTestPersonMapper : AbpMapperlyMapperBase<ExtensibleTestPerson, ExtensibleTestPersonDto>
+public partial class ExtensibleTestPersonMapper : MapperBase<ExtensibleTestPerson, ExtensibleTestPersonDto>
 {
     public override partial ExtensibleTestPersonDto Map(ExtensibleTestPerson source);
 
@@ -33,7 +33,7 @@ public partial class ExtensibleTestPersonMapper : AbpMapperlyMapperBase<Extensib
 
 [Mapper]
 [MapExtraProperties(MapToRegularProperties = true)]
-public partial class ExtensibleTestPersonWithRegularPropertiesDtoMapper : AbpMapperlyMapperBase<ExtensibleTestPerson, ExtensibleTestPersonWithRegularPropertiesDto>
+public partial class ExtensibleTestPersonWithRegularPropertiesDtoMapper : MapperBase<ExtensibleTestPerson, ExtensibleTestPersonWithRegularPropertiesDto>
 {
     [MapperIgnoreTarget(nameof(ExtensibleTestPersonWithRegularPropertiesDto.Name))]
     [MapperIgnoreTarget(nameof(ExtensibleTestPersonWithRegularPropertiesDto.Age))]
