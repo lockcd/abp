@@ -1,5 +1,6 @@
 import { ApplicationInfo, EnvironmentService } from '@abp/ng.core';
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'abp-logo',
@@ -12,7 +13,7 @@ import { Component } from '@angular/core';
       }
     </a>
   `,
-  imports: [],
+  imports: [RouterLink],
 })
 export class LogoComponent {
   get appInfo(): ApplicationInfo {

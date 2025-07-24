@@ -1,7 +1,7 @@
 import { EXTENSIONS_FORM_PROP, EXTENSIONS_FORM_PROP_DATA } from './../../tokens/extensions.token';
 import {
   ABP,
-  LocalizationModule,
+  LocalizationPipe,
   PermissionDirective,
   ShowPasswordDirective,
   TrackByService,
@@ -66,7 +66,7 @@ import { ExtensibleFormMultiselectComponent } from '../multi-select/extensible-f
     NgbTypeaheadModule,
     ShowPasswordDirective,
     PermissionDirective,
-    LocalizationModule,
+    LocalizationPipe,
     NgClass,
     NgComponentOutlet,
     NgTemplateOutlet,
