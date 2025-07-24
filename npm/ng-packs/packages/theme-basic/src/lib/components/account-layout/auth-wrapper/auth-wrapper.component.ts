@@ -8,7 +8,7 @@ import { TenantBoxComponent } from '../tenant-box/tenant-box.component';
   selector: 'abp-auth-wrapper',
   templateUrl: './auth-wrapper.component.html',
   providers: [AuthWrapperService],
-  imports: [CommonModule, TenantBoxComponent, ReplaceableTemplateDirective, LocalizationPipe],
+  imports: [AsyncPipe, TenantBoxComponent, ReplaceableTemplateDirective, LocalizationPipe],
 })
 export class AuthWrapperComponent {
   service = inject(AuthWrapperService);

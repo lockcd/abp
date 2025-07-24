@@ -7,7 +7,7 @@ import { LocalizationPipe, SafeHtmlPipe } from '@abp/ng.core';
   selector: 'abp-page-alert-container',
   templateUrl: './page-alert-container.component.html',
   encapsulation: ViewEncapsulation.None,
-  imports: [CommonModule, LocalizationPipe, SafeHtmlPipe],
+  imports: [NgClass, AsyncPipe, LocalizationPipe, SafeHtmlPipe],
 })
 export class PageAlertContainerComponent {
   service = inject(PageAlertService);

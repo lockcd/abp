@@ -1,4 +1,3 @@
-import { Router } from '@angular/router';
 import { NgClass, NgStyle } from '@angular/common';
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { combineLatest, Subscription, timer } from 'rxjs';

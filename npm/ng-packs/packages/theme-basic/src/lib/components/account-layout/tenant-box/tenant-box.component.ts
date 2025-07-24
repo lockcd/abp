@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './tenant-box.component.html',
   providers: [TenantBoxService],
   imports: [
-    CommonModule,
+    AsyncPipe,
     FormsModule,
     ModalComponent,
     LocalizationPipe,
