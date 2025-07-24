@@ -190,7 +190,10 @@ export class FeatureManagementComponent
     if (children?.length) {
       return children.some(child => {
         const childProvider = child.provider?.name;
-        return childProvider !== this.providerName && childProvider !== this.defaultProviderName;
+        return (
+          (childProvider !== this.providerName && childProvider !== this.defaultProviderName) ||
+          (provider !== this.providerName && provider !== this.defaultProviderName)
+        );
       });
     } else {
       return provider !== this.providerName && provider !== this.defaultProviderName;
