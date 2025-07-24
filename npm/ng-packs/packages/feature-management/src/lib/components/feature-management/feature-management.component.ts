@@ -184,13 +184,17 @@ export class FeatureManagementComponent
     }
   }
 
-  isParentDisabled(parentName: string, groupName: string): boolean {
+  isParentDisabled(parentName: string, groupName: string, provider: string): boolean {
     const children = this.features[groupName]?.filter(f => f.parentName === parentName);
 
-    return children.some(child => {
-      const provider = child.provider?.name;
+    if (children?.length) {
+      return children.some(child => {
+        const childProvider = child.provider?.name;
+        return childProvider !== this.providerName && childProvider !== this.defaultProviderName;
+      });
+    } else {
       return provider !== this.providerName && provider !== this.defaultProviderName;
-    });
+    }
   }
 
   private uncheckToggleDescendants(feature: FeatureDto) {
