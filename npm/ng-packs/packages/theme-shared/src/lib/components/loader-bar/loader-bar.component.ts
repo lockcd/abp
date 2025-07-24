@@ -1,6 +1,6 @@
-import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgClass, NgStyle } from '@angular/common';
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { combineLatest, Subscription, timer } from 'rxjs';
 import { HttpWaitService, RouterWaitService, SubscriptionService } from '@abp/ng.core';
 
@@ -24,6 +24,11 @@ import { HttpWaitService, RouterWaitService, SubscriptionService } from '@abp/ng
   imports: [NgClass, NgStyle],
 })
 export class LoaderBarComponent implements OnDestroy, OnInit {
+  private cdRef = inject(ChangeDetectorRef);
+  private subscription = inject(SubscriptionService);
+  private httpWaitService = inject(HttpWaitService);
+  private routerWaitService = inject(RouterWaitService);
+
   protected _isLoading!: boolean;
 
   @Input()
@@ -72,14 +77,6 @@ export class LoaderBarComponent implements OnDestroy, OnInit {
   get boxShadow(): string {
     return `0 0 10px rgba(${this.color}, 0.5)`;
   }
-
-  constructor(
-    private router: Router,
-    private cdRef: ChangeDetectorRef,
-    private subscription: SubscriptionService,
-    private httpWaitService: HttpWaitService,
-    private routerWaitService: RouterWaitService,
-  ) {}
 
   ngOnInit() {
     this.subscribeLoading();
