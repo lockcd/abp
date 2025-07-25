@@ -6,7 +6,7 @@ import {
   CanActivateFn,
 } from '@angular/router';
 
-import { Observable } from 'rxjs';
+import { Observable, interval, filter, take, map, firstValueFrom, timeout, catchError, of } from 'rxjs';
 import { OAuthService } from 'angular-oauth2-oidc';
 
 import { AuthService, IAbpGuard } from '@abp/ng.core';
@@ -51,5 +51,35 @@ export const abpOAuthGuard: CanActivateFn = (
 
   const params = { returnUrl: state.url };
   authService.navigateToLogin(params);
+  return false;
+};
+
+export const asyncAbpOAuthGuard: CanActivateFn = (
+  route: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot,
+) => {
+  const authService = inject(AuthService);
+  const code = new URLSearchParams(window.location.search).get('code');
+
+  if (code) {
+    return firstValueFrom(
+      interval(100).pipe(
+        map(() => authService.isAuthenticated),
+        filter(isAuthenticated => isAuthenticated),
+        take(1),
+        timeout(3000),
+        catchError(() => {
+          authService.navigateToLogin({ returnUrl: state.url });
+          return of(false);
+        })
+      )
+    );
+  }
+
+  if (authService.isAuthenticated) {
+    return true;
+  }
+
+  authService.navigateToLogin({ returnUrl: state.url });
   return false;
 };
