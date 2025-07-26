@@ -8,7 +8,7 @@ namespace Volo.Abp.EntityFrameworkCore;
 public static class AbpDbContextConfigurationContextMySQLExtensions
 {
     /// <summary>
-    /// This extension method is configuring the use Pomelo.EntityFrameworkCore.MySql as the database provider.
+    /// This extension method configures Pomelo.EntityFrameworkCore.MySql as the database provider.
     /// </summary>
     [Obsolete("Use UsePomeloMySQL instead.")]
     public static DbContextOptionsBuilder UseMySQL(
@@ -19,7 +19,7 @@ public static class AbpDbContextConfigurationContextMySQLExtensions
     }
 
     /// <summary>
-    /// This extension method is configuring the use Pomelo.EntityFrameworkCore.MySql as the database provider.
+    /// This extension method configures Pomelo.EntityFrameworkCore.MySql as the database provider.
     /// </summary>
     public static DbContextOptionsBuilder UsePomeloMySQL(
         [NotNull] this AbpDbContextConfigurationContext context,
@@ -46,7 +46,7 @@ public static class AbpDbContextConfigurationContextMySQLExtensions
     }
 
     /// <summary>
-    /// This extension method is configuring the use MySql.EntityFrameworkCore  as the database provider.
+    /// This extension method configures MySql.EntityFrameworkCore as the database provider.
     /// </summary>
     public static DbContextOptionsBuilder UseMySQLConnector(
         [NotNull] this AbpDbContextConfigurationContext context,
