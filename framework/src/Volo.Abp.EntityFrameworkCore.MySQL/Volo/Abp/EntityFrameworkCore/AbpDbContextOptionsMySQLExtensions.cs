@@ -1,14 +1,51 @@
 ﻿using JetBrains.Annotations;
 using System;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Volo.Abp.EntityFrameworkCore;
 
 public static class AbpDbContextOptionsMySQLExtensions
 {
+    [Obsolete("Use UsePomeloMySQL instead.")]
     public static void UseMySQL(
-            [NotNull] this AbpDbContextOptions options,
-            Action<MySqlDbContextOptionsBuilder>? mySQLOptionsAction = null)
+        [NotNull] this AbpDbContextOptions options,
+        Action<Microsoft.EntityFrameworkCore.Infrastructure.MySqlDbContextOptionsBuilder>? mySQLOptionsAction = null)
+    {
+        options.UsePomeloMySQL(mySQLOptionsAction);
+    }
+
+    [Obsolete("Use UsePomeloMySQL instead.")]
+    public static void UseMySQL<TDbContext>(
+        [NotNull] this AbpDbContextOptions options,
+        Action<Microsoft.EntityFrameworkCore.Infrastructure.MySqlDbContextOptionsBuilder>? mySQLOptionsAction = null)
+        where TDbContext : AbpDbContext<TDbContext>
+    {
+        options.UsePomeloMySQL<TDbContext>(mySQLOptionsAction);
+    }
+
+    public static void UsePomeloMySQL(
+        [NotNull] this AbpDbContextOptions options,
+        Action<Microsoft.EntityFrameworkCore.Infrastructure.MySqlDbContextOptionsBuilder>? mySQLOptionsAction = null)
+    {
+        options.Configure(context =>
+        {
+            context.UsePomeloMySQL(mySQLOptionsAction);
+        });
+    }
+
+    public static void UsePomeloMySQL<TDbContext>(
+        [NotNull] this AbpDbContextOptions options,
+        Action<Microsoft.EntityFrameworkCore.Infrastructure.MySqlDbContextOptionsBuilder>? mySQLOptionsAction = null)
+        where TDbContext : AbpDbContext<TDbContext>
+    {
+        options.Configure<TDbContext>(context =>
+        {
+            context.UsePomeloMySQL(mySQLOptionsAction);
+        });
+    }
+
+    public static void UseMySQL(
+        [NotNull] this AbpDbContextOptions options,
+        Action<MySql.EntityFrameworkCore.Infrastructure.MySQLDbContextOptionsBuilder>? mySQLOptionsAction = null)
     {
         options.Configure(context =>
         {
@@ -18,7 +55,7 @@ public static class AbpDbContextOptionsMySQLExtensions
 
     public static void UseMySQL<TDbContext>(
         [NotNull] this AbpDbContextOptions options,
-        Action<MySqlDbContextOptionsBuilder>? mySQLOptionsAction = null)
+        Action<MySql.EntityFrameworkCore.Infrastructure.MySQLDbContextOptionsBuilder>? mySQLOptionsAction = null)
         where TDbContext : AbpDbContext<TDbContext>
     {
         options.Configure<TDbContext>(context =>

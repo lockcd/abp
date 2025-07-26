@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using MySqlConnector;
+using MySql.Data.MySqlClient;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 
