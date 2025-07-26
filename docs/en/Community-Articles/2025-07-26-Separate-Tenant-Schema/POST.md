@@ -237,6 +237,37 @@ namespace MtDemoApp
 }
 ````
 
+### Configuring the Database Mapping
+
+Open the `MtDemoAppDbContextBase` class and add the following configuration inside the `OnModelCreating` method:
+
+````csharp
+builder.Entity<Product>(b =>
+{
+    b.ToTable("Products");
+    b.ConfigureByConvention(); //auto-configure for the base class properties
+    b.Property(x => x.Name).IsRequired().HasMaxLength(100);
+});
+````
+
+We made the configuration in the base class since the `Products` table should be created in all databases, not only in the main database.
+
 ### Add a New Database Migration
+
+To add a new EF Core database migration, we can use ABP Studio UI, or EF Core command-line commands. I will show both of these approaches here.
+
+#### Use ABP Studio to Add Database Migrations
+
+...
+
+![abp-studio-add-migration](abp-studio-add-migration.png)
+
+...
+
+![abp-studio-add-migration-set-name](abp-studio-add-migration-set-name.png)
+
+...
+
+![abp-studio-add-migration-select-dbcontext](abp-studio-add-migration-select-dbcontext.png)
 
 TODO
