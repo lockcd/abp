@@ -12,14 +12,18 @@ This document explains how to switch to the **MySQL** database provider for **[t
 
 Find ***YourProjectName*EntityFrameworkCoreModule** class inside the `.EntityFrameworkCore` project, remove `typeof(AbpEntityFrameworkCoreSqlServerModule)` from the `DependsOn` attribute, add `typeof(AbpEntityFrameworkCoreMySQLModule)` (also replace `using Volo.Abp.EntityFrameworkCore.SqlServer;` with `using Volo.Abp.EntityFrameworkCore.MySQL;`).
 
-## UseMySQL()
+## UsePomeloMySQL()
 
 Find `UseSqlServer()` calls in your solution. Check the following files:
 
-* *YourProjectName*EntityFrameworkCoreModule.cs inside the `.EntityFrameworkCore` project. Replace `UseSqlServer()` with `UseMySQL()`.
-* *YourProjectName*DbContextFactory.cs inside the `.EntityFrameworkCore` project. Replace `UseSqlServer()` with `UseMySql()`. Then add a new parameter (`ServerVersion`) to `UseMySql()` method. Example: `.UseMySql(configuration.GetConnectionString("Default"), ServerVersion.Parse("8.0.21-mysql"))`. See [this issue](https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql/pull/1233) for more information about `ServerVersion`)
+* *YourProjectName*EntityFrameworkCoreModule.cs inside the `.EntityFrameworkCore` project. Replace `UseSqlServer()` with `UsePomeloMySQL()`.
+* *YourProjectName*DbContextFactory.cs inside the `.EntityFrameworkCore` project. Replace `UseSqlServer()` with `UsePomeloMySQL()`.
 
 > Depending on your solution structure, you may find more code files need to be changed.
+
+## UseMySQLConnector()
+
+You can also use the [MySql.EntityFrameworkCore](https://www.nuget.org/packages/MySql.EntityFrameworkCore) package instead of the Pomelo provider. If you want to use this package, you need to change the `UseMySQLConnector()` method instead of `UsePomeloMySQL()`.
 
 ## Change the Connection Strings
 

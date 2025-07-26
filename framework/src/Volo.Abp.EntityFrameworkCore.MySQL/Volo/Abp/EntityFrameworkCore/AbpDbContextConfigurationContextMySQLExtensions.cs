@@ -48,7 +48,7 @@ public static class AbpDbContextConfigurationContextMySQLExtensions
     /// <summary>
     /// This extension method is configuring the use MySql.EntityFrameworkCore  as the database provider.
     /// </summary>
-    public static DbContextOptionsBuilder UseMySQL(
+    public static DbContextOptionsBuilder UseMySQLConnector(
         [NotNull] this AbpDbContextConfigurationContext context,
         Action<MySql.EntityFrameworkCore.Infrastructure.MySQLDbContextOptionsBuilder>? mySQLOptionsAction = null)
     {

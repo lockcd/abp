@@ -43,24 +43,24 @@ public static class AbpDbContextOptionsMySQLExtensions
         });
     }
 
-    public static void UseMySQL(
+    public static void UseMySQLConnector(
         [NotNull] this AbpDbContextOptions options,
         Action<MySql.EntityFrameworkCore.Infrastructure.MySQLDbContextOptionsBuilder>? mySQLOptionsAction = null)
     {
         options.Configure(context =>
         {
-            context.UseMySQL(mySQLOptionsAction);
+            context.UseMySQLConnector(mySQLOptionsAction);
         });
     }
 
-    public static void UseMySQL<TDbContext>(
+    public static void UseMySQLConnector<TDbContext>(
         [NotNull] this AbpDbContextOptions options,
         Action<MySql.EntityFrameworkCore.Infrastructure.MySQLDbContextOptionsBuilder>? mySQLOptionsAction = null)
         where TDbContext : AbpDbContext<TDbContext>
     {
         options.Configure<TDbContext>(context =>
         {
-            context.UseMySQL(mySQLOptionsAction);
+            context.UseMySQLConnector(mySQLOptionsAction);
         });
     }
 }
