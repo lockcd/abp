@@ -463,7 +463,16 @@ In brief, when you make changes on your entity classes;
 
 ## Conclusion
 
+In this article, I covered two important aspects of multi-tenant application development:
 
+* How ABP startup templates provide a multi-tenant application setup, so some tenants may store their data in a single (main, shared) database while some others may have their own dedicated database.
+* Demonstrate how it can manage database migration process on the fly for multiple databases.
+
+I started by defining different database models for multi-tenant applications (Single database, separate databases, and hybrid), showed how to create an ABP application that supports hybrid model, explained the DbContext structure that is coming with the solution template, demonstrated how to define entities, create and apply database migrations in such an application.
+
+I hope this article gives you a good understanding the problem and the solution provided by the ABP Framework. Please write your questions or comments under this article.
+
+Enjoy coding! :)
 
 ## Further Reading
 
