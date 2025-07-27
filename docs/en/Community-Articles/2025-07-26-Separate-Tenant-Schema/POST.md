@@ -239,35 +239,111 @@ namespace MtDemoApp
 
 ### Configuring the Database Mapping
 
-Open the `MtDemoAppDbContextBase` class and add the following configuration inside the `OnModelCreating` method:
+Open the `MtDemoAppDbContextBase` class and add the following property to the class:
+
+````csharp
+public DbSet<Product> Products { get; set; }
+````
+
+Then add the following mapping code inside the `OnModelCreating` method (after all other existing code):
 
 ````csharp
 builder.Entity<Product>(b =>
 {
-    b.ToTable("Products");
-    b.ConfigureByConvention(); //auto-configure for the base class properties
+    b.ToTable(MtDemoAppConsts.DbTablePrefix + "Products", MtDemoAppConsts.DbSchema);
+    b.ConfigureByConvention(); //auto-configure for the base class props
     b.Property(x => x.Name).IsRequired().HasMaxLength(100);
 });
 ````
 
 We made the configuration in the base class since the `Products` table should be created in all databases, not only in the main database.
 
-### Add a New Database Migration
+>`DbTablePrefix` and `DbSchema` are optional and configurable in your application. You can change or remove them.
 
-To add a new EF Core database migration, we can use ABP Studio UI, or EF Core command-line commands. I will show both of these approaches here.
+### Add a New Database Migration for the Main Database
 
-#### Use ABP Studio to Add Database Migrations
+To add a new EF Core database migration, we can use ABP Studio UI or EF Core command-line commands. I will show both of these approaches here.
 
-...
+#### Using the ABP Studio "Add Migrations" UI
+
+You can right-click the `.EntityFrameworkCore` package in the ABP Studio's *Solution Explorer* panel and select *EF Core CLI* -> *Add Migration* command as shown below:
 
 ![abp-studio-add-migration](abp-studio-add-migration.png)
 
-...
+You set a migration name on the opened dialog:
 
 ![abp-studio-add-migration-set-name](abp-studio-add-migration-set-name.png)
 
-...
+If you select the *Update Database* checkbox it will apply changes to the database after generating the migration code.
+
+Lastly, select the main DbContext class for this migration:
 
 ![abp-studio-add-migration-select-dbcontext](abp-studio-add-migration-select-dbcontext.png)
+
+This dialog is shown when your application has multiple `DbContext` classes. Once you click the *OK* button, a new migration class is added under the `Migrations` folder of the `.EntityFrameworkCore` project (you can see in your coding editor):
+
+![added-product-entity-migration-main-context](added-product-entity-migration-main-context.png)
+
+Since we selected the *Update Database* option, the database table is also created. The following screenshot shows the `AppProducts` table (`App` is the default prefix for your tables, but you can change or remove it) in Microsoft SQL Server Management Studio:
+
+![product-database-table](product-database-table.png)
+
+#### Using a Command-Line Terminal
+
+If you prefer to use the command-line terminal (instead of ABP Studio UI), open a command-line terminal in the directory of the `.EntityFrameworkCore` project. As a shortcut, you can right-click the `.EntityFrameworkCore` project in ABP Studio, then select *Open with* -> *Terminal* command as shown in the following figure:
+
+![abp-studio-open-with-terminal](abp-studio-open-with-terminal.png)
+
+Then you can use the [EF Core command-line tool](https://learn.microsoft.com/en-us/ef/core/cli/dotnet) to add a new database migration:
+
+````bash
+dotnet ef migrations add "Added_Product_Entity" --context MtDemoAppDbContext
+````
+
+It is important to set the `--context` parameter since we have two DbContext classes in the same project.
+
+After adding the migration, you can update the database:
+
+````bash
+dotnet ef database update "Added_Product_Entity" --context MtDemoAppDbContext
+````
+
+> If you are using Visual Studio, you can also use the [Package Manager Console](https://learn.microsoft.com/en-us/ef/core/cli/powershell) inside your IDE to add migrations and update the database.
+
+### Add a New Database Migration for the Tenant Database
+
+We added a database migration for the main (shared) database. We also need to add a new database migration for tenants who have separate databases.
+
+This time, no need to configure the DbContext since we did it in the base DbContext class, so it is valid for both of the DbContext classes. Just right-click the `.EntityFrameworkCore` package in the ABP Studio's *Solution Explorer* panel and select *EF Core CLI* -> *Add Migration* command as shown below:
+
+![abp-studio-add-migration](abp-studio-add-migration.png)
+
+You can set the same or a different migration name here:
+
+![abp-studio-add-migration-set-name](abp-studio-add-migration-set-name.png)
+
+The important part is to select the Tenant DbContext in the next dialog, because we want to change the tenant database this time:
+
+![abp-studio-context-selection](abp-studio-context-selection.png)
+
+After clicking the *OK* button, it will add a new database migration class, but this time to the `TenantMigrations` folder:
+
+![added-product-entity-migration-tenant-context](added-product-entity-migration-tenant-context.png)
+
+ABP Studio is smart enough to select the right folder name for the new migration by mapping with the DbContext name. However, you could manually type `TenantMigrations` in the *Output directory* textbox.
+
+Since we selected the *Update Database* option, it also applied changes to the database. But, which database? Interestingly, it automatically creates a second database for tenants with the project name + `_Tenant` suffix:
+
+![tenant-database](tenant-database.png)
+
+> This new database is never used on runtime or production. It is only created to allow you to see the schema (tables and their fields) on development time to be sure that everything is as expected. As you see, some tables (like `Saas*` and `OpenIddict*`) are not available in that database, since they are used on the host side and only necessary to be in the main database.
+
+You can see that database's connection string in the `appsettings.development.json` file of the `.DbMigrator` project in the solution. If you want to understand how it works, you can check source code of the `DbContextFactory` classes in the `.EntityFrameworkCore` project:
+
+![dbcontext-factories](dbcontext-factories.png)
+
+These factory classes are used to create `DbContext` instances when you execute *Add Migration* and *Update Database* commands.
+
+## Managing Tenant Databases and Connection Strings
 
 TODO
