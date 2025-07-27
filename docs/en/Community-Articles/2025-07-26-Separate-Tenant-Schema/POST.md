@@ -432,8 +432,40 @@ Just fill these information as you wish, then open the *Database connection stri
 
 Uncheck the *Use the shared database* option and set a connection string to the *Default connection string* for this tenant. I used `Server=(LocalDb)\MSSQLLocalDB;Database=MtDemoApp_Volosoft;Trusted_Connection=True;TrustServerCertificate=true` as the connection string value. The database name is `MtDemoApp_Volosoft`. You can Test the connection string to be sure that it is a valid connection string.
 
-Once you click the *Save* button, the new tenant is created, a new database is created, all the database migrations are applied and the initial data seed is performed. You can open the SQL Server Management Studio to see the new database:
+Once you click the *Save* button, the new tenant is created, a new database is created on the fly, all the database migrations are applied and the initial data seed is performed. You can open the SQL Server Management Studio to see the new database:
 
 ![separate-database](separate-database.png)
 
 You can check the tables (e.g. `AbpUsers`) to see that only this new tenant's data is stored in this database. To test the application, switch to the Volosoft tenant (as like explained in the *Sign in with the new Tenant* section before), create a new role or user and check the database.
+
+## Migrating Existing Tenant Databases
+
+In the previous section, we've seen that a tenant database is automatically created on runtime if you set a connection string for that tenant. Also, all the current migrations are automatically applied to the database, so it becomes up to date.
+
+But what about existing tenant databases when a new migration is added to the application? Maybe you have a few tenants with their separate databases, or you may have thousands of tenants with separate databases. How will you apply database schema changes to all of these databases?
+
+The startup template comes with a solution to this problem. There is a `.DbMigrator` console application in the solution that is responsible to apply schema (table and their fields) changes to all of the databases in the system (the main database and all the separate tenant databases). It also executes the data seeding if seed data is available. All you need to do is to execute this application on your production environment while deploying a new version of your application (of course, it is also very useful in the development environment). It checks and upgrades all the databases before the new version of your application is deployed.
+
+Here is the console log screen when I run the `.DbMigrator` application on my development environment:
+
+![dbmigrator-logs](dbmigrator-logs.png)
+
+As you can see in the logs, it first migrates for the main (host) database, then migrates the tenant databases one by one. It doesn't make schema migration for the `acme` tenant since it has not a separate database, but uses the main database.
+
+In brief, when you make changes on your entity classes;
+
+1) Add a new migration for the main DbContext class as I explained in this article.
+2) Add a new migration for the tenant DbContext class as I explained in this article.
+3) Run the `.DbMigrator` application in your development environment to ensure all the databases are up to date.
+4) When you deploy your application to production or test environments, remember to run the `.DbMigrator` application first, then update your application. Or better, setup a CI/CD pipeline that automates this process. You can run the `.DbMigrator` every time while deploying the application, regardless of whether there is a schema change or not.
+
+> If you have too many tenants with separate database, then the migration process may take too much time. `.DbMigrator` provides the fundamental solution. But for more advanced scenarios or bigger systems, you can always develop your own solution. Just check the `.DbMigrator` application to understand how it was implemented. All the necessary code located in your solution, so you can easily understand and freely customize.
+
+## Conclusion
+
+
+
+## Further Reading
+
+* [ABP Multi-Tenancy document](https://abp.io/docs/latest/framework/architecture/multi-tenancy)
+* [Multi-Tenancy Architecture with .NET](https://abp.io/architecture/multi-tenancy)
