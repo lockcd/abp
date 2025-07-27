@@ -428,7 +428,7 @@ Finally, we came to the point that we will create a new tenant with a separate, 
 
 Just fill these information as you wish, then open the *Database connection strings* tab:
 
-![new-tenant-dialog-conn-string-2](D:\Github\abp\docs\en\Community-Articles\2025-07-26-Separate-Tenant-Schema\new-tenant-dialog-conn-string-2.png)
+![new-tenant-dialog-conn-string-2](new-tenant-dialog-conn-string-2.png)
 
 Uncheck the *Use the shared database* option and set a connection string to the *Default connection string* for this tenant. I used `Server=(LocalDb)\MSSQLLocalDB;Database=MtDemoApp_Volosoft;Trusted_Connection=True;TrustServerCertificate=true` as the connection string value. The database name is `MtDemoApp_Volosoft`. You can Test the connection string to be sure that it is a valid connection string.
 
