@@ -4,7 +4,7 @@
 
 In this article, we’ll explore how to use this advanced multi-tenancy model using the powerful capabilities of the ABP Framework and the .NET platform.
 
-> In this article, I will use ABP Studio for creating the application. ABP Studio allows to select "separate database per tenant" option only for [commercial licenses](https://abp.io/pricing).
+> In this article, I will use [ABP Studio](https://abp.io/studio) for creating the application. ABP Studio allows to select "separate database per tenant" option only for [commercial licenses](https://abp.io/pricing).
 
 ## Understanding Database Models for a Multi-Tenant Application
 
@@ -337,6 +337,8 @@ Since we selected the *Update Database* option, it also applied changes to the d
 ![tenant-database](tenant-database.png)
 
 > This new database is never used on runtime or production. It is only created to allow you to see the schema (tables and their fields) on development time to be sure that everything is as expected. As you see, some tables (like `Saas*` and `OpenIddict*`) are not available in that database, since they are used on the host side and only necessary to be in the main database.
+>
+> So, where is the real tenant database? If a tenant's database is dedicated (separate), it is created on runtime as I will explain in the *Managing Tenant Databases and Connection Strings* section later.
 
 You can see that database's connection string in the `appsettings.development.json` file of the `.DbMigrator` project in the solution. If you want to understand how it works, you can check source code of the `DbContextFactory` classes in the `.EntityFrameworkCore` project:
 
@@ -346,4 +348,92 @@ These factory classes are used to create `DbContext` instances when you execute 
 
 ## Managing Tenant Databases and Connection Strings
 
-TODO
+Until now, we even didn't run the application. It is the time to do it.
+
+### Running the Application with ABP Studio
+
+You can run the `.Web` project in your IDE. But I prefer to use ABP Studio's *[Solution Runner](https://abp.io/docs/latest/studio/running-applications)* feature here. You can open the *Solution Runner* panel in *ABP Studio* and click the play icon near to the solution root (`MyDemoApp`):
+
+![abp-studio-solution-runner](abp-studio-solution-runner.png)
+
+Once the application runs (and you see the blue link icon near to it), right click and select the *Browse* command:
+
+![abp-studio-browse](abp-studio-browse.png)
+
+It will open the application's UI in the built-in browser of ABP Studio. You can Login the application (with `admin` as user name and `1q2w3E*` as the default password) and navigate to the *Saas* -> *Tenants* page.
+
+### Creating a New Tenant with the Shared Database
+
+The *Tenants* page of the [SaaS module](https://abp.io/modules/Volo.SaaS) is shown below:
+
+![abp-saas-tenants-page](abp-saas-tenants-page.png)
+
+As you see, there is no tenant at the beginning. I can click the *+ New tenant* button to create the first tenant:
+
+![new-tenant-dialog-1](new-tenant-dialog-1.png)
+
+On this screen, we can set the base tenant information. If you click the *Database connection strings* tab, you can see the following UI:
+
+![new-tenant-dialog-conn-string-1](new-tenant-dialog-conn-string-1.png)
+
+For this first tenant, I will keep it as default and use the shared (main) database for this tenant's data. After clicking the *Save* button, the tenant is created and an initial [data seed](https://abp.io/docs/latest/framework/infrastructure/data-seeding) operation is automatically performed for us. To see an example, you can open the database, show rows of the `AbpUsers` table:
+
+![users-table-new-tenant](users-table-new-tenant.png)
+
+As you see, a new `admin` user has been created with a `TenantId`. The first row is the `admin` user of the host side. So, ABP allows to define same user name in different tenants, because their data (users in this example) are completely isolated from each other.
+
+### Sign in with the new Tenant
+
+We created a new tenant. In this step, we will sign in with the new tenant's `admin` user to see the application UI by that new tenant. To do that, we should logout from the host admin user first. Click the user name (`admin`) on the top right area of the application and select the *Log out* command:
+
+![user-logout](user-logout.png)
+
+Click the *Login* button again, which redirects you to the *Login* page:
+
+![user-login](user-login.png)
+
+In this page, click the *switch* button near to the *TENANT* selection area and type `acme` as *Name*:
+
+![switch-tenant-dialog](switch-tenant-dialog.png)
+
+Once you click the *Save* button, you are now in the acme tenant's context. You can see it on the *TENANT* selection area:
+
+![tenant-acme-name](tenant-acme-name.png)
+
+> This kind of tenant switch feature is very useful in development to quickly change tenants to test your application. However, in production, you typically want to use subdomain/domain names or another mechanism to determine tenants automatically. When you configure domain based resolution, the tenant selection area is automatically disappears from the login page. You can check the [multi-tenant document](https://abp.io/docs/latest/framework/architecture/multi-tenancy) to learn how to configure it.
+
+After switching to the `acme` tenant, we can use `admin` as user name and the password you set during the tenant creation (I had set it as `1q2w3E*`) to login to the application.
+
+Here a screenshot from the *Roles* page after signing in as the `acme` tenant's `admin` user:
+
+![acme-tenant-screen](acme-tenant-screen.png)
+
+> Notice that each tenant has its own roles, users, permissions, and other data. If you change roles here, it doesn't affect other tenants or the host side.
+>
+> Also, you can see that there are less menu items compared to host side. For example, tenant management page is not available for tenants as you can expect.
+
+### Switch Back to the Host Side
+
+To switch back to the host side to add a new tenant, logout from the application, click the *Login* button again to open the login page and then again click the *switch* button to change the current tenant context:
+
+![switch-host-side](switch-host-side.png)
+
+In this dialog, clear the *Name* field and then *Save* the dialog to switch back to the host side. Then you can use the standard `admin` user name with `1q2w3E*` password to login to the application as the host administrator.
+
+### Creating a New Tenant with a Separate Database
+
+Finally, we came to the point that we will create a new tenant with a separate, dedicated database. Open the *Tenants* page of the SaaS module and click the *+ New tenant* button:
+
+![new-tenant-dialog-2](new-tenant-dialog-2.png)
+
+Just fill these information as you wish, then open the *Database connection strings* tab:
+
+![new-tenant-dialog-conn-string-2](D:\Github\abp\docs\en\Community-Articles\2025-07-26-Separate-Tenant-Schema\new-tenant-dialog-conn-string-2.png)
+
+Uncheck the *Use the shared database* option and set a connection string to the *Default connection string* for this tenant. I used `Server=(LocalDb)\MSSQLLocalDB;Database=MtDemoApp_Volosoft;Trusted_Connection=True;TrustServerCertificate=true` as the connection string value. The database name is `MtDemoApp_Volosoft`. You can Test the connection string to be sure that it is a valid connection string.
+
+Once you click the *Save* button, the new tenant is created, a new database is created, all the database migrations are applied and the initial data seed is performed. You can open the SQL Server Management Studio to see the new database:
+
+![separate-database](separate-database.png)
+
+You can check the tables (e.g. `AbpUsers`) to see that only this new tenant's data is stored in this database. To test the application, switch to the Volosoft tenant (as like explained in the *Sign in with the new Tenant* section before), create a new role or user and check the database.
