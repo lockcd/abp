@@ -12,18 +12,24 @@ This document explains how to switch to the **MySQL** database provider for **[t
 
 Find ***YourProjectName*EntityFrameworkCoreModule** class inside the `.EntityFrameworkCore` project, remove `typeof(AbpEntityFrameworkCoreSqlServerModule)` from the `DependsOn` attribute, add `typeof(AbpEntityFrameworkCoreMySQLModule)` (also replace `using Volo.Abp.EntityFrameworkCore.SqlServer;` with `using Volo.Abp.EntityFrameworkCore.MySQL;`).
 
-## UsePomeloMySQL()
+## UseMySQL()
 
 Find `UseSqlServer()` calls in your solution. Check the following files:
 
-* *YourProjectName*EntityFrameworkCoreModule.cs inside the `.EntityFrameworkCore` project. Replace `UseSqlServer()` with `UsePomeloMySQL()`.
-* *YourProjectName*DbContextFactory.cs inside the `.EntityFrameworkCore` project. Replace `UseSqlServer()` with `UsePomeloMySQL()`.
+* *YourProjectName*EntityFrameworkCoreModule.cs inside the `.EntityFrameworkCore` project. Replace `UseSqlServer()` with `UseMySQL()`.
+* *YourProjectName*DbContextFactory.cs inside the `.EntityFrameworkCore` project. Replace `UseSqlServer()` with `UseMySQL()`.
 
 > Depending on your solution structure, you may find more code files need to be changed.
 
-## UseMySQLConnector()
+## Use Pomelo Provider
 
-You can also use the [MySql.EntityFrameworkCore](https://www.nuget.org/packages/MySql.EntityFrameworkCore) package instead of the Pomelo provider. If you want to use this package, you need to change the `UseMySQLConnector()` method instead of `UsePomeloMySQL()`.
+Alternatively, you can use the [Pomelo.EntityFrameworkCore.MySql](https://www.nuget.org/packages/Pomelo.EntityFrameworkCore.MySql) provider. Replace the [Volo.Abp.EntityFrameworkCore.MySQL](https://www.nuget.org/packages/Volo.Abp.EntityFrameworkCore.MySQL) package with the [Volo.Abp.EntityFrameworkCore.MySQL.Pomelo](https://www.nuget.org/packages/Volo.Abp.EntityFrameworkCore.MySQL.Pomelo) package in your `.EntityFrameworkCore` project.
+
+Find ***YourProjectName*EntityFrameworkCoreModule** class inside the `.EntityFrameworkCore` project, replace `typeof(AbpEntityFrameworkCoreMySQLModule)` with `typeof(AbpEntityFrameworkCoreMySQLPomeloModule)` in the `DependsOn` attribute.
+
+> Depending on your solution structure, you may find more code files need to be changed.
+
+The `UseMySQL()` method calls remain the same, no changes needed.
 
 ## Change the Connection Strings
 

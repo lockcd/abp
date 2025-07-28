@@ -1,13 +1,13 @@
 using System;
 using System.Threading.Tasks;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 
 namespace Volo.Abp.EntityFrameworkCore.ConnectionStrings;
 
 [Dependency(ReplaceServices = true)]
-public class MySqlConnectionStringChecker : IConnectionStringChecker, ITransientDependency
+public class PomeloMySQLConnectionStringChecker : IConnectionStringChecker, ITransientDependency
 {
     public virtual async Task<AbpConnectionStringCheckResult> CheckAsync(string connectionString)
     {
