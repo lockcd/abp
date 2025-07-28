@@ -1,4 +1,4 @@
-import { makeEnvironmentProviders, Provider, inject, provideAppInitializer } from '@angular/core';
+import { makeEnvironmentProviders, Provider, provideAppInitializer, inject, Injector } from '@angular/core';
 import { TitleStrategy } from '@angular/router';
 import {
   HTTP_INTERCEPTORS,
@@ -107,13 +107,16 @@ export function provideAbpCore(...features: CoreFeature<CoreFeatureKind>[]) {
       }),
     ),
     provideAppInitializer(() => {
-      getInitialData();
-      localeInitializer();
+      const injector = inject(Injector);
       inject(LocalizationService);
       inject(LocalStorageListenerService);
       inject(RoutesHandler);
-    }),
 
+      return (async (): Promise<void> => {
+        await getInitialData();
+        await localeInitializer(injector);
+      })();
+    }),
     LocaleProvider,
     CookieLanguageProvider,
     {
