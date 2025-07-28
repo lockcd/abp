@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
             return;
         }
         var clientName = redirectButton.getAttribute("cname");
-        if (!clientName) {
+        if (clientName) {
             window.clientName = clientName;
         }
         var href = redirectButton.getAttribute("href");
