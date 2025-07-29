@@ -17,6 +17,7 @@
     "SentSuccessfully": "Enviado exitosamente",
     "MailSendingFailed": "Error al enviar el correo, por favor revise su configuración de correo y vuelva a intentarlo.",
     "Send": "Enviar",
+    "Menu:SettingManagement": "Gestión de configuración",
     "Menu:Emailing": "Configuración",
     "Menu:TimeZone": "Zona Horaria",
     "DisplayName:Timezone": "Zona horaria",

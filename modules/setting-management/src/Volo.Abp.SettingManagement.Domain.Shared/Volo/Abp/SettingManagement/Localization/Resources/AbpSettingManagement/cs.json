@@ -17,6 +17,7 @@
     "SentSuccessfully": "Úspěšně odesláno",
     "MailSendingFailed": "Odesílání e-mailu se nezdařilo. Zkontrolujte konfiguraci e-mailu a zkuste to znovu.",
     "Send": "Poslat",
+    "Menu:SettingManagement": "Správa nastavení",
     "Menu:Emailing": "Zasílání e-mailem",
     "Menu:TimeZone": "Časové Pásmo",
     "DisplayName:Timezone": "Časové pásmo",
