@@ -107,14 +107,12 @@ export function provideAbpCore(...features: CoreFeature<CoreFeatureKind>[]) {
       }),
     ),
     provideAppInitializer(() => {
-      const injector = inject(Injector);
       inject(LocalizationService);
       inject(LocalStorageListenerService);
       inject(RoutesHandler);
 
       return (async (): Promise<void> => {
         await getInitialData();
-        await localeInitializer(injector);
       })();
     }),
     LocaleProvider,

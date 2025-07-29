@@ -50,6 +50,7 @@ export async function getInitialData() {
     }),
   );
   await lastValueFrom(result$);
+  await localeInitializer(injector);
 }
 
 export function localeInitializer(injector?: Injector) {
