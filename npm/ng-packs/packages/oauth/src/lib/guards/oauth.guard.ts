@@ -6,10 +6,10 @@ import {
   CanActivateFn,
 } from '@angular/router';
 
-import { Observable, interval, filter, take, map, firstValueFrom, timeout, catchError, of } from 'rxjs';
+import { Observable, timer, filter, take, map, firstValueFrom, timeout, catchError, of } from 'rxjs';
 import { OAuthService } from 'angular-oauth2-oidc';
 
-import { AuthService, IAbpGuard } from '@abp/ng.core';
+import { AuthService, IAbpGuard, EnvironmentService } from '@abp/ng.core';
 
 /**
  * @deprecated Use `abpOAuthGuard` *function* instead.
@@ -58,14 +58,17 @@ export const asyncAbpOAuthGuard: CanActivateFn = (
   route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot,
 ) => {
+  const oAuthService = inject(OAuthService);
   const authService = inject(AuthService);
-  const code = new URLSearchParams(window.location.search).get('code');
+  const environmentService = inject(EnvironmentService);
 
-  if (code) {
+  const { oAuthConfig } = environmentService.getEnvironment();
+
+  if (oAuthConfig?.responseType === 'code') {
     return firstValueFrom(
-      interval(100).pipe(
-        map(() => authService.isAuthenticated),
-        filter(isAuthenticated => isAuthenticated),
+      timer(0, 100).pipe(
+        map(() => oAuthService.hasValidAccessToken()),
+        filter(Boolean),
         take(1),
         timeout(3000),
         catchError(() => {
@@ -76,7 +79,7 @@ export const asyncAbpOAuthGuard: CanActivateFn = (
     );
   }
 
-  if (authService.isAuthenticated) {
+  if (oAuthService.hasValidAccessToken()) {
     return true;
   }
 
