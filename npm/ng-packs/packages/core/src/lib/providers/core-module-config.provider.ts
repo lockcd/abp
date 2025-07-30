@@ -106,14 +106,11 @@ export function provideAbpCore(...features: CoreFeature<CoreFeatureKind>[]) {
         headerName: 'RequestVerificationToken',
       }),
     ),
-    provideAppInitializer(() => {
+    provideAppInitializer(async () => {
       inject(LocalizationService);
       inject(LocalStorageListenerService);
       inject(RoutesHandler);
-
-      return (async (): Promise<void> => {
-        await getInitialData();
-      })();
+      await getInitialData();
     }),
     LocaleProvider,
     CookieLanguageProvider,
