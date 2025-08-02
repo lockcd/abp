@@ -123,7 +123,7 @@ public class DefaultObjectMapper : IObjectMapper, ITransientDependency
 
     protected virtual bool TryToMapCollection<TSource, TDestination>(IServiceScope serviceScope, TSource source, TDestination? destination, out TDestination collectionResult)
     {
-        if (!IsCollectionGenericType<TSource, TDestination>(out var sourceArgumentType, out var destinationArgumentType, out var definitionGenericType))
+        if (!ObjectMappingHelper.IsCollectionGenericType<TSource, TDestination>(out var sourceArgumentType, out var destinationArgumentType, out var definitionGenericType))
         {
             collectionResult = default!;
             return false;
@@ -240,63 +240,6 @@ public class DefaultObjectMapper : IObjectMapper, ITransientDependency
         var callConvert = Expression.Convert(call, typeof(object));
 
         return Expression.Lambda<Func<object, object, object, object?>>(callConvert, instanceParam, sourceParam, destinationParam).Compile();
-    }
-
-    public static bool IsCollectionGenericType<TSource, TDestination>(out Type sourceArgumentType, out Type destinationArgumentType, out Type definitionGenericType)
-    {
-        sourceArgumentType = null!;
-        destinationArgumentType = null!;
-        definitionGenericType = null!;
-
-        if ((!typeof(TSource).IsGenericType && !typeof(TSource).IsArray) ||
-            (!typeof(TDestination).IsGenericType && !typeof(TDestination).IsArray))
-        {
-            return false;
-        }
-
-        var supportedCollectionTypes = new[]
-        {
-            typeof(IEnumerable<>),
-            typeof(ICollection<>),
-            typeof(Collection<>),
-            typeof(IList<>),
-            typeof(List<>)
-        };
-
-        if (typeof(TSource).IsGenericType && supportedCollectionTypes.Any(x => x == typeof(TSource).GetGenericTypeDefinition()))
-        {
-            sourceArgumentType = typeof(TSource).GenericTypeArguments[0];
-        }
-
-        if (typeof(TSource).IsArray)
-        {
-            sourceArgumentType = typeof(TSource).GetElementType()!;
-        }
-
-        if (sourceArgumentType == null!)
-        {
-            return false;
-        }
-
-        definitionGenericType = typeof(List<>);
-        if (typeof(TDestination).IsGenericType && supportedCollectionTypes.Any(x => x == typeof(TDestination).GetGenericTypeDefinition()))
-        {
-            destinationArgumentType = typeof(TDestination).GenericTypeArguments[0];
-
-            if (typeof(TDestination).GetGenericTypeDefinition() == typeof(ICollection<>) ||
-                typeof(TDestination).GetGenericTypeDefinition() == typeof(Collection<>))
-            {
-                definitionGenericType = typeof(Collection<>);
-            }
-        }
-
-        if (typeof(TDestination).IsArray)
-        {
-            destinationArgumentType = typeof(TDestination).GetElementType()!;
-            definitionGenericType = typeof(Array);
-        }
-
-        return destinationArgumentType != null!;
     }
 
     protected virtual TDestination AutoMap<TSource, TDestination>(object source)

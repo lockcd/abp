@@ -98,7 +98,7 @@ public class MapperlyAutoObjectMappingProvider : IAutoObjectMappingProvider
 
     protected virtual bool TryToMapCollection<TSource, TDestination>(TSource source, TDestination? destination, out TDestination collectionResult)
     {
-        if (!DefaultObjectMapper.IsCollectionGenericType<TSource, TDestination>(out var sourceArgumentType, out var destinationArgumentType, out var definitionGenericType))
+        if (!ObjectMappingHelper.IsCollectionGenericType<TSource, TDestination>(out var sourceArgumentType, out var destinationArgumentType, out var definitionGenericType))
         {
             collectionResult = default!;
             return false;
