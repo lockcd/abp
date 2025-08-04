@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Volo.Abp.Mapperly.SampleClasses;
@@ -39,6 +40,36 @@ public class AbpMapperlyModule_Basic_Tests : AbpIntegratedTest<MapperlyTestModul
 
         dto.Number.ShouldBe(43);
         dto.Id.ShouldNotBe(Guid.Empty);
+    }
+
+    [Fact]
+    public void Should_Map_Collection()
+    {
+        var dto = _objectMapper.Map<List<MyEntity>, List<MyEntityDto>>(new List<MyEntity>
+        {
+            new MyEntity { Number = 42 },
+            new MyEntity { Number = 43 }
+        });
+
+        dto.Count.ShouldBe(2);
+        dto[0].Number.ShouldBe(42);
+        dto[1].Number.ShouldBe(43);
+
+        var dtoList = new List<MyEntityDto>();
+        {
+            new MyEntityDto() { Number = 44 };
+            new MyEntityDto() { Number = 45 };
+        }
+
+        dto = _objectMapper.Map<List<MyEntity>, List<MyEntityDto>>(new List<MyEntity>
+        {
+            new MyEntity { Number = 42 },
+            new MyEntity { Number = 43 }
+        }, dtoList);
+
+        dtoList.Count.ShouldBe(2);
+        dtoList[0].Number.ShouldBe(42);
+        dtoList[1].Number.ShouldBe(43);
     }
 
     [Fact]
