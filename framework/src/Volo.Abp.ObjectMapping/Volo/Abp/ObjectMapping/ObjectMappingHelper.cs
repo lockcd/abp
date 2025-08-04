@@ -28,16 +28,17 @@ public static class ObjectMappingHelper
 
     private static (Type, Type, Type)? IsCollectionGenericTypeInternal<TSource, TDestination>()
     {
-        Type sourceArgumentType = null!;
-        Type destinationArgumentType = null!;
-        Type definitionGenericType = null!;
-
-        if ((!typeof(TSource).IsGenericType && !typeof(TSource).IsArray) ||
-            (!typeof(TDestination).IsGenericType && !typeof(TDestination).IsArray))
+        if (!IsCollectionGenericTypeInternal(typeof(TSource), out var sourceArgumentType, out _) ||
+            !IsCollectionGenericTypeInternal(typeof(TDestination), out var destinationArgumentType, out var definitionGenericType))
         {
             return null;
         }
 
+        return (sourceArgumentType, destinationArgumentType, definitionGenericType);
+    }
+
+    private static bool IsCollectionGenericTypeInternal(Type type, out Type elementType, out Type definitionGenericType)
+    {
         var supportedCollectionTypes = new[]
         {
             typeof(IEnumerable<>),
@@ -47,39 +48,34 @@ public static class ObjectMappingHelper
             typeof(List<>)
         };
 
-        if (typeof(TSource).IsGenericType && supportedCollectionTypes.Any(x => x == typeof(TSource).GetGenericTypeDefinition()))
+        if (type.IsArray)
         {
-            sourceArgumentType = typeof(TSource).GenericTypeArguments[0];
+            elementType = type.GetElementType()!;
+            definitionGenericType = type;
+            return true;
         }
 
-        if (typeof(TSource).IsArray)
+        if (type.IsGenericType &&
+            supportedCollectionTypes.Contains(type.GetGenericTypeDefinition()) ||
+            type.GetInterfaces().Any(i => i.IsGenericType && supportedCollectionTypes.Contains(i.GetGenericTypeDefinition())))
         {
-            sourceArgumentType = typeof(TSource).GetElementType()!;
-        }
+            elementType = type.GetGenericArguments()[0];
+            definitionGenericType = type.GetGenericTypeDefinition();
+            if (definitionGenericType == typeof(IEnumerable<>) ||
+                definitionGenericType == typeof(IList<>))
+            {
+                definitionGenericType = typeof(List<>);
+            }
 
-        if (sourceArgumentType == null)
-        {
-            return null;
-        }
-
-        definitionGenericType = typeof(List<>);
-        if (typeof(TDestination).IsGenericType && supportedCollectionTypes.Any(x => x == typeof(TDestination).GetGenericTypeDefinition()))
-        {
-            destinationArgumentType = typeof(TDestination).GenericTypeArguments[0];
-
-            if (typeof(TDestination).GetGenericTypeDefinition() == typeof(ICollection<>) ||
-                typeof(TDestination).GetGenericTypeDefinition() == typeof(Collection<>))
+            if (definitionGenericType == typeof(ICollection<>))
             {
                 definitionGenericType = typeof(Collection<>);
             }
+            return true;
         }
 
-        if (typeof(TDestination).IsArray)
-        {
-            destinationArgumentType = typeof(TDestination).GetElementType()!;
-            definitionGenericType = typeof(Array);
-        }
-
-        return (sourceArgumentType, destinationArgumentType, definitionGenericType);
+        elementType = null!;
+        definitionGenericType = null!;
+        return false;
     }
 }

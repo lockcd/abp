@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices.JavaScript;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Volo.Abp.Mapperly.SampleClasses;
@@ -55,13 +57,23 @@ public class AbpMapperlyModule_Basic_Tests : AbpIntegratedTest<MapperlyTestModul
         dto[0].Number.ShouldBe(42);
         dto[1].Number.ShouldBe(43);
 
+        var dto2 = _objectMapper.Map<IReadOnlyList<MyEntity>, MyEntityDto[]>(new List<MyEntity>
+        {
+            new MyEntity { Number = 42 },
+            new MyEntity { Number = 43 }
+        }.AsReadOnly());
+
+        dto2.Length.ShouldBe(2);
+        dto2[0].Number.ShouldBe(42);
+        dto2[1].Number.ShouldBe(43);
+
         var dtoList = new List<MyEntityDto>();
         {
             new MyEntityDto() { Number = 44 };
             new MyEntityDto() { Number = 45 };
         }
 
-        dto = _objectMapper.Map<List<MyEntity>, List<MyEntityDto>>(new List<MyEntity>
+        _objectMapper.Map<List<MyEntity>, List<MyEntityDto>>(new List<MyEntity>
         {
             new MyEntity { Number = 42 },
             new MyEntity { Number = 43 }
@@ -70,6 +82,17 @@ public class AbpMapperlyModule_Basic_Tests : AbpIntegratedTest<MapperlyTestModul
         dtoList.Count.ShouldBe(2);
         dtoList[0].Number.ShouldBe(42);
         dtoList[1].Number.ShouldBe(43);
+
+        var dtoArray = dtoList.ToArray();
+        _objectMapper.Map<IReadOnlyList<MyEntity>, MyEntityDto[]>(new List<MyEntity>
+        {
+            new MyEntity { Number = 42 },
+            new MyEntity { Number = 43 }
+        }.AsReadOnly(), dtoArray);
+
+        dtoArray.Length.ShouldBe(2);
+        dtoArray[0].Number.ShouldBe(42);
+        dtoArray[1].Number.ShouldBe(43);
     }
 
     [Fact]
