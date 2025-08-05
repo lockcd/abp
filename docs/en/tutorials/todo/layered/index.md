@@ -585,8 +585,6 @@ namespace TodoApp.Blazor.Pages;
 namespace TodoApp.MauiBlazor.Pages;
 {{end}}
 
-namespace TodoApp.Blazor.Pages;
-
 public partial class Index
 {
     [Inject]
