@@ -30,6 +30,6 @@ public class WebRequestResources : IWebRequestResources, IScopedDependency
         }
 
         Resources.Add(path, resources);
-        return resources;
+        return resources.ToList();
     }
 }
