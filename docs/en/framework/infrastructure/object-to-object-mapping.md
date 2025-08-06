@@ -302,6 +302,23 @@ public partial class UserToUserDtoMapper : MapperBase<User, UserDto>
 
 It is suggested to use the `MapExtraPropertiesAttribute` attribute if both classes are extensible objects (implement the `IHasExtraProperties` interface). See the [object extension document](../fundamentals/object-extensions.md) for more.
 
+
+### Lists and Arrays Support
+
+ABP Mapperly integration also supports mapping lists and arrays. Same as [IObjectMapper<TSource, TDestination> Interface](#iobjectmappertsource-tdestination-interface) section. Example:
+
+````csharp
+[Mapper]
+public partial class UserToUserDtoMapper : MapperBase<User, UserDto>
+{
+    public override partial UserDto Map(User source);
+    public override partial void Map(User source, UserDto destination);
+}
+
+var users = await _userRepository.GetListAsync(); // returns List<User>
+var dtos = ObjectMapper.Map<List<User>, List<UserDto>>(users); // creates List<UserDto>
+````
+
 ### More Mapperly Features
 
 Most of Mapperly's features such as `Ignore` can be configured through its attributes. See the [Mapperly documentation](https://mapperly.riok.app/docs/intro/) for more details.
