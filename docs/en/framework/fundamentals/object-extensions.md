@@ -398,7 +398,7 @@ It has the same parameters with the `MapExtraPropertiesTo` method.
 
 If you're using the [Mapperly](https://github.com/riok/mapperly) library, the ABP also provides an extension method to utilize the `MapExtraPropertiesTo` method defined above.
 
-You can use the `MapExtraProperties` attribute to Mapperly class.
+You can use the `MapExtraProperties` attribute to Mapperly class:
 
 ````csharp
 [Mapper]

@@ -225,7 +225,7 @@ Once you define mappings class as below, you can use the `IObjectMapper` interfa
 
 ### Define Mapping Classes
 
-You can define a mapper class by using the `Mapper` attribute. The class and methods must be `partial` to allow the Mapperly to generate the implementation during the build process.
+You can define a mapper class by using the `Mapper` attribute. The class and methods must be `partial` to allow the Mapperly to generate the implementation during the build process:
 
 ````csharp
 [Mapper]
@@ -236,7 +236,7 @@ public partial class UserToUserDtoMapper : MapperBase<User, UserDto>
 }
 ````
 
-If you also want to map `UserDto` to `User`, you can inherit from the `TwoWayMapperBase<User, UserDto>` class.
+If you also want to map `UserDto` to `User`, you can inherit from the `TwoWayMapperBase<User, UserDto>` class:
 
 ````csharp
 [Mapper]
@@ -252,7 +252,7 @@ public partial class UserToUserDtoMapper : TwoWayMapperBase<User, UserDto>
 
 ### Before and After Mapping Methods
 
-The base class provides `BeforeMap` and `AfterMap` methods that can be overridden to perform actions before and after the mapping.
+The base class provides `BeforeMap` and `AfterMap` methods that can be overridden to perform actions before and after the mapping:
 
 ````csharp
 [Mapper]
@@ -288,7 +288,7 @@ public partial class UserToUserDtoMapper : TwoWayMapperBase<User, UserDto>
 
 ### Mapping the Object Extensions
 
-[Object extension system](../fundamentals/object-extensions.md) allows to define extra properties for existing classes. ABP provides a mapping definition extension to properly map extra properties of two objects.
+[Object extension system](../fundamentals/object-extensions.md) allows to define extra properties for existing classes. ABP provides a mapping definition extension to properly map extra properties of two objects:
 
 ````csharp
 [Mapper]
@@ -302,10 +302,11 @@ public partial class UserToUserDtoMapper : MapperBase<User, UserDto>
 
 It is suggested to use the `MapExtraPropertiesAttribute` attribute if both classes are extensible objects (implement the `IHasExtraProperties` interface). See the [object extension document](../fundamentals/object-extensions.md) for more.
 
-
 ### Lists and Arrays Support
 
-ABP Mapperly integration also supports mapping lists and arrays. Same as [IObjectMapper<TSource, TDestination> Interface](#iobjectmappertsource-tdestination-interface) section. Example:
+ABP Mapperly integration also supports mapping lists and arrays as explained in the [IObjectMapper<TSource, TDestination> Interface](#iobjectmappertsource-tdestination-interface) section. 
+
+**Example**:
 
 ````csharp
 [Mapper]

@@ -2,27 +2,22 @@
 
 ## Introduction
 
-The AutoMapper library is no longer free for commercial use. See [this article](https://www.jimmybogard.com/automapper-and-mediatr-going-commercial/) for more details.
+The AutoMapper library is **no longer free for commercial use**. For more details, you can refer to [this announcement post](https://www.jimmybogard.com/automapper-and-mediatr-going-commercial/).
 
-ABP framework provides the AutoMapper and Mapperly integration. If you have a project that uses AutoMapper and don't have any license for AutoMapper, you can migrate to Mapperly by following the steps below.
+ABP Framework provides both AutoMapper and Mapperly integrations. If your project currently uses AutoMapper and you don't have a commercial license, you can switch to Mapperly by following the steps outlined below.
 
 ## Migration Steps
 
-Please open your project with the IDE(`Visual Studio`, `VS Code` or `JetBrains Rider`), then perform a global search and replace.
+Please open your project in an IDE(`Visual Studio`, `VS Code` or `JetBrains Rider`), then perform the following global search and replace operations:
 
-1. Replace `Volo.Abp.AutoMapper` to `Volo.Abp.Mapperly` in all `*.csproj` files.
-
-2. Replace `using Volo.Abp.AutoMapper;` to `using Volo.Abp.Mapperly;` in all `*.cs` files.
-
+1. Replace `Volo.Abp.AutoMapper` with `Volo.Abp.Mapperly` in all `*.csproj` files.
+2. Replace `using Volo.Abp.AutoMapper;` with `using Volo.Abp.Mapperly;` in all `*.cs` files.
 3. Replace `AbpAutoMapperModule` with `AbpMapperlyModule` in all `*.cs` files.
+4. Replace `AddAutoMapperObjectMapper` with `AddMapperlyObjectMapper` in all `*.cs` files.
+5. Remove any code sections that configure `Configure<AbpAutoMapperOptions>`.
+6. Review any existing AutoMapper `Profile` classes and ensure all newly created Mapperly mapping classes are registered appropriately. (You can refer to the example below for guidance)
 
-4. Replace `AddAutoMapperObjectMapper` to `AddMapperlyObjectMapper` in all `*.cs` files.
-
-5. Remove `Configure<AbpAutoMapperOptions>` code section.
-
-6. Check the AutoMapper's `Profile` class to add all new Mapperly mapping classes.
-
-## Example
+**Example:**
 
 Here is an AutoMapper's `Profile` class:
 
@@ -146,21 +141,19 @@ public partial class IdentityUserToIdentityUserExportDtoMapper : MapperBase<Iden
 
 ## Mapperly Mapping Class
 
-You need to create a new Mapperly mapping class for each source and destination type.
+To use Mapperly, you'll need to create a dedicated mapping class for each source and destination types.
 
-The `Mapper` attribute is used to mark the class as a Mapperly mapping class.
-
-The `MapperIgnoreTarget` attribute is used to replace the `Ignore` method.
-
-The `MapExtraProperties` attribute is used to replace the `MapExtraProperties` method.
-
-The `TwoWayMapperBase` class is used to replace the `ReverseMap` method.
-
-The `AfterMap` method is used to perform actions after the mapping.
+* Use the `[Mapper]` attribute to designate the class as a Mapperly mapper.
+* Replace AutoMapper's `Ignore()` method with the `[MapperIgnoreTarget]` attribute.
+* Replace the `MapExtraProperties()` method with the `[MapExtraProperties]` attribute.
+* Use the `TwoWayMapperBase` class as an alternative to AutoMapper’s `ReverseMap()` functionality.
+* Implement the `AfterMap()` method to execute logic after the mapping is completed.
 
 ### Dependency Injection in Mapper Class
 
-All the Mapperly mapping classes will be added to the DI container. If you want to inject a service in your Mapper class, You just need to add the service to the constructor of the Mapper class.
+All Mapperly mapping classes automatically registered in the the [dependency injection (DI)](../../framework/fundamentals/dependency-injection.md) container. To use a service within a Mapper class, simply add it to the constructor, Mapperly will inject it automatically.
+
+**Example:**
 
 ```csharp
 public partial class IdentityUserToIdentityUserDtoMapper : MapperBase<IdentityUser, IdentityUserDto>
@@ -184,7 +177,7 @@ public partial class IdentityUserToIdentityUserDtoMapper : MapperBase<IdentityUs
 
 Please refer to the [Mapperly documentation](https://mapperly.riok.app/docs/intro/) for more details.
 
-Key points:
+**Key points:**
 
 - [Mapperly Configuration](https://mapperly.riok.app/docs/configuration/mapper/)
 - [Mapperly Enums](https://mapperly.riok.app/docs/configuration/enum/)
