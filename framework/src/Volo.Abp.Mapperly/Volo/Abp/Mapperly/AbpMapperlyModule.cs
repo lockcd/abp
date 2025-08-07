@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Auditing;
 using Volo.Abp.Modularity;
@@ -22,8 +23,11 @@ public class AbpMapperlyModule : AbpModule
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         // This is the temporary solution, We will remove it in when all apps are migrated to Mapperly.
-        var autoMapperModule = context.Services.FirstOrDefault(x => x.ServiceType.FullName == "Volo.Abp.AutoMapper.AbpAutoMapperModule");
-        if (autoMapperModule == null)
+        var abpApplication = context.Services.GetSingletonInstance<IAbpApplication>();
+        var modules = abpApplication.Modules.ToList();
+        var autoMapperModuleIndex = modules.FindIndex(x => x.Type.FullName!.Equals("Volo.Abp.AutoMapper.AbpAutoMapperModule", StringComparison.OrdinalIgnoreCase));
+        var mapperlyModuleIndex = modules.FindIndex(x => x.Type == typeof(AbpMapperlyModule));
+        if (mapperlyModuleIndex < autoMapperModuleIndex)
         {
             context.Services.AddMapperlyObjectMapper();
         }
