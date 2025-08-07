@@ -23,11 +23,20 @@ public class AbpMapperlyModule : AbpModule
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         // This is the temporary solution, We will remove it in when all apps are migrated to Mapperly.
-        var abpApplication = context.Services.GetSingletonInstance<IAbpApplication>();
-        var modules = abpApplication.Modules.ToList();
+        var disableMapperlyAutoObjectMappingProvider = false;
+
+        var modules = context.Services.GetSingletonInstance<IAbpApplication>().Modules.ToList();
         var autoMapperModuleIndex = modules.FindIndex(x => x.Type.FullName!.Equals("Volo.Abp.AutoMapper.AbpAutoMapperModule", StringComparison.OrdinalIgnoreCase));
-        var mapperlyModuleIndex = modules.FindIndex(x => x.Type == typeof(AbpMapperlyModule));
-        if (mapperlyModuleIndex < autoMapperModuleIndex)
+        if (autoMapperModuleIndex >= 0)
+        {
+            var mapperlyModuleIndex = modules.FindIndex(x => x.Type == typeof(AbpMapperlyModule));
+            if (mapperlyModuleIndex > autoMapperModuleIndex)
+            {
+                disableMapperlyAutoObjectMappingProvider = true;
+            }
+        }
+
+        if (!disableMapperlyAutoObjectMappingProvider)
         {
             context.Services.AddMapperlyObjectMapper();
         }
